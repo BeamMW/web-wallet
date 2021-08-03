@@ -1,0 +1,44 @@
+{
+  "name": "web-wallet",
+  "version": "2.0.0",
+  "main": "popup.js",
+  "repository": "",
+  "author": "",
+  "license": "",
+  "scripts": {
+    "watch": "webpack --watch",
+    "build": "rm -rf dist/ && webpack"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "7.12.11",
+    "@babel/preset-react": "^7.14.5",
+    "@babel/preset-typescript": "7.12.7",
+    "@types/chrome": "0.0.135",
+    "@types/react": "^17.0.15",
+    "@typescript-eslint/eslint-plugin": "4.17.0",
+    "@typescript-eslint/parser": "4.17.0",
+    "copy-webpack-plugin": "^9.0.1",
+    "cross-env": "7.0.3",
+    "eslint": "^7.11.0",
+    "eslint-config-prettier": "6.10.1",
+    "eslint-plugin-import": "2.22.1",
+    "prettier": "2.0.1",
+    "ts-loader": "^9.1.1",
+    "typescript": "^4.0.3",
+    "web-ext-types": "3.2.1",
+    "webpack": "5.18.0",
+    "webpack-cli": "4.4.0",
+    "webpack-merge": "5.7.3",
+    "whatwg-fetch": "3.0.0"
+  },
+  "dependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.14.8",
+    "@types/node": "^16.4.10",
+    "@types/react-dom": "^17.0.9",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  }
+}

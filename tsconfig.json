@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "target": "es5",
+    "esModuleInterop": true,
+    "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],
+    "types": ["node"]
+  },
+  "include": ["src/*.ts*"],
+  "exclude": ["node_modules"]
+}

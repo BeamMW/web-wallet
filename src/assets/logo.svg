@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="242px" height="168px" viewBox="0 0 242 168" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>logo</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="50%" x2="69.9236976%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="96.8343132%" y1="31.5784192%" x2="32.0565226%" y2="34.8028938%" id="linearGradient-2">
+            <stop stop-color="#FD76FD" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#FF51FF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="95.9480128%" y1="44.4307516%" x2="45.0288776%" y2="44.4307516%" id="linearGradient-3">
+            <stop stop-color="#5300FF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#9D6EFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="96.9658805%" y1="35.4091113%" x2="44.1485367%" y2="42.3121076%" id="linearGradient-4">
+            <stop stop-color="#AE60D6" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#AB38E6" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="atomic" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="creating-wallet" transform="translate(-391.000000, -140.000000)">
+            <g id="Group-2" transform="translate(391.000000, 140.000000)">
+                <g id="logo-2">
+                    <polygon id="Combined-Shape" fill="#0B76FF" points="121.003111 139.120816 171.009129 139.120816 121.018638 52.4962076 121.012778 52.5063618 121.018638 0 219 167 121 167"></polygon>
+                    <polygon id="Combined-Shape" fill="#24C1FF" transform="translate(72.000000, 83.500000) scale(-1, 1) translate(-72.000000, -83.500000) " points="23.0031114 139.120816 73.0091287 139.120816 23.0186378 52.4962076 23.0127779 52.5063618 23.0186378 0 121 167 23 167"></polygon>
+                    <polygon id="Triangle-5" fill="#39FFF2" points="121 74 121 128.939482 90 129"></polygon>
+                    <polygon id="Triangle-5" fill="#00E2C2" transform="translate(136.500000, 101.500000) scale(-1, 1) translate(-136.500000, -101.500000) " points="152 74 152 128.939482 121 129"></polygon>
+                    <polygon id="Rectangle-5" fill="url(#linearGradient-1)" points="0 57 121 107 121 114 0 84"></polygon>
+                    <polygon id="Rectangle-5" fill="url(#linearGradient-2)" points="242 36.032052 121 107 121 108.92104 242 59"></polygon>
+                    <polygon id="Rectangle-5" fill="url(#linearGradient-3)" transform="translate(181.453161, 97.994376) scale(-1, 1) rotate(-180.000000) translate(-181.453161, -97.994376) " points="241.906323 90.9887517 121 82 121 83.9887517 241.906323 113.988752"></polygon>
+                    <polygon id="Rectangle-5" fill="url(#linearGradient-4)" points="242 59.96331 121 109.037861 121 112 242 81"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
