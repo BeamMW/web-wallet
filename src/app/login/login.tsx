@@ -1,16 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
-import * as passworder from 'browser-passworder';
+
+import WasmWallet from '@wallet';
 
 import { setView, View } from '@root';
 
 const Login = () => {
-  const [pass, setPass] = useState('');
+  const wallet = WasmWallet.getInstance();
+  const [erorr, setError] = useState(false);
   const inputRef = useRef<HTMLInputElement>();
 
-  const handleSubmit: React.FormEventHandler = event => {
+  const handleSubmit: React.FormEventHandler = async event => {
     event.preventDefault();
     const { value } = inputRef.current;
-    console.log(value);
+    try {
+      await wallet.checkPassword(value);
+      setError(false);
+      wallet.open(value);
+      setView(View.PROGRESS);
+    } catch {
+      setError(true);
+    }
   };
 
   const handleRestore: React.MouseEventHandler = event => {

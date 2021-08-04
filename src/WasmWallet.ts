@@ -75,10 +75,21 @@ export default class WasmWallet {
     });
   }
 
+  async open(pass: string) {
+    try {
+      if (!this.mounted) {
+        await this.mount();
+      }
+
+      this.start(pass);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async create(seed: string, pass: string, seedConfirmed: boolean) {
     try {
-      const data = await passworder.encrypt(pass, { seed });
-      this.save(data);
+      await this.save(seed, pass);
       this.initSettings(seedConfirmed);
 
       if (!this.mounted) {
@@ -92,9 +103,18 @@ export default class WasmWallet {
     }
   }
 
-  save(data) {
+  async save(seed: string, pass: string) {
+    const data = await passworder.encrypt(pass, { seed });
     extensionizer.storage.local.remove(['wallet']);
     extensionizer.storage.local.set({ wallet: data });
+  }
+
+  checkPassword(pass: string) {
+    return new Promise<boolean>((resolve, reject) => {
+      extensionizer.storage.local.get('wallet', ({ wallet }) => {
+        passworder.decrypt(pass, wallet).then(resolve).catch(reject);
+      });
+    });
   }
 
   send<T>(method: RPCMethod, params: T) {
