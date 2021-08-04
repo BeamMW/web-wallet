@@ -3,7 +3,7 @@ import { useStore } from 'effector-react';
 
 import { createChangeHandler } from '@utils';
 
-import { $seed } from '@root';
+import { $seed, setView, View } from '@root';
 import WasmWallet from '@wallet';
 
 const SetPassword = () => {
@@ -19,6 +19,7 @@ const SetPassword = () => {
     event.preventDefault();
     const wallet = WasmWallet.getInstance();
     wallet.create(seed.join(' '), pass, true);
+    setView(View.PROGRESS);
   };
 
   return (

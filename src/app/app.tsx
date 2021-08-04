@@ -6,6 +6,7 @@ import WasmWallet from '@wallet';
 import Login from './login';
 import Restore from './restore';
 import SetPassword from './set-password';
+import Progress from './progress';
 import Main from './main';
 
 import { $view, View } from './model';
@@ -14,6 +15,7 @@ const ViewCompomentMap = {
   [View.LOGIN]: Login,
   [View.RESTORE]: Restore,
   [View.SET_PASSWORD]: SetPassword,
+  [View.PROGRESS]: Progress,
   [View.MAIN]: Main,
 };
 

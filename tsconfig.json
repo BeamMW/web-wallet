@@ -7,6 +7,7 @@
     "types": ["node"],
     "baseUrl": "src",
     "paths": {
+      "@api": ["api.ts"],
       "@root": ["app/model.ts"],
       "@wallet": ["WasmWallet.ts"],
       "@utils": ["app/shared/utils.ts"]
