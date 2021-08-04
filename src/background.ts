@@ -2,7 +2,7 @@
 
 // On first install, open a new tab with MetaMask
 function openExtensionInBrowser() {
-  const extensionURL = chrome.runtime.getURL('index.html#initialize/create');
+  const extensionURL = chrome.runtime.getURL('index.html');
 
   chrome.tabs.create({ url: extensionURL });
 }

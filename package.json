@@ -1,7 +1,7 @@
 {
   "name": "web-wallet",
   "version": "2.0.0",
-  "main": "popup.js",
+  "main": "index.js",
   "repository": "",
   "author": "",
   "license": "",

@@ -7,7 +7,7 @@ module.exports = {
   mode: 'development',
   devtool: 'inline-source-map',
   entry: {
-    popup: path.join(__dirname, './src/popup.tsx'),
+    index: path.join(__dirname, './src/index.tsx'),
     background: path.join(__dirname, './src/background.ts'),
   },
   output: {
@@ -41,7 +41,7 @@ module.exports = {
           context: 'public',
         },
         {
-          from: path.join(__dirname, 'src/popup.html'),
+          from: path.join(__dirname, 'src/index.html'),
           to: path.join(__dirname, 'dist'),
           context: 'public',
         },
