@@ -4,8 +4,14 @@
     "target": "es5",
     "esModuleInterop": true,
     "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],
-    "types": ["node"]
+    "types": ["node"],
+    "baseUrl": "src",
+    "paths": {
+      "@root": ["app/model.ts"],
+      "@wallet": ["WasmWallet.ts"],
+      "@utils": ["app/shared/utils.ts"]
+    }
   },
-  "include": ["src/*.ts*"],
+  "include": ["**/*"],
   "exclude": ["node_modules"]
 }
