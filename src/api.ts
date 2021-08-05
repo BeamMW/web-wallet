@@ -1,16 +1,32 @@
-export enum RPCMethod {
-  ToggleSubscribeTo = 'ev_subunsub',
+import WasmWallet, { RPCMethod } from '@wallet';
+
+function sendRequest(method: RPCMethod, params?: any): void {
+  WasmWallet.getInstance().send(method, params);
 }
 
-export enum RPCEvent {
-  SYNC_PROGRESS = 'ev_sync_progress',
+export function getWalletStatus() {
+  sendRequest(RPCMethod.GetWalletStatus);
 }
 
-export interface ToggleSubscribeToParams {
-  ev_sync_progress?: boolean;
-  ev_system_state?: boolean;
-  ev_assets_changed?: boolean;
-  ev_addrs_changed?: boolean;
-  ev_utxos_changed?: boolean;
-  ev_txs_changed?: boolean;
+export function getAddressList() {
+  sendRequest(RPCMethod.GetAddressList);
+}
+
+export function getUTXO() {
+  sendRequest(RPCMethod.GetUTXO);
+}
+
+export function getTXList() {
+  sendRequest(RPCMethod.GetTXList);
+}
+
+export function loadAssetsInfo(assets: any[]) {
+  for (let { asset_id } of assets) {
+    if (asset_id > 0) {
+      sendRequest(RPCMethod.GetAssetInfo, {
+        assets: true,
+        asset_id: asset_id,
+      });
+    }
+  }
 }

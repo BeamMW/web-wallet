@@ -2,11 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import WasmWallet from '@wallet';
 
-import { setView, View } from '@root';
+import { setSeed, setView, View } from '@root';
 
 const Login = () => {
   const wallet = WasmWallet.getInstance();
-  const [erorr, setError] = useState(false);
+  const [error, setError] = useState(false);
   const inputRef = useRef<HTMLInputElement>();
 
   const handleSubmit: React.FormEventHandler = async event => {
@@ -14,16 +14,22 @@ const Login = () => {
     const { value } = inputRef.current;
     try {
       await wallet.checkPassword(value);
-      setError(false);
       wallet.open(value);
+      setError(false);
       setView(View.PROGRESS);
     } catch {
       setError(true);
     }
   };
 
-  const handleRestore: React.MouseEventHandler = event => {
+  const handleRestoreClick: React.MouseEventHandler = () => {
     setView(View.RESTORE);
+  };
+
+  const handleCreateClick: React.MouseEventHandler = () => {
+    const seed = wallet.getSeedPhrase().split(' ');
+    setSeed(seed);
+    setView(View.CREATE);
   };
 
   return (
@@ -36,9 +42,13 @@ const Login = () => {
           placeholder="Password"
           ref={inputRef}
         />
+        {error && 'fuck you!'}
         <button type="submit">Open your wallet</button>
-        <button type="button" onClick={handleRestore}>
-          Restore wallet
+        <button type="button" onClick={handleRestoreClick}>
+          Restore
+        </button>
+        <button type="button" onClick={handleCreateClick}>
+          Create
         </button>
       </form>
     </div>

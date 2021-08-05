@@ -1,17 +1,45 @@
 import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
 
-import { isNil } from '@utils';
-import { RPCMethod, RPCEvent, ToggleSubscribeToParams } from '@api';
-import { setSyncProgress } from '@root';
+import { isNil } from '@shared/utils';
 
 declare const BeamModule: any;
+
+export enum RPCMethod {
+  ToggleSubscribeTo = 'ev_subunsub',
+  GetAssetInfo = 'get_asset_info',
+  GetWalletStatus = 'wallet_status',
+  GetAddressList = 'addr_list',
+  GetUTXO = 'get_utxo',
+  GetTXList = 'tx_list',
+}
+
+export enum RPCEvent {
+  SYNC_PROGRESS = 'ev_sync_progress',
+}
+export interface ToggleSubscribeToParams {
+  ev_sync_progress?: boolean;
+  ev_system_state?: boolean;
+  ev_assets_changed?: boolean;
+  ev_addrs_changed?: boolean;
+  ev_utxos_changed?: boolean;
+  ev_txs_changed?: boolean;
+}
 
 const PATH_DB = '/beam_wallet/wallet.db';
 const PATH_NODE = 'eu-node01.masternet.beam.mw:8200';
 
 let counter = 0;
 let WasmWalletClient;
+
+export interface WalletEvent {
+  id: RPCMethod | RPCEvent;
+  result: any;
+}
+
+type WalletEventHandler = {
+  (event: WalletEvent): void;
+};
 export default class WasmWallet {
   private static instance: WasmWallet;
 
@@ -19,32 +47,20 @@ export default class WasmWallet {
     if (this.instance != null) {
       return this.instance;
     }
-
-    return new WasmWallet();
+    this.instance = new WasmWallet();
+    return this.instance;
   }
 
   private wallet: any;
-  private ready: boolean;
   private mounted: boolean = false;
+  private eventHandler: WalletEventHandler;
 
   constructor() {}
 
-  handleResponse = (response: string) => {
-    const event = JSON.parse(response);
-    console.log(event.id, event.result);
-    switch (event.id) {
-      case RPCEvent.SYNC_PROGRESS:
-        const { done, total } = event.result;
-        setSyncProgress([done, total]);
-        break;
-      default:
-        break;
-    }
-  };
+  init(handler: WalletEventHandler) {
+    this.eventHandler = handler;
 
-  init() {
     BeamModule().then(module => {
-      this.ready = true;
       WasmWalletClient = module.WasmWalletClient;
     });
   }
@@ -54,9 +70,14 @@ export default class WasmWallet {
       this.wallet = new WasmWalletClient(PATH_DB, pass, PATH_NODE);
     }
 
-    this.wallet.startWallet();
+    const responseHandler = response => {
+      const event = JSON.parse(response);
+      console.info(event.id, event.result);
+      this.eventHandler(event);
+    };
 
-    this.wallet.subscribe(this.handleResponse);
+    this.wallet.startWallet();
+    this.wallet.subscribe(responseHandler);
 
     this.send<ToggleSubscribeToParams>(RPCMethod.ToggleSubscribeTo, {
       ev_addrs_changed: true,
@@ -99,6 +120,7 @@ export default class WasmWallet {
       WasmWalletClient.CreateWallet(seed, '/beam_wallet/wallet.db', pass);
       this.start(pass);
     } catch (error) {
+      // if 32722064 delete wallet
       console.log(error);
     }
   }
@@ -117,11 +139,11 @@ export default class WasmWallet {
     });
   }
 
-  send<T>(method: RPCMethod, params: T) {
+  send<T>(method: RPCMethod, params?: T) {
     this.wallet.sendRequest(
       JSON.stringify({
         jsonrpc: '2.0',
-        id: counter++,
+        id: method,
         method,
         params,
       }),
@@ -130,6 +152,10 @@ export default class WasmWallet {
 
   isAllowedWord(word: string): boolean {
     return WasmWalletClient.IsAllowedWord(word);
+  }
+
+  getSeedPhrase(): string {
+    return WasmWalletClient.GeneratePhrase();
   }
 
   initSettings(seedConfirmed: boolean) {
