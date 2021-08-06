@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from 'react';
 
 import { SeedConfirm } from '@intro/seed';
-import { setView, View } from '@root';
-import { $seed } from '@root';
+import { $seed, setView, View } from '@model';
 import { useStore } from 'effector-react';
 
 const SEED_CONFIRM_COUNT = 6;

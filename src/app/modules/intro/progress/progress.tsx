@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from 'effector-react';
 
-import { $syncProgress, $syncPercent } from '@root';
+import { $syncProgress, $syncPercent } from '@model';
 
 const Progress = () => {
   const [done, total] = useStore($syncProgress);

@@ -3,7 +3,7 @@ import { useStore } from 'effector-react';
 
 import { createChangeHandler } from '@shared/utils';
 
-import { $seed, setView, View } from '@root';
+import { $seed, setView, View } from '@model';
 import WasmWallet from '@wallet';
 
 const SetPassword = () => {

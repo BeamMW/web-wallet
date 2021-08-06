@@ -1,5 +1,6 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
@@ -22,12 +23,26 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        use: ['babel-loader', '@linaria/webpack-loader'],
         exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+          },
+          {
+            loader: 'css-loader',
+          },
+        ],
       },
     ],
   },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'styles.css',
+    }),
     new CopyWebpackPlugin({
       patterns: [
         {

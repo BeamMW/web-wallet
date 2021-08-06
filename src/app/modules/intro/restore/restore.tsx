@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-import { setSeed, setView, View } from '@root';
+import { setSeed, setView, View } from '@model';
 
 import { SeedRestore } from '@intro/seed';
 

@@ -12,10 +12,14 @@ export enum RPCMethod {
   GetAddressList = 'addr_list',
   GetUTXO = 'get_utxo',
   GetTXList = 'tx_list',
+  CreateAddress = 'create_address',
 }
 
 export enum RPCEvent {
   SYNC_PROGRESS = 'ev_sync_progress',
+  ASSETS_CHANGED = 'ev_assets_changed',
+  SYSTEM_STATE = 'ev_system_state',
+  TXS_CHANGED = 'ev_txs_changed',
 }
 export interface ToggleSubscribeToParams {
   ev_sync_progress?: boolean;
@@ -72,7 +76,7 @@ export default class WasmWallet {
 
     const responseHandler = response => {
       const event = JSON.parse(response);
-      console.info(event.id, event.result);
+      console.info(event);
       this.eventHandler(event);
     };
 

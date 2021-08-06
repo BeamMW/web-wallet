@@ -6,7 +6,7 @@ import Restore from '@intro/restore';
 import Create from '@intro/create';
 import SetPassword from '@intro/set-password';
 import Progress from '@intro/progress';
-import Portfolio from '@intro/portfolio';
+import Portfolio from '@main/portfolio';
 
 import { initWallet, $view, View } from './model';
 
