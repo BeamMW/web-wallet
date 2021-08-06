@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 
-import { setSeed, setView, View } from '@model';
-
-import { SeedRestore } from '@intro/seed';
+import { setSeed } from '@state/intro';
+import { View, setView } from '@state/shared';
+import { SeedRestore } from '@pages/intro/seed';
 
 const Restore = () => {
   const handleSubmit: React.ChangeEventHandler<HTMLFormElement> = event => {

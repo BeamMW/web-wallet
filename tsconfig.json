@@ -7,12 +7,10 @@
     "types": ["node"],
     "baseUrl": "src/app",
     "paths": {
-      "@intro/*": ["modules/intro/*"],
-      "@main/*": ["modules/main/*"],
-      "@shared/*": ["modules/shared/*"],
-      "@api": ["api.ts"],
-      "@model": ["model.ts"],
-      "@wallet": ["WasmWallet.ts"]
+      "@app/*": ["*"],
+      "@wallet": ["WasmWallet.ts"],
+      "@pages/*": ["pages/*"],
+      "@state/*": ["state/*"]
     }
   },
   "include": ["**/*"],

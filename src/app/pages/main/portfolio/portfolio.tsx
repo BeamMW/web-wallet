@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
-import { $balance, $transactions } from '@model';
-import { isNil } from '@shared/utils';
+import { $balance, $transactions } from '@state/portfolio';
+import { isNil } from '@app/utils';
 
 interface CardProps {
   active?: boolean;

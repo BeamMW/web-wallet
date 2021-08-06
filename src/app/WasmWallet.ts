@@ -1,41 +1,15 @@
 import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
 
-import { isNil } from '@shared/utils';
+import { isNil } from '@app/utils';
+import { RPCMethod, RPCEvent, ToggleSubscribeToParams } from './types';
 
 declare const BeamModule: any;
-
-export enum RPCMethod {
-  ToggleSubscribeTo = 'ev_subunsub',
-  GetAssetInfo = 'get_asset_info',
-  GetWalletStatus = 'wallet_status',
-  GetAddressList = 'addr_list',
-  GetUTXO = 'get_utxo',
-  GetTXList = 'tx_list',
-  CreateAddress = 'create_address',
-}
-
-export enum RPCEvent {
-  SYNC_PROGRESS = 'ev_sync_progress',
-  ASSETS_CHANGED = 'ev_assets_changed',
-  SYSTEM_STATE = 'ev_system_state',
-  TXS_CHANGED = 'ev_txs_changed',
-}
-export interface ToggleSubscribeToParams {
-  ev_sync_progress?: boolean;
-  ev_system_state?: boolean;
-  ev_assets_changed?: boolean;
-  ev_addrs_changed?: boolean;
-  ev_utxos_changed?: boolean;
-  ev_txs_changed?: boolean;
-}
 
 const PATH_DB = '/beam_wallet/wallet.db';
 const PATH_NODE = 'eu-node01.masternet.beam.mw:8200';
 
-let counter = 0;
 let WasmWalletClient;
-
 export interface WalletEvent {
   id: RPCMethod | RPCEvent;
   result: any;

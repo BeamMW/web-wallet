@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 
 import WasmWallet from '@wallet';
-
-import { setSeed, setView, View } from '@model';
+import { setSeed } from '@state/intro';
+import { setView, View } from '@state/shared';
 
 const Login = () => {
   const wallet = WasmWallet.getInstance();

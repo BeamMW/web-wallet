@@ -1,14 +1,10 @@
 import React, { useEffect } from 'react';
 import { useStore } from 'effector-react';
 
-import Login from '@intro/login';
-import Restore from '@intro/restore';
-import Create from '@intro/create';
-import SetPassword from '@intro/set-password';
-import Progress from '@intro/progress';
-import Portfolio from '@main/portfolio';
-
-import { initWallet, $view, View } from './model';
+import { Login, Restore, Create, SetPassword, Progress } from '@pages/intro';
+import Portfolio from '@pages/main/portfolio';
+import { $view, View } from '@state/shared';
+import { initWallet } from '@state/init';
 
 const ViewCompomentMap = {
   [View.LOGIN]: Login,
