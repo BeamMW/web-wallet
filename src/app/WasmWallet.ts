@@ -3,6 +3,7 @@ import * as passworder from 'browser-passworder';
 
 import { isNil } from '@app/utils';
 import { RPCMethod, RPCEvent, ToggleSubscribeToParams } from './types';
+import { resolve } from 'path/posix';
 
 declare const BeamModule: any;
 
@@ -88,7 +89,7 @@ export default class WasmWallet {
 
   async create(seed: string, pass: string, seedConfirmed: boolean) {
     try {
-      await this.save(seed, pass);
+      await this.saveWallet(seed, pass);
       this.initSettings(seedConfirmed);
 
       if (!this.mounted) {
@@ -103,10 +104,22 @@ export default class WasmWallet {
     }
   }
 
-  async save(seed: string, pass: string) {
+  async saveWallet(seed: string, pass: string) {
     const data = await passworder.encrypt(pass, { seed });
     extensionizer.storage.local.remove(['wallet']);
     extensionizer.storage.local.set({ wallet: data });
+  }
+
+  private load<T>(name: string): Promise<T> {
+    return new Promise<T>(resolve => {
+      extensionizer.storage.local.get(name, result => {
+        resolve(result[name]);
+      });
+    });
+  }
+
+  loadWallet() {
+    return this.load<string>('wallet');
   }
 
   checkPassword(pass: string) {
@@ -132,8 +145,9 @@ export default class WasmWallet {
     return WasmWalletClient.IsAllowedWord(word);
   }
 
-  getSeedPhrase(): string {
-    return WasmWalletClient.GeneratePhrase();
+  getSeedPhrase() {
+    const seed: string = WasmWalletClient.GeneratePhrase();
+    return seed.split(' ');
   }
 
   initSettings(seedConfirmed: boolean) {

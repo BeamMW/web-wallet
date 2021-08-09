@@ -1,58 +1,30 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
+import { useStore } from 'effector-react';
 
-import WasmWallet from '@wallet';
-import { setSeed } from '@state/intro';
-import { setView, View } from '@state/shared';
+import { $phase } from '@state/intro';
+import { LoginPhase } from '@state/intro';
 
-const Login = () => {
-  const wallet = WasmWallet.getInstance();
-  const [error, setError] = useState(false);
-  const inputRef = useRef<HTMLInputElement>();
+import LoginActive from './login-active';
+import LoginRestore from './login-restore';
 
-  const handleSubmit: React.FormEventHandler = async event => {
-    event.preventDefault();
-    const { value } = inputRef.current;
-    try {
-      await wallet.checkPassword(value);
-      wallet.open(value);
-      setError(false);
-      setView(View.PROGRESS);
-    } catch {
-      setError(true);
-    }
-  };
+const LoginLoading: React.FC = () => <div>Loading</div>;
 
-  const handleRestoreClick: React.MouseEventHandler = () => {
-    setView(View.RESTORE);
-  };
+function getLoginComponent(phase: LoginPhase) {
+  switch (phase) {
+    case LoginPhase.ACTIVE:
+      return LoginActive;
+    case LoginPhase.RESTORE:
+    case LoginPhase.FIRSTTIME:
+      return LoginRestore;
+    default:
+      return LoginLoading;
+  }
+}
 
-  const handleCreateClick: React.MouseEventHandler = () => {
-    const seed = wallet.getSeedPhrase().split(' ');
-    setSeed(seed);
-    setView(View.CREATE);
-  };
-
-  return (
-    <div>
-      <form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <input
-          autoFocus
-          name="password"
-          type="password"
-          placeholder="Password"
-          ref={inputRef}
-        />
-        {error && 'fuck you!'}
-        <button type="submit">Open your wallet</button>
-        <button type="button" onClick={handleRestoreClick}>
-          Restore
-        </button>
-        <button type="button" onClick={handleCreateClick}>
-          Create
-        </button>
-      </form>
-    </div>
-  );
+const Login: React.FC = () => {
+  const phase = useStore($phase);
+  const Component = getLoginComponent(phase);
+  return <Component />;
 };
 
 export default Login;

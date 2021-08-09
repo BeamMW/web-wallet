@@ -10,5 +10,7 @@ export enum View {
 }
 
 export const setView = createEvent<View>();
-
 export const $view = restore(setView, View.LOGIN);
+
+export const setOnboarding = createEvent<boolean>();
+export const $onboarding = restore(setOnboarding, null);

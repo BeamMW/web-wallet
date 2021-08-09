@@ -18,10 +18,14 @@ const Restore = () => {
     setView(View.SET_PASSWORD);
   };
 
+  const handleBackClick: React.MouseEventHandler = () => {
+    setView(View.LOGIN);
+  };
+
   return (
     <div>
       <h1>Restore</h1>
-      <SeedRestore onSubmit={handleSubmit} />
+      <SeedRestore onCancel={handleBackClick} onSubmit={handleSubmit} />
     </div>
   );
 };

@@ -1,10 +1,7 @@
 import { sample } from 'effector';
 
 import WasmWallet from '@wallet';
-import { setTotals, setMeta, setTransactions } from '@state/portfolio';
 
-import { View, setView } from './shared';
-import { $ready, setReady, setSyncProgress, sendWalletEvent } from './intro';
 import {
   RPCEvent,
   RPCMethod,
@@ -13,7 +10,34 @@ import {
   AssetsEvent,
   TxsEvent,
 } from '@app/types';
+
+import { isNil } from '@app/utils';
 import { createAddress, getWalletStatus } from '@app/api';
+
+import { View, setView, $onboarding, setOnboarding } from './shared';
+import { setTotals, setMeta, setTransactions } from './portfolio';
+
+import {
+  $ready,
+  setReady,
+  setSyncProgress,
+  sendWalletEvent,
+  setLoginPhase,
+  LoginPhase,
+} from './intro';
+
+const wallet = WasmWallet.getInstance();
+
+export async function initWallet() {
+  wallet.init(sendWalletEvent);
+
+  try {
+    const result = await wallet.loadWallet();
+    setOnboarding(isNil(result));
+  } catch {
+    setOnboarding(false);
+  }
+}
 
 function handleSyncProgress(
   ready: boolean,
@@ -79,6 +103,11 @@ sample({
   },
 });
 
-export const initWallet = () => {
-  WasmWallet.getInstance().init(sendWalletEvent);
-};
+let unwatch;
+
+unwatch = $onboarding.watch(value => {
+  if (!isNil(value)) {
+    unwatch();
+    setLoginPhase(value ? LoginPhase.FIRSTTIME : LoginPhase.ACTIVE);
+  }
+});

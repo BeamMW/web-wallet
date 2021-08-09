@@ -2,6 +2,13 @@ import { createEvent, restore } from 'effector';
 
 import { WalletEvent } from '@wallet';
 
+export enum LoginPhase {
+  LOADING,
+  ACTIVE,
+  RESTORE,
+  FIRSTTIME,
+}
+
 export const setSeed = createEvent<string[]>();
 export const setReady = createEvent<boolean>();
 export const setSyncProgress = createEvent<[number, number]>();
@@ -20,3 +27,7 @@ export const $syncPercent = $syncProgress.map<number>((state, last) => {
   }
   return next;
 });
+
+export const setLoginPhase = createEvent<LoginPhase>();
+
+export const $phase = restore(setLoginPhase, LoginPhase.LOADING);
