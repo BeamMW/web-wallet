@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useStore } from 'effector-react';
+import { css } from '@linaria/core';
 
 import { Login, Restore, Create, SetPassword, Progress } from '@pages/intro';
 import Portfolio from '@pages/main/portfolio';
@@ -14,6 +15,20 @@ const ViewCompomentMap = {
   [View.PROGRESS]: Progress,
   [View.PORTFOLIO]: Portfolio,
 };
+
+css`
+  :global() {
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  }
+`;
 
 const App = () => {
   useEffect(() => {

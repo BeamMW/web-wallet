@@ -3,17 +3,54 @@ import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import { $balance, $transactions } from '@state/portfolio';
+import { Table } from '@pages/shared';
 import { isNil } from '@app/utils';
 
 interface CardProps {
   active?: boolean;
 }
 
+function compact(value: string): string {
+  if (value.length <= 11) {
+    return value;
+  }
+  return `${value.substr(0, 5)}…${value.substr(-5, 5)}`;
+}
+
+const GROTHS_IN_BEAM = 100000000;
+
+const TABLE_CONFIG = [
+  {
+    name: 'create_time',
+    title: 'Created',
+  },
+  {
+    name: 'sender',
+    title: 'From',
+    fn: compact,
+  },
+  {
+    name: 'receiver',
+    title: 'To',
+    fn: compact,
+  },
+  {
+    name: 'value',
+    title: 'Amount',
+    fn: (value: number) => {
+      const result = value / GROTHS_IN_BEAM;
+      return result.toString();
+    },
+  },
+  {
+    name: 'status_string',
+    title: 'Status',
+  },
+];
+
 const Card = styled.li<CardProps>`
   color: ${({ active }) => (active ? 'red' : 'black')};
 `;
-
-const GROTHS_IN_BEAM = 100000000;
 
 const Portfolio = () => {
   const [active, setActive] = useState(null);
@@ -24,7 +61,7 @@ const Portfolio = () => {
     setActive(active === asset_id ? null : asset_id);
   };
 
-  const list = isNil(active)
+  const data = isNil(active)
     ? transactions
     : transactions.filter(({ asset_id }) => asset_id === active);
 
@@ -42,13 +79,7 @@ const Portfolio = () => {
           </Card>
         ))}
       </ul>
-      <ul>
-        {list.map(({ txId, asset_id, value }) => (
-          <li key={txId}>
-            {asset_id} {value / GROTHS_IN_BEAM}
-          </li>
-        ))}
-      </ul>
+      <Table key="txId" data={data} config={TABLE_CONFIG} />
     </div>
   );
 };
