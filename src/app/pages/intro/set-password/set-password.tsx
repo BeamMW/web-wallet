@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 
-import WasmWallet from '@wallet';
+import WasmWallet from '@core/WasmWallet';
 import { $seed } from '@state/intro';
 import { View, setView } from '@state/shared';
-import { createChangeHandler } from '@app/utils';
+import { createChangeHandler } from '@core/utils';
 
 const SetPassword = () => {
   const wallet = WasmWallet.getInstance();

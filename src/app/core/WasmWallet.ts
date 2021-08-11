@@ -1,9 +1,8 @@
 import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
 
-import { isNil } from '@app/utils';
+import { isNil } from '@core/utils';
 import { RPCMethod, RPCEvent, ToggleSubscribeToParams } from './types';
-import { resolve } from 'path/posix';
 
 declare const BeamModule: any;
 

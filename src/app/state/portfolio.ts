@@ -1,5 +1,6 @@
 import { createEvent, restore, combine } from 'effector';
-import { Asset, Transaction, WalletTotal } from 'types';
+
+import { Asset, Transaction, WalletTotal } from '@core/types';
 
 const BEAM_METADATA: Partial<Asset> = {
   metadata_pairs: {

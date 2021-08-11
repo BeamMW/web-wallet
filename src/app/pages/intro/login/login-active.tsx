@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 
-import WasmWallet from '@wallet';
+import WasmWallet from '@core/WasmWallet';
 import { setView, View } from '@state/shared';
 import { setLoginPhase, LoginPhase } from '@state/intro';
 import { Popup } from '@pages/shared';

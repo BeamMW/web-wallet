@@ -7,8 +7,7 @@
     "types": ["node"],
     "baseUrl": "src/app",
     "paths": {
-      "@app/*": ["*"],
-      "@wallet": ["WasmWallet.ts"],
+      "@core/*": ["core/*"],
       "@pages/*": ["pages/*"],
       "@state/*": ["state/*"]
     }

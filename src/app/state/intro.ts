@@ -1,6 +1,6 @@
 import { createEvent, restore } from 'effector';
 
-import { WalletEvent } from '@wallet';
+import { WalletEvent } from '@core/WasmWallet';
 
 export enum LoginPhase {
   LOADING,

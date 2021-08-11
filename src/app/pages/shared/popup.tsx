@@ -1,7 +1,7 @@
-import { isNil } from '@app/utils';
 import React from 'react';
-
 import { styled } from '@linaria/react';
+
+import { isNil } from '@core/utils';
 
 interface PopupProps {
   title?: string;

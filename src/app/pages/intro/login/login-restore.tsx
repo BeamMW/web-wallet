@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 
-import WasmWallet from '@wallet';
+import WasmWallet from '@core/WasmWallet';
 import { $phase, setSeed } from '@state/intro';
 import { setView, View } from '@state/shared';
 import { setLoginPhase, LoginPhase } from '@state/intro';

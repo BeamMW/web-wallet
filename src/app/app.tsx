@@ -3,7 +3,7 @@ import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 
 import { Login, Restore, Create, SetPassword, Progress } from '@pages/intro';
-import Portfolio from '@pages/main/portfolio';
+import { Portfolio, Send } from '@pages/main';
 import { $view, View } from '@state/shared';
 import { initWallet } from '@state/init';
 
@@ -14,6 +14,7 @@ const ViewCompomentMap = {
   [View.SET_PASSWORD]: SetPassword,
   [View.PROGRESS]: Progress,
   [View.PORTFOLIO]: Portfolio,
+  [View.SEND]: Send,
 };
 
 css`

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-import WasmWallet from '@wallet';
+import WasmWallet from '@core/WasmWallet';
 
 const SEED_PHRASE_COUNT = 12;
 

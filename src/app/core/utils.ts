@@ -7,3 +7,13 @@ export const createChangeHandler = (setFn: (value: string) => void) => (
 ) => {
   setFn(event.target.value);
 };
+
+export const debounce = (fn: Function, ms: number): Function => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(null, args);
+    }, ms);
+  };
+};

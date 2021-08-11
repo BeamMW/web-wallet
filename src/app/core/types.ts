@@ -1,11 +1,13 @@
 export enum RPCMethod {
   ToggleSubscribeTo = 'ev_subunsub',
+  GetUTXO = 'get_utxo',
   GetAssetInfo = 'get_asset_info',
   GetWalletStatus = 'wallet_status',
   GetAddressList = 'addr_list',
-  GetUTXO = 'get_utxo',
-  GetTXList = 'tx_list',
   CreateAddress = 'create_address',
+  CalculateChange = 'calc_change',
+  GetTXList = 'tx_list',
+  Send = 'tx_send',
 }
 
 export enum RPCEvent {

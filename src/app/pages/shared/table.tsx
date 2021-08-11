@@ -1,7 +1,7 @@
-import { isNil } from '@app/utils';
 import React, { useState } from 'react';
-
 import { styled } from '@linaria/react';
+
+import { isNil } from '@core/utils';
 
 interface CellConfig {
   name: string;
@@ -10,7 +10,7 @@ interface CellConfig {
 }
 
 interface TableProps {
-  key: string;
+  keyBy: string;
   data: any[];
   config: CellConfig[];
 }
@@ -27,7 +27,7 @@ const Header = styled.th<{ active: boolean }>`
   }};
 `;
 
-const Table: React.FC<TableProps> = ({ key, data, config }) => {
+const Table: React.FC<TableProps> = ({ keyBy, data, config }) => {
   const [filterBy, setFilterBy] = useState(0);
 
   const sortFn = (objectA, objectB) => {
@@ -68,7 +68,7 @@ const Table: React.FC<TableProps> = ({ key, data, config }) => {
       </thead>
       <tbody>
         {data.sort(sortFn).map(item => (
-          <tr key={item[key]}>
+          <tr key={item[keyBy]}>
             {config.map(({ name, fn }, index) => {
               const value = item[name];
               return <td key={index}>{isNil(fn) ? value : fn(value, item)}</td>;

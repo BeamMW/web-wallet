@@ -4,7 +4,8 @@ import { styled } from '@linaria/react';
 
 import { $balance, $transactions } from '@state/portfolio';
 import { Table } from '@pages/shared';
-import { isNil } from '@app/utils';
+import { isNil } from '@core/utils';
+import { setView, View, GROTHS_IN_BEAM } from '@state/shared';
 
 interface CardProps {
   active?: boolean;
@@ -16,8 +17,6 @@ function compact(value: string): string {
   }
   return `${value.substr(0, 5)}…${value.substr(-5, 5)}`;
 }
-
-const GROTHS_IN_BEAM = 100000000;
 
 const TABLE_CONFIG = [
   {
@@ -61,6 +60,10 @@ const Portfolio = () => {
     setActive(active === asset_id ? null : asset_id);
   };
 
+  const handleSendClick = () => {
+    setView(View.SEND);
+  };
+
   const data = isNil(active)
     ? transactions
     : transactions.filter(({ asset_id }) => asset_id === active);
@@ -68,6 +71,9 @@ const Portfolio = () => {
   return (
     <div>
       <h1>Main Screen</h1>
+      <button type="button" onClick={handleSendClick}>
+        Send
+      </button>
       <ul>
         {balance.map(({ asset_id, available, name }) => (
           <Card
@@ -79,7 +85,7 @@ const Portfolio = () => {
           </Card>
         ))}
       </ul>
-      <Table key="txId" data={data} config={TABLE_CONFIG} />
+      <Table keyBy="txId" data={data} config={TABLE_CONFIG} />
     </div>
   );
 };

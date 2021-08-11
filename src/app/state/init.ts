@@ -1,6 +1,6 @@
 import { sample } from 'effector';
 
-import WasmWallet from '@wallet';
+import WasmWallet from '@core/WasmWallet';
 
 import {
   RPCEvent,
@@ -9,10 +9,10 @@ import {
   SyncProgress,
   AssetsEvent,
   TxsEvent,
-} from '@app/types';
+} from '@core/types';
 
-import { isNil } from '@app/utils';
-import { createAddress, getWalletStatus } from '@app/api';
+import { isNil } from '@core/utils';
+import { createAddress, getWalletStatus } from '@core/api';
 
 import { View, setView, $onboarding, setOnboarding } from './shared';
 import { setTotals, setMeta, setTransactions } from './portfolio';
