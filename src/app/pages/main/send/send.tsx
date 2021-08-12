@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 
 import { $balance } from '@state/portfolio';
-import { GROTHS_IN_BEAM, FEE_DEFAULT } from '@state/shared';
+import { GROTHS_IN_BEAM, FEE_DEFAULT, setView, View } from '@state/shared';
 import { debounce } from '@core/utils';
 import { calculateChange, sendTransaction } from '@core/api';
 
@@ -49,6 +49,10 @@ const Send = () => {
     });
   };
 
+  const handleBackClick: React.MouseEventHandler = () => {
+    setView(View.PORTFOLIO);
+  };
+
   return (
     <div>
       <h1>Send</h1>
@@ -84,6 +88,9 @@ const Send = () => {
             onChange={handleAmountChange}
           />
         </div>
+        <button type="button" onClick={handleBackClick}>
+          Back
+        </button>
         <button type="submit">Send</button>
       </form>
     </div>

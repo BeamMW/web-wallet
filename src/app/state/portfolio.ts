@@ -1,6 +1,13 @@
 import { createEvent, restore, combine } from 'effector';
 
-import { Asset, Transaction, WalletTotal } from '@core/types';
+import {
+  Asset,
+  AssetsEvent,
+  Transaction,
+  TxsEvent,
+  WalletTotal,
+} from '@core/types';
+import Entity from './Entity';
 
 const BEAM_METADATA: Partial<Asset> = {
   metadata_pairs: {
@@ -9,20 +16,22 @@ const BEAM_METADATA: Partial<Asset> = {
   },
 };
 
+export const assets = new Entity<Asset, AssetsEvent>('assets', 'asset_id');
+export const transactions = new Entity<Transaction, TxsEvent>('txs', 'txId');
+
+export const $assets = assets.getStore();
+export const $transactions = transactions.getStore();
+
 export const setTotals = createEvent<WalletTotal[]>();
-export const setMeta = createEvent<Asset[]>();
-export const setTransactions = createEvent<Transaction[]>();
 
 export const $totals = restore(setTotals, []);
-export const $meta = restore(setMeta, []);
-export const $transactions = restore(setTransactions, []);
 
-export const $balance = combine($totals, $meta, (totals, meta) => {
+export const $balance = combine($totals, $assets, (totals, assets) => {
   return totals.map(({ asset_id, available, maturing, receiving, sending }) => {
     const target =
       asset_id === 0
         ? BEAM_METADATA
-        : meta.find(({ asset_id: id }) => asset_id === id);
+        : assets.find(({ asset_id: id }) => asset_id === id);
 
     const { metadata_pairs: pairs } = target;
 

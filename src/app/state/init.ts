@@ -1,6 +1,6 @@
 import { sample } from 'effector';
 
-import WasmWallet from '@core/WasmWallet';
+import WasmWallet, { WalletEvent } from '@core/WasmWallet';
 
 import {
   RPCEvent,
@@ -15,7 +15,7 @@ import { isNil } from '@core/utils';
 import { createAddress, getWalletStatus } from '@core/api';
 
 import { View, setView, $onboarding, setOnboarding } from './shared';
-import { setTotals, setMeta, setTransactions } from './portfolio';
+import { setTotals, assets, transactions } from './portfolio';
 
 import {
   $ready,
@@ -57,24 +57,6 @@ function handleWalletStatus({ totals }: WalletStatus) {
   setTotals(totals);
 }
 
-function handleAssetsChanged({ change, assets }: AssetsEvent) {
-  switch (change) {
-    case 3: // reset
-      setMeta(assets);
-      break;
-    default:
-  }
-}
-
-function handleTxsChanged({ change, txs }: TxsEvent) {
-  switch (change) {
-    case 3: // reset
-      setTransactions(txs);
-      break;
-    default:
-  }
-}
-
 sample({
   source: $ready,
   clock: sendWalletEvent,
@@ -84,16 +66,16 @@ sample({
         handleSyncProgress(ready, result);
         break;
       case RPCEvent.ASSETS_CHANGED:
-        handleAssetsChanged(result);
+        assets.push(result as AssetsEvent);
         break;
       case RPCEvent.SYSTEM_STATE:
         getWalletStatus();
         break;
       case RPCEvent.TXS_CHANGED:
-        handleTxsChanged(result);
+        transactions.push(result as TxsEvent);
         break;
       case RPCMethod.GetWalletStatus:
-        handleWalletStatus(result);
+        handleWalletStatus(result as WalletStatus);
         break;
       case RPCMethod.CreateAddress:
         break;
