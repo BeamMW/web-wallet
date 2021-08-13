@@ -3,12 +3,27 @@ import React, { useState, useRef } from 'react';
 import WasmWallet from '@core/WasmWallet';
 import { setView, View } from '@state/shared';
 import { setLoginPhase, LoginPhase } from '@state/intro';
-import { Popup } from '@pages/shared';
+import { Popup, Button, Link, Input, Logo } from '@pages/shared';
+import { styled } from '@linaria/react';
 
 const wallet = WasmWallet.getInstance();
 
+const FormStyled = styled.form`
+  padding: 0 30px;
+  text-align: center;
+`;
+
+const PaddingStyled = styled.div`
+  margin: 30px 0;
+`;
+
+enum ErrorMessage {
+  INVALID = 'Invalid password provided',
+  EMPTY = 'Please, enter password',
+}
+
 const LoginActive: React.FC = () => {
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<ErrorMessage>(null);
   const [warningVisible, toggleWarning] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>();
@@ -16,13 +31,19 @@ const LoginActive: React.FC = () => {
   const handleSubmit: React.FormEventHandler = async event => {
     event.preventDefault();
     const { value } = inputRef.current;
+
+    if (value === '') {
+      setError(ErrorMessage.EMPTY);
+      return;
+    }
+
     try {
       await wallet.checkPassword(value);
       wallet.open(value);
-      setError(false);
+      setError(null);
       setView(View.PROGRESS);
     } catch {
-      setError(true);
+      setError(ErrorMessage.INVALID);
     }
   };
 
@@ -46,31 +67,33 @@ const LoginActive: React.FC = () => {
           </p>
         </Popup>
       )}
-      <form autoComplete="off" noValidate onSubmit={handleSubmit}>
+      <FormStyled autoComplete="off" noValidate onSubmit={handleSubmit}>
+        <Logo />
+        <p>Enter your password to access the wallet</p>
         <div>
-          <input
+          <Input
             autoFocus
             name="password"
             type="password"
             placeholder="Password"
+            error={error}
             ref={inputRef}
           />
         </div>
-        {error && <div>Invalid password provided</div>}
         <div>
-          <button type="submit">open your wallet</button>
+          <Button type="submit">open your wallet</Button>
         </div>
-        <div>
-          <button
-            type="button"
-            onClick={() => {
+        <PaddingStyled>
+          <Link
+            onClick={event => {
+              event.preventDefault();
               toggleWarning(true);
             }}
           >
             Restore wallet or create a new one
-          </button>
-        </div>
-      </form>
+          </Link>
+        </PaddingStyled>
+      </FormStyled>
     </>
   );
 };

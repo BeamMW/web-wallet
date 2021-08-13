@@ -5,11 +5,12 @@
     "esModuleInterop": true,
     "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],
     "types": ["node"],
-    "baseUrl": "src/app",
+    "baseUrl": "src/",
     "paths": {
-      "@core/*": ["core/*"],
-      "@pages/*": ["pages/*"],
-      "@state/*": ["state/*"]
+      "@core/*": ["app/core/*"],
+      "@pages/*": ["app/pages/*"],
+      "@state/*": ["app/state/*"],
+      "@assets/*": ["assets/*"]
     }
   },
   "include": ["**/*"],

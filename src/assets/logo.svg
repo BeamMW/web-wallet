@@ -1,40 +1,33 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="242px" height="168px" viewBox="0 0 242 168" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
-    <title>logo</title>
-    <desc>Created with Sketch.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="159" height="139" viewBox="0 0 159 139">
     <defs>
-        <linearGradient x1="0%" y1="50%" x2="69.9236976%" y2="50%" id="linearGradient-1">
-            <stop stop-color="#FFFFFF" stop-opacity="0" offset="0%"></stop>
-            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        <linearGradient id="prefix__a" x1=".027%" x2="54.787%" y1="50.232%" y2="50.232%">
+            <stop offset="0%" stop-color="#FFF" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#FFF"/>
         </linearGradient>
-        <linearGradient x1="96.8343132%" y1="31.5784192%" x2="32.0565226%" y2="34.8028938%" id="linearGradient-2">
-            <stop stop-color="#FD76FD" stop-opacity="0" offset="0%"></stop>
-            <stop stop-color="#FF51FF" offset="100%"></stop>
+        <linearGradient id="prefix__b" x1="99.383%" x2="35.802%" y1="49.833%" y2="49.833%">
+            <stop offset="0%" stop-color="#FD76FD" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#FF51FF"/>
         </linearGradient>
-        <linearGradient x1="95.9480128%" y1="44.4307516%" x2="45.0288776%" y2="44.4307516%" id="linearGradient-3">
-            <stop stop-color="#5300FF" stop-opacity="0" offset="0%"></stop>
-            <stop stop-color="#9D6EFF" offset="100%"></stop>
+        <linearGradient id="prefix__c" x1="100.434%" x2="48.938%" y1="50.114%" y2="50.114%">
+            <stop offset="0%" stop-color="#9D6EFF" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#A18CFF"/>
         </linearGradient>
-        <linearGradient x1="96.9658805%" y1="35.4091113%" x2="44.1485367%" y2="42.3121076%" id="linearGradient-4">
-            <stop stop-color="#AE60D6" stop-opacity="0" offset="0%"></stop>
-            <stop stop-color="#AB38E6" offset="100%"></stop>
+        <linearGradient id="prefix__d" x1="99.909%" x2="41.056%" y1="50.24%" y2="50.24%">
+            <stop offset="0%" stop-color="#AE60D6" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#AB38E6"/>
         </linearGradient>
     </defs>
-    <g id="atomic" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="creating-wallet" transform="translate(-391.000000, -140.000000)">
-            <g id="Group-2" transform="translate(391.000000, 140.000000)">
-                <g id="logo-2">
-                    <polygon id="Combined-Shape" fill="#0B76FF" points="121.003111 139.120816 171.009129 139.120816 121.018638 52.4962076 121.012778 52.5063618 121.018638 0 219 167 121 167"></polygon>
-                    <polygon id="Combined-Shape" fill="#24C1FF" transform="translate(72.000000, 83.500000) scale(-1, 1) translate(-72.000000, -83.500000) " points="23.0031114 139.120816 73.0091287 139.120816 23.0186378 52.4962076 23.0127779 52.5063618 23.0186378 0 121 167 23 167"></polygon>
-                    <polygon id="Triangle-5" fill="#39FFF2" points="121 74 121 128.939482 90 129"></polygon>
-                    <polygon id="Triangle-5" fill="#00E2C2" transform="translate(136.500000, 101.500000) scale(-1, 1) translate(-136.500000, -101.500000) " points="152 74 152 128.939482 121 129"></polygon>
-                    <polygon id="Rectangle-5" fill="url(#linearGradient-1)" points="0 57 121 107 121 114 0 84"></polygon>
-                    <polygon id="Rectangle-5" fill="url(#linearGradient-2)" points="242 36.032052 121 107 121 108.92104 242 59"></polygon>
-                    <polygon id="Rectangle-5" fill="url(#linearGradient-3)" transform="translate(181.453161, 97.994376) scale(-1, 1) rotate(-180.000000) translate(-181.453161, -97.994376) " points="241.906323 90.9887517 121 82 121 83.9887517 241.906323 113.988752"></polygon>
-                    <polygon id="Rectangle-5" fill="url(#linearGradient-4)" points="242 59.96331 121 109.037861 121 112 242 81"></polygon>
-                </g>
-            </g>
+    <g fill="none">
+        <g>
+            <path fill="#0B76FF" d="M64.599 92.169L97.555 92.169 64.608 34.776 64.608 34.776 64.608 0 129.19 110.637 64.595 110.637z" transform="translate(14.824 .242)"/>
+            <path fill="#24C1FF" d="M64.595 92.169L31.634 92.169 64.582 34.776 64.582 34.776 64.582 0 0 110.637 64.595 110.637z" transform="translate(14.824 .242)"/>
         </g>
+        <path fill="#25C1FF" stroke="#25C1FF" d="M39.252 138.175h-5.666v-13.61H39.1c.998 0 1.78.33 2.346.989.566.66.849 1.486.849 2.48 0 .816-.188 1.506-.563 2.07-.376.565-.838.915-1.388 1.051.606.11 1.119.487 1.539 1.133.42.646.63 1.384.63 2.214 0 1.088-.288 1.973-.866 2.653-.577.68-1.375 1.02-2.395 1.02zm-.852-8.26c.355 0 .633-.13.835-.391.202-.262.302-.599.302-1.013 0-.424-.1-.767-.302-1.028-.202-.261-.48-.392-.835-.392h-2.264v2.824H38.4zm.235 5.897c.417 0 .742-.136.976-.409.234-.273.352-.654.352-1.144 0-.434-.118-.798-.352-1.093-.234-.295-.56-.443-.976-.443h-2.499v3.09h2.5zm28.58 2.363h-8.502v-13.61h8.502v2.526H60.89v2.894h6.196v2.525H60.89v3.138h6.326v2.527zm28.695 0h-2.714l-1-2.612h-6.244l-1 2.612h-2.714l5.346-13.61h2.98l5.346 13.61zm-4.812-5.415l-2.024-5.363-2.024 5.363h4.048zm34.048 5.415h-2.388v-10.1l-4.183 10.1h-1.02l-4.163-10.1v10.1h-2.388v-13.61h3.367l3.694 8.958 3.714-8.959h3.367v13.611z"/>
+        <path fill="#39FFF2" d="M79.419 49.515L79.419 86.617 59.234 86.655z"/>
+        <path fill="#00E2C2" d="M79.419 49.515L79.419 86.617 99.605 86.655z"/>
+        <path fill="url(#prefix__a)" d="M0.293 34.852L79.419 71.422 79.419 75.249 0.293 57.929z"/>
+        <path fill="url(#prefix__b)" d="M158.707 24.233L79.419 71.422 79.419 72.698 158.707 39.465z"/>
+        <path fill="url(#prefix__c)" d="M158.707 69.934L79.419 75.249 79.419 73.973 158.707 54.702z"/>
+        <path fill="url(#prefix__d)" d="M158.707 39.465L79.419 72.698 79.419 73.973 158.707 54.702z"/>
     </g>
 </svg>
