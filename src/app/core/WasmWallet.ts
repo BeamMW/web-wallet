@@ -100,7 +100,7 @@ export default class WasmWallet {
         await this.mount();
       }
 
-      WasmWalletClient.CreateWallet(seed, '/beam_wallet/wallet.db', pass);
+      WasmWalletClient.CreateWallet(seed, PATH_DB, pass);
       this.start(pass);
     } catch (error) {
       // if 32722064 delete wallet

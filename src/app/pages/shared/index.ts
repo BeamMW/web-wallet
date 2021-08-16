@@ -4,4 +4,5 @@ export { default as Menu } from './menu';
 export { default as Button } from './button';
 export { default as Link } from './link';
 export { default as Input } from './input';
-export { default as Logo } from './logo';
+export { default as Splash } from './splash';
+export { default as Icon } from './icon';

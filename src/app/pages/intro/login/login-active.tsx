@@ -3,19 +3,10 @@ import React, { useState, useRef } from 'react';
 import WasmWallet from '@core/WasmWallet';
 import { setView, View } from '@state/shared';
 import { setLoginPhase, LoginPhase } from '@state/intro';
-import { Popup, Button, Link, Input, Logo } from '@pages/shared';
+import { Popup, Button, Link, Input, Splash } from '@pages/shared';
 import { styled } from '@linaria/react';
 
 const wallet = WasmWallet.getInstance();
-
-const FormStyled = styled.form`
-  padding: 0 30px;
-  text-align: center;
-`;
-
-const PaddingStyled = styled.div`
-  margin: 30px 0;
-`;
 
 enum ErrorMessage {
   INVALID = 'Invalid password provided',
@@ -49,28 +40,9 @@ const LoginActive: React.FC = () => {
 
   return (
     <>
-      {warningVisible && (
-        <Popup
-          title="Restore wallet or create a new one"
-          cancel="cancel"
-          confirm="proceed"
-          onCancel={() => {
-            toggleWarning(false);
-          }}
-          onConfirm={() => {
-            setLoginPhase(LoginPhase.RESTORE);
-          }}
-        >
-          <p>
-            If you'll restore a wallet all transaction history and addresses
-            will be lost
-          </p>
-        </Popup>
-      )}
-      <FormStyled autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Logo />
-        <p>Enter your password to access the wallet</p>
-        <div>
+      <Splash>
+        <form autoComplete="off" noValidate onSubmit={handleSubmit}>
+          <p>Enter your password to access the wallet</p>
           <Input
             autoFocus
             name="password"
@@ -79,11 +51,7 @@ const LoginActive: React.FC = () => {
             error={error}
             ref={inputRef}
           />
-        </div>
-        <div>
           <Button type="submit">open your wallet</Button>
-        </div>
-        <PaddingStyled>
           <Link
             onClick={event => {
               event.preventDefault();
@@ -92,8 +60,24 @@ const LoginActive: React.FC = () => {
           >
             Restore wallet or create a new one
           </Link>
-        </PaddingStyled>
-      </FormStyled>
+        </form>
+      </Splash>
+
+      <Popup
+        visible={warningVisible}
+        title="Restore wallet or create a new one"
+        cancel="cancel"
+        confirm="proceed"
+        onCancel={() => {
+          toggleWarning(false);
+        }}
+        onConfirm={() => {
+          setLoginPhase(LoginPhase.RESTORE);
+        }}
+      >
+        If you'll restore a wallet all transaction history and addresses will be
+        lost
+      </Popup>
     </>
   );
 };

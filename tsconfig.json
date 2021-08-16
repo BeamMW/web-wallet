@@ -3,7 +3,11 @@
     "jsx": "react",
     "target": "es5",
     "esModuleInterop": true,
-    "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],
+    "typeRoots": [
+      "node_modules/@types",
+      "node_modules/web-ext-types",
+      "./src/@types"
+    ],
     "types": ["node"],
     "baseUrl": "src/",
     "paths": {

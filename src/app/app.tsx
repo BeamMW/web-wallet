@@ -11,14 +11,22 @@ css`
   :global() {
     :root {
       --color-background: #042548;
+      --color-popup: #003f6f;
+
       --color-regular: #92abba;
       --color-active: #e4f5ff;
+
       --color-primary: #00f6d2;
+      --color-ghost: rgba(255, 255, 255, 0.07);
+
       --color-send: #da68f5;
       --color-receive: #25c1ff;
+
       --color-disabled: #8da1ad;
       --color-failed: #ff746b;
-      --color-ghost: rgba(255, 255, 255, 0.07);
+
+      --color-blue: #032e49;
+      --color-white: #ffffff;
     }
 
     @font-face {
@@ -111,6 +119,7 @@ css`
 `;
 
 const ContainerStyled = styled.div`
+  position: relative;
   padding-top: 50px;
 `;
 

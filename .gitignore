@@ -3,3 +3,4 @@ dist/
 .cache
 .linaria-cache
 .log
+src/assets/icons/

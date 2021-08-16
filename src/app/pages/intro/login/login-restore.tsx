@@ -6,7 +6,7 @@ import { $phase, setSeed } from '@state/intro';
 import { setView, View } from '@state/shared';
 import { setLoginPhase, LoginPhase } from '@state/intro';
 
-import { Popup } from '@pages/shared';
+import { Popup, Splash, Button, Link } from '@pages/shared';
 
 const wallet = WasmWallet.getInstance();
 
@@ -16,25 +16,8 @@ const LoginRestore: React.FC = () => {
   const active = phase === LoginPhase.RESTORE;
 
   return (
-    <div>
-      <div>
-        {warningVisible && (
-          <Popup
-            title="Restore wallet"
-            confirm="agree"
-            onCancel={() => {
-              toggleWarning(false);
-            }}
-            onConfirm={() => {
-              setView(View.RESTORE);
-            }}
-          >
-            <p>
-              If you'll restore a wallet all transaction history and addresses
-              will be lost
-            </p>
-          </Popup>
-        )}
+    <>
+      <Splash blur={warningVisible}>
         {active && (
           <button
             type="button"
@@ -45,27 +28,41 @@ const LoginRestore: React.FC = () => {
             back
           </button>
         )}
-        <button
+        <Button
           type="button"
+          icon="add"
           onClick={() => {
             setSeed(wallet.getSeedPhrase());
             setView(View.CREATE);
           }}
         >
           create new wallet
-        </button>
-      </div>
-      <div>
-        <button
-          type="button"
-          onClick={() => {
+        </Button>
+        <Link
+          onClick={event => {
+            event.preventDefault();
             toggleWarning(true);
           }}
         >
           Restore wallet
-        </button>
-      </div>
-    </div>
+        </Link>
+      </Splash>
+      <Popup
+        visible={warningVisible}
+        title="Restore wallet"
+        cancel="cancel"
+        confirm="proceed"
+        onCancel={() => {
+          toggleWarning(false);
+        }}
+        onConfirm={() => {
+          setView(View.RESTORE);
+        }}
+      >
+        If you'll restore a wallet all transaction history and addresses will be
+        lost
+      </Popup>
+    </>
   );
 };
 
