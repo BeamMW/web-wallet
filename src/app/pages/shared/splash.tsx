@@ -1,8 +1,9 @@
 import React from 'react';
 import { styled } from '@linaria/react';
+import Logo from './logo';
 
 interface SplashProps {
-  small?: boolean;
+  size?: 'large' | 'small';
   blur?: boolean;
 }
 
@@ -15,29 +16,17 @@ const ContainerStyled = styled.div<SplashProps>`
 `;
 
 const TitleStyled = styled.div<SplashProps>`
-  margin-bottom: ${({ small }) => (small ? 50 : 100)}px;
+  margin-bottom: ${({ size }) => (size === 'small' ? 50 : 100)}px;
   text-align: center;
   font-size: 16px;
   font-weight: 700;
   color: var(--color-receive);
 `;
 
-const LogoStyled = styled.object`
-  display: block;
-  margin: 0 auto 20px;
-`;
-
-const Splash: React.FC<SplashProps> = ({ small, blur, children }) => (
+const Splash: React.FC<SplashProps> = ({ size, blur, children }) => (
   <ContainerStyled blur={blur}>
-    <LogoStyled
-      type="image/svg+xml"
-      data="./assets/logo.svg"
-      width={small ? 100 : 159}
-      height={small ? 88 : 139}
-    ></LogoStyled>
-    <TitleStyled small={small}>
-      Scalable confidential cryptocurrency
-    </TitleStyled>
+    <Logo size={size} />
+    <TitleStyled size={size}>Scalable confidential cryptocurrency</TitleStyled>
     {children}
   </ContainerStyled>
 );

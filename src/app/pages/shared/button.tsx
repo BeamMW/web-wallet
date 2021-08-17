@@ -2,44 +2,75 @@ import React from 'react';
 import { styled } from '@linaria/react';
 import { isNil } from '@core/utils';
 
-import Icon from './icon';
-
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  icon?: string;
+  icon?: React.FC;
   color?: 'primary' | 'ghost';
 }
 
 const ButtonStyled = styled.button<ButtonProps>`
   display: block;
   width: 100%;
+  max-width: 254px;
+  margin: 0 auto;
   padding: 12px 24px;
   border: none;
   border-radius: 22px;
-  background-color: ${({ color }) => `var(--color-${color})`};
+  background-color: var(--color-primary);
   text-align: center;
   font-weight: bold;
   font-size: 16px;
-  color: ${({ color }) =>
-    `var(--color-${color === 'ghost' ? 'white' : 'blue'})`};
+  color: var(--color-blue);
 
   &:hover,
   &:active {
     box-shadow: 0 0 8px white;
     cursor: pointer;
   }
+
+  &[disabled] {
+    opacity: 0.5;
+
+    &:hover, &:active {
+      box-shadow: none
+      cursor: not-allowed;
+    }
+  }
+
+  > svg {
+    vertical-align: sub;
+    margin-right: 10px;
+  }
+`;
+
+const GhostButtonStyled = styled(ButtonStyled)`
+  background-color: var(--color-ghost);
+  color: white;
+
+  &:hover,
+  &:active {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+    background-color: var(--color-ghost-active);
+  }
 `;
 
 const Button: React.FC<ButtonProps> = ({
   type = 'button',
   color = 'primary',
-  icon,
+  icon: IconComponent,
   children,
   ...rest
-}) => (
-  <ButtonStyled type={type} color={color} {...rest}>
-    {!isNil(icon) && <Icon name={icon} />}
-    {children}
-  </ButtonStyled>
-);
+}) => {
+  const ButtonComponent = {
+    primary: ButtonStyled,
+    ghost: GhostButtonStyled,
+  }[color];
+
+  return (
+    <ButtonComponent type={type} {...rest}>
+      {!isNil(IconComponent) && <IconComponent />}
+      {children}
+    </ButtonComponent>
+  );
+};
 
 export default Button;

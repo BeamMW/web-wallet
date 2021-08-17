@@ -3,6 +3,9 @@ import { styled } from '@linaria/react';
 
 import { isNil } from '@core/utils';
 
+import cancelIcon from '@icons/icon-cancel.svg';
+import doneIcon from '@icons/icon-done.svg';
+
 import Button from './button';
 
 interface PopupProps {
@@ -77,11 +80,16 @@ const Popup: React.FC<PopupProps> = ({
         {children}
         <FooterStyled>
           {!isNil(cancel) && (
-            <Button color="ghost" type="button" onClick={onCancel}>
+            <Button
+              icon={cancelIcon}
+              color="ghost"
+              type="button"
+              onClick={onCancel}
+            >
               {cancel}
             </Button>
           )}
-          <Button type="button" onClick={onConfirm}>
+          <Button icon={doneIcon} type="button" onClick={onConfirm}>
             {confirm}
           </Button>
         </FooterStyled>

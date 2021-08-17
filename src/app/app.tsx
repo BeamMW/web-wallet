@@ -18,6 +18,7 @@ css`
 
       --color-primary: #00f6d2;
       --color-ghost: rgba(255, 255, 255, 0.07);
+      --color-ghost-active: rgba(255, 255, 255, 0.28);
 
       --color-send: #da68f5;
       --color-receive: #25c1ff;

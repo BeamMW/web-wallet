@@ -5,8 +5,9 @@ import WasmWallet from '@core/WasmWallet';
 import { $phase, setSeed } from '@state/intro';
 import { setView, View } from '@state/shared';
 import { setLoginPhase, LoginPhase } from '@state/intro';
-
 import { Popup, Splash, Button, Link } from '@pages/shared';
+
+import addIcon from '@icons/icon-add.svg';
 
 const wallet = WasmWallet.getInstance();
 
@@ -30,7 +31,7 @@ const LoginRestore: React.FC = () => {
         )}
         <Button
           type="button"
-          icon="add"
+          icon={addIcon}
           onClick={() => {
             setSeed(wallet.getSeedPhrase());
             setView(View.CREATE);

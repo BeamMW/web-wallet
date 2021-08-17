@@ -2,7 +2,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const SvgSpritePlugin = require('svg-sprite-loader/plugin');
+const SvgSpriteLoaderPlugin = require('svg-sprite-loader/plugin');
 
 module.exports = {
   target: 'node',
@@ -28,6 +28,10 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
+        test: /\.svg$/,
+        use: ['@svgr/webpack', 'svgo-loader'],
+      },
+      {
         test: /\.css$/,
         use: [
           {
@@ -39,22 +43,10 @@ module.exports = {
           },
         ],
       },
-      {
-        test: /\.svg$/,
-        use: [
-          {
-            loader: 'svg-sprite-loader',
-            options: {
-              extract: true,
-            },
-          },
-          'svgo-loader',
-        ],
-      },
     ],
   },
   plugins: [
-    new SvgSpritePlugin(),
+    new SvgSpriteLoaderPlugin(),
     new MiniCssExtractPlugin({
       filename: 'styles.css',
     }),
