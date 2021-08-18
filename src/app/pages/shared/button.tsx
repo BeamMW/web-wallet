@@ -12,13 +12,14 @@ const ButtonStyled = styled.button<ButtonProps>`
   width: 100%;
   max-width: 254px;
   margin: 0 auto;
+  margin-bottom: 10px;
   padding: 12px 24px;
   border: none;
   border-radius: 22px;
   background-color: var(--color-primary);
   text-align: center;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   color: var(--color-blue);
 
   &:hover,

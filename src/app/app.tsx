@@ -15,9 +15,11 @@ css`
 
       --color-regular: #92abba;
       --color-active: #e4f5ff;
+      --color-invalid: #f9605b;
 
       --color-primary: #00f6d2;
       --color-ghost: rgba(255, 255, 255, 0.07);
+      --color-ghost-medium: rgba(255, 255, 255, 0.2);
       --color-ghost-active: rgba(255, 255, 255, 0.28);
 
       --color-send: #da68f5;
@@ -115,6 +117,12 @@ css`
     p {
       margin: 0;
       margin-bottom: 30px;
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding: 0;
     }
   }
 `;

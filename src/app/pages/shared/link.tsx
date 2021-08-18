@@ -5,7 +5,7 @@ interface LinkProps extends React.HTMLAttributes<HTMLAnchorElement> {}
 
 const LinkStyled = styled.a<LinkProps>`
   display: inline-block;
-  margin: 30px 0;
+  margin: 20px 0;
   font-weight: 700;
   color: var(--color-primary);
   cursor: pointer;

@@ -1,5 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
+import { Button } from '@pages/shared';
+import ArrowIcon from '@icons/icon-arrow.svg';
+
+import SeedList from './seed-list';
+
 const SEED_CONFIRM_COUNT = 6;
 
 interface SeedInputProps {
@@ -20,6 +25,7 @@ const SeedConfirm: React.FC<SeedInputProps> = ({ seed, ids, onSubmit }) => {
     const index = parseInt(name);
     const result = seed[index] !== value;
     const target = ids.indexOf(index);
+
     if (errors[target] !== result) {
       const next = errors.slice();
       next[target] = result;
@@ -28,24 +34,11 @@ const SeedConfirm: React.FC<SeedInputProps> = ({ seed, ids, onSubmit }) => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <ul>
-        {ids.map((value, index) => {
-          return (
-            <li key={index}>
-              {value.toString()}
-              <input
-                type="text"
-                onInput={handleInput}
-                name={value.toString()}
-              />
-            </li>
-          );
-        })}
-      </ul>
-      <button type="submit" disabled={!valid}>
-        Submit
-      </button>
+    <form autoComplete="off" onSubmit={onSubmit}>
+      <SeedList indexByValue data={ids} errors={errors} onInput={handleInput} />
+      <Button type="submit" disabled={!valid} icon={ArrowIcon}>
+        next
+      </Button>
     </form>
   );
 };

@@ -12,14 +12,14 @@ import EyeIcon from '@icons/icon-eye.svg';
 import PassIcon from '@icons/icon-pass.svg';
 import CopyIcon from '@icons/icon-copy.svg';
 import DoneIcon from '@icons/icon-done.svg';
+import LockIcon from '@icons/icon-lock.svg';
+import ArrowIcon from '@icons/icon-arrow.svg';
 
 const SEED_CONFIRM_COUNT = 6;
 
-const ListStyled = styled.ul`
+const WarningListStyled = styled.ul`
   list-style: none;
-  margin: 0;
   margin-bottom: 30px;
-  padding: 0;
 
   > li {
     position: relative;
@@ -42,6 +42,40 @@ const ListStyled = styled.ul`
     vertical-align: middle;
     line-height: normal;
     margin: 0;
+  }
+`;
+
+const SeedListStyled = styled.ol`
+  counter-reset: counter;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 0 10px;
+
+  > li {
+    counter-increment: counter;
+    display: inline-block;
+    width: 140px;
+    height: 32px;
+    line-height: 30px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    text-align: left;
+
+    &:before {
+      display: inline-block;
+      content: counter(counter);
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      margin: 5px 10px 5px 9px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.2);
+      text-align: center;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.5);
   }
 `;
 
@@ -84,30 +118,42 @@ const Create = () => {
   switch (step) {
     case 1: // write seed phrase
       return (
-        <div>
-          <h1>Seed Phrase</h1>
-          <ul>
+        <Window title="Seed phrase" onBackClick={handleBackClick}>
+          <p>
+            Your seed phrase is the access key to all the funds in your wallet.
+            Print or write down the phrase to keep it in a safe or in a locked
+            vault. Without the phrase you will not be able to recover your
+            money.
+          </p>
+          <SeedListStyled>
             {seed.map((value, index) => (
               <li key={index}>{value}</li>
             ))}
-          </ul>
-          <button type="button" onClick={handleBackClick}>
-            Back
-          </button>
-          <button type="button" onClick={handleSkipClick}>
+          </SeedListStyled>
+          <Button icon={LockIcon} type="button" onClick={handleNextClick}>
+            Complete verification
+          </Button>
+          <Button
+            icon={ArrowIcon}
+            type="button"
+            color="ghost"
+            onClick={handleSkipClick}
+          >
             I will do it later
-          </button>
-          <button type="button" onClick={handleNextClick}>
-            Next
-          </button>
-        </div>
+          </Button>
+        </Window>
       );
     case 2: // confirm seed phrase
       return (
-        <div>
-          <h1>Confirm Seed Phrase</h1>
+        <Window title="Confirm seed phrase" onBackClick={handleBackClick}>
+          <p>
+            Your seed phrase is the access key to all the funds in your wallet.
+            Print or write down the phrase to keep it in a safe or in a locked
+            vault. Without the phrase you will not be able to recover your
+            money.
+          </p>
           <SeedConfirm seed={seed} ids={ids} onSubmit={handleSubmit} />
-        </div>
+        </Window>
       );
     default:
       // warning
@@ -121,7 +167,7 @@ const Create = () => {
             <br />
             Never save it in your local or remote folders in any form.
           </p>
-          <ListStyled>
+          <WarningListStyled>
             <li>
               <EyeIcon width={48} height={34} />
               <p>Do not let anyone see your seed phrase</p>
@@ -136,7 +182,7 @@ const Create = () => {
               <CopyIcon width={48} height={34} />
               <p>Make at least 2 copies of the phrase in case of emergency</p>
             </li>
-          </ListStyled>
+          </WarningListStyled>
           <Button icon={DoneIcon} type="button" onClick={handleNextClick}>
             I understand
           </Button>

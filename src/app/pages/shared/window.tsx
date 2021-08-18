@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import BackIcon from '@icons/icon-back.svg';
+import AngleBackIcon from '@icons/icon-angle-back.svg';
 
 import Logo from './logo';
 
@@ -61,7 +61,7 @@ const Window: React.FC<WindowhProps> = ({ title, onBackClick, children }) => (
     <TitleStyled>{title}</TitleStyled>
     {onBackClick && (
       <BackStyled href="#" onClick={onBackClick}>
-        <BackIcon />
+        <AngleBackIcon />
       </BackStyled>
     )}
     {children}

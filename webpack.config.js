@@ -2,7 +2,6 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const SvgSpriteLoaderPlugin = require('svg-sprite-loader/plugin');
 
 module.exports = {
   target: 'node',
@@ -46,7 +45,6 @@ module.exports = {
     ],
   },
   plugins: [
-    new SvgSpriteLoaderPlugin(),
     new MiniCssExtractPlugin({
       filename: 'styles.css',
     }),
