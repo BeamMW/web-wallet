@@ -2,8 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
-import { Window, Button } from '@pages/shared';
-
+import { Window, Popup, Button } from '@pages/shared';
 import { SeedConfirm } from '@pages/intro/seed';
 import { $seed } from '@state/intro';
 import { View, setView, $onboarding } from '@state/shared';
@@ -93,6 +92,7 @@ const getRandomIds = () => {
 
 const Create = () => {
   const [step, setStep] = useState(0);
+  const [warningVisible, toggleWarning] = useState(false);
   const seed = useStore($seed);
   const onboarding = useStore($onboarding);
   const ids = useMemo(getRandomIds, seed);
@@ -103,7 +103,6 @@ const Create = () => {
   };
 
   const handleBackClick: React.MouseEventHandler = event => {
-    event.preventDefault();
     setView(View.LOGIN);
   };
 
@@ -118,30 +117,53 @@ const Create = () => {
   switch (step) {
     case 1: // write seed phrase
       return (
-        <Window title="Seed phrase" onBackClick={handleBackClick}>
-          <p>
-            Your seed phrase is the access key to all the funds in your wallet.
-            Print or write down the phrase to keep it in a safe or in a locked
-            vault. Without the phrase you will not be able to recover your
-            money.
-          </p>
-          <SeedListStyled>
-            {seed.map((value, index) => (
-              <li key={index}>{value}</li>
-            ))}
-          </SeedListStyled>
-          <Button icon={LockIcon} type="button" onClick={handleNextClick}>
-            Complete verification
-          </Button>
-          <Button
-            icon={ArrowIcon}
-            type="button"
-            color="ghost"
-            onClick={handleSkipClick}
+        <>
+          <Window
+            title="Seed phrase"
+            blur={warningVisible}
+            onBackClick={handleBackClick}
           >
-            I will do it later
-          </Button>
-        </Window>
+            <p>
+              Your seed phrase is the access key to all the funds in your
+              wallet. Print or write down the phrase to keep it in a safe or in
+              a locked vault. Without the phrase you will not be able to recover
+              your money.
+            </p>
+            <SeedListStyled>
+              {seed.map((value, index) => (
+                <li key={index}>{value}</li>
+              ))}
+            </SeedListStyled>
+            <Button
+              icon={LockIcon}
+              type="button"
+              onClick={() => toggleWarning(true)}
+            >
+              Complete verification
+            </Button>
+            <Button
+              icon={ArrowIcon}
+              type="button"
+              color="ghost"
+              onClick={handleSkipClick}
+            >
+              I will do it later
+            </Button>
+          </Window>
+          <Popup
+            visible={warningVisible}
+            title="Save seed phrase"
+            cancel="cancel"
+            confirm="done"
+            onCancel={() => {
+              toggleWarning(false);
+            }}
+            onConfirm={handleNextClick}
+          >
+            Please write the seed phrase down. Storing it in a file makes it
+            prone to cyber attacks and, therefore, less secure.
+          </Popup>
+        </>
       );
     case 2: // confirm seed phrase
       return (

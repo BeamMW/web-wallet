@@ -2,14 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import WasmWallet from '@core/WasmWallet';
 
+import { Button } from '@pages/shared';
+import SeedList from './seed-list';
+
 const SEED_PHRASE_COUNT = 12;
 
 interface SeedInputProps {
-  onCancel: React.MouseEventHandler;
   onSubmit: React.FormEventHandler;
 }
 
-const SeedRestore: React.FC<SeedInputProps> = ({ onCancel, onSubmit }) => {
+const SeedRestore: React.FC<SeedInputProps> = ({ onSubmit }) => {
   const wallet = WasmWallet.getInstance();
 
   const [errors, setErrors] = useState(new Array(SEED_PHRASE_COUNT).fill(null));
@@ -29,20 +31,11 @@ const SeedRestore: React.FC<SeedInputProps> = ({ onCancel, onSubmit }) => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <ul>
-        {errors.map((value, index) => (
-          <li key={index}>
-            <input type="text" onInput={handleInput} name={index.toString()} />
-          </li>
-        ))}
-      </ul>
-      <button type="button" onClick={onCancel}>
-        back
-      </button>
-      <button type="submit" disabled={!valid}>
+    <form autoComplete="off" onSubmit={onSubmit}>
+      <SeedList data={errors} onInput={handleInput} />
+      <Button type="submit" disabled={!valid}>
         Submit
-      </button>
+      </Button>
     </form>
   );
 };

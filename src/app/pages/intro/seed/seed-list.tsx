@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { css, cx } from '@linaria/core';
 import React, { useState, useRef, useEffect } from 'react';
 import { unlinkSync } from 'node:fs';
+import { isNil } from '@core/utils';
 
 interface callbackFn {
   (value: any, index: number): string;
@@ -9,7 +10,7 @@ interface callbackFn {
 
 interface SeedListProps {
   data: any[];
-  errors: boolean[];
+  errors?: boolean[];
   indexByValue?: boolean;
   onInput?: React.FormEventHandler;
 }
@@ -34,7 +35,6 @@ const baseClassName = css`
     position: absolute;
     top: 12px;
     left: 0;
-    display: inline-block;
     content: attr(data-index);
     width: 20px;
     height: 20px;
@@ -85,7 +85,8 @@ const SeedList: React.FC<SeedListProps> = ({
 }) => (
   <ListStyled>
     {data.map((value, index) => {
-      const err = errors[index];
+      const idx = indexByValue ? value : index;
+      const err = isNil(errors) ? value : errors[index];
       const className = cx(
         baseClassName,
         err === true && errorClassName,
@@ -93,12 +94,8 @@ const SeedList: React.FC<SeedListProps> = ({
       );
 
       return (
-        <li
-          key={index}
-          className={className}
-          data-index={indexByValue ? value + 1 : index + 1}
-        >
-          <input required type="text" name={value} onInput={onInput} />
+        <li key={index} className={className} data-index={idx + 1}>
+          <input required type="text" name={idx} onInput={onInput} />
         </li>
       );
     })}

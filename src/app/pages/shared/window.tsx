@@ -5,16 +5,18 @@ import AngleBackIcon from '@icons/icon-angle-back.svg';
 
 import Logo from './logo';
 
-interface WindowhProps {
-  title: string;
+interface WindowProps {
+  title?: string;
+  blur?: boolean;
   onBackClick?: React.MouseEventHandler;
 }
 
-const ContainerStyled = styled.div`
+const ContainerStyled = styled.div<WindowProps>`
   position: relative;
   height: 550px;
   padding: 20px;
   text-align: center;
+  filter: ${({ blur }) => (blur ? 'blur(3px)' : 'none')};
 
   &:before {
     content: '';
@@ -53,8 +55,13 @@ const BackStyled = styled.a`
   left: 20px;
 `;
 
-const Window: React.FC<WindowhProps> = ({ title, onBackClick, children }) => (
-  <ContainerStyled>
+const Window: React.FC<WindowProps> = ({
+  title,
+  blur,
+  onBackClick,
+  children,
+}) => (
+  <ContainerStyled blur={blur}>
     <FrameStyled>
       <Logo size="icon" />
     </FrameStyled>
