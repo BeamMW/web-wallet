@@ -16,11 +16,11 @@ const ButtonStyled = styled.button<ButtonProps>`
   padding: 12px 24px;
   border: none;
   border-radius: 22px;
-  background-color: var(--color-primary);
+  background-color: var(--color-green);
   text-align: center;
   font-weight: bold;
   font-size: 14px;
-  color: var(--color-blue);
+  color: var(--color-dark-blue);
 
   &:hover,
   &:active {
@@ -54,7 +54,7 @@ const GhostButtonStyled = styled(ButtonStyled)`
   }
 `;
 
-const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<ButtonProps> = ({
   type = 'button',
   color = 'primary',
   icon: IconComponent,

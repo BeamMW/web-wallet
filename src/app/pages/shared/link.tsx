@@ -7,12 +7,12 @@ const LinkStyled = styled.a<LinkProps>`
   display: inline-block;
   margin: 20px 0;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-green);
   cursor: pointer;
   text-decoration: none;
 `;
 
-const Link: React.FC<LinkProps> = ({ children, ...rest }) => (
+export const Link: React.FC<LinkProps> = ({ children, ...rest }) => (
   <LinkStyled href="#" {...rest}>
     {children}
   </LinkStyled>

@@ -19,12 +19,8 @@ const Restore = () => {
     setView(View.SET_PASSWORD);
   };
 
-  const handleBackClick: React.MouseEventHandler = () => {
-    setView(View.LOGIN);
-  };
-
   return (
-    <Window title="Restore" onBackClick={handleBackClick}>
+    <Window title="Restore" onBackClick={() => setView(View.LOGIN)}>
       <SeedRestore onSubmit={handleSubmit} />
     </Window>
   );

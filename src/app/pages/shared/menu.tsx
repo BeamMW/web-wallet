@@ -13,7 +13,7 @@ const MENU_ITEMS = [
   },
 ];
 
-const Menu: React.FC = ({}) => {
+export const Menu: React.FC = ({}) => {
   const handleClick: React.MouseEventHandler<HTMLLIElement> = ({
     currentTarget,
   }) => {

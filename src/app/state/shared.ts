@@ -3,6 +3,11 @@ import { createEvent, restore } from 'effector';
 export const GROTHS_IN_BEAM = 100000000;
 export const FEE_DEFAULT = 100000;
 
+export enum ErrorMessage {
+  INVALID = 'Invalid password provided',
+  EMPTY = 'Please, enter password',
+}
+
 export enum View {
   // intro
   LOGIN,

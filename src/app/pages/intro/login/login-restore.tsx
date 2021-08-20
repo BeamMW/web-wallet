@@ -16,19 +16,16 @@ const LoginRestore: React.FC = () => {
   const phase = useStore($phase);
   const active = phase === LoginPhase.RESTORE;
 
+  const handleBackClick = () => {
+    setLoginPhase(LoginPhase.ACTIVE);
+  };
+
   return (
     <>
-      <Splash blur={warningVisible}>
-        {active && (
-          <button
-            type="button"
-            onClick={() => {
-              setLoginPhase(LoginPhase.ACTIVE);
-            }}
-          >
-            back
-          </button>
-        )}
+      <Splash
+        blur={warningVisible}
+        onBackClick={active ? handleBackClick : null}
+      >
         <Button
           type="button"
           icon={addIcon}

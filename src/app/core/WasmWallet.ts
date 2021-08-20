@@ -108,6 +108,27 @@ export default class WasmWallet {
     }
   }
 
+  stop() {
+    return new Promise((resolve, reject) => {
+      if (isNil(this.wallet)) {
+        resolve(true);
+        return;
+      }
+
+      this.wallet.stopWallet(data => {
+        const running = this.wallet.isRunning();
+        console.log('is running: ' + this.wallet.isRunning());
+        console.log('wallet stopped:', data);
+
+        if (running) {
+          reject(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  }
+
   async saveWallet(seed: string, pass: string) {
     const data = await passworder.encrypt(pass, { seed });
     extensionizer.storage.local.remove(['wallet']);

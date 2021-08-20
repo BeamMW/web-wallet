@@ -56,7 +56,7 @@ const FooterStyled = styled.div`
   }
 `;
 
-const Popup: React.FC<PopupProps> = ({
+export const Popup: React.FC<PopupProps> = ({
   title,
   cancel,
   confirm,

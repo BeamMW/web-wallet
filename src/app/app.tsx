@@ -10,26 +10,22 @@ import { styled } from '@linaria/react';
 css`
   :global() {
     :root {
-      --color-background: #042548;
       --color-popup: #003f6f;
 
-      --color-regular: #92abba;
-      --color-active: #e4f5ff;
-      --color-invalid: #f9605b;
+      --color-purple: #da68f5;
+      --color-red: #ff5354;
+      --color-yellow: #f4ce4a;
+      --color-green: #00f6d2;
+      --color-blue: #0bccf7;
+      --color-dark-blue: #042548;
+      --color-white: #ffffff;
 
-      --color-primary: #00f6d2;
-      --color-ghost: rgba(255, 255, 255, 0.07);
+      --color-ghost: rgba(255, 255, 255, 0.1);
       --color-ghost-medium: rgba(255, 255, 255, 0.2);
-      --color-ghost-active: rgba(255, 255, 255, 0.28);
-
-      --color-send: #da68f5;
-      --color-receive: #25c1ff;
+      --color-ghost-active: rgba(255, 255, 255, 0.3);
 
       --color-disabled: #8da1ad;
       --color-failed: #ff746b;
-
-      --color-blue: #032e49;
-      --color-white: #ffffff;
     }
 
     @font-face {
@@ -109,7 +105,7 @@ css`
     }
 
     body {
-      background-color: var(--color-background);
+      background-color: var(--color-dark-blue);
       font-size: 14px;
       color: white;
     }

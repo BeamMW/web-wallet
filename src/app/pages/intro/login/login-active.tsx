@@ -1,17 +1,12 @@
 import React, { useState, useRef } from 'react';
 
 import WasmWallet from '@core/WasmWallet';
-import { setView, View } from '@state/shared';
+import { setView, View, ErrorMessage } from '@state/shared';
 import { setLoginPhase, LoginPhase } from '@state/intro';
 import { Popup, Button, Link, Input, Splash } from '@pages/shared';
 import { styled } from '@linaria/react';
 
 const wallet = WasmWallet.getInstance();
-
-enum ErrorMessage {
-  INVALID = 'Invalid password provided',
-  EMPTY = 'Please, enter password',
-}
 
 const LoginActive: React.FC = () => {
   const [error, setError] = useState<ErrorMessage>(null);
@@ -40,7 +35,7 @@ const LoginActive: React.FC = () => {
 
   return (
     <>
-      <Splash>
+      <Splash size="small">
         <form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <p>Enter your password to access the wallet</p>
           <Input

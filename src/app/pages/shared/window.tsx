@@ -4,6 +4,7 @@ import { styled } from '@linaria/react';
 import AngleBackIcon from '@icons/icon-angle-back.svg';
 
 import Logo from './logo';
+import BackLink from './back-link';
 
 interface WindowProps {
   title?: string;
@@ -14,7 +15,7 @@ interface WindowProps {
 const ContainerStyled = styled.div<WindowProps>`
   position: relative;
   height: 550px;
-  padding: 20px;
+  padding: 30px;
   text-align: center;
   filter: ${({ blur }) => (blur ? 'blur(3px)' : 'none')};
 
@@ -49,13 +50,7 @@ const TitleStyled = styled.h2`
   letter-spacing: 3px;
 `;
 
-const BackStyled = styled.a`
-  position: absolute;
-  top: 20px;
-  left: 20px;
-`;
-
-const Window: React.FC<WindowProps> = ({
+export const Window: React.FC<WindowProps> = ({
   title,
   blur,
   onBackClick,
@@ -66,11 +61,7 @@ const Window: React.FC<WindowProps> = ({
       <Logo size="icon" />
     </FrameStyled>
     <TitleStyled>{title}</TitleStyled>
-    {onBackClick && (
-      <BackStyled href="#" onClick={onBackClick}>
-        <AngleBackIcon />
-      </BackStyled>
-    )}
+    {onBackClick && <BackLink onClick={onBackClick} />}
     {children}
   </ContainerStyled>
 );

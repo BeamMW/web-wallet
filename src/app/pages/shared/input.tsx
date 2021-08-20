@@ -18,8 +18,7 @@ const InputStyled = styled.input<InputProps>`
 
   border: none;
   border-bottom: 2px solid
-    ${({ error }) =>
-      isNil(error) ? 'var(--color-primary)' : 'var(--color-failed)'};
+    ${({ error }) => (isNil(error) ? 'var(--color-green)' : 'var(--color-red)')};
   background-color: transparent;
   font-size: 14px;
   color: white;
@@ -43,7 +42,7 @@ const ErrorStyled = styled.div`
   color: var(--color-failed);
 `;
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ error, ...rest }, ref) => (
     <ContainerStyled>
       <InputStyled ref={ref} error={error} {...rest} />

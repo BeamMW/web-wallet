@@ -27,7 +27,7 @@ const Header = styled.th<{ active: boolean }>`
   }};
 `;
 
-const Table: React.FC<TableProps> = ({ keyBy, data, config }) => {
+export const Table: React.FC<TableProps> = ({ keyBy, data, config }) => {
   const [filterBy, setFilterBy] = useState(0);
 
   const sortFn = (objectA, objectB) => {

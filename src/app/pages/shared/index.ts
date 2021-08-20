@@ -1,9 +1,9 @@
-export { default as Splash } from './splash';
-export { default as Window } from './window';
-
-export { default as Popup } from './popup';
-export { default as Table } from './table';
-export { default as Menu } from './menu';
-export { default as Button } from './button';
-export { default as Link } from './link';
-export { default as Input } from './input';
+export { Splash } from './splash';
+export { Window } from './window';
+export { Popup } from './popup';
+export { Table } from './table';
+export { Menu } from './menu';
+export { Button } from './button';
+export { Link } from './link';
+export { Input } from './input';
+export { BackLink } from './back-link';

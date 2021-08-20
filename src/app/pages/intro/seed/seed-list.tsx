@@ -63,8 +63,8 @@ const errorClassName = css`
   &:before {
     line-height: 20px;
     border: none;
-    background-color: var(--color-invalid);
-    color: var(--color-background);
+    background-color: var(--color-red);
+    color: var(--color-dark-blue);
   }
 `;
 
@@ -72,8 +72,8 @@ const validClassName = css`
   &:before {
     line-height: 20px;
     border: none;
-    background-color: var(--color-primary);
-    color: var(--color-background);
+    background-color: var(--color-green);
+    color: var(--color-dark-blue);
   }
 `;
 
