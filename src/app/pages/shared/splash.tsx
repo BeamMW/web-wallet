@@ -12,6 +12,7 @@ interface SplashProps {
 
 const ContainerStyled = styled.div<SplashProps>`
   filter: ${({ blur }) => (blur ? 'blur(3px)' : 'none')};
+  position: relative;
   height: 550px;
   padding: 70px 30px 0;
   background-image: url('/assets/background.png');

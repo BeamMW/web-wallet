@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
-import { Button } from '@pages/shared';
+import { Button, Footer } from '@pages/shared';
 import ArrowIcon from '@icons/icon-arrow.svg';
 
 import SeedList from './seed-list';
@@ -36,9 +36,11 @@ const SeedConfirm: React.FC<SeedInputProps> = ({ seed, ids, onSubmit }) => {
   return (
     <form autoComplete="off" onSubmit={onSubmit}>
       <SeedList indexByValue data={ids} errors={errors} onInput={handleInput} />
-      <Button type="submit" disabled={!valid} icon={ArrowIcon}>
-        next
-      </Button>
+      <Footer>
+        <Button type="submit" disabled={!valid} icon={ArrowIcon}>
+          next
+        </Button>
+      </Footer>
     </form>
   );
 };

@@ -20,7 +20,8 @@ const Restore = () => {
   };
 
   return (
-    <Window title="Restore" onBackClick={() => setView(View.LOGIN)}>
+    <Window title="Restore wallet" onBackClick={() => setView(View.LOGIN)}>
+      <p>Type in your seed phrase</p>
       <SeedRestore onSubmit={handleSubmit} />
     </Window>
   );

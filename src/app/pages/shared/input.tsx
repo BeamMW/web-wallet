@@ -4,11 +4,12 @@ import { isNil } from '@core/utils';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
+  margin?: 'none' | 'large';
 }
 
-const ContainerStyled = styled.div`
+const ContainerStyled = styled.div<InputProps>`
   position: relative;
-  margin-bottom: 50px;
+  margin-bottom: ${({ margin }) => (margin === 'none' ? 0 : 50)}px;
 `;
 
 const InputStyled = styled.input<InputProps>`
@@ -43,8 +44,8 @@ const ErrorStyled = styled.div`
 `;
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ error, ...rest }, ref) => (
-    <ContainerStyled>
+  ({ error, margin = 'none', ...rest }, ref) => (
+    <ContainerStyled margin={margin}>
       <InputStyled ref={ref} error={error} {...rest} />
       {!isNil(error) && <ErrorStyled>{error}</ErrorStyled>}
     </ContainerStyled>

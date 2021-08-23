@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import WasmWallet from '@core/WasmWallet';
 
-import { Button } from '@pages/shared';
+import { Button, Footer } from '@pages/shared';
 import SeedList from './seed-list';
 
 const SEED_PHRASE_COUNT = 12;
@@ -33,9 +33,11 @@ const SeedRestore: React.FC<SeedInputProps> = ({ onSubmit }) => {
   return (
     <form autoComplete="off" onSubmit={onSubmit}>
       <SeedList data={errors} onInput={handleInput} />
-      <Button type="submit" disabled={!valid}>
-        Submit
-      </Button>
+      <Footer>
+        <Button type="submit" disabled={!valid}>
+          Submit
+        </Button>
+      </Footer>
     </form>
   );
 };

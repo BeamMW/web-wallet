@@ -9,7 +9,7 @@ interface BackLinkProps {
 
 const LinkStyled = styled.a`
   position: absolute;
-  top: 20px;
+  top: 30px;
   left: 20px;
 `;
 

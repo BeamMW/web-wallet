@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
-import { Window, Popup, Button } from '@pages/shared';
+import { Window, Popup, Button, Footer } from '@pages/shared';
 import { SeedConfirm } from '@pages/intro/seed';
 import { $seed } from '@state/intro';
 import { View, setView, $onboarding } from '@state/shared';
@@ -18,7 +18,6 @@ const SEED_CONFIRM_COUNT = 6;
 
 const WarningListStyled = styled.ul`
   list-style: none;
-  margin-bottom: 30px;
 
   > li {
     position: relative;
@@ -49,7 +48,6 @@ const SeedListStyled = styled.ol`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-bottom: 20px;
   padding: 0 10px;
 
   > li {
@@ -134,21 +132,23 @@ const Create = () => {
                 <li key={index}>{value}</li>
               ))}
             </SeedListStyled>
-            <Button
-              icon={LockIcon}
-              type="button"
-              onClick={() => toggleWarning(true)}
-            >
-              Complete verification
-            </Button>
-            <Button
-              icon={ArrowIcon}
-              type="button"
-              color="ghost"
-              onClick={handleSkipClick}
-            >
-              I will do it later
-            </Button>
+            <Footer margin="small">
+              <Button
+                icon={LockIcon}
+                type="button"
+                onClick={() => toggleWarning(true)}
+              >
+                Complete verification
+              </Button>
+              <Button
+                icon={ArrowIcon}
+                type="button"
+                color="ghost"
+                onClick={handleSkipClick}
+              >
+                I will do it later
+              </Button>
+            </Footer>
           </Window>
           <Popup
             visible={warningVisible}
@@ -205,9 +205,11 @@ const Create = () => {
               <p>Make at least 2 copies of the phrase in case of emergency</p>
             </li>
           </WarningListStyled>
-          <Button icon={DoneIcon} type="button" onClick={handleNextClick}>
-            I understand
-          </Button>
+          <Footer>
+            <Button icon={DoneIcon} type="button" onClick={handleNextClick}>
+              I understand
+            </Button>
+          </Footer>
         </Window>
       );
   }

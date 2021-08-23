@@ -43,6 +43,7 @@ const LoginActive: React.FC = () => {
             name="password"
             type="password"
             placeholder="Password"
+            margin="large"
             error={error}
             ref={inputRef}
           />

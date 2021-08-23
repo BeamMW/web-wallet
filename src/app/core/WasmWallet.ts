@@ -93,6 +93,8 @@ export default class WasmWallet {
 
   async create(seed: string, pass: string, seedConfirmed: boolean) {
     try {
+      WasmWalletClient.DeleteWallet(PATH_DB);
+
       await this.saveWallet(seed, pass);
       this.initSettings(seedConfirmed);
 
@@ -103,8 +105,7 @@ export default class WasmWallet {
       WasmWalletClient.CreateWallet(seed, PATH_DB, pass);
       this.start(pass);
     } catch (error) {
-      // if 32722064 delete wallet
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -138,7 +139,8 @@ export default class WasmWallet {
   private load<T>(name: string): Promise<T> {
     return new Promise<T>(resolve => {
       extensionizer.storage.local.get(name, result => {
-        resolve(result[name]);
+        const value = result[name];
+        resolve(value);
       });
     });
   }

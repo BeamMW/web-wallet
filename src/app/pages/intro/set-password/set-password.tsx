@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 
 import WasmWallet from '@core/WasmWallet';
 import { $seed } from '@state/intro';
-import { Window, Button, Input } from '@pages/shared';
+import { Window, Button, Input, Footer } from '@pages/shared';
 import { View, setView } from '@state/shared';
 import { createChangeHandler } from '@core/utils';
 import ArrowIcon from '@icons/icon-arrow.svg';
@@ -59,9 +59,11 @@ const SetPassword = () => {
           placeholder="Confirm password"
           onChange={handleChangeConfirm}
         />
-        <Button type="submit" icon={ArrowIcon} disabled={!valid}>
-          next
-        </Button>
+        <Footer>
+          <Button type="submit" icon={ArrowIcon} disabled={!valid}>
+            next
+          </Button>
+        </Footer>
       </FormStyled>
     </Window>
   );

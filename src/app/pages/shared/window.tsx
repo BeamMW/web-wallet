@@ -15,7 +15,7 @@ interface WindowProps {
 const ContainerStyled = styled.div<WindowProps>`
   position: relative;
   height: 550px;
-  padding: 30px;
+  padding: 30px 30px 0;
   text-align: center;
   filter: ${({ blur }) => (blur ? 'blur(3px)' : 'none')};
 

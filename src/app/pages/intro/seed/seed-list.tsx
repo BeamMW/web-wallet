@@ -19,7 +19,6 @@ const ListStyled = styled.ul`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-bottom: 20px;
   padding: 0 10px;
 `;
 
