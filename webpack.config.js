@@ -1,4 +1,5 @@
 const path = require('path');
+const { IgnorePlugin } = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
@@ -45,16 +46,14 @@ module.exports = {
     ],
   },
   plugins: [
+    new IgnorePlugin({
+      resourceRegExp: /^ws$/,
+    }),
     new MiniCssExtractPlugin({
       filename: 'styles.css',
     }),
     new CopyWebpackPlugin({
       patterns: [
-        {
-          from: path.join(__dirname, 'src/wasm'),
-          to: path.join(__dirname, 'dist/'),
-          context: 'public',
-        },
         {
           from: path.join(__dirname, 'src/assets'),
           to: path.join(__dirname, 'dist/assets'),

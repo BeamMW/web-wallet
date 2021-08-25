@@ -2,12 +2,9 @@ import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
 
 import { isNil } from '@core/utils';
-import {
-  RPCMethod,
-  RPCEvent,
-  ToggleSubscribeToParams,
-  ChangeEvent,
-} from './types';
+import { RPCMethod, RPCEvent, ToggleSubscribeToParams } from './types';
+
+import 'beam-wasm-client-master/wasm-client';
 
 declare const BeamModule: any;
 
