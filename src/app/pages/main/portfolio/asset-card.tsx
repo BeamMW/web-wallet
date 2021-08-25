@@ -1,8 +1,12 @@
-import React, { HTMLAttributes } from 'react';
+import React from 'react';
 import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import { GROTHS_IN_BEAM } from '@state/shared';
 
 import { WalletTotal } from '@core/types';
+
+import BeamIcon from '@icons/icon-beam.svg';
+import AssetIcon from '@icons/icon-asset.svg';
 
 const COLORS = [
   '#72fdff',
@@ -30,11 +34,15 @@ const COLORS = [
 interface AssetCardProps extends Partial<WalletTotal> {
   name?: string;
   short?: string;
+  onClick?: React.MouseEventHandler;
 }
 
 const AssetCardStyled = styled.li<AssetCardProps>`
+  margin-bottom: 10px;
   position: relative;
   padding: 20px;
+  padding-left: 62px;
+  color: ${({ asset_id }) => COLORS[asset_id]};
 
   &:before {
     opacity: 0.3;
@@ -62,12 +70,24 @@ const TitleStyled = styled.h3`
   color: white;
 `;
 
+const iconClassName = css`
+  position: absolute;
+  top: 16px;
+  left: 20px;
+`;
+
 export const AssetCard: React.FC<AssetCardProps> = ({
   asset_id,
   available,
   name,
 }) => (
   <AssetCardStyled asset_id={asset_id}>
+    {asset_id === 0 ? (
+      <BeamIcon className={iconClassName} />
+    ) : (
+      <AssetIcon className={iconClassName} />
+    )}
+
     <TitleStyled>
       {available / GROTHS_IN_BEAM} {name}
     </TitleStyled>

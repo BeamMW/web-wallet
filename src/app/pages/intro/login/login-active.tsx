@@ -25,9 +25,9 @@ const LoginActive: React.FC = () => {
 
     try {
       await wallet.checkPassword(value);
-      wallet.open(value);
       setError(null);
       setView(View.PROGRESS);
+      wallet.open(value);
     } catch {
       setError(ErrorMessage.INVALID);
     }

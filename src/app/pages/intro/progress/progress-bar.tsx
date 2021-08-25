@@ -1,63 +1,71 @@
 import React from 'react';
 import { styled } from '@linaria/react';
-import { css, cx } from '@linaria/core';
-
-const intermediateCss = css`
-  &:before {
-    animation: swoosh 2s infinite linear;
-  }
-
-  &:after {
-    animation: swoosh 2s 1400ms infinite linear;
-  }
-
-  @keyframes swoosh {
-    0% {
-      left: 0;
-      width: 0%;
-    }
-
-    25% {
-      left: 50%;
-      width: 50%;
-    }
-
-    50% {
-      left: 100%;
-      width: 0%;
-    }
-
-    100% {
-      left: 100%;
-      width: 0%;
-    }
-  }
-`;
 
 const ContainerStyled = styled.div`
+  overflow: hidden;
   position: relative;
   width: 256px;
-  height: 4px;
+  height: 4px
   margin: 0 auto;
-  border: 1px solid var(--color-ghost);
   border-radius: 2px;
-`;
 
-const ProgressBarStyled = styled.div<{ percent: number }>`
-  &:before,
-  &:after {
+  &:before {
     content: '';
+    box-sizing: border-box;
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
     height: 4px;
+    border: 1px solid var(--color-ghost);
     border-radius: 2px;
-    background-color: var(--color-green);
-    box-shadow: 0 0 5px 0 rgba(0, 246, 210, 0.7);
+  }
+`;
+
+const LineStyled = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  border-radius: 2px;
+  background-color: var(--color-green);
+`;
+
+const LineActive = styled(LineStyled)<{ percent: number }>`
+  width: ${({ percent }) => percent}%;
+`;
+
+const LineIntermediate = styled(LineStyled)`
+  &:first-child {
+    animation: increase 1s infinite;
   }
 
-  &:after {
-    width: ${({ percent }) => percent}%;
+  &:last-child {
+    animation: decrease 1s 250ms infinite;
+  }
+
+  @keyframes increase {
+    0% {
+      transform: translateX(-8px);
+      width: 8px;
+    }
+
+    100% {
+      transform: translateX(384px);
+      width: 288px;
+    }
+  }
+
+  @keyframes decrease {
+    0% {
+      transform: translateX(-96px);
+      width: 96px;
+    }
+
+    100% {
+      transform: translateX(320px);
+      width: 64px;
+    }
   }
 `;
 
@@ -67,12 +75,18 @@ interface ProgressBarProps {
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ active, percent }) => {
+  if (active) {
+    return (
+      <ContainerStyled>
+        <LineActive percent={percent} />
+      </ContainerStyled>
+    );
+  }
+
   return (
     <ContainerStyled>
-      <ProgressBarStyled
-        percent={percent}
-        className={cx(!active && intermediateCss)}
-      />
+      <LineIntermediate />
+      <LineIntermediate />
     </ContainerStyled>
   );
 };

@@ -8,3 +8,5 @@ export { Link } from './link';
 export { Input } from './input';
 export { BackLink } from './back-link';
 export { Footer } from './footer';
+export { Section } from './section';
+export { Select } from './select';

@@ -20,6 +20,8 @@ css`
       --color-dark-blue: #042548;
       --color-white: #ffffff;
 
+      --color-select: #184469;
+
       --color-ghost: rgba(255, 255, 255, 0.1);
       --color-ghost-medium: rgba(255, 255, 255, 0.2);
       --color-ghost-active: rgba(255, 255, 255, 0.3);

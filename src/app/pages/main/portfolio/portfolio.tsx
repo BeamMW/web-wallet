@@ -3,7 +3,7 @@ import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import { $balance, $transactions } from '@state/portfolio';
-import { Button, Table, Window } from '@pages/shared';
+import { Button, Table, Window, Section } from '@pages/shared';
 import { isNil } from '@core/utils';
 import { setView, View, GROTHS_IN_BEAM } from '@state/shared';
 
@@ -58,11 +58,6 @@ const ActionsStyled = styled.div`
   }
 `;
 
-const AssetsStyled = styled.ul`
-  margin: 0 -30px;
-  padding: 0 8px;
-`;
-
 const Portfolio = () => {
   const [active, setActive] = useState(null);
   const balance = useStore($balance);
@@ -90,18 +85,19 @@ const Portfolio = () => {
           receive
         </Button>
       </ActionsStyled>
-
-      <AssetsStyled>
-        {balance.map(({ asset_id, ...rest }) => (
-          <AssetCard
-            key={asset_id}
-            asset_id={asset_id}
-            onClick={() => toggleActive(asset_id)}
-            {...rest}
-          />
-        ))}
-      </AssetsStyled>
-      <Table keyBy="txId" data={data} config={TABLE_CONFIG} />
+      <Section title="Assets">
+        <ul>
+          {balance.map(({ asset_id, ...rest }) => (
+            <AssetCard
+              key={asset_id}
+              asset_id={asset_id}
+              onClick={() => toggleActive(asset_id)}
+              {...rest}
+            />
+          ))}
+        </ul>
+      </Section>
+      <Section title="Transactions"></Section>
     </Window>
   );
 };

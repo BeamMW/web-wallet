@@ -5,6 +5,7 @@ import { $balance } from '@state/portfolio';
 import { GROTHS_IN_BEAM, FEE_DEFAULT, setView, View } from '@state/shared';
 import { debounce } from '@core/utils';
 import { calculateChange, sendTransaction } from '@core/api';
+import { Window, Select } from '@pages/shared';
 
 const calculateChangeDebounced = debounce(calculateChange, 300);
 
@@ -49,14 +50,16 @@ const Send = () => {
     });
   };
 
-  const handleBackClick: React.MouseEventHandler = () => {
-    setView(View.PORTFOLIO);
-  };
+  const options = ['BEAM', 'WTF'];
 
   return (
-    <div>
-      <h1>Send</h1>
+    <Window
+      title="Send"
+      color="purple"
+      onBackClick={() => setView(View.PORTFOLIO)}
+    >
       <form onSubmit={handleSubmit}>
+        <Select options={options} selected={0} />
         <div>
           <ul>
             {balance.map(({ name, available, asset_id }) => (
@@ -88,12 +91,9 @@ const Send = () => {
             onChange={handleAmountChange}
           />
         </div>
-        <button type="button" onClick={handleBackClick}>
-          Back
-        </button>
         <button type="submit">Send</button>
       </form>
-    </div>
+    </Window>
   );
 };
 
