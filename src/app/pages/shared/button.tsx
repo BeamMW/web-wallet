@@ -4,7 +4,8 @@ import { isNil } from '@core/utils';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.FC;
-  color?: 'primary' | 'ghost';
+  color?: 'green' | 'ghost' | 'purple' | 'blue';
+  variant?: 'regular' | 'ghost';
 }
 
 const ButtonStyled = styled.button<ButtonProps>`
@@ -16,7 +17,7 @@ const ButtonStyled = styled.button<ButtonProps>`
   padding: 12px 24px;
   border: none;
   border-radius: 22px;
-  background-color: var(--color-green);
+  background-color: ${({ color }) => `var(--color-${color})`};
   text-align: center;
   font-weight: bold;
   font-size: 14px;
@@ -56,18 +57,19 @@ const GhostButtonStyled = styled(ButtonStyled)`
 
 export const Button: React.FC<ButtonProps> = ({
   type = 'button',
-  color = 'primary',
+  color = 'green',
+  variant = 'regular',
   icon: IconComponent,
   children,
   ...rest
 }) => {
   const ButtonComponent = {
-    primary: ButtonStyled,
+    regular: ButtonStyled,
     ghost: GhostButtonStyled,
-  }[color];
+  }[variant];
 
   return (
-    <ButtonComponent type={type} {...rest}>
+    <ButtonComponent type={type} color={color} {...rest}>
       {!isNil(IconComponent) && <IconComponent />}
       {children}
     </ButtonComponent>

@@ -82,7 +82,7 @@ export const Popup: React.FC<PopupProps> = ({
           {!isNil(cancel) && (
             <Button
               icon={cancelIcon}
-              color="ghost"
+              variant="ghost"
               type="button"
               onClick={onCancel}
             >

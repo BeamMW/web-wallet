@@ -47,6 +47,7 @@
   "dependencies": {
     "@linaria/react": "^3.0.0-beta.7",
     "babel-polyfill": "^6.26.0",
+    "beam-wasm-client-master": "^6.2.11713",
     "browser-passworder": "^2.0.3",
     "effector": "^21.8.12",
     "effector-react": "^21.3.3",

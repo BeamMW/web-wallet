@@ -3,13 +3,14 @@ import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import { $balance, $transactions } from '@state/portfolio';
-import { Table } from '@pages/shared';
+import { Button, Table, Window } from '@pages/shared';
 import { isNil } from '@core/utils';
 import { setView, View, GROTHS_IN_BEAM } from '@state/shared';
 
-interface CardProps {
-  active?: boolean;
-}
+import ArrowUpIcon from '@icons/icon-arrow-up.svg';
+import ArrowDownIcon from '@icons/icon-arrow-down.svg';
+
+import AssetCard from './asset-card';
 
 function compact(value: string): string {
   if (value.length <= 11) {
@@ -47,8 +48,19 @@ const TABLE_CONFIG = [
   },
 ];
 
-const Card = styled.li<CardProps>`
-  color: ${({ active }) => (active ? 'red' : 'black')};
+const ActionsStyled = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 0 -4px;
+
+  > button {
+    margin: 0 4px;
+  }
+`;
+
+const AssetsStyled = styled.ul`
+  margin: 0 -30px;
+  padding: 0 8px;
 `;
 
 const Portfolio = () => {
@@ -69,24 +81,28 @@ const Portfolio = () => {
     : transactions.filter(({ asset_id }) => asset_id === active);
 
   return (
-    <div>
-      <h1>Main Screen</h1>
-      <button type="button" onClick={handleSendClick}>
-        Send
-      </button>
-      <ul>
-        {balance.map(({ asset_id, available, name }) => (
-          <Card
+    <Window title="Wallet">
+      <ActionsStyled>
+        <Button color="purple" icon={ArrowUpIcon} onClick={handleSendClick}>
+          send
+        </Button>
+        <Button color="blue" icon={ArrowDownIcon} onClick={handleSendClick}>
+          receive
+        </Button>
+      </ActionsStyled>
+
+      <AssetsStyled>
+        {balance.map(({ asset_id, ...rest }) => (
+          <AssetCard
             key={asset_id}
-            active={asset_id === active}
+            asset_id={asset_id}
             onClick={() => toggleActive(asset_id)}
-          >
-            {asset_id} {available / GROTHS_IN_BEAM} {name}
-          </Card>
+            {...rest}
+          />
         ))}
-      </ul>
+      </AssetsStyled>
       <Table keyBy="txId" data={data} config={TABLE_CONFIG} />
-    </div>
+    </Window>
   );
 };
 

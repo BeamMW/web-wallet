@@ -143,7 +143,7 @@ const Create = () => {
               <Button
                 icon={ArrowIcon}
                 type="button"
-                color="ghost"
+                variant="ghost"
                 onClick={handleSkipClick}
               >
                 I will do it later

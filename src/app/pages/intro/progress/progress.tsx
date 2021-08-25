@@ -46,7 +46,7 @@ const Progress = () => {
       <SubtitleStyled>{active && progress}</SubtitleStyled>
       <ProgressBar active={active} percent={syncPercent} />
       <Footer>
-        <Button color="ghost" icon={CancelIcon} onClick={handleCancelClick}>
+        <Button variant="ghost" icon={CancelIcon} onClick={handleCancelClick}>
           cancel
         </Button>
       </Footer>

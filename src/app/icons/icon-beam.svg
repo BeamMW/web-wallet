@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26">
+    <defs>
+        <radialGradient id="hxvtkshuca" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+            <stop offset="0%" stop-color="#008471"/>
+            <stop offset="100%" stop-color="#103051"/>
+        </radialGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <g>
+            <g transform="translate(-28.000000, -247.000000) translate(28.000000, 247.000000)">
+                <circle cx="13" cy="13" r="11.636" fill="url(#hxvtkshuca)" stroke="#00F6D2" stroke-width="2"/>
+                <g fill="#FFF">
+                    <g>
+                        <path d="M6.649 0l6.646 11.523H6.648V9.599h3.392L6.649 3.622V0z" transform="translate(6.381818, 6.322727)"/>
+                        <path d="M.001 0l6.647 11.523H0V9.599h3.392L.002 3.622V0z" transform="translate(6.381818, 6.322727) translate(3.323864, 5.761364) scale(-1, 1) translate(-3.323864, -5.761364)"/>
+                        <path d="M6.648 5.106L6.648 8.897 4.545 8.901z" transform="translate(6.381818, 6.322727)"/>
+                        <path d="M8.751 5.106L8.751 8.897 6.648 8.901z" transform="translate(6.381818, 6.322727) translate(7.699154, 7.003334) scale(-1, 1) translate(-7.699154, -7.003334)"/>
+                    </g>
+                    <path d="M0 6.63L7.091 3.545 7.091 7.091 0 6.947z" transform="translate(6.381818, 6.322727) translate(3.545455, 5.318182) scale(-1, 1) translate(-3.545455, -5.318182)"/>
+                    <path d="M7.091 6.63L14.182 3.545 14.182 7.091 7.091 6.947z" transform="translate(6.381818, 6.322727)"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
