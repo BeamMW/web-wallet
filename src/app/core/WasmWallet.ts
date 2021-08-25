@@ -4,8 +4,6 @@ import * as passworder from 'browser-passworder';
 import { isNil } from '@core/utils';
 import { RPCMethod, RPCEvent, ToggleSubscribeToParams } from './types';
 
-import 'beam-wasm-client-master/wasm-client';
-
 declare const BeamModule: any;
 
 const PATH_DB = '/beam_wallet/wallet.db';

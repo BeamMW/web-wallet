@@ -15,6 +15,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name].js',
+    clean: true,
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
@@ -54,6 +55,12 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
       patterns: [
+        {
+          from: path.join(__dirname, './node_modules/beam-wasm-client-master/'),
+          globOptions: {
+            ignore: ['package.json'],
+          },
+        },
         {
           from: path.join(__dirname, 'src/assets'),
           to: path.join(__dirname, 'dist/assets'),
