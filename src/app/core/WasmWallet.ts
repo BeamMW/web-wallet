@@ -145,7 +145,7 @@ export default class WasmWallet {
       const data = await this.load<string>('wallet');
       const result = !isNil(data);
       this.created = result;
-      return isNil(result);
+      return result;
     } catch {
       return false;
     }

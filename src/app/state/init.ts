@@ -32,9 +32,9 @@ export async function initWallet() {
   wallet.init(sendWalletEvent);
   try {
     const result = await wallet.checkWallet();
-    setOnboarding(result);
+    setOnboarding(!result);
   } catch {
-    setOnboarding(false);
+    setOnboarding(true);
   }
 }
 
