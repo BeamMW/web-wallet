@@ -35,12 +35,10 @@ export default class WasmWallet {
 
   constructor() {}
 
-  init(handler: WalletEventHandler) {
+  async init(handler: WalletEventHandler) {
     this.eventHandler = handler;
-
-    BeamModule().then(module => {
-      WasmWalletClient = module.WasmWalletClient;
-    });
+    const module = await BeamModule();
+    WasmWalletClient = module.WasmWalletClient;
   }
 
   start(pass: string) {
@@ -67,40 +65,39 @@ export default class WasmWallet {
     });
   }
 
-  mount(onMount: Function) {
-    WasmWalletClient.MountFS(() => {
-      this.mounted = true;
-      onMount();
+  mount() {
+    return new Promise(resolve => {
+      WasmWalletClient.MountFS(() => {
+        this.mounted = true;
+        resolve(true);
+      });
     });
   }
 
-  open(pass: string) {
-    const onMount = () => this.start(pass);
-
+  async open(pass: string) {
     if (!this.mounted) {
-      this.mount(onMount);
-    } else {
-      onMount();
+      await this.mount();
     }
+
+    this.start(pass);
   }
 
-  create(seed: string, pass: string, seedConfirmed: boolean) {
+  async create(seed: string, pass: string, seedConfirmed: boolean) {
     WasmWalletClient.DeleteWallet(PATH_DB);
 
-    this.saveWallet(seed, pass).then(() => {
+    try {
+      await this.saveWallet(seed, pass);
       this.initSettings(seedConfirmed);
 
-      const onMount = () => {
-        WasmWalletClient.CreateWallet(seed, PATH_DB, pass);
-        this.start(pass);
-      };
-
       if (!this.mounted) {
-        this.mount(onMount);
-      } else {
-        onMount();
+        await this.mount();
       }
-    });
+
+      WasmWalletClient.CreateWallet(seed, PATH_DB, pass);
+      this.start(pass);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   stop() {
@@ -124,11 +121,10 @@ export default class WasmWallet {
     });
   }
 
-  saveWallet(seed: string, pass: string) {
-    return passworder.encrypt(pass, { seed }).then(data => {
-      extensionizer.storage.local.remove(['wallet']);
-      extensionizer.storage.local.set({ wallet: data });
-    });
+  async saveWallet(seed: string, pass: string) {
+    const data = await passworder.encrypt(pass, { seed });
+    extensionizer.storage.local.remove(['wallet']);
+    extensionizer.storage.local.set({ wallet: data });
   }
 
   private load<T>(name: string): Promise<T> {

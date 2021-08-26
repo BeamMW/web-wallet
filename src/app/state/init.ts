@@ -28,17 +28,14 @@ import {
 
 const wallet = WasmWallet.getInstance();
 
-export function initWallet() {
+export async function initWallet() {
   wallet.init(sendWalletEvent);
-
-  wallet.loadWallet().then(
-    result => {
-      setOnboarding(isNil(result));
-    },
-    () => {
-      setOnboarding(false);
-    },
-  );
+  try {
+    const result = await wallet.loadWallet();
+    setOnboarding(isNil(result));
+  } catch {
+    setOnboarding(false);
+  }
 }
 
 function handleSyncProgress(

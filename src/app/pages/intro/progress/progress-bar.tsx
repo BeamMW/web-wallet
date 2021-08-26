@@ -26,6 +26,7 @@ const LineStyled = styled.div`
   position: absolute;
   top: 0;
   left: 0;
+  width: 256px;
   height: 4px;
   border-radius: 2px;
   background-color: var(--color-green);
@@ -36,6 +37,9 @@ const LineActive = styled(LineStyled)<{ percent: number }>`
 `;
 
 const LineIntermediate = styled(LineStyled)`
+  transform: translateX(-256px);
+  transform-origin: left;
+
   &:first-child {
     animation: increase 1s infinite;
   }
@@ -46,25 +50,21 @@ const LineIntermediate = styled(LineStyled)`
 
   @keyframes increase {
     0% {
-      transform: translateX(-8px);
-      width: 8px;
+      transform: translateX(-16px) scaleX(0.0625);
     }
 
     100% {
-      transform: translateX(384px);
-      width: 288px;
+      transform: translateX(384px) scaleX(1.125);
     }
   }
 
   @keyframes decrease {
     0% {
-      transform: translateX(-96px);
-      width: 96px;
+      transform: translateX(-96px) scalex(0.375);
     }
 
     100% {
-      transform: translateX(320px);
-      width: 64px;
+      transform: translateX(320px) scalex(0.25);
     }
   }
 `;
