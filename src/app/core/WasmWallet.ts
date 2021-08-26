@@ -31,6 +31,7 @@ export default class WasmWallet {
 
   private wallet: any;
   private mounted: boolean = false;
+  private created: boolean = false;
   private eventHandler: WalletEventHandler;
 
   constructor() {}
@@ -83,14 +84,16 @@ export default class WasmWallet {
   }
 
   async create(seed: string, pass: string, seedConfirmed: boolean) {
-    WasmWalletClient.DeleteWallet(PATH_DB);
-
     try {
       await this.saveWallet(seed, pass);
       this.initSettings(seedConfirmed);
 
       if (!this.mounted) {
         await this.mount();
+      }
+
+      if (this.created) {
+        WasmWalletClient.DeleteWallet(PATH_DB);
       }
 
       WasmWalletClient.CreateWallet(seed, PATH_DB, pass);
@@ -125,6 +128,7 @@ export default class WasmWallet {
     const data = await passworder.encrypt(pass, { seed });
     extensionizer.storage.local.remove(['wallet']);
     extensionizer.storage.local.set({ wallet: data });
+    return data;
   }
 
   private load<T>(name: string): Promise<T> {
@@ -136,8 +140,15 @@ export default class WasmWallet {
     });
   }
 
-  loadWallet() {
-    return this.load<string>('wallet');
+  async checkWallet() {
+    try {
+      const data = await this.load<string>('wallet');
+      const result = !isNil(data);
+      this.created = result;
+      return isNil(result);
+    } catch {
+      return false;
+    }
   }
 
   checkPassword(pass: string) {

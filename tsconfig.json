@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "jsx": "react",
-    "target": "es5",
+    "target": "es6",
+    "moduleResolution": "Node",
     "esModuleInterop": true,
     "typeRoots": [
       "node_modules/@types",
