@@ -1,6 +1,6 @@
 import { sample } from 'effector';
 
-import WasmWallet, { WalletEvent } from '@core/WasmWallet';
+import WasmWallet from '@core/WasmWallet';
 
 import {
   RPCEvent,
@@ -28,20 +28,27 @@ import {
 
 const wallet = WasmWallet.getInstance();
 
-export async function initWallet() {
+export function initWallet() {
   wallet.init(sendWalletEvent);
 
-  try {
-    const result = await wallet.loadWallet();
-    setOnboarding(isNil(result));
-  } catch {
-    setOnboarding(false);
-  }
+  wallet.loadWallet().then(
+    result => {
+      setOnboarding(isNil(result));
+    },
+    () => {
+      setOnboarding(false);
+    },
+  );
 }
 
 function handleSyncProgress(
   ready: boolean,
-  { done, total, current_state_hash, tip_state_hash }: SyncProgress,
+  {
+    sync_requests_done,
+    sync_requests_total,
+    current_state_hash,
+    tip_state_hash,
+  }: SyncProgress,
 ) {
   if (!ready && current_state_hash === tip_state_hash) {
     setReady(true);
@@ -49,7 +56,7 @@ function handleSyncProgress(
     getWalletStatus();
     createAddress();
   } else {
-    setSyncProgress([done, total]);
+    setSyncProgress([sync_requests_done, sync_requests_total]);
   }
 }
 

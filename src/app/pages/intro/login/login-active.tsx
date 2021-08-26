@@ -14,7 +14,7 @@ const LoginActive: React.FC = () => {
 
   const inputRef = useRef<HTMLInputElement>();
 
-  const handleSubmit: React.FormEventHandler = async event => {
+  const handleSubmit: React.FormEventHandler = event => {
     event.preventDefault();
     const { value } = inputRef.current;
 
@@ -23,14 +23,16 @@ const LoginActive: React.FC = () => {
       return;
     }
 
-    try {
-      await wallet.checkPassword(value);
-      setError(null);
-      setView(View.PROGRESS);
-      wallet.open(value);
-    } catch {
-      setError(ErrorMessage.INVALID);
-    }
+    wallet.checkPassword(value).then(
+      () => {
+        setError(null);
+        setView(View.PROGRESS);
+        wallet.open(value);
+      },
+      () => {
+        setError(ErrorMessage.INVALID);
+      },
+    );
   };
 
   return (

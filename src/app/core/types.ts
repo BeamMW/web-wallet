@@ -69,8 +69,8 @@ export interface Asset {
 }
 
 export interface SyncProgress extends SyncHash {
-  done: number;
-  total: number;
+  sync_requests_done: number;
+  sync_requests_total: number;
   tip_height: number;
   tip_prev_state_hash: string;
   tip_state_hash: string;

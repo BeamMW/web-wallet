@@ -67,41 +67,40 @@ export default class WasmWallet {
     });
   }
 
-  mount() {
-    return new Promise<void>(resolve => {
+  mount(onMount: Function) {
+    WasmWalletClient.MountFS(() => {
       this.mounted = true;
-      WasmWalletClient.MountFS(resolve);
+      onMount();
     });
   }
 
-  async open(pass: string) {
-    try {
-      if (!this.mounted) {
-        await this.mount();
-      }
+  open(pass: string) {
+    const onMount = () => this.start(pass);
 
-      this.start(pass);
-    } catch (error) {
-      console.log(error);
+    if (!this.mounted) {
+      this.mount(onMount);
+    } else {
+      onMount();
     }
   }
 
-  async create(seed: string, pass: string, seedConfirmed: boolean) {
-    try {
-      WasmWalletClient.DeleteWallet(PATH_DB);
+  create(seed: string, pass: string, seedConfirmed: boolean) {
+    WasmWalletClient.DeleteWallet(PATH_DB);
 
-      await this.saveWallet(seed, pass);
+    this.saveWallet(seed, pass).then(() => {
       this.initSettings(seedConfirmed);
 
-      if (!this.mounted) {
-        await this.mount();
-      }
+      const onMount = () => {
+        WasmWalletClient.CreateWallet(seed, PATH_DB, pass);
+        this.start(pass);
+      };
 
-      WasmWalletClient.CreateWallet(seed, PATH_DB, pass);
-      this.start(pass);
-    } catch (error) {
-      console.error(error);
-    }
+      if (!this.mounted) {
+        this.mount(onMount);
+      } else {
+        onMount();
+      }
+    });
   }
 
   stop() {
@@ -125,10 +124,11 @@ export default class WasmWallet {
     });
   }
 
-  async saveWallet(seed: string, pass: string) {
-    const data = await passworder.encrypt(pass, { seed });
-    extensionizer.storage.local.remove(['wallet']);
-    extensionizer.storage.local.set({ wallet: data });
+  saveWallet(seed: string, pass: string) {
+    return passworder.encrypt(pass, { seed }).then(data => {
+      extensionizer.storage.local.remove(['wallet']);
+      extensionizer.storage.local.set({ wallet: data });
+    });
   }
 
   private load<T>(name: string): Promise<T> {
