@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 
 import WasmWallet from '@core/WasmWallet';
 import { $seed } from '@state/intro';
-import { Window, Button, Input, Footer } from '@pages/shared';
+import { Window, Button, Input, Footer } from 'app/uikit';
 import { View, setView } from '@state/shared';
 import { createChangeHandler } from '@core/utils';
 import ArrowIcon from '@icons/icon-arrow.svg';

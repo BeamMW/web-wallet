@@ -9,8 +9,8 @@ interface BackLinkProps {
 
 const LinkStyled = styled.a`
   position: absolute;
-  top: 30px;
-  left: 20px;
+  top: 23px;
+  left: 15px;
 `;
 
 export const BackLink: React.FC<BackLinkProps> = ({ onClick }) => (

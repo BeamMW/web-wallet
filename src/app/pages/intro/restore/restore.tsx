@@ -2,7 +2,7 @@ import React from 'react';
 
 import { setSeed } from '@state/intro';
 import { View, setView } from '@state/shared';
-import { Window } from '@pages/shared';
+import { Window } from 'app/uikit';
 import { SeedRestore } from '@pages/intro/seed';
 
 const Restore = () => {

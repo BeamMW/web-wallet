@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
-import { Window, Popup, Button, Footer } from '@pages/shared';
+import { Window, Popup, Button, Footer } from 'app/uikit';
 import { SeedConfirm } from '@pages/intro/seed';
 import { $seed } from '@state/intro';
 import { View, setView, $onboarding } from '@state/shared';

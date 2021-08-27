@@ -10,3 +10,4 @@ export { BackLink } from './back-link';
 export { Footer } from './footer';
 export { Section } from './section';
 export { Select } from './select';
+export { Angle } from './angle';

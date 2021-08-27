@@ -2,7 +2,7 @@ import React from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
-import { Button, Splash, Footer } from '@pages/shared';
+import { Button, Splash, Footer } from 'app/uikit';
 import { setView, View } from '@state/shared';
 import { $syncProgress, $syncPercent } from '@state/intro';
 

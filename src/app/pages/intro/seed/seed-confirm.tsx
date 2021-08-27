@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
-import { Button, Footer } from '@pages/shared';
+import { Button, Footer } from 'app/uikit';
 import ArrowIcon from '@icons/icon-arrow.svg';
 
 import SeedList from './seed-list';

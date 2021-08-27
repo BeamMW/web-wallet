@@ -3,8 +3,9 @@ import React, { useState, useRef } from 'react';
 import WasmWallet from '@core/WasmWallet';
 import { setView, View, ErrorMessage } from '@state/shared';
 import { setLoginPhase, LoginPhase } from '@state/intro';
-import { Popup, Button, Link, Input, Splash } from '@pages/shared';
-import { styled } from '@linaria/react';
+import { Popup, Button, Link, Input, Splash } from 'app/uikit';
+
+import WalletSmallIcon from '@icons/icon-wallet-small.svg';
 
 const wallet = WasmWallet.getInstance();
 
@@ -47,7 +48,9 @@ const LoginActive: React.FC = () => {
             error={error}
             ref={inputRef}
           />
-          <Button type="submit">open your wallet</Button>
+          <Button type="submit" icon={WalletSmallIcon}>
+            open your wallet
+          </Button>
           <Link
             onClick={event => {
               event.preventDefault();

@@ -16,7 +16,7 @@ interface WindowProps {
 const ContainerStyled = styled.div<WindowProps>`
   position: relative;
   height: 550px;
-  padding: 30px 30px 0;
+  padding: 0 30px;
   text-align: center;
   filter: ${({ blur }) => (blur ? 'blur(3px)' : 'none')};
 
@@ -57,8 +57,8 @@ const FrameStyled = styled.div`
 `;
 
 const TitleStyled = styled.h2`
+  line-height: 72px;
   margin: 0;
-  margin-bottom: 26px;
   font-size: 20px;
   font-weight: 600;
   text-transform: uppercase;

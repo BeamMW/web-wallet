@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import WasmWallet from '@core/WasmWallet';
 
-import { Button, Footer } from '@pages/shared';
+import { Button, Footer } from 'app/uikit';
 import SeedList from './seed-list';
 
 const SEED_PHRASE_COUNT = 12;

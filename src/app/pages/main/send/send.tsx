@@ -5,7 +5,10 @@ import { $balance } from '@state/portfolio';
 import { GROTHS_IN_BEAM, FEE_DEFAULT, setView, View } from '@state/shared';
 import { debounce } from '@core/utils';
 import { calculateChange, sendTransaction } from '@core/api';
-import { Window, Select } from '@pages/shared';
+import { Window, Select, Section, Input, Button } from 'app/uikit';
+import AssetInput from './asset-input';
+
+import ArrowIcon from '@icons/icon-arrow.svg';
 
 const calculateChangeDebounced = debounce(calculateChange, 300);
 
@@ -50,7 +53,11 @@ const Send = () => {
     });
   };
 
-  const options = ['BEAM', 'WTF'];
+  const handleSelect = (index: number) => {
+    console.log(index);
+  };
+
+  const assets = balance.map(({ name }) => name);
 
   return (
     <Window
@@ -59,39 +66,18 @@ const Send = () => {
       onBackClick={() => setView(View.PORTFOLIO)}
     >
       <form onSubmit={handleSubmit}>
-        <Select options={options} selected={0} />
-        <div>
-          <ul>
-            {balance.map(({ name, available, asset_id }) => (
-              <li key={asset_id}>
-                <label>
-                  {name} {available / GROTHS_IN_BEAM}
-                </label>
-                <input
-                  id={`asset${asset_id}`}
-                  value={asset_id}
-                  type="radio"
-                  name="asset"
-                  checked={selected === asset_id}
-                  onChange={handleAssetChange}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          Address: <input type="text" name="address" />
-        </div>
-        <div>
-          Amount:
-          <input
-            type="text"
-            name="sum"
-            value={amount}
-            onChange={handleAmountChange}
-          />
-        </div>
-        <button type="submit">Send</button>
+        <Section title="Send to" variant="gray">
+          <Input variant="gray" />
+        </Section>
+        <Section title="Amount" variant="gray">
+          <AssetInput assets={assets} onSelect={handleSelect} />
+        </Section>
+        <Section title="Comment" variant="gray">
+          <Input variant="gray" />
+        </Section>
+        <Button color="purple" icon={ArrowIcon} type="submit">
+          next
+        </Button>
       </form>
     </Window>
   );

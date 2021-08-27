@@ -3,7 +3,7 @@ import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import { $balance, $transactions } from '@state/portfolio';
-import { Button, Table, Window, Section } from '@pages/shared';
+import { Button, Table, Window, Section } from 'app/uikit';
 import { isNil } from '@core/utils';
 import { setView, View, GROTHS_IN_BEAM } from '@state/shared';
 
