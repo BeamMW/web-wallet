@@ -4,12 +4,14 @@ import { styled } from '@linaria/react';
 
 import WasmWallet from '@core/WasmWallet';
 import { $seed } from '@state/intro';
-import { Window, Button, Input, Footer } from 'app/uikit';
+import {
+  Window, Button, Input, Footer,
+} from 'app/uikit';
 import { View, setView } from '@state/shared';
 import { createChangeHandler } from '@core/utils';
 import ArrowIcon from '@icons/icon-arrow.svg';
 
-import PasswordStrength from './password-strength';
+import PasswordStrength from './PasswordStrength';
 
 const FormStyled = styled.form`
   text-align: left;
@@ -32,7 +34,7 @@ const SetPassword = () => {
   const handleChangePassword = createChangeHandler(setPassword);
   const handleChangeConfirm = createChangeHandler(setConfirm);
 
-  const handleSubmit: React.FormEventHandler = event => {
+  const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
     wallet.create(seed.join(' '), pass, true);
     setView(View.PROGRESS);

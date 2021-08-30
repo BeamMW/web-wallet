@@ -76,7 +76,7 @@ const iconClassName = css`
   left: 20px;
 `;
 
-export const AssetCard: React.FC<AssetCardProps> = ({
+const AssetCard: React.FC<AssetCardProps> = ({
   asset_id,
   available,
   name,
@@ -89,7 +89,9 @@ export const AssetCard: React.FC<AssetCardProps> = ({
     )}
 
     <TitleStyled>
-      {available / GROTHS_IN_BEAM} {name}
+      {available / GROTHS_IN_BEAM}
+      {' '}
+      {name}
     </TitleStyled>
   </AssetCardStyled>
 );

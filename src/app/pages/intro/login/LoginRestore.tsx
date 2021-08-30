@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 
 import WasmWallet from '@core/WasmWallet';
-import { $phase, setSeed } from '@state/intro';
+import {
+  $phase, setSeed, setLoginPhase, LoginPhase,
+} from '@state/intro';
 import { setView, View } from '@state/shared';
-import { setLoginPhase, LoginPhase } from '@state/intro';
-import { Popup, Splash, Button, Link } from 'app/uikit';
+import {
+  Popup, Splash, Button,
+} from 'app/uikit';
 
 import addIcon from '@icons/icon-add.svg';
-
-const wallet = WasmWallet.getInstance();
 
 const LoginRestore: React.FC = () => {
   const [warningVisible, toggleWarning] = useState(false);
@@ -30,20 +31,21 @@ const LoginRestore: React.FC = () => {
           type="button"
           icon={addIcon}
           onClick={() => {
-            setSeed(wallet.getSeedPhrase());
+            setSeed(WasmWallet.getSeedPhrase());
             setView(View.CREATE);
           }}
         >
           create new wallet
         </Button>
-        <Link
-          onClick={event => {
+        <Button
+          variant="link"
+          onClick={(event) => {
             event.preventDefault();
             toggleWarning(true);
           }}
         >
           Restore wallet
-        </Link>
+        </Button>
       </Splash>
       <Popup
         visible={warningVisible}
@@ -57,7 +59,7 @@ const LoginRestore: React.FC = () => {
           setView(View.RESTORE);
         }}
       >
-        If you'll restore a wallet all transaction history and addresses will be
+        If you&apos;ll restore a wallet all transaction history and addresses will be
         lost
       </Popup>
     </>

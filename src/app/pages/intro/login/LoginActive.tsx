@@ -3,7 +3,9 @@ import React, { useState, useRef } from 'react';
 import WasmWallet from '@core/WasmWallet';
 import { setView, View, ErrorMessage } from '@state/shared';
 import { setLoginPhase, LoginPhase } from '@state/intro';
-import { Popup, Button, Link, Input, Splash } from 'app/uikit';
+import {
+  Popup, Button, Input, Splash,
+} from 'app/uikit';
 
 import WalletSmallIcon from '@icons/icon-wallet-small.svg';
 
@@ -25,7 +27,7 @@ const LoginActive: React.FC = () => {
     }
 
     try {
-      await wallet.checkPassword(value);
+      await WasmWallet.checkPassword(value);
       setError(null);
       setView(View.PROGRESS);
       wallet.open(value);
@@ -51,14 +53,15 @@ const LoginActive: React.FC = () => {
           <Button type="submit" icon={WalletSmallIcon}>
             open your wallet
           </Button>
-          <Link
-            onClick={event => {
+          <Button
+            variant="link"
+            onClick={(event) => {
               event.preventDefault();
               toggleWarning(true);
             }}
           >
             Restore wallet or create a new one
-          </Link>
+          </Button>
         </form>
       </Splash>
 
@@ -74,7 +77,7 @@ const LoginActive: React.FC = () => {
           setLoginPhase(LoginPhase.RESTORE);
         }}
       >
-        If you'll restore a wallet all transaction history and addresses will be
+        If you&apos;ll restore a wallet all transaction history and addresses will be
         lost
       </Popup>
     </>

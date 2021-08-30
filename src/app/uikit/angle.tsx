@@ -25,7 +25,7 @@ const ContainerStyled = styled.div<AngleProps>`
   }
 `;
 
-export const Angle: React.FC<AngleProps> = ({ value = 0, margin = 0 }) => (
+const Angle: React.FC<AngleProps> = ({ value = 0, margin = 0 }) => (
   <ContainerStyled value={value} margin={margin}>
     <AngleSmallUpIcon />
   </ContainerStyled>

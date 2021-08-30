@@ -1,8 +1,9 @@
 import React from 'react';
 import { styled } from '@linaria/react';
-import Logo from './logo';
-import BackLink from './back-link';
 import { isNil } from '@core/utils';
+
+import Logo from './Logo';
+import BackButton from './BackButton';
 
 interface SplashProps {
   size?: 'large' | 'small';
@@ -34,7 +35,7 @@ export const Splash: React.FC<SplashProps> = ({
   children,
 }) => (
   <ContainerStyled blur={blur}>
-    {!isNil(onBackClick) && <BackLink onClick={onBackClick} />}
+    {!isNil(onBackClick) && <BackButton onClick={onBackClick} />}
     <Logo size={size} />
     <TitleStyled size={size}>Scalable confidential cryptocurrency</TitleStyled>
     {children}

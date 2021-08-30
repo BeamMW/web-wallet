@@ -3,10 +3,11 @@ import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 
 import { $view } from '@state/shared';
-import { initWallet } from '@state/init';
-import { getCurrentView } from '@core/router';
+import initWallet from '@app/state/init-wallet';
+import getCurrentView from '@app/core/get-current-view';
 import { styled } from '@linaria/react';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 css`
   :global() {
     :root {

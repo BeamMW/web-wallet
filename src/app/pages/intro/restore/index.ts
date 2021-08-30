@@ -1,1 +1,1 @@
-export { default } from './restore';
+export { default } from './Restore';

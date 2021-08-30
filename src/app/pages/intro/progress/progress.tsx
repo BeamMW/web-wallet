@@ -9,7 +9,7 @@ import { $syncProgress, $syncPercent } from '@state/intro';
 import CancelIcon from '@icons/icon-cancel.svg';
 import WasmWallet from '@core/WasmWallet';
 
-import ProgressBar from './progress-bar';
+import ProgressBar from './ProgressBar';
 
 const TitleStyled = styled.h2`
   margin: 0;

@@ -33,7 +33,7 @@ const SectionGrayStyled = styled(SectionStyled)`
   }
 `;
 
-export const Section: React.FC<SectionProps> = ({
+const Section: React.FC<SectionProps> = ({
   title,
   variant = 'regular',
   children,

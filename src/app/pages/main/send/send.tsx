@@ -1,14 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 
 import { $balance } from '@state/portfolio';
-import { GROTHS_IN_BEAM, FEE_DEFAULT, setView, View } from '@state/shared';
+import {
+  GROTHS_IN_BEAM, FEE_DEFAULT, setView, View,
+} from '@state/shared';
 import { debounce } from '@core/utils';
 import { calculateChange, sendTransaction } from '@core/api';
-import { Window, Select, Section, Input, Button } from 'app/uikit';
-import AssetInput from './asset-input';
-
+import {
+  Window, Select, Section, Input, Button,
+} from 'app/uikit';
 import ArrowIcon from '@icons/icon-arrow.svg';
+import AssetInput from './AssetInput';
 
 const calculateChangeDebounced = debounce(calculateChange, 300);
 
@@ -37,11 +41,11 @@ const Send = () => {
   const handleAssetChange: React.ChangeEventHandler<HTMLInputElement> = ({
     target,
   }) => {
-    const value = parseInt(target.value);
+    const value = parseInt(target.value, 10);
     setSelected(value);
   };
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
     const data = new FormData(event.currentTarget);

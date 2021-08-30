@@ -22,7 +22,7 @@ const ContainerStyled = styled.div`
   display: flex;
 `;
 
-export const AssetInput: React.FC<AssetInpuProps> = ({ assets, onSelect }) => {
+const AssetInput: React.FC<AssetInpuProps> = ({ assets, onSelect }) => {
   const [selected, setSelected] = useState(0);
 
   const handleSelect = (value: number) => {

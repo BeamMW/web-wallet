@@ -4,10 +4,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
-module.exports = {
+const IN_DEVELOPMENT = process.env.NODE_ENV !== 'production';
+
+const config = {
   target: 'node',
-  mode: 'development',
-  devtool: 'inline-source-map',
   entry: {
     index: path.join(__dirname, './src/index.tsx'),
     background: path.join(__dirname, './src/background.ts'),
@@ -40,7 +40,10 @@ module.exports = {
           },
           {
             loader: 'css-loader',
-            options: { url: false },
+            options: {
+              url: false,
+              sourceMap: IN_DEVELOPMENT,
+            },
           },
         ],
       },
@@ -80,4 +83,12 @@ module.exports = {
     }),
   ],
   externals: ['fs'],
+};
+
+module.exports = (env, argv) => {
+  if (argv.mode === 'development') {
+    config.devtool = 'inline-source-map';
+  }
+
+  return config;
 };

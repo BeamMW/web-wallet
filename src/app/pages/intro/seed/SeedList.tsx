@@ -1,12 +1,7 @@
 import { styled } from '@linaria/react';
 import { css, cx } from '@linaria/core';
-import React, { useState, useRef, useEffect } from 'react';
-import { unlinkSync } from 'node:fs';
+import React from 'react';
 import { isNil } from '@core/utils';
-
-interface callbackFn {
-  (value: any, index: number): string;
-}
 
 interface SeedListProps {
   data: any[];

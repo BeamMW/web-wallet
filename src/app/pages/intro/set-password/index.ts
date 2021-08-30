@@ -1,1 +1,1 @@
-export { default } from './set-password';
+export { default } from './SetPassword';

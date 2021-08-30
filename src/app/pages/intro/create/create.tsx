@@ -2,9 +2,12 @@ import React, { useMemo, useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
-import { Window, Popup, Button, Footer } from 'app/uikit';
+import {
+  Window, Popup, Button, Footer,
+} from 'app/uikit';
 import { SeedConfirm } from '@pages/intro/seed';
 import { $seed } from '@state/intro';
+// eslint-disable-next-line
 import { View, setView, $onboarding } from '@state/shared';
 
 import EyeIcon from '@icons/icon-eye.svg';
@@ -80,10 +83,9 @@ const getRandomIds = () => {
   const result = [];
   while (result.length < SEED_CONFIRM_COUNT) {
     const value = Math.floor(Math.random() * 12);
-    if (result.includes(value)) {
-      continue;
+    if (!result.includes(value)) {
+      result.push(value);
     }
-    result.push(value);
   }
   return result;
 };
@@ -92,15 +94,15 @@ const Create = () => {
   const [step, setStep] = useState(0);
   const [warningVisible, toggleWarning] = useState(false);
   const seed = useStore($seed);
-  const onboarding = useStore($onboarding);
+  // const onboarding = useStore($onboarding);
   const ids = useMemo(getRandomIds, seed);
 
-  const handleSubmit: React.FormEventHandler = event => {
+  const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
     setView(View.SET_PASSWORD);
   };
 
-  const handleBackClick: React.MouseEventHandler = event => {
+  const handleBackClick: React.MouseEventHandler = () => {
     setView(View.LOGIN);
   };
 
@@ -129,6 +131,7 @@ const Create = () => {
             </p>
             <SeedListStyled>
               {seed.map((value, index) => (
+                // eslint-disable-next-line
                 <li key={index}>{value}</li>
               ))}
             </SeedListStyled>
@@ -184,7 +187,9 @@ const Create = () => {
           <p>
             If you ever lose your device, you will need this phrase to recover
             your wallet!
-            <br /> Never type your seed phrase in keychains or password
+            <br />
+            {' '}
+            Never type your seed phrase in keychains or password
             managers.
             <br />
             Never save it in your local or remote folders in any form.

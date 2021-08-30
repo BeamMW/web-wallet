@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { setView, View } from '@state/shared';
 
@@ -13,11 +13,11 @@ const MENU_ITEMS = [
   },
 ];
 
-export const Menu: React.FC = ({}) => {
+const Menu: React.FC = () => {
   const handleClick: React.MouseEventHandler<HTMLLIElement> = ({
     currentTarget,
   }) => {
-    const index = parseInt(currentTarget.dataset.index);
+    const index = parseInt(currentTarget.dataset.index, 10);
     setView(MENU_ITEMS[index].value);
   };
 
@@ -25,6 +25,7 @@ export const Menu: React.FC = ({}) => {
     <nav>
       <ul>
         {MENU_ITEMS.map(({ title }) => (
+          // eslint-disable-next-line
           <li onClick={handleClick}>{title}</li>
         ))}
       </ul>

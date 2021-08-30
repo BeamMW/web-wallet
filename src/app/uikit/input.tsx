@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from 'react';
+import React from 'react';
 import { styled } from '@linaria/react';
 import { isNil } from '@core/utils';
 
@@ -34,14 +34,12 @@ const InputStyled = styled.input<InputProps>`
 `;
 
 const InputRegularStyled = styled(InputStyled)`
-  border-color: ${({ error }) =>
-    isNil(error) ? 'var(--color-green)' : 'var(--color-red)'};
+  border-color: ${({ error }) => (isNil(error) ? 'var(--color-green)' : 'var(--color-red)')};
 `;
 
 const InputGrayStyled = styled(InputStyled)`
   border-width: 1px;
-  border-color: ${({ error }) =>
-    isNil(error) ? 'rgba(255,255,255,0.3)' : 'var(--color-red)'};
+  border-color: ${({ error }) => (isNil(error) ? 'rgba(255,255,255,0.3)' : 'var(--color-red)')};
 `;
 
 const ErrorStyled = styled.div`
@@ -53,9 +51,11 @@ const ErrorStyled = styled.div`
   color: var(--color-failed);
 `;
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { error, variant = 'regular', margin = 'none', className, ...rest },
+    {
+      error, variant = 'regular', margin = 'none', className, ...rest
+    },
     ref,
   ) => {
     const InputComponent = {

@@ -6,7 +6,7 @@ import { isNil } from '@core/utils';
 import cancelIcon from '@icons/icon-cancel.svg';
 import doneIcon from '@icons/icon-done.svg';
 
-import Button from './button';
+import Button from './Button';
 
 interface PopupProps {
   title?: string;
@@ -56,7 +56,7 @@ const FooterStyled = styled.div`
   }
 `;
 
-export const Popup: React.FC<PopupProps> = ({
+const Popup: React.FC<PopupProps> = ({
   title,
   cancel,
   confirm,
@@ -67,7 +67,7 @@ export const Popup: React.FC<PopupProps> = ({
 }) => {
   const rootRef = useRef();
 
-  const handleOutsideClick = event => {
+  const handleOutsideClick = (event) => {
     if (event.target === rootRef.current) {
       onCancel(event);
     }

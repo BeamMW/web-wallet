@@ -31,7 +31,7 @@ export const Table: React.FC<TableProps> = ({ keyBy, data, config }) => {
   const [filterBy, setFilterBy] = useState(0);
 
   const sortFn = (objectA, objectB) => {
-    const name = config[Math.abs(filterBy)].name;
+    const { name } = config[Math.abs(filterBy)];
     const a = objectA[name];
     const b = objectB[name];
 
@@ -43,8 +43,8 @@ export const Table: React.FC<TableProps> = ({ keyBy, data, config }) => {
     return a > b ? sign : -sign;
   };
 
-  const handleSortClick: React.MouseEventHandler<HTMLElement> = event => {
-    const index = parseInt(event.currentTarget.dataset.index);
+  const handleSortClick: React.MouseEventHandler<HTMLElement> = (event) => {
+    const index = parseInt(event.currentTarget.dataset.index, 10);
     setFilterBy(index === filterBy ? -filterBy : index);
   };
 
@@ -67,7 +67,7 @@ export const Table: React.FC<TableProps> = ({ keyBy, data, config }) => {
         </tr>
       </thead>
       <tbody>
-        {data.sort(sortFn).map(item => (
+        {data.sort(sortFn).map((item) => (
           <tr key={item[keyBy]}>
             {config.map(({ name, fn }, index) => {
               const value = item[name];

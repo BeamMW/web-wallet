@@ -5,7 +5,7 @@ import { isNil } from '@core/utils';
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.FC;
   color?: 'green' | 'ghost' | 'purple' | 'blue';
-  variant?: 'regular' | 'ghost';
+  variant?: 'regular' | 'ghost' | 'link' | 'icon';
 }
 
 const ButtonStyled = styled.button<ButtonProps>`
@@ -44,6 +44,18 @@ const ButtonStyled = styled.button<ButtonProps>`
   }
 `;
 
+const LinkButtonStyled = styled.button<ButtonProps>`
+  display: inline-block;
+  margin: 20px 0;
+  border: none;
+  background-color: transparent;
+  font-size: 14px;
+  font-weight: 700;
+  color: ${({ color }) => `var(--color-${color})`};
+  cursor: pointer;
+  text-decoration: none;
+`;
+
 const GhostButtonStyled = styled(ButtonStyled)`
   background-color: var(--color-ghost);
   color: white;
@@ -55,7 +67,13 @@ const GhostButtonStyled = styled(ButtonStyled)`
   }
 `;
 
-export const Button: React.FC<ButtonProps> = ({
+const IconButtonStyled = styled.button`
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+`;
+
+const Button: React.FC<ButtonProps> = ({
   type = 'button',
   color = 'green',
   variant = 'regular',
@@ -66,6 +84,8 @@ export const Button: React.FC<ButtonProps> = ({
   const ButtonComponent = {
     regular: ButtonStyled,
     ghost: GhostButtonStyled,
+    link: LinkButtonStyled,
+    icon: IconButtonStyled,
   }[variant];
 
   return (

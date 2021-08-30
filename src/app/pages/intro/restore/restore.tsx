@@ -6,14 +6,14 @@ import { Window } from 'app/uikit';
 import { SeedRestore } from '@pages/intro/seed';
 
 const Restore = () => {
-  const handleSubmit: React.ChangeEventHandler<HTMLFormElement> = event => {
+  const handleSubmit: React.ChangeEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     const data = new FormData(event.target);
     const seed = [];
     let i = 0;
-    data.forEach(value => {
+    data.forEach((value) => {
       seed[i] = value;
-      i++;
+      i += 1;
     });
     setSeed(seed);
     setView(View.SET_PASSWORD);

@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-
-import { Login, Restore, Create, SetPassword, Progress } from '@pages/intro';
+import {
+  Login, Restore, Create, SetPassword, Progress,
+} from '@pages/intro';
 import { Portfolio, Send } from '@pages/main';
-import { $view, View } from '@state/shared';
+import { View } from '@state/shared';
 
 const ROUTES = {
   [View.LOGIN]: Login,
@@ -14,6 +14,6 @@ const ROUTES = {
   [View.SEND]: Send,
 };
 
-export const getCurrentView = (view: View) => {
-  return ROUTES[view];
-};
+const getCurrentView = (view: View) => ROUTES[view];
+
+export default getCurrentView;

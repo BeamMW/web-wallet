@@ -1,16 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import { $balance, $transactions } from '@state/portfolio';
-import { Button, Table, Window, Section } from 'app/uikit';
+import {
+  Button, Window, Section,
+} from 'app/uikit';
 import { isNil } from '@core/utils';
 import { setView, View, GROTHS_IN_BEAM } from '@state/shared';
 
 import ArrowUpIcon from '@icons/icon-arrow-up.svg';
 import ArrowDownIcon from '@icons/icon-arrow-down.svg';
 
-import AssetCard from './asset-card';
+import AssetCard from './AssetCard';
 
 function compact(value: string): string {
   if (value.length <= 11) {
@@ -87,17 +90,18 @@ const Portfolio = () => {
       </ActionsStyled>
       <Section title="Assets">
         <ul>
-          {balance.map(({ asset_id, ...rest }) => (
+          {balance.map(({ asset_id, available, name }) => (
             <AssetCard
               key={asset_id}
+              name={name}
               asset_id={asset_id}
+              available={available}
               onClick={() => toggleActive(asset_id)}
-              {...rest}
             />
           ))}
         </ul>
       </Section>
-      <Section title="Transactions"></Section>
+      <Section title="Transactions" />
     </Window>
   );
 };

@@ -13,7 +13,7 @@ export const debounce = (fn: Function, ms: number): Function => {
   return (...args) => {
     clearTimeout(timer);
     timer = setTimeout(() => {
-      fn.apply(null, args);
+      fn(...args);
     }, ms);
   };
 };

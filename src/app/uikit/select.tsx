@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { isNil } from '@core/utils';
 
-import { Angle } from './angle';
+import Angle from './Angle';
 
 interface SelectProps {
   options: string[];
@@ -86,7 +86,7 @@ export const Select: React.FC<SelectProps> = ({
   const handleSelect: React.MouseEventHandler<HTMLElement> = ({
     currentTarget,
   }) => {
-    const index = parseInt(currentTarget.dataset.index);
+    const index = parseInt(currentTarget.dataset.index, 10);
     if (index !== selected) {
       onSelect(index);
       setOpened(false);
@@ -108,7 +108,9 @@ export const Select: React.FC<SelectProps> = ({
           {options.map((value, index) => {
             if (index === selected) {
               return (
-                <OptionActiveStyled key={index}>{value} </OptionActiveStyled>
+                <OptionActiveStyled key={index}>
+                  {value}
+                </OptionActiveStyled>
               );
             }
 

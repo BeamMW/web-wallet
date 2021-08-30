@@ -27,7 +27,7 @@ const DIMENSIONS = {
   },
 };
 
-export const Logo: React.FC<LogoProps> = ({ size = 'large' }) => {
+const Logo: React.FC<LogoProps> = ({ size = 'large' }) => {
   const viewBox = '0 0 159 139';
   const dimensions = DIMENSIONS[size];
   return (

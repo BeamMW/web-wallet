@@ -1,10 +1,8 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import AngleBackIcon from '@icons/icon-angle-back.svg';
-
-import Logo from './logo';
-import BackLink from './back-link';
+import Logo from './Logo';
+import BackButton from './BackButton';
 
 interface WindowProps {
   title?: string;
@@ -32,15 +30,15 @@ const ContainerStyled = styled.div<WindowProps>`
       to top,
       rgba(3, 91, 143, 0),
       ${({ color }) => {
-          switch (color) {
-            case 'blue':
-              return 'var(--color-blue)';
-            case 'purple':
-              return 'var(--color-purple)';
-            default:
-              return '#035b8f';
-          }
-        }}
+    switch (color) {
+      case 'blue':
+        return 'var(--color-blue)';
+      case 'purple':
+        return 'var(--color-purple)';
+      default:
+        return '#035b8f';
+    }
+  }}
         150%
     );
   }
@@ -77,7 +75,7 @@ export const Window: React.FC<WindowProps> = ({
       <Logo size="icon" />
     </FrameStyled>
     <TitleStyled>{title}</TitleStyled>
-    {onBackClick && <BackLink onClick={onBackClick} />}
+    {onBackClick && <BackButton onClick={onBackClick} />}
     {children}
   </ContainerStyled>
 );

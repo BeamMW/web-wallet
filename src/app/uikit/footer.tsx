@@ -17,11 +17,9 @@ interface FooterProps {
   margin?: 'large' | 'small';
 }
 
-export const Footer: React.FC<FooterProps> = ({
+const Footer: React.FC<FooterProps> = ({
   children,
   margin = 'large',
-}) => {
-  return <FooterStyled margin={margin}>{children}</FooterStyled>;
-};
+}) => <FooterStyled margin={margin}>{children}</FooterStyled>;
 
 export default Footer;

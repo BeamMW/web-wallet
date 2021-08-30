@@ -96,7 +96,11 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ value }) => {
         ))}
       </ListStyled>
       {!isNil(title) && (
-        <StrengthTitleStyled>{title} password</StrengthTitleStyled>
+        <StrengthTitleStyled>
+          {title}
+          {' '}
+          password
+        </StrengthTitleStyled>
       )}
     </ContainerStyled>
   );

@@ -18,6 +18,15 @@ export interface WalletEvent {
 type WalletEventHandler = {
   (event: WalletEvent): void;
 };
+
+function load<T>(name: string): Promise<T> {
+  return new Promise<T>((resolve) => {
+    extensionizer.storage.local.get(name, (result) => {
+      const value = result[name];
+      resolve(value);
+    });
+  });
+}
 export default class WasmWallet {
   private static instance: WasmWallet;
 
@@ -29,12 +38,52 @@ export default class WasmWallet {
     return this.instance;
   }
 
-  private wallet: any;
-  private mounted: boolean = false;
-  private created: boolean = false;
-  private eventHandler: WalletEventHandler;
+  static initSettings(seedConfirmed: boolean) {
+    extensionizer.storage.local.set({
+      settings: {
+        privacySetting: false,
+        saveLogsSetting: 0,
+        currencySetting: {
+          value: 0,
+          updated: new Date().getTime(),
+        },
+        dnsSetting: 'wallet-service.beam.mw',
+        ipSetting: '3.222.86.179:20000',
+        verificatedSetting: {
+          state: seedConfirmed,
+          isMessageClosed: false,
+          balanceWasPositive: false,
+          balanceWasPositiveMoreEn: false,
+        },
+        passwordCheck: true,
+      },
+    });
+  }
 
-  constructor() {}
+  static checkPassword(pass: string) {
+    return new Promise<boolean>((resolve, reject) => {
+      extensionizer.storage.local.get('wallet', ({ wallet }) => {
+        passworder.decrypt(pass, wallet).then(resolve).catch(reject);
+      });
+    });
+  }
+
+  static isAllowedWord(word: string): boolean {
+    return WasmWalletClient.IsAllowedWord(word);
+  }
+
+  static getSeedPhrase() {
+    const seed: string = WasmWalletClient.GeneratePhrase();
+    return seed.split(' ');
+  }
+
+  private wallet: any;
+
+  private mounted: boolean = false;
+
+  private created: boolean = false;
+
+  private eventHandler: WalletEventHandler;
 
   async init(handler: WalletEventHandler) {
     this.eventHandler = handler;
@@ -47,7 +96,7 @@ export default class WasmWallet {
       this.wallet = new WasmWalletClient(PATH_DB, pass, PATH_NODE);
     }
 
-    const responseHandler = response => {
+    const responseHandler = (response) => {
       const event = JSON.parse(response);
       console.info(event);
       this.eventHandler(event);
@@ -67,7 +116,7 @@ export default class WasmWallet {
   }
 
   mount() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       WasmWalletClient.MountFS(() => {
         this.mounted = true;
         resolve(true);
@@ -86,7 +135,7 @@ export default class WasmWallet {
   async create(seed: string, pass: string, seedConfirmed: boolean) {
     try {
       await this.saveWallet(seed, pass);
-      this.initSettings(seedConfirmed);
+      WasmWallet.initSettings(seedConfirmed);
 
       if (!this.mounted) {
         await this.mount();
@@ -110,12 +159,13 @@ export default class WasmWallet {
         return;
       }
 
-      this.wallet.stopWallet(data => {
+      this.wallet.stopWallet((data) => {
         const running = this.wallet.isRunning();
-        console.log('is running: ' + this.wallet.isRunning());
+        console.log(`is running: ${this.wallet.isRunning()}`);
         console.log('wallet stopped:', data);
 
         if (running) {
+          // eslint-disable-next-line
           reject(false);
         } else {
           resolve(true);
@@ -124,6 +174,7 @@ export default class WasmWallet {
     });
   }
 
+  // eslint-disable-next-line
   async saveWallet(seed: string, pass: string) {
     const data = await passworder.encrypt(pass, { seed });
     extensionizer.storage.local.remove(['wallet']);
@@ -131,32 +182,15 @@ export default class WasmWallet {
     return data;
   }
 
-  private load<T>(name: string): Promise<T> {
-    return new Promise<T>(resolve => {
-      extensionizer.storage.local.get(name, result => {
-        const value = result[name];
-        resolve(value);
-      });
-    });
-  }
-
   async checkWallet() {
     try {
-      const data = await this.load<string>('wallet');
+      const data = await load<string>('wallet');
       const result = !isNil(data);
       this.created = result;
       return result;
     } catch {
       return false;
     }
-  }
-
-  checkPassword(pass: string) {
-    return new Promise<boolean>((resolve, reject) => {
-      extensionizer.storage.local.get('wallet', ({ wallet }) => {
-        passworder.decrypt(pass, wallet).then(resolve).catch(reject);
-      });
-    });
   }
 
   send<T>(method: RPCMethod, params?: T) {
@@ -168,36 +202,5 @@ export default class WasmWallet {
         params,
       }),
     );
-  }
-
-  isAllowedWord(word: string): boolean {
-    return WasmWalletClient.IsAllowedWord(word);
-  }
-
-  getSeedPhrase() {
-    const seed: string = WasmWalletClient.GeneratePhrase();
-    return seed.split(' ');
-  }
-
-  initSettings(seedConfirmed: boolean) {
-    extensionizer.storage.local.set({
-      settings: {
-        privacySetting: false,
-        saveLogsSetting: 0,
-        currencySetting: {
-          value: 0,
-          updated: new Date().getTime(),
-        },
-        dnsSetting: 'wallet-service.beam.mw',
-        ipSetting: '3.222.86.179:20000',
-        verificatedSetting: {
-          state: seedConfirmed,
-          isMessageClosed: false,
-          balanceWasPositive: false,
-          balanceWasPositiveMoreEn: false,
-        },
-        passwordCheck: true,
-      },
-    });
   }
 }

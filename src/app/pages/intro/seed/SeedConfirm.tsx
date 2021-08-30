@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import { Button, Footer } from 'app/uikit';
 import ArrowIcon from '@icons/icon-arrow.svg';
 
-import SeedList from './seed-list';
+import SeedList from './SeedList';
 
 const SEED_CONFIRM_COUNT = 6;
 
@@ -17,12 +17,12 @@ const SeedConfirm: React.FC<SeedInputProps> = ({ seed, ids, onSubmit }) => {
   const [errors, setErrors] = useState(
     new Array(SEED_CONFIRM_COUNT).fill(null),
   );
-  const valid = errors.every(value => value === false);
+  const valid = errors.every((value) => value === false);
 
-  const handleInput: React.ChangeEventHandler<HTMLInputElement> = event => {
+  const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     event.preventDefault();
     const { name, value } = event.target;
-    const index = parseInt(name);
+    const index = parseInt(name, 10);
     const result = seed[index] !== value;
     const target = ids.indexOf(index);
 
