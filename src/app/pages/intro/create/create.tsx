@@ -20,8 +20,6 @@ import ArrowIcon from '@icons/icon-arrow.svg';
 const SEED_CONFIRM_COUNT = 6;
 
 const WarningListStyled = styled.ul`
-  list-style: none;
-
   > li {
     position: relative;
     height: 34px;

@@ -12,6 +12,7 @@
     "no-use-before-define": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "react/prop-types": "off",
+    "react/require-default-props": "off",
     "react/no-array-index-key": "off",
     "react/jsx-props-no-spreading": "off",
     "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],

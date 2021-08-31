@@ -4,7 +4,7 @@ import { isNil } from '@core/utils';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
-  variant?: 'regular' | 'gray';
+  variant?: 'regular' | 'gray' | 'send';
   margin?: 'none' | 'large';
 }
 
@@ -42,6 +42,13 @@ const InputGrayStyled = styled(InputStyled)`
   border-color: ${({ error }) => (isNil(error) ? 'rgba(255,255,255,0.3)' : 'var(--color-red)')};
 `;
 
+const InputSendStyled = styled(InputGrayStyled)`
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.34px;
+  color: var(--color-purple);
+`;
+
 const ErrorStyled = styled.div`
   position: absolute;
   top: 33px;
@@ -61,6 +68,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const InputComponent = {
       regular: InputRegularStyled,
       gray: InputGrayStyled,
+      send: InputSendStyled,
     }[variant];
 
     return (

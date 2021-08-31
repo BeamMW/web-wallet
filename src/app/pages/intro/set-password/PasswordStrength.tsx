@@ -48,7 +48,6 @@ const ContainerStyled = styled.div`
 `;
 
 const ListStyled = styled.ol`
-  list-style: none;
   display: flex;
   align-content: stretch;
   margin: 0 -4px;

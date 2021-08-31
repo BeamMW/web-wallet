@@ -61,6 +61,10 @@ const ActionsStyled = styled.div`
   }
 `;
 
+const ListStyled = styled.ul`
+  margin: 0 -12px;
+`;
+
 const Portfolio = () => {
   const [active, setActive] = useState(null);
   const balance = useStore($balance);
@@ -81,15 +85,15 @@ const Portfolio = () => {
   return (
     <Window title="Wallet">
       <ActionsStyled>
-        <Button color="purple" icon={ArrowUpIcon} onClick={handleSendClick}>
+        <Button pallete="purple" icon={ArrowUpIcon} onClick={handleSendClick}>
           send
         </Button>
-        <Button color="blue" icon={ArrowDownIcon} onClick={handleSendClick}>
+        <Button pallete="blue" icon={ArrowDownIcon} onClick={handleSendClick}>
           receive
         </Button>
       </ActionsStyled>
       <Section title="Assets">
-        <ul>
+        <ListStyled>
           {balance.map(({ asset_id, available, name }) => (
             <AssetCard
               key={asset_id}
@@ -99,7 +103,7 @@ const Portfolio = () => {
               onClick={() => toggleActive(asset_id)}
             />
           ))}
-        </ul>
+        </ListStyled>
       </Section>
       <Section title="Transactions" />
     </Window>

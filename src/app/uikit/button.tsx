@@ -4,7 +4,7 @@ import { isNil } from '@core/utils';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.FC;
-  color?: 'green' | 'ghost' | 'purple' | 'blue';
+  pallete?: 'green' | 'ghost' | 'purple' | 'blue';
   variant?: 'regular' | 'ghost' | 'link' | 'icon';
 }
 
@@ -17,7 +17,7 @@ const ButtonStyled = styled.button<ButtonProps>`
   padding: 12px 24px;
   border: none;
   border-radius: 22px;
-  background-color: ${({ color }) => `var(--color-${color})`};
+  background-color: ${({ pallete }) => `var(--color-${pallete})`};
   text-align: center;
   font-weight: bold;
   font-size: 14px;
@@ -44,18 +44,6 @@ const ButtonStyled = styled.button<ButtonProps>`
   }
 `;
 
-const LinkButtonStyled = styled.button<ButtonProps>`
-  display: inline-block;
-  margin: 20px 0;
-  border: none;
-  background-color: transparent;
-  font-size: 14px;
-  font-weight: 700;
-  color: ${({ color }) => `var(--color-${color})`};
-  cursor: pointer;
-  text-decoration: none;
-`;
-
 const GhostButtonStyled = styled(ButtonStyled)`
   background-color: var(--color-ghost);
   color: white;
@@ -67,29 +55,41 @@ const GhostButtonStyled = styled(ButtonStyled)`
   }
 `;
 
-const IconButtonStyled = styled.button`
+const IconButtonStyled = styled.button<ButtonProps>`
+  display: inline-block;
   margin: 0;
   padding: 0;
   background-color: transparent;
+  border: none;
+  cursor: pointer;
 `;
+
+const LinkButtonStyled = styled(IconButtonStyled)`
+  margin: 20px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: ${({ pallete }) => `var(--color-${pallete})`};
+`;
+
+const VARIANTS = {
+  regular: ButtonStyled,
+  ghost: GhostButtonStyled,
+  link: LinkButtonStyled,
+  icon: IconButtonStyled,
+};
 
 const Button: React.FC<ButtonProps> = ({
   type = 'button',
-  color = 'green',
+  pallete = 'green',
   variant = 'regular',
   icon: IconComponent,
   children,
   ...rest
 }) => {
-  const ButtonComponent = {
-    regular: ButtonStyled,
-    ghost: GhostButtonStyled,
-    link: LinkButtonStyled,
-    icon: IconButtonStyled,
-  }[variant];
+  const ButtonComponent = VARIANTS[variant];
 
   return (
-    <ButtonComponent type={type} color={color} {...rest}>
+    <ButtonComponent type={type} pallete={pallete} {...rest}>
       {!isNil(IconComponent) && <IconComponent />}
       {children}
     </ButtonComponent>

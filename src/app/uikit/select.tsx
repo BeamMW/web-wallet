@@ -18,7 +18,6 @@ const ContainerStyled = styled.div`
 `;
 
 const SelectStyled = styled.ul`
-  list-style: none;
   position: absolute;
   top: 100%;
   right: 0;

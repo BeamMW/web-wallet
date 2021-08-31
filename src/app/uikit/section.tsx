@@ -1,36 +1,24 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
+import Title from './Title';
+
 interface SectionProps {
   title?: string;
   variant?: 'regular' | 'gray';
 }
 
-const TitleStyled = styled.h3`
-  margin: 0;
-  margin-bottom: 20px;
-  padding-left: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  text-align: left;
-  letter-spacing: 1px;
-  color: white;
-`;
-
 const SectionStyled = styled.div`
-  margin: 0 -30px;
-  padding: 20px 8px 0;
+  margin: 0 -10px;
+  padding-top: 20px;
 `;
 
-const SectionGrayStyled = styled(SectionStyled)`
+const SectionGrayStyled = styled.div`
+  margin: 0 -30px;
   margin-bottom: 20px;
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.05);
-
-  > ${TitleStyled} {
-    padding-left: 0;
-  }
+  text-align: left;
 `;
 
 const Section: React.FC<SectionProps> = ({
@@ -45,7 +33,7 @@ const Section: React.FC<SectionProps> = ({
 
   return (
     <SectionComponent>
-      <TitleStyled>{title}</TitleStyled>
+      <Title>{title}</Title>
       {children}
     </SectionComponent>
   );

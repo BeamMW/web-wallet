@@ -3,11 +3,12 @@ import { styled } from '@linaria/react';
 
 import Logo from './Logo';
 import BackButton from './BackButton';
+import Title from './Title';
 
 interface WindowProps {
   title?: string;
   blur?: boolean;
-  color?: 'default' | 'blue' | 'purple';
+  pallete?: 'default' | 'blue' | 'purple';
   onBackClick?: React.MouseEventHandler;
 }
 
@@ -29,8 +30,8 @@ const ContainerStyled = styled.div<WindowProps>`
     background-image: linear-gradient(
       to top,
       rgba(3, 91, 143, 0),
-      ${({ color }) => {
-    switch (color) {
+      ${({ pallete }) => {
+    switch (pallete) {
       case 'blue':
         return 'var(--color-blue)';
       case 'purple':
@@ -54,27 +55,18 @@ const FrameStyled = styled.div`
   transform: translateX(-50%);
 `;
 
-const TitleStyled = styled.h2`
-  line-height: 72px;
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-`;
-
 export const Window: React.FC<WindowProps> = ({
   title,
   blur,
-  color = 'default',
+  pallete = 'default',
   onBackClick,
   children,
 }) => (
-  <ContainerStyled blur={blur} color={color}>
+  <ContainerStyled blur={blur} pallete={pallete}>
     <FrameStyled>
       <Logo size="icon" />
     </FrameStyled>
-    <TitleStyled>{title}</TitleStyled>
+    <Title variant="heading">{title}</Title>
     {onBackClick && <BackButton onClick={onBackClick} />}
     {children}
   </ContainerStyled>
