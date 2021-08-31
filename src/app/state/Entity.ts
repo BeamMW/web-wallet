@@ -1,7 +1,7 @@
-import { ChangeEvent } from '@core/types';
+import { WalletChangeEvent } from '@core/types';
 import { createEvent, restore } from 'effector';
 
-export default class Entity<T, E extends ChangeEvent> {
+export default class Entity<T, E extends WalletChangeEvent> {
   private reset = createEvent<T[]>();
 
   private append = createEvent<T[]>();

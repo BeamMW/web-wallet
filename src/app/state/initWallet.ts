@@ -14,16 +14,16 @@ import {
 import { isNil } from '@core/utils';
 import { createAddress, getWalletStatus } from '@core/api';
 
+import { setTotals, $$assets, $$transactions } from '@pages/main/portfolio/model';
+
 import {
-  View, setView, $onboarding, setOnboarding,
+  View, setView, $onboarding, setOnboarding, sendWalletEvent,
 } from './shared';
-import { setTotals, $$assets, $$transactions } from './portfolio';
 
 import {
   $ready,
   setReady,
   setSyncProgress,
-  sendWalletEvent,
   setLoginPhase,
   LoginPhase,
 } from './intro';
@@ -49,10 +49,6 @@ function handleSyncProgress(
   }
 }
 
-function handleWalletStatus({ totals }: WalletStatus) {
-  setTotals(totals);
-}
-
 sample({
   source: $ready,
   clock: sendWalletEvent,
@@ -61,17 +57,19 @@ sample({
       case RPCEvent.SYNC_PROGRESS:
         handleSyncProgress(ready, result);
         break;
-      case RPCEvent.ASSETS_CHANGED:
-        $$assets.push(result as AssetsEvent);
-        break;
       case RPCEvent.SYSTEM_STATE:
         getWalletStatus();
         break;
+      case RPCMethod.GetWalletStatus: {
+        const { totals } = result as WalletStatus;
+        setTotals(totals);
+        break;
+      }
+      case RPCEvent.ASSETS_CHANGED:
+        $$assets.push(result as AssetsEvent);
+        break;
       case RPCEvent.TXS_CHANGED:
         $$transactions.push(result as TxsEvent);
-        break;
-      case RPCMethod.GetWalletStatus:
-        handleWalletStatus(result as WalletStatus);
         break;
       case RPCMethod.CreateAddress:
         break;

@@ -9,7 +9,7 @@ import {
   TxsEvent,
   WalletTotal,
 } from '@core/types';
-import Entity from './Entity';
+import Entity from '../../../state/Entity';
 
 export interface Balance {
   name: string;

@@ -1,7 +1,5 @@
 import { createEvent, restore } from 'effector';
 
-import { WalletEvent } from '@core/WasmWallet';
-
 export enum LoginPhase {
   LOADING,
   ACTIVE,
@@ -12,8 +10,6 @@ export enum LoginPhase {
 export const setSeed = createEvent<string[]>();
 export const setReady = createEvent<boolean>();
 export const setSyncProgress = createEvent<[number, number]>();
-
-export const sendWalletEvent = createEvent<WalletEvent>();
 
 export const $seed = restore(setSeed, null);
 export const $ready = restore(setReady, false);

@@ -1,5 +1,7 @@
 import { createEvent, restore } from 'effector';
 
+import { WalletEvent } from '@core/WasmWallet';
+
 export const GROTHS_IN_BEAM = 100000000;
 export const FEE_DEFAULT = 100000;
 
@@ -26,3 +28,5 @@ export const $view = restore(setView, View.LOGIN);
 
 export const setOnboarding = createEvent<boolean>();
 export const $onboarding = restore(setOnboarding, null);
+
+export const sendWalletEvent = createEvent<WalletEvent>();

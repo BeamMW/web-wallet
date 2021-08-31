@@ -6,6 +6,7 @@ export enum RPCMethod {
   GetAddressList = 'addr_list',
   CreateAddress = 'create_address',
   CalculateChange = 'calc_change',
+  ValidateAddress = 'validate_address',
   GetTXList = 'tx_list',
   Send = 'tx_send',
 }
@@ -68,6 +69,25 @@ export interface Asset {
   ownerId: string;
 }
 
+export interface Change {
+  asset_change: number;
+  asset_change_str: string;
+  change: number;
+  change_str: string;
+  explicit_fee: number;
+}
+
+export enum TransactionType {
+  regular = 'Regular',
+  maxPrivacy = 'Max Privacy',
+  offline = 'Offline',
+}
+export interface Validation {
+  is_mine: boolean;
+  is_valid: boolean;
+  type: TransactionType;
+}
+
 export interface SyncProgress extends SyncHash {
   sync_requests_done: number;
   sync_requests_total: number;
@@ -106,14 +126,14 @@ export interface Transaction {
   value: number;
 }
 
-export interface ChangeEvent {
+export interface WalletChangeEvent {
   change: number;
   change_str: string;
 }
-export interface AssetsEvent extends ChangeEvent {
+export interface AssetsEvent extends WalletChangeEvent {
   assets: Asset[];
 }
 
-export interface TxsEvent extends ChangeEvent {
+export interface TxsEvent extends WalletChangeEvent {
   txs: Transaction[];
 }

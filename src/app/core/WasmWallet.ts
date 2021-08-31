@@ -10,9 +10,9 @@ const PATH_DB = '/beam_wallet/wallet.db';
 const PATH_NODE = 'eu-node01.masternet.beam.mw:8200';
 
 let WasmWalletClient;
-export interface WalletEvent {
+export interface WalletEvent<T = any> {
   id: RPCMethod | RPCEvent;
-  result: any;
+  result: T;
 }
 
 type WalletEventHandler = {

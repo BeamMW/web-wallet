@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
-import { $balance, $transactions } from '@state/portfolio';
 import {
   Button, Window, Section,
 } from 'app/uikit';
@@ -12,6 +11,8 @@ import { setView, View, GROTHS_IN_BEAM } from '@state/shared';
 
 import ArrowUpIcon from '@icons/icon-arrow-up.svg';
 import ArrowDownIcon from '@icons/icon-arrow-down.svg';
+
+import { $balance, $transactions } from './model';
 
 import AssetCard from './AssetCard';
 

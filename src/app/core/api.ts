@@ -1,17 +1,17 @@
 import WasmWallet from './WasmWallet';
 import { RPCMethod } from './types';
 
-const sendRequest = (method: RPCMethod, params?: any): void => {
+const sendRequest = (method: RPCMethod, params?: unknown): void => {
   WasmWallet.getInstance().send(method, params);
 };
 
-export const getWalletStatus = () => {
+export function getWalletStatus() {
   sendRequest(RPCMethod.GetWalletStatus);
-};
+}
 
-export const createAddress = () => {
+export function createAddress() {
   sendRequest(RPCMethod.CreateAddress);
-};
+}
 
 export interface CalculateChangeParams {
   amount: number;
@@ -20,9 +20,13 @@ export interface CalculateChangeParams {
   is_push_transaction: boolean;
 }
 
-export const calculateChange = (params: CalculateChangeParams) => {
+export function calculateChange(params: CalculateChangeParams) {
   sendRequest(RPCMethod.CalculateChange, params);
-};
+}
+
+export function validateAddress(address: string) {
+  sendRequest(RPCMethod.ValidateAddress, { address });
+}
 
 export interface SendTransactionParams {
   value: number;
@@ -34,6 +38,6 @@ export interface SendTransactionParams {
   offline?: boolean;
 }
 
-export const sendTransaction = (params: SendTransactionParams) => {
+export function sendTransaction(params: SendTransactionParams) {
   sendRequest(RPCMethod.Send, params);
-};
+}
