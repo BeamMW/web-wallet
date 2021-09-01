@@ -10,11 +10,12 @@ import { GROTHS_IN_BEAM } from '@app/model';
 import { useStore } from 'effector-react';
 
 import {
-  $amount, $asset, $options, $selected, onAmountInput, setSelected,
+  $amount, $amountError, $asset, $options, $selected, onAmountInput, setSelected,
 } from './model';
 
 const selectClassName = css`
-  align-self: center;
+  align-self: flex-start;
+  margin-top: 10px;
 `;
 
 const RowStyled = styled.div`
@@ -29,6 +30,7 @@ const containerStyle = css`
 
 const AmountInput: React.FC = () => {
   const amount = useStore($amount);
+  const amountError = useStore($amountError);
   const selected = useStore($selected);
   const options = useStore($options);
   const asset = useStore($asset);
@@ -37,7 +39,15 @@ const AmountInput: React.FC = () => {
   return (
     <Section title="Amount" variant="gray">
       <RowStyled>
-        <Input variant="send" value={amount} maxLength={17} className={containerStyle} onInput={onAmountInput} />
+        <Input
+          variant="send"
+          error={amountError}
+          value={amount}
+          maxLength={16}
+          placeholder="0"
+          className={containerStyle}
+          onInput={onAmountInput}
+        />
         <Select
           options={options}
           selected={selected}

@@ -6,13 +6,15 @@ import { debounce } from 'patronum/debounce';
 import { spread } from 'patronum/spread';
 
 import { calculateChange, validateAddress } from '@core/api';
-import { FEE_DEFAULT, GROTHS_IN_BEAM, sendWalletEvent } from '@app/model';
+import {
+  AMOUNT_MAX, FEE_DEFAULT, GROTHS_IN_BEAM, sendWalletEvent,
+} from '@app/model';
 
 import {
   Change, RPCMethod, TransactionType, Validation,
 } from '@app/core/types';
 import { WalletEvent } from '@app/core/WasmWallet';
-import { $balance } from '../portfolio/model';
+import { $balance, Balance } from '../portfolio/model';
 
 type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
 
@@ -57,41 +59,53 @@ spread({
 
 /* Asset Select */
 
+const ASSET_BLANK: Balance = {
+  name: '',
+  short: '',
+  asset_id: 0,
+  available: 0,
+  maturing: 0,
+  receiving: 0,
+  sending: 0,
+};
+
 export const setSelected = createEvent<number>();
 
 export const $selected = restore(setSelected, 0);
-export const $asset = combine($balance, $selected, (array, index) => array[index]);
+export const $asset = combine($balance, $selected,
+  (array, index) => (array.length > 0 ? array[index] : ASSET_BLANK));
 
 /* Amount Field */
 
 export const onAmountInput = createEvent<ReactChangeEvent>();
 
-const REG_AMOUNT = /^(\d+\.?)?(\d+)?$/;
+const REG_AMOUNT = /^(?:[1-9]\d*|0)?(?:\.(\d+)?)?$/;
 
-const setAmount = createEvent<string>();
-
-// should be a valid number
-const setAmountSafe = onAmountInput
+const setAmount = onAmountInput
   .map(getValue)
+  // should be a valid number
   .filter({
     fn: (value) => REG_AMOUNT.test(value),
+  })
+  // cap at max amount
+  .map((value) => {
+    if (value === '0') {
+      return '';
+    }
+
+    return parseFloat(value) > AMOUNT_MAX
+      ? AMOUNT_MAX.toString() : value;
   });
 
-// should not be higher than available amount
-sample({
-  source: $asset,
-  clock: setAmountSafe,
-  fn: ({ available }, value) => {
-    const total = available / GROTHS_IN_BEAM;
-    return parseFloat(value) > total
-      ? total.toString() : value;
-  },
-  target: setAmount,
+const setAmountPositive = setAmount.filter({
+  fn: (value) => parseFloat(value) > 0,
 });
 
-export const $amount = restore(setAmount, '');
+const setAmountDebounced = debounce({
+  source: setAmountPositive,
+  timeout: 200,
+});
 
-const setAmountDebounced = debounce({ source: setAmount, timeout: 200 });
 const calculateChangeFx = createEffect((params) => calculateChange(params));
 
 // call CalculateChange on setAmount w/ debounce
@@ -116,7 +130,14 @@ const setFee = guard({
 })
   .map(({ result }) => result.explicit_fee);
 
-export const $fee = restore(setFee, 0);
+export const $fee = restore(setFee, FEE_DEFAULT);
+export const $amount = restore(setAmount, '');
+export const $amountError = combine($asset, $amount, $fee, ({ available }, amount, fee) => {
+  const groths = parseFloat(amount) * GROTHS_IN_BEAM;
+  const total = groths + fee;
+  return total > available
+    ? `Insufficient funds: you would need ${total / GROTHS_IN_BEAM} BEAM to complete the transaction` : null;
+});
 
 // misc
 

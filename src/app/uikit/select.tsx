@@ -22,6 +22,7 @@ const SelectStyled = styled.ul`
   top: 100%;
   right: 0;
   z-index: 1;
+  margin-top: 8px;
   padding: 10px 0;
   border-radius: 10px;
   background-color: var(--color-select);
@@ -53,6 +54,7 @@ const LinkStyled = styled.a`
   cursor: pointer;
   text-decoration: none;
   color: white;
+  white-space: nowrap;
 `;
 
 const TitleStyled = styled.span`

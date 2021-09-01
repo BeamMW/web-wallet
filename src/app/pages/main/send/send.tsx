@@ -73,7 +73,6 @@ const Send = () => {
             <Amount />
             <Section title="Comment" variant="gray">
               <Input variant="gray" />
-              { fee }
             </Section>
             <Button pallete="purple" icon={ArrowIcon} type="submit">
               next
