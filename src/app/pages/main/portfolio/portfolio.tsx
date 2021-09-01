@@ -7,7 +7,7 @@ import {
   Button, Window, Section,
 } from 'app/uikit';
 import { isNil } from '@core/utils';
-import { setView, View, GROTHS_IN_BEAM } from '@state/shared';
+import { setView, View, GROTHS_IN_BEAM } from '@app/model';
 
 import ArrowUpIcon from '@icons/icon-arrow-up.svg';
 import ArrowDownIcon from '@icons/icon-arrow-down.svg';

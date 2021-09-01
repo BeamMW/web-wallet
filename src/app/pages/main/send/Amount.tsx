@@ -2,10 +2,13 @@ import React from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
-import { Input, Section, Select } from '@uikit';
-import { GROTHS_IN_BEAM } from '@app/state/shared';
-import Title from '@app/uikit/Title';
+import {
+  Input, Section, Select, Title,
+} from '@uikit';
+import { GROTHS_IN_BEAM } from '@app/model';
+
 import { useStore } from 'effector-react';
+
 import {
   $amount, $asset, $options, $selected, onAmountInput, setSelected,
 } from './model';

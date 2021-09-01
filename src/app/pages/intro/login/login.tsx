@@ -1,10 +1,9 @@
 import React from 'react';
 import { useStore } from 'effector-react';
 
-import { $phase, LoginPhase } from '@state/intro';
-
 import LoginActive from './LoginActive';
 import LoginRestore from './LoginRestore';
+import { $phase, LoginPhase } from './model';
 
 const LoginLoading: React.FC = () => <div>Loading</div>;
 

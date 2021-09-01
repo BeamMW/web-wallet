@@ -5,11 +5,17 @@ import {
 import {
   Asset,
   AssetsEvent,
+  RPCEvent,
+  RPCMethod,
   Transaction,
   TxsEvent,
+  WalletStatus,
   WalletTotal,
 } from '@core/types';
-import Entity from '../../../state/Entity';
+
+import Entity from '@core/Entity';
+import { handleWalletEvent } from '@app/model';
+import { getWalletStatus } from '@app/core/api';
 
 export interface Balance {
   name: string;
@@ -31,12 +37,11 @@ const BEAM_METADATA: Partial<Asset> = {
 export const $$assets = new Entity<Asset, AssetsEvent>('assets', 'asset_id');
 export const $$transactions = new Entity<Transaction, TxsEvent>('txs', 'txId');
 
-export const $assets = $$assets.getStore();
-export const $transactions = $$transactions.getStore();
-
 export const setTotals = createEvent<WalletTotal[]>();
 
 export const $totals = restore(setTotals, []);
+export const $assets = $$assets.getStore();
+export const $transactions = $$transactions.getStore();
 
 export const $balance: Store<Balance[]> = combine($totals, $assets, (totals, assets) => (
   totals.map(({
@@ -59,3 +64,27 @@ export const $balance: Store<Balance[]> = combine($totals, $assets, (totals, ass
     };
   })
 ));
+
+// receive Wallet Status
+handleWalletEvent<WalletStatus>(
+  RPCMethod.GetWalletStatus,
+  ({ totals }) => setTotals(totals),
+);
+
+// receive System State
+handleWalletEvent<any>(
+  RPCEvent.SYSTEM_STATE,
+  () => getWalletStatus(),
+);
+
+// receive Assets
+handleWalletEvent<AssetsEvent>(
+  RPCEvent.ASSETS_CHANGED,
+  (payload) => $$assets.push(payload),
+);
+
+// receive Transactions
+handleWalletEvent<TxsEvent>(
+  RPCEvent.TXS_CHANGED,
+  (payload) => $$transactions.push(payload),
+);

@@ -1,23 +1,28 @@
 import React from 'react';
 import {
-  combine, createEffect, createEvent, forward, guard, restore, sample,
+  combine, createEffect, createEvent, Event, forward, guard, restore, sample,
 } from 'effector';
 import { debounce } from 'patronum/debounce';
+import { spread } from 'patronum/spread';
 
 import { calculateChange, validateAddress } from '@core/api';
-import { FEE_DEFAULT, GROTHS_IN_BEAM, sendWalletEvent } from '@app/state/shared';
+import { FEE_DEFAULT, GROTHS_IN_BEAM, sendWalletEvent } from '@app/model';
 
-import { Change, RPCMethod, Validation } from '@app/core/types';
+import {
+  Change, RPCMethod, TransactionType, Validation,
+} from '@app/core/types';
 import { WalletEvent } from '@app/core/WasmWallet';
 import { $balance } from '../portfolio/model';
 
+type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
+
 const getValue = ({ target }: React.ChangeEvent<HTMLInputElement>) => target.value;
 
-// address
+/* Adress Field */
 
-export const onAddressInput = createEvent<ChangeEvent>();
+export const onAddressInput = createEvent<ReactChangeEvent>();
 export const setAddress = onAddressInput.map(getValue);
-export const setAddressType = createEvent<string>();
+export const setAddressType = createEvent<TransactionType>();
 export const setAddressValid = createEvent<boolean>();
 
 export const $address = restore(setAddress, '');
@@ -33,28 +38,33 @@ forward({
   to: validateAddressFx,
 });
 
+type ValidationEvent = WalletEvent<Validation>;
+
 // receive Validate data
-guard({
-  source: sendWalletEvent,
+const onValidate = guard({
+  source: sendWalletEvent as Event<ValidationEvent>,
   filter: ({ id }) => id === RPCMethod.ValidateAddress,
 })
-  .watch(({ result }: WalletEvent<Validation>) => {
-    setAddressType(result.type);
-    setAddressValid(result.is_valid);
-  });
+  .map(({ result }) => result);
 
-// asset
+spread({
+  source: onValidate,
+  targets: {
+    type: $addressType,
+    is_valid: $addressValid,
+  },
+});
+
+/* Asset Select */
 
 export const setSelected = createEvent<number>();
 
 export const $selected = restore(setSelected, 0);
 export const $asset = combine($balance, $selected, (array, index) => array[index]);
 
-// amount
+/* Amount Field */
 
-interface ChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
-
-export const onAmountInput = createEvent<ChangeEvent>();
+export const onAmountInput = createEvent<ReactChangeEvent>();
 
 const REG_AMOUNT = /^(\d+\.?)?(\d+)?$/;
 
@@ -97,12 +107,14 @@ sample({
   target: calculateChangeFx,
 });
 
+type ChangeEvent = WalletEvent<Change>;
+
 // receive Change data
 const setFee = guard({
-  source: sendWalletEvent,
+  source: sendWalletEvent as Event<ChangeEvent>,
   filter: ({ id }) => id === RPCMethod.CalculateChange,
 })
-  .map(({ result }: WalletEvent<Change>) => result.explicit_fee);
+  .map(({ result }) => result.explicit_fee);
 
 export const $fee = restore(setFee, 0);
 

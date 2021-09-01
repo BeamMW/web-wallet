@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 
-import { $view } from '@state/shared';
-import initWallet from '@app/state/initWallet';
-import getCurrentView from '@app/core/get-current-view';
+import { $view, sendWalletEvent, setOnboarding } from '@app/model';
+import getCurrentView from '@app/core/getCurrentView';
 import { styled } from '@linaria/react';
+import WasmWallet from './core/WasmWallet';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 css`
@@ -131,6 +131,18 @@ const ContainerStyled = styled.div`
   position: relative;
   padding-top: 50px;
 `;
+
+const wallet = WasmWallet.getInstance();
+
+async function initWallet() {
+  wallet.init(sendWalletEvent);
+  try {
+    const result = await wallet.checkWallet();
+    setOnboarding(!result);
+  } catch {
+    setOnboarding(true);
+  }
+}
 
 const App = () => {
   useEffect(() => {

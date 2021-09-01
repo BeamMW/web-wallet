@@ -1,13 +1,13 @@
 import React, { useState, useRef } from 'react';
 
 import WasmWallet from '@core/WasmWallet';
-import { setView, View, ErrorMessage } from '@state/shared';
-import { setLoginPhase, LoginPhase } from '@state/intro';
+import { setView, View, ErrorMessage } from '@app/model';
 import {
   Popup, Button, Input, Splash,
 } from 'app/uikit';
 
 import WalletSmallIcon from '@icons/icon-wallet-small.svg';
+import { LoginPhase, setLoginPhase } from './model';
 
 const wallet = WasmWallet.getInstance();
 

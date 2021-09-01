@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { setSeed } from '@state/intro';
-import { View, setView } from '@state/shared';
+import { View, setView, setSeed } from '@app/model';
 import { Window } from 'app/uikit';
 import { SeedRestore } from '@pages/intro/seed';
 

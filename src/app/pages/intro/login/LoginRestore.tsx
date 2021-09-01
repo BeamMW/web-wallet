@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 
 import WasmWallet from '@core/WasmWallet';
-import {
-  $phase, setSeed, setLoginPhase, LoginPhase,
-} from '@state/intro';
-import { setView, View } from '@state/shared';
+import { setSeed, setView, View } from '@app/model';
 import {
   Popup, Splash, Button,
 } from 'app/uikit';
 
 import addIcon from '@icons/icon-add.svg';
+
+import { $phase, LoginPhase, setLoginPhase } from './model';
 
 const LoginRestore: React.FC = () => {
   const [warningVisible, toggleWarning] = useState(false);

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { setView, View } from '@state/shared';
+import { setView, View } from '@app/model';
 
 const MENU_ITEMS = [
   {

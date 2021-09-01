@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
-import { GROTHS_IN_BEAM } from '@state/shared';
+import { GROTHS_IN_BEAM } from '@app/model';
 
 import { WalletTotal } from '@core/types';
 

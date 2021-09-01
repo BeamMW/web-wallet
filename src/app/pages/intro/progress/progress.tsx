@@ -3,13 +3,12 @@ import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import { Button, Splash, Footer } from 'app/uikit';
-import { setView, View } from '@state/shared';
-import { $syncProgress, $syncPercent } from '@state/intro';
-
+import { setView, View } from '@app/model';
 import CancelIcon from '@icons/icon-cancel.svg';
 import WasmWallet from '@core/WasmWallet';
 
 import ProgressBar from './ProgressBar';
+import { $syncPercent, $syncProgress } from './model';
 
 const TitleStyled = styled.h2`
   margin: 0;

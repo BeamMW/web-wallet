@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
 
-import { setView, View } from '@state/shared';
+import { setView, View } from '@app/model';
 import {
   Window, Section, Input, Button,
 } from 'app/uikit';
@@ -11,6 +11,7 @@ import Title from '@app/uikit/Title';
 import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';
 import Amount from './Amount';
+
 import {
   $address, $addressType, $fee, onAddressInput,
 } from './model';

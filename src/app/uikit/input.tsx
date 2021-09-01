@@ -8,7 +8,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   margin?: 'none' | 'large';
 }
 
-export const ContainerStyled = styled.div<InputProps>`
+const ContainerStyled = styled.div<InputProps>`
   position: relative;
   margin-bottom: ${({ margin }) => (margin === 'none' ? 0 : 50)}px;
 `;

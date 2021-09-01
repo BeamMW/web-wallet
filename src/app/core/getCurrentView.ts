@@ -2,7 +2,7 @@ import {
   Login, Restore, Create, SetPassword, Progress,
 } from '@pages/intro';
 import { Portfolio, Send } from '@pages/main';
-import { View } from '@state/shared';
+import { View } from '@app/model';
 
 const ROUTES = {
   [View.LOGIN]: Login,

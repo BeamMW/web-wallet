@@ -6,9 +6,8 @@ import {
   Window, Popup, Button, Footer,
 } from 'app/uikit';
 import { SeedConfirm } from '@pages/intro/seed';
-import { $seed } from '@state/intro';
 // eslint-disable-next-line
-import { View, setView, $onboarding } from '@state/shared';
+import { View, setView, $onboarding, $seed } from '@app/model';
 
 import EyeIcon from '@icons/icon-eye.svg';
 import PassIcon from '@icons/icon-pass.svg';
