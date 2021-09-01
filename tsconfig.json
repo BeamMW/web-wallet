@@ -15,6 +15,7 @@
       "@app/*": ["app/*"],
       "@core/*": ["app/core/*"],
       "@uikit": ["app/uikit"],
+      "@uikit/*": ["app/uikit/*"],
       "@pages/*": ["app/pages/*"],
       "@state/*": ["app/state/*"],
       "@icons/*": ["app/icons/*"],
