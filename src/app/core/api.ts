@@ -1,16 +1,19 @@
-import WasmWallet from './WasmWallet';
-import { RPCMethod } from './types';
+import { sendRequest } from '@app/model';
 
-const sendRequest = (method: RPCMethod, params?: unknown): void => {
-  WasmWallet.getInstance().send(method, params);
-};
+import {
+  AddressValidation, ChangeData, RPCMethod, WalletStatus,
+} from './types';
 
 export function getWalletStatus() {
-  sendRequest(RPCMethod.GetWalletStatus);
+  return sendRequest<WalletStatus>(RPCMethod.GetWalletStatus);
 }
 
 export function createAddress() {
   sendRequest(RPCMethod.CreateAddress);
+}
+
+export function validateAddress(address: string) {
+  return sendRequest<AddressValidation>(RPCMethod.ValidateAddress, { address });
 }
 
 export interface CalculateChangeParams {
@@ -21,11 +24,7 @@ export interface CalculateChangeParams {
 }
 
 export function calculateChange(params: CalculateChangeParams) {
-  sendRequest(RPCMethod.CalculateChange, params);
-}
-
-export function validateAddress(address: string) {
-  sendRequest(RPCMethod.ValidateAddress, { address });
+  return sendRequest<ChangeData>(RPCMethod.CalculateChange, params);
 }
 
 export interface SendTransactionParams {
@@ -39,5 +38,5 @@ export interface SendTransactionParams {
 }
 
 export function sendTransaction(params: SendTransactionParams) {
-  sendRequest(RPCMethod.Send, params);
+  return sendRequest(RPCMethod.SendTransaction, params);
 }

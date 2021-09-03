@@ -20,7 +20,7 @@ const ButtonStyled = styled.button<ButtonProps>`
   background-color: ${({ pallete }) => `var(--color-${pallete})`};
   text-align: center;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--color-dark-blue);
 
   &:hover,

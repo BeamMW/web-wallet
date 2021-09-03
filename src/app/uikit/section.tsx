@@ -11,6 +11,7 @@ interface SectionProps {
 const SectionStyled = styled.div`
   margin: 0 -10px;
   padding-top: 20px;
+  text-align: left;
 `;
 
 const SectionGrayStyled = styled.div`

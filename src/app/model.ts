@@ -1,6 +1,6 @@
 import { createEvent, restore } from 'effector';
 
-import { WalletEvent } from '@core/WasmWallet';
+import WasmWallet, { WalletEvent } from '@core/WasmWallet';
 import { RPCEvent, RPCMethod } from './core/types';
 
 export const GROTHS_IN_BEAM = 100000000;
@@ -21,7 +21,8 @@ export enum View {
   PROGRESS,
   // main
   PORTFOLIO,
-  SEND,
+  SEND_FORM,
+  SEND_CONFIRM,
   UTXO,
 }
 
@@ -40,4 +41,24 @@ export function handleWalletEvent<E>(event: RPCEvent | RPCMethod, handler: (payl
     id === event ? result as E : undefined
   ))
     .watch(handler);
+}
+
+const wallet = WasmWallet.getInstance();
+
+export function sendRequest<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const target = wallet.send(method, params);
+    console.info(`sending ${method}:${target}`);
+
+    const unwatch = sendWalletEvent
+      .filter({
+        fn: ({ id }) => id === target,
+      })
+      .watch(({ result }) => {
+        console.info(`received ${method}:${target} with`, result);
+
+        resolve(result);
+        unwatch();
+      });
+  });
 }

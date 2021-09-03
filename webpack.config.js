@@ -8,6 +8,7 @@ const IN_DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 const config = {
   target: 'node',
+  cache: false,
   entry: {
     index: path.join(__dirname, './src/index.tsx'),
     background: path.join(__dirname, './src/background.ts'),

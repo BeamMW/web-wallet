@@ -8,7 +8,7 @@ export enum RPCMethod {
   CalculateChange = 'calc_change',
   ValidateAddress = 'validate_address',
   GetTXList = 'tx_list',
-  Send = 'tx_send',
+  SendTransaction = 'tx_send',
 }
 
 export enum RPCEvent {
@@ -69,7 +69,7 @@ export interface Asset {
   ownerId: string;
 }
 
-export interface Change {
+export interface ChangeData {
   asset_change: number;
   asset_change_str: string;
   change: number;
@@ -82,7 +82,7 @@ export enum TransactionType {
   maxPrivacy = 'Max Privacy',
   offline = 'Offline',
 }
-export interface Validation {
+export interface AddressValidation {
   is_mine: boolean;
   is_valid: boolean;
   type: TransactionType;

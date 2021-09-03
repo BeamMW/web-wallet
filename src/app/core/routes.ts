@@ -1,7 +1,7 @@
 import {
   Login, Restore, Create, SetPassword, Progress,
 } from '@pages/intro';
-import { Portfolio, Send } from '@pages/main';
+import { Portfolio, SendConfirm, SendForm } from '@pages/main';
 import { View } from '@app/model';
 
 const ROUTES = {
@@ -11,9 +11,8 @@ const ROUTES = {
   [View.SET_PASSWORD]: SetPassword,
   [View.PROGRESS]: Progress,
   [View.PORTFOLIO]: Portfolio,
-  [View.SEND]: Send,
+  [View.SEND_FORM]: SendForm,
+  [View.SEND_CONFIRM]: SendConfirm,
 };
 
-const getCurrentView = (view: View) => ROUTES[view];
-
-export default getCurrentView;
+export default ROUTES;

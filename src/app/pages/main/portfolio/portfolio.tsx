@@ -76,7 +76,7 @@ const Portfolio = () => {
   };
 
   const handleSendClick = () => {
-    setView(View.SEND);
+    setView(View.SEND_FORM);
   };
 
   const data = isNil(active)

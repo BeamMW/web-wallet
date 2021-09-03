@@ -9,6 +9,7 @@ import { GROTHS_IN_BEAM } from '@app/model';
 
 import { useStore } from 'effector-react';
 
+import { isNil } from '@app/core/utils';
 import {
   $amount, $amountError, $asset, $options, $selected, onAmountInput, setSelected,
 } from './model';
@@ -41,7 +42,8 @@ const AmountInput: React.FC = () => {
       <RowStyled>
         <Input
           variant="send"
-          error={amountError}
+          valid={isNil(amountError)}
+          label={amountError}
           value={amount}
           maxLength={16}
           placeholder="0"

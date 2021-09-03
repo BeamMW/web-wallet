@@ -3,7 +3,8 @@ import { styled } from '@linaria/react';
 import { isNil } from '@core/utils';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  error?: string;
+  label?: string;
+  valid?: boolean;
   variant?: 'regular' | 'gray' | 'send';
   margin?: 'none' | 'large';
 }
@@ -25,22 +26,20 @@ const InputStyled = styled.input<InputProps>`
   color: white;
 
   &::placeholder {
-    position: absolute;
-    top: 0;
-    left: 3px;
-    line-height: inherit;
     color: white;
     opacity: 0.5;
+    font-size: 14px;
+    transform: translateX(1px);
   }
 `;
 
 const InputRegularStyled = styled(InputStyled)`
-  border-color: ${({ error }) => (isNil(error) ? 'var(--color-green)' : 'var(--color-red)')};
+  border-color: ${({ valid }) => (valid ? 'var(--color-green)' : 'var(--color-red)')};
 `;
 
 const InputGrayStyled = styled(InputStyled)`
   border-width: 1px;
-  border-color: ${({ error }) => (isNil(error) ? 'rgba(255,255,255,0.3)' : 'var(--color-red)')};
+  border-color: ${({ valid }) => (valid ? 'rgba(255,255,255,0.3)' : 'var(--color-red)')};
 `;
 
 const InputSendStyled = styled(InputGrayStyled)`
@@ -50,19 +49,22 @@ const InputSendStyled = styled(InputGrayStyled)`
   color: var(--color-purple);
 `;
 
-const ErrorStyled = styled.div`
+const LabelStyled = styled.div<InputProps>`
   margin-top: 4px;
-  font-size: 13px;
-  color: var(--color-failed);
+  font-size: 14px;
+  font-style: italic;
+  color: ${({ valid }) => (valid ? 'var(--color-gray)' : 'var(--color-red)')};
 `;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  (
-    {
-      error, variant = 'regular', margin = 'none', className, ...rest
-    },
-    ref,
-  ) => {
+  ({
+    label,
+    valid = true,
+    variant = 'regular',
+    margin = 'none',
+    className,
+    ...rest
+  }, ref) => {
     const InputComponent = {
       regular: InputRegularStyled,
       gray: InputGrayStyled,
@@ -71,8 +73,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <ContainerStyled className={className} margin={margin}>
-        <InputComponent ref={ref} error={error} {...rest} />
-        {!isNil(error) && <ErrorStyled>{error}</ErrorStyled>}
+        <InputComponent ref={ref} valid={valid} {...rest} />
+        {!isNil(label) && <LabelStyled valid={valid}>{label}</LabelStyled>}
       </ContainerStyled>
     );
   },

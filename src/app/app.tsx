@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 
 import { $view, sendWalletEvent, setOnboarding } from '@app/model';
-import getCurrentView from '@app/core/getCurrentView';
-import { styled } from '@linaria/react';
+
+import ROUTES from './core/routes';
 import WasmWallet from './core/WasmWallet';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -20,6 +21,7 @@ css`
       --color-blue: #0bccf7;
       --color-dark-blue: #042548;
       --color-white: #ffffff;
+      --color-gray: #8196a4;
 
       --color-select: #184469;
 
@@ -28,7 +30,6 @@ css`
       --color-ghost-active: rgba(255, 255, 255, 0.3);
 
       --color-disabled: #8da1ad;
-      --color-failed: #ff746b;
     }
 
     @font-face {
@@ -150,7 +151,7 @@ const App = () => {
   }, []);
 
   const view = useStore($view);
-  const ViewComponent = getCurrentView(view);
+  const ViewComponent = ROUTES[view];
 
   return (
     <ContainerStyled>

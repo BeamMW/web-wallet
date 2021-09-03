@@ -11,7 +11,7 @@ const PATH_NODE = 'eu-node01.masternet.beam.mw:8200';
 
 let WasmWalletClient;
 export interface WalletEvent<T = any> {
-  id: RPCMethod | RPCEvent;
+  id: number | RPCEvent;
   result: T;
 }
 
@@ -82,6 +82,8 @@ export default class WasmWallet {
   private mounted: boolean = false;
 
   private created: boolean = false;
+
+  private counter: number = 0;
 
   private eventHandler: WalletEventHandler;
 
@@ -193,14 +195,17 @@ export default class WasmWallet {
     }
   }
 
-  send<T>(method: RPCMethod, params?: T) {
+  send<T>(method: RPCMethod, params?: T): number {
+    const id = this.counter;
+    this.counter += 1;
     this.wallet.sendRequest(
       JSON.stringify({
         jsonrpc: '2.0',
-        id: method,
+        id,
         method,
         params,
       }),
     );
+    return id;
   }
 }

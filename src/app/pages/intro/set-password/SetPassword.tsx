@@ -7,7 +7,7 @@ import {
   Window, Button, Input, Footer,
 } from 'app/uikit';
 import { View, setView, $seed } from '@app/model';
-import { createChangeHandler } from '@core/utils';
+import { makeOnChange } from '@core/utils';
 import ArrowIcon from '@icons/icon-arrow.svg';
 
 import PasswordStrength from './PasswordStrength';
@@ -30,8 +30,8 @@ const SetPassword = () => {
 
   const valid = pass !== '' && pass === confirm;
 
-  const handleChangePassword = createChangeHandler(setPassword);
-  const handleChangeConfirm = createChangeHandler(setConfirm);
+  const onPasswordChange = makeOnChange(setPassword);
+  const onConfirmChange = makeOnChange(setConfirm);
 
   const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
@@ -45,7 +45,7 @@ const SetPassword = () => {
         <Input
           type="password"
           placeholder="Password"
-          onChange={handleChangePassword}
+          onChange={onPasswordChange}
         />
         <PasswordStrength value={pass} />
         <p>Strong password needs to meet the following requirements:</p>
@@ -58,7 +58,7 @@ const SetPassword = () => {
         <Input
           type="password"
           placeholder="Confirm password"
-          onChange={handleChangeConfirm}
+          onChange={onConfirmChange}
         />
         <Footer>
           <Button type="submit" icon={ArrowIcon} disabled={!valid}>

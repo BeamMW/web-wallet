@@ -2,7 +2,6 @@ import { createEvent, guard, restore } from 'effector';
 
 import { RPCEvent, SyncProgress } from '@app/core/types';
 import { sendWalletEvent, setView, View } from '@app/model';
-import { createAddress, getWalletStatus } from '@app/core/api';
 
 export const setSyncProgress = createEvent<[number, number]>();
 
@@ -38,8 +37,6 @@ guard(onProgress, {
     if (current_state_hash === tip_state_hash) {
       setLoading(false);
       setView(View.PORTFOLIO);
-      getWalletStatus();
-      createAddress();
     } else {
       setSyncProgress([sync_requests_done, sync_requests_total]);
     }

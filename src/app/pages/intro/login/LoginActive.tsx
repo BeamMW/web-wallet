@@ -7,6 +7,7 @@ import {
 } from 'app/uikit';
 
 import WalletSmallIcon from '@icons/icon-wallet-small.svg';
+import { isNil } from '@app/core/utils';
 import { LoginPhase, setLoginPhase } from './model';
 
 const wallet = WasmWallet.getInstance();
@@ -47,7 +48,8 @@ const LoginActive: React.FC = () => {
             type="password"
             placeholder="Password"
             margin="large"
-            error={error}
+            valid={isNil(error)}
+            label={error}
             ref={inputRef}
           />
           <Button type="submit" icon={WalletSmallIcon}>

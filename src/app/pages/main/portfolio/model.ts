@@ -6,10 +6,8 @@ import {
   Asset,
   AssetsEvent,
   RPCEvent,
-  RPCMethod,
   Transaction,
   TxsEvent,
-  WalletStatus,
   WalletTotal,
 } from '@core/types';
 
@@ -65,16 +63,14 @@ export const $balance: Store<Balance[]> = combine($totals, $assets, (totals, ass
   })
 ));
 
-// receive Wallet Status
-handleWalletEvent<WalletStatus>(
-  RPCMethod.GetWalletStatus,
-  ({ totals }) => setTotals(totals),
-);
-
 // receive System State
 handleWalletEvent<any>(
   RPCEvent.SYSTEM_STATE,
-  () => getWalletStatus(),
+  // receive Wallet Status
+  async () => {
+    const { totals } = await getWalletStatus();
+    setTotals(totals);
+  },
 );
 
 // receive Assets
