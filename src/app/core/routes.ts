@@ -1,7 +1,11 @@
 import {
   Login, Restore, Create, SetPassword, Progress,
 } from '@pages/intro';
-import { Portfolio, SendConfirm, SendForm } from '@pages/main';
+
+import {
+  Wallet, Receive, SendConfirm, SendForm,
+} from '@pages/main';
+
 import { View } from '@app/model';
 
 const ROUTES = {
@@ -10,9 +14,10 @@ const ROUTES = {
   [View.CREATE]: Create,
   [View.SET_PASSWORD]: SetPassword,
   [View.PROGRESS]: Progress,
-  [View.PORTFOLIO]: Portfolio,
+  [View.WALLET]: Wallet,
   [View.SEND_FORM]: SendForm,
   [View.SEND_CONFIRM]: SendConfirm,
+  [View.RECEIVE]: Receive,
 };
 
 export default ROUTES;

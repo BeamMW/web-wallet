@@ -45,6 +45,7 @@ export interface WalletTotal {
   receiving: number;
   receiving_str: string;
   sending: number;
+  sending_str: string;
 }
 
 export interface MetadataPairs {

@@ -36,7 +36,7 @@ guard(onProgress, {
   }) => {
     if (current_state_hash === tip_state_hash) {
       setLoading(false);
-      setView(View.PORTFOLIO);
+      setView(View.WALLET);
     } else {
       setSyncProgress([sync_requests_done, sync_requests_total]);
     }

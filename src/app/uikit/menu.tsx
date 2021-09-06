@@ -5,7 +5,7 @@ import { setView, View } from '@app/model';
 const MENU_ITEMS = [
   {
     title: 'Wallet',
-    value: View.PORTFOLIO,
+    value: View.WALLET,
   },
   {
     title: 'UTXO',

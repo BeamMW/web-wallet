@@ -2,35 +2,40 @@
 import React from 'react';
 import { useStore } from 'effector-react';
 
-import { setView, View } from '@app/model';
+import { gotoConfirm, gotoPortfolio, GROTHS_IN_BEAM } from '@app/model';
 import {
-  Window, Section, Input, Button,
+  Window, Section, Input, Button, Title, Select,
 } from 'app/uikit';
 import ArrowIcon from '@icons/icon-arrow.svg';
-
-import Amount from './Amount';
 
 import {
   $valid,
   $address,
   $addressLabel,
   $addressValid,
-  gotoConfirm,
-  gotoPortfolio,
   onAddressInput,
+  $totalSelected,
 } from './model';
 
-const Send = () => {
+import AmountInput from './AmountInput';
+import { $assets } from '../wallet/model';
+
+const SendForm = () => {
   const address = useStore($address);
   const addressValid = useStore($addressValid);
   const addressLabel = useStore($addressLabel);
+
+  const assets = useStore($assets);
+  const total = useStore($totalSelected);
+  const groths = total.available / GROTHS_IN_BEAM;
+
   const valid = useStore($valid);
 
   return (
     <Window
       title="Send"
       pallete="purple"
-      onBackClick={gotoPortfolio}
+      onBackClick={(gotoPortfolio)}
     >
       <form onSubmit={gotoConfirm}>
         <Section title="Send to" variant="gray">
@@ -43,7 +48,11 @@ const Send = () => {
             onInput={onAddressInput}
           />
         </Section>
-        <Amount />
+        <Section title="Amount" variant="gray">
+          <AmountInput />
+          <Title variant="subtitle">Available</Title>
+          {`${groths} ${assets[total.asset_id].metadata_pairs.N}`}
+        </Section>
         <Section title="Comment" variant="gray">
           <Input variant="gray" />
         </Section>
@@ -60,4 +69,4 @@ const Send = () => {
   );
 };
 
-export default Send;
+export default SendForm;

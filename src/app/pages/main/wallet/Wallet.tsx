@@ -7,14 +7,16 @@ import {
   Button, Window, Section,
 } from 'app/uikit';
 import { isNil } from '@core/utils';
-import { setView, View, GROTHS_IN_BEAM } from '@app/model';
+import { GROTHS_IN_BEAM, gotoSend, gotoReceive } from '@app/model';
 
 import ArrowUpIcon from '@icons/icon-arrow-up.svg';
 import ArrowDownIcon from '@icons/icon-arrow-down.svg';
 
-import { $balance, $transactions } from './model';
+import { $totals, $transactions } from './model';
 
-import AssetCard from './AssetCard';
+import AssetIcon from './AssetIcon';
+import Assets from './Assets';
+import Transactions from './Transactions';
 
 function compact(value: string): string {
   if (value.length <= 11) {
@@ -62,21 +64,13 @@ const ActionsStyled = styled.div`
   }
 `;
 
-const ListStyled = styled.ul`
-  margin: 0 -12px;
-`;
-
-const Portfolio = () => {
+const Wallet = () => {
   const [active, setActive] = useState(null);
-  const balance = useStore($balance);
+  const totals = useStore($totals);
   const transactions = useStore($transactions);
 
   const toggleActive = (asset_id: number) => {
     setActive(active === asset_id ? null : asset_id);
-  };
-
-  const handleSendClick = () => {
-    setView(View.SEND_FORM);
   };
 
   const data = isNil(active)
@@ -86,29 +80,21 @@ const Portfolio = () => {
   return (
     <Window title="Wallet">
       <ActionsStyled>
-        <Button pallete="purple" icon={ArrowUpIcon} onClick={handleSendClick}>
+        <Button pallete="purple" icon={ArrowUpIcon} onClick={gotoSend}>
           send
         </Button>
-        <Button pallete="blue" icon={ArrowDownIcon} onClick={handleSendClick}>
+        <Button pallete="blue" icon={ArrowDownIcon} onClick={gotoReceive}>
           receive
         </Button>
       </ActionsStyled>
       <Section title="Assets">
-        <ListStyled>
-          {balance.map(({ asset_id, available, name }) => (
-            <AssetCard
-              key={asset_id}
-              name={name}
-              asset_id={asset_id}
-              available={available}
-              onClick={() => toggleActive(asset_id)}
-            />
-          ))}
-        </ListStyled>
+        <Assets data={totals} />
       </Section>
-      <Section title="Transactions" />
+      <Section title="Transactions">
+        <Transactions data={transactions} />
+      </Section>
     </Window>
   );
 };
 
-export default Portfolio;
+export default Wallet;

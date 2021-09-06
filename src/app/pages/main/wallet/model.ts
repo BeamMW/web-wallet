@@ -1,5 +1,5 @@
 import {
-  createEvent, restore, combine, Store,
+  createEvent, restore, Store,
 } from 'effector';
 
 import {
@@ -15,14 +15,31 @@ import Entity from '@core/Entity';
 import { handleWalletEvent } from '@app/model';
 import { getWalletStatus } from '@app/core/api';
 
-export interface Balance {
-  name: string;
-  short: string;
-  asset_id: number;
-  available: number;
-  maturing: number;
-  receiving: number;
-  sending: number;
+export const PALLETE_ASSETS = [
+  '#72fdff',
+  '#2acf1d',
+  '#ffbb54',
+  '#d885ff',
+  '#008eff',
+  '#ff746b',
+  '#91e300',
+  '#ffe75a',
+  '#9643ff',
+  '#395bff',
+  '#ff3b3b',
+  '#73ff7c',
+  '#ffa86c',
+  '#ff3abe',
+  '#0aaee1',
+  '#ff5200',
+  '#6464ff',
+  '#ff7a21',
+  '#63afff',
+  '#c81f68',
+];
+
+export interface AssetMap {
+  [id: number]: Partial<Asset>;
 }
 
 const BEAM_METADATA: Partial<Asset> = {
@@ -38,30 +55,19 @@ export const $$transactions = new Entity<Transaction, TxsEvent>('txs', 'txId');
 export const setTotals = createEvent<WalletTotal[]>();
 
 export const $totals = restore(setTotals, []);
-export const $assets = $$assets.getStore();
 export const $transactions = $$transactions.getStore();
 
-export const $balance: Store<Balance[]> = combine($totals, $assets, (totals, assets) => (
-  totals.map(({
-    asset_id, available, maturing, receiving, sending,
-  }) => {
-    const target = asset_id === 0
-      ? BEAM_METADATA
-      : assets.find(({ asset_id: id }) => asset_id === id);
-
-    const { metadata_pairs: pairs } = target;
-
-    return {
-      name: pairs.N,
-      short: pairs.SN,
-      asset_id,
-      available,
-      maturing,
-      receiving,
-      sending,
-    };
-  })
-));
+export const $assets: Store<AssetMap> = $$assets
+  .getStore()
+  .map((assets) => (
+    assets.reduce((result, item) => {
+      // eslint-disable-next-line
+      result[item.asset_id] = item;
+      return result;
+    }, {
+      0: BEAM_METADATA,
+    })
+  ));
 
 // receive System State
 handleWalletEvent<any>(

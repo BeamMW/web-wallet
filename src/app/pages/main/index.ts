@@ -1,3 +1,4 @@
-export { default as Portfolio } from './portfolio';
-export { default as SendForm } from './send/SendForm';
-export { default as SendConfirm } from './send/SendConfirm';
+export { default as Wallet } from './wallet';
+export { default as SendForm } from './send-receive/SendForm';
+export { default as SendConfirm } from './send-receive/SendConfirm';
+export { default as Receive } from './send-receive/Receive';

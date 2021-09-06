@@ -9,7 +9,7 @@ export function getWalletStatus() {
 }
 
 export function createAddress() {
-  sendRequest(RPCMethod.CreateAddress);
+  return sendRequest<string>(RPCMethod.CreateAddress);
 }
 
 export function validateAddress(address: string) {

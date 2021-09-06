@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 
-import { GROTHS_IN_BEAM } from '@app/model';
+import { gotoForm, GROTHS_IN_BEAM } from '@app/model';
 import {
   Window, Section, Button,
 } from 'app/uikit';
@@ -11,7 +11,7 @@ import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';
 
 import {
-  $address, $amount, $asset, $change, $fee, gotoForm, onConfirmSubmit,
+  $address, $amount, $totalSelected, $change, $fee, onConfirmSubmit,
 } from './model';
 
 const WarningSyled = styled.p`
@@ -23,7 +23,7 @@ const WarningSyled = styled.p`
 
 const Send = () => {
   const fee = useStore($fee);
-  const asset = useStore($asset);
+  const asset = useStore($totalSelected);
   const change = useStore($change);
   const amount = useStore($amount);
   const address = useStore($address);

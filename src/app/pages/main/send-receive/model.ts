@@ -6,47 +6,44 @@ import { debounce } from 'patronum/debounce';
 import { spread } from 'patronum/spread';
 
 import {
-  AMOUNT_MAX, FEE_DEFAULT, GROTHS_IN_BEAM, setView, View,
+  AMOUNT_MAX, FEE_DEFAULT, gotoPortfolio, GROTHS_IN_BEAM, setView, View,
 } from '@app/model';
-import { TransactionType } from '@app/core/types';
+import { TransactionType, WalletTotal } from '@app/core/types';
 import {
-  curry, getInputValue, isNil, makeOnClick, makeOnSubmit,
+  getInputValue, isNil, makeOnSubmit,
 } from '@app/core/utils';
 import {
-  calculateChange, sendTransaction, SendTransactionParams, validateAddress,
+  calculateChange, createAddress, sendTransaction, SendTransactionParams, validateAddress,
 } from '@app/core/api';
-import { $balance, Balance } from '../portfolio/model';
+
+import { $assets, $totals } from '../wallet/model';
 
 /* Misc */
 
-export const $options = $balance.map((state) => (
-  state.map(({ name }) => name)
+export const $options = combine($totals, $assets, (totals, assets) => (
+  totals.map(({ asset_id }) => assets[asset_id].metadata_pairs.N)
 ));
 
-/* Routes */
+/* Receive Address */
 
-export const gotoPortfolio = makeOnClick(
-  curry(setView, View.SEND_FORM),
-);
+export const getAddressFx = createEffect(createAddress);
 
-export const gotoForm = makeOnClick(
-  curry(setView, View.SEND_FORM),
-);
+export const $addressMine = restore(getAddressFx.doneData, '');
 
-export const gotoConfirm = makeOnSubmit(
-  curry(setView, View.SEND_CONFIRM),
-);
-
-/* Adress Field */
+/* Send Address */
 
 type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
 
 export const onAddressInput = createEvent<ReactChangeEvent>();
+
 export const setAddress = onAddressInput.map(getInputValue);
 export const setAddressType = createEvent<TransactionType>();
 export const setAddressValid = createEvent<boolean>();
 
 export const $address = restore(setAddress, '');
+
+$address.reset(gotoPortfolio);
+
 export const $addressType = restore(setAddressType, null);
 export const $addressValid = restore(setAddressValid, true);
 
@@ -78,20 +75,23 @@ spread({
 
 /* Asset Select */
 
-const ASSET_BLANK: Balance = {
-  name: '',
-  short: '',
+const ASSET_BLANK: WalletTotal = {
   asset_id: 0,
   available: 0,
+  available_str: '0',
   maturing: 0,
+  maturing_str: '0',
   receiving: 0,
+  receiving_str: '0',
   sending: 0,
+  sending_str: '0',
 };
 
 export const setSelected = createEvent<number>();
 
 export const $selected = restore(setSelected, 0);
-export const $asset = combine($balance, $selected,
+
+export const $totalSelected = combine($totals, $selected,
   (array, index) => (array.length > 0 ? array[index] : ASSET_BLANK));
 
 /* Amount Field */
@@ -129,7 +129,7 @@ const setAmountDebounced = debounce({
 
 // call CalculateChange on setAmount w/ debounce
 sample({
-  source: $asset,
+  source: $totalSelected,
   clock: setAmountDebounced,
   fn: ({ asset_id }, payload) => ({
     asset_id,
@@ -154,7 +154,7 @@ spread({
 
 export const $amount = restore(setAmount, '');
 export const $amountGroths = $amount.map((value) => parseFloat(value) * GROTHS_IN_BEAM);
-export const $amountError = combine($asset, $amountGroths, $fee, ({ available }, amount, fee) => {
+export const $amountError = combine($totalSelected, $amountGroths, $fee, ({ available }, amount, fee) => {
   const total = amount + fee;
   return total > available
     ? `Insufficient funds: you would need ${total / GROTHS_IN_BEAM} BEAM to complete the transaction` : null;
@@ -174,14 +174,14 @@ export const $valid = combine(
 const sendTransactionFx = createEffect(sendTransaction);
 
 export const onConfirmSubmit = makeOnSubmit(() => {
-  setView(View.PORTFOLIO);
+  setView(View.WALLET);
 });
 
 const $params: Store<SendTransactionParams> = combine(
   $amountGroths,
   $fee,
   $address,
-  $asset,
+  $totalSelected,
   (value, fee, address, { asset_id }) => ({
     value,
     fee,
