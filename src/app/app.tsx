@@ -136,9 +136,9 @@ const ContainerStyled = styled.div`
 const wallet = WasmWallet.getInstance();
 
 async function initWallet() {
-  wallet.init(sendWalletEvent);
   try {
-    const result = await wallet.checkWallet();
+    const result = await wallet.init(sendWalletEvent);
+    console.log(result);
     setOnboarding(!result);
   } catch {
     setOnboarding(true);

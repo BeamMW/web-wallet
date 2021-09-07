@@ -27,14 +27,16 @@ const LoginActive: React.FC = () => {
       return;
     }
 
-    try {
-      await WasmWallet.checkPassword(value);
-      setError(null);
-      setView(View.PROGRESS);
-      wallet.open(value);
-    } catch {
+    const valid = WasmWallet.checkPassword(value);
+
+    if (!valid) {
       setError(ErrorMessage.INVALID);
+      return;
     }
+
+    setError(null);
+    setView(View.PROGRESS);
+    wallet.open(value);
   }
 
   return (

@@ -51,7 +51,7 @@
     "@linaria/core": "^3.0.0-beta.4",
     "@linaria/react": "^3.0.0-beta.7",
     "babel-polyfill": "^6.26.0",
-    "beam-wasm-client-master": "^6.2.11713",
+    "beam-wasm-client-masternet": "^6.2.11796",
     "browser-passworder": "^2.0.3",
     "effector": "^21.8.12",
     "effector-react": "^21.3.3",

@@ -154,11 +154,12 @@ spread({
 
 export const $amount = restore(setAmount, '');
 export const $amountGroths = $amount.map((value) => parseFloat(value) * GROTHS_IN_BEAM);
-export const $amountError = combine($totalSelected, $amountGroths, $fee, ({ available }, amount, fee) => {
-  const total = amount + fee;
-  return total > available
-    ? `Insufficient funds: you would need ${total / GROTHS_IN_BEAM} BEAM to complete the transaction` : null;
-});
+export const $amountError = combine($totalSelected, $amountGroths, $fee,
+  ({ available }, amount, fee) => {
+    const total = amount + fee;
+    return total > available
+      ? `Insufficient funds: you would need ${total / GROTHS_IN_BEAM} BEAM to complete the transaction` : null;
+  });
 
 export const $valid = combine(
   $address,

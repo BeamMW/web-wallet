@@ -19,14 +19,6 @@ type WalletEventHandler = {
   (event: WalletEvent): void;
 };
 
-function load<T>(name: string): Promise<T> {
-  return new Promise<T>((resolve) => {
-    extensionizer.storage.local.get(name, (result) => {
-      const value = result[name];
-      resolve(value);
-    });
-  });
-}
 export default class WasmWallet {
   private static instance: WasmWallet;
 
@@ -61,11 +53,7 @@ export default class WasmWallet {
   }
 
   static checkPassword(pass: string) {
-    return new Promise<boolean>((resolve, reject) => {
-      extensionizer.storage.local.get('wallet', ({ wallet }) => {
-        passworder.decrypt(pass, wallet).then(resolve).catch(reject);
-      });
-    });
+    return WasmWalletClient.CheckPassword(PATH_DB, pass);
   }
 
   static isAllowedWord(word: string): boolean {
@@ -81,7 +69,7 @@ export default class WasmWallet {
 
   private mounted: boolean = false;
 
-  private created: boolean = false;
+  private ready: boolean = false;
 
   private counter: number = 0;
 
@@ -91,6 +79,8 @@ export default class WasmWallet {
     this.eventHandler = handler;
     const module = await BeamModule();
     WasmWalletClient = module.WasmWalletClient;
+    this.ready = WasmWalletClient.IsInitialized(PATH_DB);
+    return this.ready;
   }
 
   start(pass: string) {
@@ -136,14 +126,13 @@ export default class WasmWallet {
 
   async create(seed: string, pass: string, seedConfirmed: boolean) {
     try {
-      await this.saveWallet(seed, pass);
       WasmWallet.initSettings(seedConfirmed);
 
       if (!this.mounted) {
         await this.mount();
       }
 
-      if (this.created) {
+      if (this.ready) {
         WasmWalletClient.DeleteWallet(PATH_DB);
       }
 
@@ -174,25 +163,6 @@ export default class WasmWallet {
         }
       });
     });
-  }
-
-  // eslint-disable-next-line
-  async saveWallet(seed: string, pass: string) {
-    const data = await passworder.encrypt(pass, { seed });
-    extensionizer.storage.local.remove(['wallet']);
-    extensionizer.storage.local.set({ wallet: data });
-    return data;
-  }
-
-  async checkWallet() {
-    try {
-      const data = await load<string>('wallet');
-      const result = !isNil(data);
-      this.created = result;
-      return result;
-    } catch {
-      return false;
-    }
   }
 
   send<T>(method: RPCMethod, params?: T): number {
