@@ -9,30 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
-      - name: Cache node modules
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
 
-      - name: npm ci and npm run build
-        run: |
-          npm ci
-          npm run build:ci
+      - run: yarn --frozen-lockfile
 
-      - name: Archive build
+      - name: Build wallet
+        run: yarn build
+
+      - name: Upload build
         if: success()
         uses: actions/upload-artifact@v1
         with:
