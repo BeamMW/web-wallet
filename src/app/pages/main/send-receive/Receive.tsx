@@ -4,7 +4,7 @@ import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
-import { gotoPortfolio, GROTHS_IN_BEAM } from '@app/model';
+import { gotoWallet, GROTHS_IN_BEAM } from '@app/model';
 import {
   Window, Section, Input, Button, Title, Select,
 } from 'app/uikit';
@@ -24,7 +24,7 @@ const SendForm = () => {
     <Window
       title="Send"
       pallete="blue"
-      onBackClick={gotoPortfolio}
+      onBackClick={gotoWallet}
     >
       <form>
         <Section title="Address" variant="gray">

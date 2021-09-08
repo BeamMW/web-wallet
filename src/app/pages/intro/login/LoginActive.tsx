@@ -36,7 +36,8 @@ const LoginActive: React.FC = () => {
 
     setError(null);
     setView(View.PROGRESS);
-    wallet.open(value);
+
+    wallet.start(value);
   }
 
   return (

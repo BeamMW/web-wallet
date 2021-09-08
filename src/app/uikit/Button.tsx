@@ -57,6 +57,7 @@ const GhostButtonStyled = styled(ButtonStyled)`
 
 const IconButtonStyled = styled.button<ButtonProps>`
   display: inline-block;
+  line-height: 0;
   margin: 0;
   padding: 0;
   background-color: transparent;

@@ -138,7 +138,6 @@ const wallet = WasmWallet.getInstance();
 async function initWallet() {
   try {
     const result = await wallet.init(sendWalletEvent);
-    console.log(result);
     setOnboarding(!result);
   } catch {
     setOnboarding(true);

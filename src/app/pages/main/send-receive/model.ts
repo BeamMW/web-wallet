@@ -6,11 +6,11 @@ import { debounce } from 'patronum/debounce';
 import { spread } from 'patronum/spread';
 
 import {
-  AMOUNT_MAX, FEE_DEFAULT, gotoPortfolio, GROTHS_IN_BEAM, setView, View,
+  AMOUNT_MAX, FEE_DEFAULT, gotoWallet, GROTHS_IN_BEAM, setView, View,
 } from '@app/model';
 import { TransactionType, WalletTotal } from '@app/core/types';
 import {
-  getInputValue, isNil, makeOnSubmit,
+  getInputValue, isNil, makeEventHandler,
 } from '@app/core/utils';
 import {
   calculateChange, createAddress, sendTransaction, SendTransactionParams, validateAddress,
@@ -42,7 +42,7 @@ export const setAddressValid = createEvent<boolean>();
 
 export const $address = restore(setAddress, '');
 
-$address.reset(gotoPortfolio);
+$address.reset(gotoWallet);
 
 export const $addressType = restore(setAddressType, null);
 export const $addressValid = restore(setAddressValid, true);
@@ -174,7 +174,7 @@ export const $valid = combine(
 
 const sendTransactionFx = createEffect(sendTransaction);
 
-export const onConfirmSubmit = makeOnSubmit(() => {
+export const onConfirmSubmit = makeEventHandler(() => {
   setView(View.WALLET);
 });
 

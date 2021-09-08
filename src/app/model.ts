@@ -2,7 +2,7 @@ import { createEvent, restore } from 'effector';
 
 import WasmWallet, { WalletEvent } from '@core/WasmWallet';
 import { RPCEvent, RPCMethod } from './core/types';
-import { curry, makeOnClick, makeOnSubmit } from './core/utils';
+import { curry, makeEventHandler } from './core/utils';
 
 export const GROTHS_IN_BEAM = 100000000;
 export const AMOUNT_MAX = 99999999;
@@ -36,23 +36,23 @@ export const $seed = restore(setSeed, null);
 export const $view = restore(setView, View.LOGIN);
 export const $onboarding = restore(setOnboarding, null);
 
-export const gotoSend = makeOnClick(
+export const gotoSend = makeEventHandler(
   curry(setView, View.SEND_FORM),
 );
 
-export const gotoReceive = makeOnClick(
+export const gotoReceive = makeEventHandler(
   curry(setView, View.RECEIVE),
 );
 
-export const gotoPortfolio = makeOnClick(
+export const gotoWallet = makeEventHandler(
   curry(setView, View.WALLET),
 );
 
-export const gotoForm = makeOnClick(
+export const gotoForm = makeEventHandler(
   curry(setView, View.SEND_FORM),
 );
 
-export const gotoConfirm = makeOnSubmit(
+export const gotoConfirm = makeEventHandler(
   curry(setView, View.SEND_CONFIRM),
 );
 

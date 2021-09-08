@@ -19,18 +19,8 @@ export const makeOnChange = (event: Event<string> | Handler<string>) => {
   return onChange;
 };
 
-type ReactMouseEvent = React.MouseEvent<HTMLElement>;
-
-export const makeOnClick = (event: Event<unknown>) => {
-  const onClick = createEvent<ReactMouseEvent>();
-  onClick.watch(event);
-  return onClick;
-};
-
-type ReactFormEvent = React.FormEvent<HTMLFormElement>;
-
-export const makeOnSubmit = (event: Event<unknown> | Handler) => {
-  const onSubmit = createEvent<ReactFormEvent>();
-  onSubmit.map<void>(preventDefault).watch(event);
-  return onSubmit;
+export const makeEventHandler = (event: Event<void> | Handler<void>) => {
+  const handler = createEvent<React.SyntheticEvent>();
+  handler.map(preventDefault).watch(event);
+  return handler;
 };

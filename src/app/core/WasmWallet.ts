@@ -1,5 +1,4 @@
 import * as extensionizer from 'extensionizer';
-import * as passworder from 'browser-passworder';
 
 import { isNil } from '@core/utils';
 import { RPCMethod, RPCEvent, ToggleSubscribeToParams } from './types';
@@ -28,6 +27,18 @@ export default class WasmWallet {
     }
     this.instance = new WasmWallet();
     return this.instance;
+  }
+
+  static async mount(): Promise<boolean> {
+    const module = await BeamModule();
+    WasmWalletClient = module.WasmWalletClient;
+
+    return new Promise((resolve) => {
+      WasmWalletClient.MountFS(() => {
+        const result = WasmWalletClient.IsInitialized(PATH_DB);
+        resolve(result);
+      });
+    });
   }
 
   static initSettings(seedConfirmed: boolean) {
@@ -65,9 +76,7 @@ export default class WasmWallet {
     return seed.split(' ');
   }
 
-  private wallet: any;
-
-  private mounted: boolean = false;
+  private wallet: typeof WasmWalletClient;
 
   private ready: boolean = false;
 
@@ -77,9 +86,7 @@ export default class WasmWallet {
 
   async init(handler: WalletEventHandler) {
     this.eventHandler = handler;
-    const module = await BeamModule();
-    WasmWalletClient = module.WasmWalletClient;
-    this.ready = WasmWalletClient.IsInitialized(PATH_DB);
+    this.ready = await WasmWallet.mount();
     return this.ready;
   }
 
@@ -107,30 +114,9 @@ export default class WasmWallet {
     });
   }
 
-  mount() {
-    return new Promise((resolve) => {
-      WasmWalletClient.MountFS(() => {
-        this.mounted = true;
-        resolve(true);
-      });
-    });
-  }
-
-  async open(pass: string) {
-    if (!this.mounted) {
-      await this.mount();
-    }
-
-    this.start(pass);
-  }
-
   async create(seed: string, pass: string, seedConfirmed: boolean) {
     try {
       WasmWallet.initSettings(seedConfirmed);
-
-      if (!this.mounted) {
-        await this.mount();
-      }
 
       if (this.ready) {
         WasmWalletClient.DeleteWallet(PATH_DB);

@@ -4,17 +4,18 @@ import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import {
-  Button, Window, Section,
+  Button, Window, Section, Menu,
 } from 'app/uikit';
 import { isNil } from '@core/utils';
 import { GROTHS_IN_BEAM, gotoSend, gotoReceive } from '@app/model';
 
 import ArrowUpIcon from '@icons/icon-arrow-up.svg';
 import ArrowDownIcon from '@icons/icon-arrow-down.svg';
+import MenuIcon from '@icons/icon-menu.svg';
 
+import { css } from '@linaria/core';
 import { $totals, $transactions } from './model';
 
-import AssetIcon from './AssetIcon';
 import Assets from './Assets';
 import Transactions from './Transactions';
 
@@ -64,7 +65,14 @@ const ActionsStyled = styled.div`
   }
 `;
 
+const menuButtonStyle = css`
+  position: absolute;
+  top: 24px;
+  left: 24px;
+`;
+
 const Wallet = () => {
+  const [menuVisible, setVisible] = useState(false);
   const [active, setActive] = useState(null);
   const totals = useStore($totals);
   const transactions = useStore($transactions);
@@ -73,12 +81,18 @@ const Wallet = () => {
     setActive(active === asset_id ? null : asset_id);
   };
 
+  const handleMenuClick: React.MouseEventHandler = () => setVisible(true);
+
+  const handleCancelClick: React.MouseEventHandler = () => setVisible(false);
+
   const data = isNil(active)
     ? transactions
     : transactions.filter(({ asset_id }) => asset_id === active);
 
   return (
     <Window title="Wallet">
+      <Button variant="icon" icon={MenuIcon} className={menuButtonStyle} onClick={handleMenuClick} />
+      { menuVisible && <Menu onCancel={handleCancelClick} />}
       <ActionsStyled>
         <Button pallete="purple" icon={ArrowUpIcon} onClick={gotoSend}>
           send

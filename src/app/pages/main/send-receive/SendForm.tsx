@@ -2,7 +2,7 @@
 import React from 'react';
 import { useStore } from 'effector-react';
 
-import { gotoConfirm, gotoPortfolio, GROTHS_IN_BEAM } from '@app/model';
+import { gotoConfirm, gotoWallet, GROTHS_IN_BEAM } from '@app/model';
 import {
   Window, Section, Input, Button, Title, Select,
 } from 'app/uikit';
@@ -35,7 +35,7 @@ const SendForm = () => {
     <Window
       title="Send"
       pallete="purple"
-      onBackClick={(gotoPortfolio)}
+      onBackClick={gotoWallet}
     >
       <form onSubmit={gotoConfirm}>
         <Section title="Send to" variant="gray">
