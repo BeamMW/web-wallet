@@ -12,7 +12,7 @@ import {
 } from '@core/types';
 
 import Entity from '@core/Entity';
-import { handleWalletEvent } from '@app/model';
+import { handleWalletEvent } from '@core/api';
 import { getWalletStatus } from '@app/core/api';
 
 export const PALLETE_ASSETS = [

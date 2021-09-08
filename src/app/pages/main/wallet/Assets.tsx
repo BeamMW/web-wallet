@@ -1,12 +1,13 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
-import { GROTHS_IN_BEAM } from '@app/model';
+import { GROTHS_IN_BEAM } from '@app/model/rates';
 
 import { WalletTotal } from '@app/core/types';
 import { useStore } from 'effector-react';
+import AssetIcon from '@uikit/AssetIcon';
+
 import { $assets, PALLETE_ASSETS } from './model';
-import AssetIcon from './AssetIcon';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;

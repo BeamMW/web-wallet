@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 
 import WasmWallet from '@core/WasmWallet';
-import { setView, View, ErrorMessage } from '@app/model';
+import { setView, View } from '@app/model/view';
 import {
   Popup, Button, Input, Splash,
 } from 'app/uikit';
@@ -9,6 +9,11 @@ import {
 import WalletSmallIcon from '@icons/icon-wallet-small.svg';
 import { isNil } from '@app/core/utils';
 import { LoginPhase, setLoginPhase } from './model';
+
+enum ErrorMessage {
+  INVALID = 'Invalid password provided',
+  EMPTY = 'Please, enter password',
+}
 
 const wallet = WasmWallet.getInstance();
 

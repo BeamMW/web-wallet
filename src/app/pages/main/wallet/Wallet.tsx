@@ -7,7 +7,8 @@ import {
   Button, Window, Section, Menu,
 } from 'app/uikit';
 import { isNil } from '@core/utils';
-import { GROTHS_IN_BEAM, gotoSend, gotoReceive } from '@app/model';
+import { gotoSend, gotoReceive } from '@app/model/view';
+import { GROTHS_IN_BEAM} from '@app/model/rates';
 
 import ArrowUpIcon from '@icons/icon-arrow-up.svg';
 import ArrowDownIcon from '@icons/icon-arrow-down.svg';

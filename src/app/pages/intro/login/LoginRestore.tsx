@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 
 import WasmWallet from '@core/WasmWallet';
-import { setSeed, setView, View } from '@app/model';
+import { setView, View } from '@app/model/view';
+import { setSeed } from '@app/model/base';
 import {
   Popup, Splash, Button,
 } from 'app/uikit';

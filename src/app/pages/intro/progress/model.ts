@@ -1,7 +1,8 @@
 import { createEvent, guard, restore } from 'effector';
 
 import { RPCEvent, SyncProgress } from '@app/core/types';
-import { sendWalletEvent, setView, View } from '@app/model';
+import { setView, View } from '@app/model/view';
+import { sendWalletEvent } from '@core/api';
 
 export const setSyncProgress = createEvent<[number, number]>();
 

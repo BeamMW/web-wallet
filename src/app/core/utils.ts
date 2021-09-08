@@ -11,16 +11,24 @@ export const curry = <T>(event: Event<T>, payload: T) => event.prepend(() => pay
 
 type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
 
-type Handler<T = unknown> = (value: T) => void;
+type Callback<T = unknown> = (value: T) => void;
 
-export const makeOnChange = (event: Event<string> | Handler<string>) => {
+export const makeOnChange = (event: Event<string> | Callback<string>) => {
   const onChange = createEvent<ReactChangeEvent>();
   onChange.map<string>(getInputValue).watch(event);
   return onChange;
 };
 
-export const makeEventHandler = (event: Event<void> | Handler<void>) => {
-  const handler = createEvent<React.SyntheticEvent>();
-  handler.map(preventDefault).watch(event);
-  return handler;
+export const makePrevented = (callback: Event<void> | Callback<void>) => {
+  const clock = createEvent<React.SyntheticEvent>();
+
+  clock.watch((event) => {
+    if (!isNil) {
+      event.preventDefault();
+    }
+
+    callback();
+  });
+
+  return clock;
 };

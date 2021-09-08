@@ -1,11 +1,11 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
-import { GROTHS_IN_BEAM } from '@app/model';
+import { GROTHS_IN_BEAM } from '@app/model/rates';
 
 import { Transaction } from '@app/core/types';
 import { useStore } from 'effector-react';
-import AssetIcon from './AssetIcon';
+import AssetIcon from '@uikit/AssetIcon';
 import { $assets } from './model';
 
 const ListStyled = styled.ul`

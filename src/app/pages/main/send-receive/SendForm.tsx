@@ -2,7 +2,8 @@
 import React from 'react';
 import { useStore } from 'effector-react';
 
-import { gotoConfirm, gotoWallet, GROTHS_IN_BEAM } from '@app/model';
+import { GROTHS_IN_BEAM } from '@app/model/rates';
+import { gotoConfirm, gotoWallet } from '@app/model/view';
 import {
   Window, Section, Input, Button, Title, Select,
 } from 'app/uikit';

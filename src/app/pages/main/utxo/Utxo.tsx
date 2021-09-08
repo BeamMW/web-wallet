@@ -7,7 +7,7 @@ import {
   Window,
 } from '@app/uikit';
 
-import { gotoWallet } from '@app/model';
+import { gotoWallet } from '@app/model/view';
 
 const Utxo = () => (
   <Window title="UTXO" onBackClick={gotoWallet}>

@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { View, setView, setSeed } from '@app/model';
+import { View, setView } from '@app/model/view';
+import { setSeed } from '@app/model/base';
+
 import { Window } from 'app/uikit';
 import { SeedRestore } from '@pages/intro/seed';
 

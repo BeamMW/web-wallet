@@ -4,10 +4,10 @@ import { styled } from '@linaria/react';
 
 import {
   Window, Popup, Button, Footer,
-} from 'app/uikit';
+} from '@uikit';
 import { SeedConfirm } from '@pages/intro/seed';
-// eslint-disable-next-line
-import { View, setView, $onboarding, $seed } from '@app/model';
+import { View, setView } from '@app/model/view';
+import { $seed } from '@app/model/base';
 
 import EyeIcon from '@icons/icon-eye.svg';
 import PassIcon from '@icons/icon-pass.svg';

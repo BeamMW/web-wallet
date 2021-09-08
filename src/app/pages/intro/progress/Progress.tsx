@@ -3,7 +3,7 @@ import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import { Button, Splash, Footer } from 'app/uikit';
-import { setView, View } from '@app/model';
+import { setView, View } from '@app/model/view';
 import CancelIcon from '@icons/icon-cancel.svg';
 import WasmWallet from '@core/WasmWallet';
 

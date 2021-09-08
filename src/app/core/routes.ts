@@ -6,7 +6,7 @@ import {
   Wallet, Receive, SendConfirm, SendForm, Utxo,
 } from '@pages/main';
 
-import { View } from '@app/model';
+import { View } from '@app/model/view';
 
 const ROUTES = {
   [View.LOGIN]: Login,

@@ -6,7 +6,8 @@ import WasmWallet from '@core/WasmWallet';
 import {
   Window, Button, Input, Footer,
 } from 'app/uikit';
-import { View, setView, $seed } from '@app/model';
+import { $seed } from '@app/model/base';
+import { View, setView } from '@app/model/view';
 import { makeOnChange } from '@core/utils';
 import ArrowIcon from '@icons/icon-arrow.svg';
 

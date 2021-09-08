@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 
-import { gotoForm, GROTHS_IN_BEAM } from '@app/model';
+import { gotoForm } from '@app/model/view';
+import { GROTHS_IN_BEAM } from '@app/model/rates';
+
 import {
   Window, Section, Button,
 } from 'app/uikit';

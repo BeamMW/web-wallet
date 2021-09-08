@@ -1,8 +1,39 @@
-import { sendRequest } from '@app/model';
-
+import { createEvent } from 'effector';
 import {
   AddressValidation, ChangeData, RPCMethod, WalletStatus,
+  RPCEvent,
 } from './types';
+
+import WasmWallet, { WalletEvent } from './WasmWallet';
+
+const wallet = WasmWallet.getInstance();
+
+export const sendWalletEvent = createEvent<WalletEvent>();
+
+export function handleWalletEvent<E>(event: RPCEvent | RPCMethod, handler: (payload: E) => void) {
+  sendWalletEvent.filterMap(({ id, result }) => (
+    id === event ? result as E : undefined
+  ))
+    .watch(handler);
+}
+
+export function sendRequest<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
+  return new Promise((resolve) => {
+    const target = wallet.send(method, params);
+    console.info(`sending ${method}:${target}`);
+
+    const unwatch = sendWalletEvent
+      .filter({
+        fn: ({ id }) => id === target,
+      })
+      .watch(({ result }) => {
+        console.info(`received ${method}:${target} with`, result);
+
+        resolve(result);
+        unwatch();
+      });
+  });
+}
 
 export function getWalletStatus() {
   return sendRequest<WalletStatus>(RPCMethod.GetWalletStatus);

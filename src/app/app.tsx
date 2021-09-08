@@ -3,7 +3,9 @@ import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
-import { $view, sendWalletEvent, setOnboarding } from '@app/model';
+import { $view } from '@app/model/view';
+import { sendWalletEvent } from '@core/api';
+import { setOnboarding } from '@app/model/base';
 
 import ROUTES from './core/routes';
 import WasmWallet from './core/WasmWallet';

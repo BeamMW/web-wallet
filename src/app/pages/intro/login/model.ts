@@ -1,6 +1,6 @@
 import { createEvent, restore } from 'effector';
 
-import { $onboarding } from '@app/model';
+import { $onboarding } from '@app/model/base';
 import { isNil } from '@app/core/utils';
 
 export enum LoginPhase {

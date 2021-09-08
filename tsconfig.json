@@ -2,6 +2,7 @@
   "compilerOptions": {
     "jsx": "react",
     "target": "es2020",
+    "module": "commonjs",
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "typeRoots": [
@@ -14,6 +15,7 @@
     "paths": {
       "@app/*": ["app/*"],
       "@core/*": ["app/core/*"],
+      "@model/*": ["app/model/*"],
       "@uikit": ["app/uikit"],
       "@uikit/*": ["app/uikit/*"],
       "@pages/*": ["app/pages/*"],

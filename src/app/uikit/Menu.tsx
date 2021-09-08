@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { $view, setView, View } from '@app/model';
+import { $view, setView, View } from '@app/model/view';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
