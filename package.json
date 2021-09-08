@@ -4,7 +4,7 @@
   "main": "index.js",
   "repository": "",
   "author": "",
-  "license": "",
+  "license": "UNLICENSED",
   "scripts": {
     "watch": "webpack --watch --mode=development",
     "serve": "webpack serve --mode=development",
