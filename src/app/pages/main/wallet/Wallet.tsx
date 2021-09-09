@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
@@ -8,7 +8,7 @@ import {
 } from 'app/uikit';
 import { isNil } from '@core/utils';
 import { gotoSend, gotoReceive } from '@app/model/view';
-import { GROTHS_IN_BEAM} from '@app/model/rates';
+import { getRateFx, GROTHS_IN_BEAM } from '@app/model/rates';
 
 import ArrowUpIcon from '@icons/icon-arrow-up.svg';
 import ArrowDownIcon from '@icons/icon-arrow-down.svg';
@@ -73,6 +73,10 @@ const menuButtonStyle = css`
 `;
 
 const Wallet = () => {
+  useEffect(() => {
+    getRateFx();
+  }, []);
+
   const [menuVisible, setVisible] = useState(false);
   const [active, setActive] = useState(null);
   const totals = useStore($totals);

@@ -11,3 +11,5 @@ export { default as Section } from './Section';
 export { default as Select } from './Select';
 export { default as Angle } from './Angle';
 export { default as Title } from './Title';
+export { default as AssetLabel } from './AssetLabel';
+export { default as StatusLabel } from './StatusLabel';

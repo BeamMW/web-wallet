@@ -15,7 +15,6 @@ const AssetIcon: React.FC<AssetIconProps> = ({
   className,
 }) => {
   const IconComponent = asset_id === 0 ? BeamIconSvg : AssetIconSvg;
-
   return <IconComponent className={className} />;
 };
 

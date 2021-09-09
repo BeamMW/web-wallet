@@ -32,3 +32,16 @@ export const makePrevented = (callback: Event<void> | Callback<void>) => {
 
   return clock;
 };
+
+export const toUSD = (amount: number, rate: number) => {
+  switch (true) {
+    case amount === 0:
+      return '0 USD';
+    case amount > 0.01: {
+      const value = amount * rate;
+      return `${value.toFixed(2)} USD`;
+    }
+    default:
+      return '< 1 cent';
+  }
+};

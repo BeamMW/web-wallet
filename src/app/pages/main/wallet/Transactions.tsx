@@ -1,16 +1,12 @@
 import React from 'react';
 import { styled } from '@linaria/react';
-import { css } from '@linaria/core';
-import { GROTHS_IN_BEAM } from '@app/model/rates';
 
 import { Transaction } from '@app/core/types';
-import { useStore } from 'effector-react';
-import AssetIcon from '@uikit/AssetIcon';
-import { $assets } from './model';
+
+import { AssetLabel, StatusLabel } from '@app/uikit';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;
-  padding: 0 8px;
 `;
 
 interface TransactionsProps {
@@ -19,40 +15,25 @@ interface TransactionsProps {
 
 const ListItemStyled = styled.li`
   position: relative;
-`;
+  padding: 20px;
+  padding-left: 70px;
 
-const TitleStyled = styled.h3`
-  margin: 0;
-  text-align: left;
-  font-size: 16px;
-  font-weight: 600;
-  color: white;
-`;
-
-const iconClassName = css`
-  position: absolute;
-  top: 16px;
-  left: 20px;
+  &:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
 `;
 
 const Transactions: React.FC<TransactionsProps> = ({
   data,
-}) => {
-  const assets = useStore($assets);
-
-  return (
-    <ListStyled>
-      { data.map(({ asset_id, value }) => (
-        <ListItemStyled>
-          <AssetIcon asset_id={asset_id} className={iconClassName} />
-          <TitleStyled>
-            {value / GROTHS_IN_BEAM}
-            {assets[asset_id].metadata_pairs.N}
-          </TitleStyled>
-        </ListItemStyled>
-      ))}
-    </ListStyled>
-  );
-};
+}) => (
+  <ListStyled>
+    { data.map((tx, index) => (
+      <ListItemStyled key={index}>
+        <AssetLabel signed value={tx.value} asset_id={tx.asset_id} />
+        <StatusLabel data={tx} />
+      </ListItemStyled>
+    ))}
+  </ListStyled>
+);
 
 export default Transactions;
