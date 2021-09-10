@@ -27,6 +27,8 @@ function compact(value: string): string {
   return `${value.substr(0, 5)}…${value.substr(-5, 5)}`;
 }
 
+const TXS_MAX = 4;
+
 const TABLE_CONFIG = [
   {
     name: 'create_time',
@@ -91,9 +93,8 @@ const Wallet = () => {
 
   const handleCancelClick: React.MouseEventHandler = () => setVisible(false);
 
-  const data = isNil(active)
-    ? transactions
-    : transactions.filter(({ asset_id }) => asset_id === active);
+  const sliced = transactions.slice(0, TXS_MAX);
+  const filtered = isNil(active) ? sliced : sliced.filter(({ asset_id }) => asset_id === active);
 
   return (
     <Window title="Wallet">
@@ -111,7 +112,7 @@ const Wallet = () => {
         <Assets data={totals} />
       </Section>
       <Section title="Transactions">
-        <Transactions data={transactions} />
+        <Transactions data={filtered} />
       </Section>
     </Window>
   );

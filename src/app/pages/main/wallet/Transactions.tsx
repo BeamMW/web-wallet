@@ -29,7 +29,7 @@ const Transactions: React.FC<TransactionsProps> = ({
   <ListStyled>
     { data.map((tx, index) => (
       <ListItemStyled key={index}>
-        <AssetLabel signed value={tx.value} asset_id={tx.asset_id} />
+        <AssetLabel income={tx.income} value={tx.value} asset_id={tx.asset_id} />
         <StatusLabel data={tx} />
       </ListItemStyled>
     ))}
