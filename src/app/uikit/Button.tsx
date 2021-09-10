@@ -8,7 +8,18 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'regular' | 'ghost' | 'link' | 'icon';
 }
 
-const ButtonStyled = styled.button<ButtonProps>`
+const BaseButtonStyled = styled.button<ButtonProps>`
+  &[disabled] {
+    opacity: 0.5;
+
+    &:hover, &:active {
+      box-shadow: none !important;
+      cursor: not-allowed !important;
+    }
+  }
+`;
+
+const ButtonStyled = styled(BaseButtonStyled)`
   display: block;
   width: 100%;
   max-width: 254px;
@@ -29,15 +40,6 @@ const ButtonStyled = styled.button<ButtonProps>`
     cursor: pointer;
   }
 
-  &[disabled] {
-    opacity: 0.5;
-
-    &:hover, &:active {
-      box-shadow: none
-      cursor: not-allowed;
-    }
-  }
-
   > svg {
     vertical-align: sub;
     margin-right: 10px;
@@ -55,7 +57,7 @@ const GhostButtonStyled = styled(ButtonStyled)`
   }
 `;
 
-const IconButtonStyled = styled.button<ButtonProps>`
+const IconButtonStyled = styled(BaseButtonStyled)`
   display: inline-block;
   line-height: 0;
   margin: 0;

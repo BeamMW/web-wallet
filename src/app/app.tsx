@@ -130,11 +130,6 @@ css`
   }
 `;
 
-const ContainerStyled = styled.div`
-  position: relative;
-  padding-top: 50px;
-`;
-
 const wallet = WasmWallet.getInstance();
 
 async function initWallet() {
@@ -155,9 +150,7 @@ const App = () => {
   const ViewComponent = ROUTES[view];
 
   return (
-    <ContainerStyled>
-      <ViewComponent />
-    </ContainerStyled>
+    <ViewComponent />
   );
 };
 

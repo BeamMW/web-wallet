@@ -62,13 +62,14 @@ const ActionsStyled = styled.div`
   margin: 0 -4px;
 
   > button {
-    margin: 0 4px;
+    margin: 0 4px !important;
   }
 `;
 
 const menuButtonStyle = css`
-  position: absolute;
-  top: 24px;
+  position: fixed;
+  z-index: 3;
+  top: 74px;
   left: 24px;
 `;
 

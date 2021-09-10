@@ -31,6 +31,11 @@ const InputStyled = styled.input<InputProps>`
     font-size: 14px;
     transform: translateX(1px);
   }
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const InputRegularStyled = styled(InputStyled)`

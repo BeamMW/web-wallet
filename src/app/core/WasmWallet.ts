@@ -14,6 +14,11 @@ export interface WalletEvent<T = any> {
   result: T;
 }
 
+export enum ErrorMessage {
+  INVALID = 'Invalid password provided',
+  EMPTY = 'Please, enter password',
+}
+
 type WalletEventHandler = {
   (event: WalletEvent): void;
 };
@@ -63,8 +68,20 @@ export default class WasmWallet {
     });
   }
 
-  static checkPassword(pass: string) {
-    return WasmWalletClient.CheckPassword(PATH_DB, pass);
+  static checkPassword(pass: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (pass === '') {
+        reject(ErrorMessage.EMPTY);
+      }
+
+      WasmWalletClient.CheckPassword(PATH_DB, pass, (result: boolean) => {
+        if (result) {
+          resolve(pass);
+        } else {
+          reject(ErrorMessage.INVALID);
+        }
+      });
+    });
   }
 
   static isAllowedWord(word: string): boolean {

@@ -1,48 +1,28 @@
 import React, { useState, useRef } from 'react';
 
-import WasmWallet from '@core/WasmWallet';
-import { setView, View } from '@app/model/view';
 import {
   Popup, Button, Input, Splash,
 } from 'app/uikit';
 
 import WalletSmallIcon from '@icons/icon-wallet-small.svg';
 import { isNil } from '@app/core/utils';
-import { LoginPhase, setLoginPhase } from './model';
-
-enum ErrorMessage {
-  INVALID = 'Invalid password provided',
-  EMPTY = 'Please, enter password',
-}
-
-const wallet = WasmWallet.getInstance();
+import { useStore } from 'effector-react';
+import {
+  $error, checkPasswordFx, LoginPhase, setLoginPhase,
+} from './model';
 
 const LoginActive: React.FC = () => {
-  const [error, setError] = useState<ErrorMessage>(null);
   const [warningVisible, toggleWarning] = useState(false);
+
+  const pending = useStore(checkPasswordFx.pending);
+  const error = useStore($error);
 
   const inputRef = useRef<HTMLInputElement>();
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const { value } = inputRef.current;
-
-    if (value === '') {
-      setError(ErrorMessage.EMPTY);
-      return;
-    }
-
-    const valid = WasmWallet.checkPassword(value);
-
-    if (!valid) {
-      setError(ErrorMessage.INVALID);
-      return;
-    }
-
-    setError(null);
-    setView(View.PROGRESS);
-
-    wallet.start(value);
+    checkPasswordFx(value);
   }
 
   return (
@@ -56,15 +36,17 @@ const LoginActive: React.FC = () => {
             type="password"
             placeholder="Password"
             margin="large"
+            disabled={pending}
             valid={isNil(error)}
             label={error}
             ref={inputRef}
           />
-          <Button type="submit" icon={WalletSmallIcon}>
+          <Button type="submit" disabled={pending} icon={WalletSmallIcon}>
             open your wallet
           </Button>
           <Button
             variant="link"
+            disabled={pending}
             onClick={(event) => {
               event.preventDefault();
               toggleWarning(true);
@@ -74,7 +56,6 @@ const LoginActive: React.FC = () => {
           </Button>
         </form>
       </Splash>
-
       <Popup
         visible={warningVisible}
         title="Restore wallet or create a new one"
