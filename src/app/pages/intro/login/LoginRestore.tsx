@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from 'effector-react';
 
-import WalletController from '@app/core/walletController';
+import WalletController from '@app/core/WalletController';
 import { setView, View } from '@app/model/view';
 import { setSeed } from '@app/model/base';
 import {

@@ -7,7 +7,7 @@ import App from './app';
 
 import { EnvironmentType } from '@core/types';
 import * as extensionizer from 'extensionizer';
-import WalletController from '@app/core/walletController';
+import WalletController from '@app/core/WalletController';
 
 window.global = window;
 

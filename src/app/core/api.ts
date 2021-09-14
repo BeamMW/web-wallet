@@ -3,7 +3,7 @@ import {
   AddressValidation, ChangeData, RPCMethod, WalletStatus,
   RPCEvent,
 } from './types';
-import WalletController from './walletController';
+import WalletController from './WalletController';
 import { WalletEvent } from './WasmWallet';
 
 const walletController = WalletController.getInstance();

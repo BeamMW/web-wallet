@@ -6,7 +6,7 @@ import { $onboarding, setSeed } from '@model/base';
 import { isNil } from '@core/utils';
 import WasmWallet, { ErrorMessage } from '@core/WasmWallet';
 import { setView, View } from '@app/model/view';
-import WalletController from '@app/core/walletController';
+import WalletController from '@app/core/WalletController';
 
 export enum LoginPhase {
   LOADING,

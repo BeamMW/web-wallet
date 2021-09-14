@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
-import WasmWallet from '@core/WasmWallet';
 import {
   Window, Button, Input, Footer,
 } from 'app/uikit';
@@ -12,7 +11,7 @@ import { makeOnChange } from '@core/utils';
 import ArrowIcon from '@icons/icon-arrow.svg';
 
 import PasswordStrength from './PasswordStrength';
-import WalletController from '@app/core/walletController';
+import WalletController from '@app/core/WalletController';
 
 const FormStyled = styled.form`
   text-align: left;
