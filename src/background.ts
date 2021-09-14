@@ -6,28 +6,19 @@ import { EnvironmentType } from '@core/types';
 import WasmWallet from '@core/WasmWallet';
 
 const wallet = WasmWallet.getInstance();
-
-const reconnectHandler = (remotePort) => {
-  wallet.updateHandler((event) => {
-    remotePort.postMessage({event});
-  });
-};
-
-async function initWallet(remotePort) {
-  try {
-    const result = await wallet.init((event) => {
-      remotePort.postMessage({event});
-    });
-    remotePort.postMessage({onboarding: !result, isrunning: false});
-  } catch (e){
-    remotePort.postMessage({onboarding: true, isrunning: false});
-  }
-}
+let isPortConnected = false;
+let remotePortObj = null;
 
 const connectRemote = (remotePort) => {
+  isPortConnected = true;
+  remotePortObj = remotePort;
   const processName = remotePort.name;
   console.log('remote connected', remotePort);
 
+  remotePort.onDisconnect.addListener(() => {
+    isPortConnected = false;
+  })
+  
   remotePort.onMessage.addListener(async (msg) => {
     if (msg.type !== undefined) {
       if (msg.type === 'start') {
@@ -45,21 +36,44 @@ const connectRemote = (remotePort) => {
       } else {
         sendResult = await wallet.send(data.method, data.params);
       }
-      remotePort.postMessage({id, result: sendResult});
+      postMessage({id, result: sendResult});
     }
   });
 
   if (processName === EnvironmentType.POPUP) {
     if (!wallet.isRunning()) {
-      initWallet(remotePort);
+      initWallet();
     } else {
-      reconnectHandler(remotePort);
+      reconnectHandler();
       wallet.subunsubTo(false);
       wallet.subunsubTo(true);
-      remotePort.postMessage({onboarding: false, isrunning: true});
+      postMessage({onboarding: false, isrunning: true});
     }
   }
 };
+
+const reconnectHandler = () => {
+  wallet.updateHandler((event) => {
+    postMessage({event});
+  });
+};
+
+const initWallet = async () => {
+  try {
+    const result = await wallet.init((event) => {
+      postMessage({event});
+    });
+    postMessage({onboarding: !result, isrunning: false});
+  } catch (e){
+    postMessage({onboarding: true, isrunning: false});
+  }
+}
+
+const postMessage = (data) => {
+  if (remotePortObj !== null && isPortConnected) {
+    remotePortObj.postMessage(data);
+  }
+}
 
 extensionizer.runtime.onConnect.addListener(connectRemote);
 
