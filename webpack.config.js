@@ -71,7 +71,22 @@ const config = {
           context: 'public',
         },
         {
-          from: path.join(__dirname, 'src/index.html'),
+          from: path.join(__dirname, 'src/page.html'),
+          to: path.join(__dirname, 'dist'),
+          context: 'public',
+        },
+        {
+          from: path.join(__dirname, 'src/notification.html'),
+          to: path.join(__dirname, 'dist'),
+          context: 'public',
+        },
+        {
+          from: path.join(__dirname, 'src/popup.html'),
+          to: path.join(__dirname, 'dist'),
+          context: 'public',
+        },
+        {
+          from: path.join(__dirname, 'src/background.html'),
           to: path.join(__dirname, 'dist'),
           context: 'public',
         },

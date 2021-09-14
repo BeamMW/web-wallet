@@ -1,46 +1,109 @@
 /// <reference types="chrome"/>
 
-function openExtensionInBrowser() {
-  const extensionURL = chrome.runtime.getURL('index.html');
+import * as extensionizer from 'extensionizer';
+import { sendWalletEvent } from '@core/api';
+import { EnvironmentType } from '@core/types';
+import WasmWallet from '@core/WasmWallet';
 
-  chrome.tabs.create({ url: extensionURL });
-}
+const wallet = WasmWallet.getInstance();
 
-chrome.runtime.onInstalled.addListener(({ reason }) => {
-  if (reason === 'install') {
-    // openExtensionInBrowser();
+const reconnectHandler = (remotePort) => {
+  wallet.updateHandler((event) => {
+    remotePort.postMessage({event});
+  });
+};
+
+async function initWallet(remotePort) {
+  try {
+    const result = await wallet.init((event) => {
+      remotePort.postMessage({event});
+    });
+    remotePort.postMessage({onboarding: !result, isrunning: false});
+  } catch (e){
+    remotePort.postMessage({onboarding: true, isrunning: false});
   }
-});
-
-function getOwnTabs(): Promise<chrome.tabs.Tab[]> {
-  return Promise.all<chrome.tabs.Tab>(
-    chrome.extension
-      .getViews({ type: 'tab' })
-      .map(
-        (view) => new Promise(
-          (resolve) => view.chrome.tabs.getCurrent(
-            (tab) => resolve(Object.assign(tab, { url: view.location.href })),
-          ),
-        ),
-      ),
-  );
 }
 
-function openOptions(url) {
-  getOwnTabs().then((ownTabs) => {
-    const target = ownTabs.find((tab) => tab.url.includes(url));
-    if (target) {
-      if (target.active && target.status === 'complete') {
-        chrome.runtime.sendMessage({ text: 'stop-loading' });
-      } else {
-        chrome.tabs.update(target.id, { active: true });
+const connectRemote = (remotePort) => {
+  const processName = remotePort.name;
+  console.log('remote connected', remotePort);
+
+  remotePort.onMessage.addListener(async (msg) => {
+    if (msg.type !== undefined) {
+      if (msg.type === 'start') {
+        wallet.start(msg.pass);
+      } else if (msg.type === 'create') {
+        wallet.create(msg.seed, msg.pass, msg.isSeedConfirmed);
       }
     }
-  });
-}
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.text === 'wallet-opened') {
-    openOptions('index.html');
+    if (msg.data !== undefined) {
+      const {id, data} = msg;
+      let sendResult = null;
+      if (msg.data === 'get_seed') {
+        sendResult = WasmWallet.getSeedPhrase();
+      } else {
+        sendResult = await wallet.send(data.method, data.params);
+      }
+      remotePort.postMessage({id, result: sendResult});
+    }
+  });
+
+  if (processName === EnvironmentType.POPUP) {
+    if (!wallet.isRunning()) {
+      initWallet(remotePort);
+    } else {
+      reconnectHandler(remotePort);
+      wallet.subunsubTo(false);
+      wallet.subunsubTo(true);
+      remotePort.postMessage({onboarding: false, isrunning: true});
+    }
   }
-});
+};
+
+extensionizer.runtime.onConnect.addListener(connectRemote);
+
+// function openExtensionInBrowser() {
+//   const extensionURL = chrome.runtime.getURL('popup.html');
+
+//   chrome.tabs.create({ url: extensionURL });
+// }
+
+// chrome.runtime.onInstalled.addListener(({ reason }) => {
+//   if (reason === 'install') {
+//     // openExtensionInBrowser();
+//   }
+// });
+
+// function getOwnTabs(): Promise<chrome.tabs.Tab[]> {
+//   return Promise.all<chrome.tabs.Tab>(
+//     chrome.extension
+//       .getViews({ type: 'tab' })
+//       .map(
+//         (view) => new Promise(
+//           (resolve) => view.chrome.tabs.getCurrent(
+//             (tab) => resolve(Object.assign(tab, { url: view.location.href })),
+//           ),
+//         ),
+//       ),
+//   );
+// }
+
+// function openOptions(url) {
+//   getOwnTabs().then((ownTabs) => {
+//     const target = ownTabs.find((tab) => tab.url.includes(url));
+//     if (target) {
+//       if (target.active && target.status === 'complete') {
+//         chrome.runtime.sendMessage({ text: 'stop-loading' });
+//       } else {
+//         chrome.tabs.update(target.id, { active: true });
+//       }
+//     }
+//   });
+// }
+
+// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+//   if (message.text === 'wallet-opened') {
+//     openOptions('index.html');
+//   }
+// });

@@ -12,6 +12,7 @@ import { makeOnChange } from '@core/utils';
 import ArrowIcon from '@icons/icon-arrow.svg';
 
 import PasswordStrength from './PasswordStrength';
+import WalletController from '@app/core/walletController';
 
 const FormStyled = styled.form`
   text-align: left;
@@ -21,8 +22,6 @@ const FormStyled = styled.form`
     padding-left: 20px;
   }
 `;
-
-const wallet = WasmWallet.getInstance();
 
 const SetPassword = () => {
   const seed = useStore($seed);
@@ -36,7 +35,7 @@ const SetPassword = () => {
 
   const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
-    wallet.create(seed.join(' '), pass, true);
+    WalletController.create(seed.join(' '), pass, true);
     setView(View.PROGRESS);
   };
 

@@ -3,12 +3,10 @@ import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
-import { $view } from '@app/model/view';
-import { sendWalletEvent } from '@core/api';
+import { $view, setView, View } from '@app/model/view';
 import { setOnboarding } from '@app/model/base';
 
 import ROUTES from './core/routes';
-import WasmWallet from './core/WasmWallet';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 css`
@@ -130,20 +128,22 @@ css`
   }
 `;
 
-const wallet = WasmWallet.getInstance();
-
-async function initWallet() {
+async function initWallet(state) {
   try {
-    const result = await wallet.init(sendWalletEvent);
-    setOnboarding(!result);
-  } catch {
-    setOnboarding(true);
+    if (state.params.isrunning) {
+      setView(View.PROGRESS);
+    } else {
+      setOnboarding(state.params.onboarding);
+    }
+  } catch (e) {
+    console.log('init error', e)
+    setOnboarding(state.params.onboarding);
   }
 }
 
-const App = () => {
+const App = (state) => {
   useEffect(() => {
-    initWallet();
+    initWallet(state);
   }, []);
 
   const view = useStore($view);

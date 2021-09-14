@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from 'effector-react';
 
-import WasmWallet from '@core/WasmWallet';
+import WalletController from '@app/core/walletController';
 import { setView, View } from '@app/model/view';
 import { setSeed } from '@app/model/base';
 import {
@@ -12,7 +12,16 @@ import addIcon from '@icons/icon-add.svg';
 
 import { $phase, LoginPhase, setLoginPhase } from './model';
 
+const walletController = WalletController.getInstance();
+
 const LoginRestore: React.FC = () => {
+  let seed = null;
+  useEffect(() => {
+    (async () => {
+      seed = await walletController.getSeedPhrase();
+    })();
+  });
+
   const [warningVisible, toggleWarning] = useState(false);
   const phase = useStore($phase);
   const active = phase === LoginPhase.RESTORE;
@@ -31,7 +40,7 @@ const LoginRestore: React.FC = () => {
           type="button"
           icon={addIcon}
           onClick={() => {
-            setSeed(WasmWallet.getSeedPhrase());
+            setSeed(seed);
             setView(View.CREATE);
           }}
         >

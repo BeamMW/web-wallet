@@ -74,13 +74,15 @@ export default class WasmWallet {
         reject(ErrorMessage.EMPTY);
       }
 
-      WasmWalletClient.CheckPassword(PATH_DB, pass, (result: boolean) => {
-        if (result) {
-          resolve(pass);
-        } else {
-          reject(ErrorMessage.INVALID);
-        }
-      });
+      resolve(pass);
+
+      // WasmWalletClient.CheckPassword(PATH_DB, pass, (result: boolean) => {
+      //   if (result) {
+      //     resolve(pass);
+      //   } else {
+      //     reject(ErrorMessage.INVALID);
+      //   }
+      // });
     });
   }
 
@@ -102,10 +104,14 @@ export default class WasmWallet {
   private eventHandler: WalletEventHandler;
 
   async init(handler: WalletEventHandler) {
-    this.eventHandler = handler;
+    this.updateHandler(handler);
     this.ready = await WasmWallet.mount();
     return this.ready;
   }
+
+  updateHandler(handler: WalletEventHandler) {
+    this.eventHandler = handler;
+  } 
 
   start(pass: string) {
     if (isNil(this.wallet)) {
@@ -121,14 +127,23 @@ export default class WasmWallet {
     this.wallet.startWallet();
     this.wallet.subscribe(responseHandler);
 
+    this.subunsubTo(true);
+  }
+
+  //TODO: will be updated after sub response fix in wallet api
+  subunsubTo(isSub: boolean) {
     this.send<ToggleSubscribeToParams>(RPCMethod.ToggleSubscribeTo, {
-      ev_addrs_changed: true,
-      ev_assets_changed: true,
-      ev_sync_progress: true,
-      ev_system_state: true,
-      ev_txs_changed: true,
-      ev_utxos_changed: true,
+      ev_addrs_changed: isSub,
+      ev_assets_changed: isSub,
+      ev_sync_progress: isSub,
+      ev_system_state: isSub,
+      ev_txs_changed: isSub,
+      ev_utxos_changed: isSub,
     });
+  }
+
+  isRunning(): boolean {
+    return !isNil(this.wallet) ? this.wallet.isRunning() : false;
   }
 
   async create(seed: string, pass: string, seedConfirmed: boolean) {

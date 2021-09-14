@@ -191,3 +191,10 @@ export interface AssetsEvent extends WalletChangeEvent {
 export interface TxsEvent extends WalletChangeEvent {
   txs: Transaction[];
 }
+
+export enum EnvironmentType {
+  POPUP = 'popup',
+  NOTIFICATION = 'notification',
+  FULLSCREEN = 'fullscreen',
+  BACKGROUND = 'background'
+}

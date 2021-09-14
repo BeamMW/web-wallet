@@ -2,10 +2,11 @@ import {
   createEffect, createEvent, createStore, restore, sample,
 } from 'effector';
 
-import { $onboarding } from '@model/base';
+import { $onboarding, setSeed } from '@model/base';
 import { isNil } from '@core/utils';
 import WasmWallet, { ErrorMessage } from '@core/WasmWallet';
 import { setView, View } from '@app/model/view';
+import WalletController from '@app/core/walletController';
 
 export enum LoginPhase {
   LOADING,
@@ -13,8 +14,6 @@ export enum LoginPhase {
   RESTORE,
   FIRSTTIME,
 }
-
-const wallet = WasmWallet.getInstance();
 
 export const setLoginPhase = createEvent<LoginPhase>();
 
@@ -31,7 +30,7 @@ $error.reset(checkPasswordFx.done);
 
 checkPasswordFx.doneData.watch((pass) => {
   setView(View.PROGRESS);
-  wallet.start(pass);
+  WalletController.start(pass);
 });
 
 const unwatch = $onboarding.watch((value) => {

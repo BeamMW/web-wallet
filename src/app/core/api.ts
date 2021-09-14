@@ -3,10 +3,10 @@ import {
   AddressValidation, ChangeData, RPCMethod, WalletStatus,
   RPCEvent,
 } from './types';
+import WalletController from './walletController';
+import { WalletEvent } from './WasmWallet';
 
-import WasmWallet, { WalletEvent } from './WasmWallet';
-
-const wallet = WasmWallet.getInstance();
+const walletController = WalletController.getInstance();
 
 export const sendWalletEvent = createEvent<WalletEvent>();
 
@@ -18,8 +18,8 @@ export function handleWalletEvent<E>(event: RPCEvent | RPCMethod, handler: (payl
 }
 
 export function sendRequest<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
-  return new Promise((resolve) => {
-    const target = wallet.send(method, params);
+  return new Promise(async (resolve) => {
+    const target = await walletController.sendRequest({method, params});
     console.info(`sending ${method}:${target}`);
 
     const unwatch = sendWalletEvent
