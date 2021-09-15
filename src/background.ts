@@ -1,13 +1,39 @@
 /// <reference types="chrome"/>
 
 import * as extensionizer from 'extensionizer';
-import { sendWalletEvent } from '@core/api';
 import { EnvironmentType } from '@core/types';
 import WasmWallet from '@core/WasmWallet';
+import { isNil } from '@app/core/utils';
+
+window.global = globalThis;
 
 const wallet = WasmWallet.getInstance();
+
 let isPortConnected = false;
 let remotePortObj = null;
+
+const postMessage = (data) => {
+  if (remotePortObj !== null && isPortConnected) {
+    remotePortObj.postMessage(data);
+  }
+};
+
+const reconnectHandler = () => {
+  wallet.updateHandler((event) => {
+    postMessage({ event });
+  });
+};
+
+const initWallet = async () => {
+  try {
+    const result = await wallet.init((event) => {
+      postMessage({ event });
+    });
+    postMessage({ onboarding: !result, isrunning: false });
+  } catch (e) {
+    postMessage({ onboarding: true, isrunning: false });
+  }
+};
 
 const connectRemote = (remotePort) => {
   isPortConnected = true;
@@ -17,8 +43,8 @@ const connectRemote = (remotePort) => {
 
   remotePort.onDisconnect.addListener(() => {
     isPortConnected = false;
-  })
-  
+  });
+
   remotePort.onMessage.addListener(async (msg) => {
     if (msg.type !== undefined) {
       if (msg.type === 'start') {
@@ -28,15 +54,15 @@ const connectRemote = (remotePort) => {
       }
     }
 
-    if (msg.data !== undefined) {
-      const {id, data} = msg;
+    if (!isNil(msg)) {
+      const { id, data } = msg;
       let sendResult = null;
       if (msg.data === 'get_seed') {
         sendResult = WasmWallet.getSeedPhrase();
       } else {
         sendResult = await wallet.send(data.method, data.params);
       }
-      postMessage({id, result: sendResult});
+      postMessage({ id, result: sendResult });
     }
   });
 
@@ -47,33 +73,10 @@ const connectRemote = (remotePort) => {
       reconnectHandler();
       wallet.subunsubTo(false);
       wallet.subunsubTo(true);
-      postMessage({onboarding: false, isrunning: true});
+      postMessage({ onboarding: false, isrunning: true });
     }
   }
 };
-
-const reconnectHandler = () => {
-  wallet.updateHandler((event) => {
-    postMessage({event});
-  });
-};
-
-const initWallet = async () => {
-  try {
-    const result = await wallet.init((event) => {
-      postMessage({event});
-    });
-    postMessage({onboarding: !result, isrunning: false});
-  } catch (e){
-    postMessage({onboarding: true, isrunning: false});
-  }
-}
-
-const postMessage = (data) => {
-  if (remotePortObj !== null && isPortConnected) {
-    remotePortObj.postMessage(data);
-  }
-}
 
 extensionizer.runtime.onConnect.addListener(connectRemote);
 

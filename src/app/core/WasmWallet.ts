@@ -1,4 +1,5 @@
 import * as extensionizer from 'extensionizer';
+import * as passworder from 'browser-passworder';
 
 import { isNil } from '@core/utils';
 import { RPCMethod, RPCEvent, ToggleSubscribeToParams } from './types';
@@ -68,21 +69,26 @@ export default class WasmWallet {
     });
   }
 
+  static async saveWallet(pass: string) {
+    const data = await passworder.encrypt(pass, Date.now());
+    extensionizer.storage.local.remove(['wallet']);
+    extensionizer.storage.local.set({ wallet: data });
+    return data;
+  }
+
   static checkPassword(pass: string): Promise<string> {
     return new Promise((resolve, reject) => {
       if (pass === '') {
         reject(ErrorMessage.EMPTY);
       }
 
-      resolve(pass);
-
-      // WasmWalletClient.CheckPassword(PATH_DB, pass, (result: boolean) => {
-      //   if (result) {
-      //     resolve(pass);
-      //   } else {
-      //     reject(ErrorMessage.INVALID);
-      //   }
-      // });
+      extensionizer.storage.local.get('wallet', ({ wallet }) => {
+        passworder.decrypt(pass, wallet).then(() => {
+          resolve(pass);
+        }).catch(() => {
+          reject(ErrorMessage.INVALID);
+        });
+      });
     });
   }
 
@@ -111,7 +117,7 @@ export default class WasmWallet {
 
   updateHandler(handler: WalletEventHandler) {
     this.eventHandler = handler;
-  } 
+  }
 
   start(pass: string) {
     if (isNil(this.wallet)) {
@@ -130,7 +136,7 @@ export default class WasmWallet {
     this.subunsubTo(true);
   }
 
-  //TODO: will be updated after sub response fix in wallet api
+  // TODO: will be updated after sub response fix in wallet api
   subunsubTo(isSub: boolean) {
     this.send<ToggleSubscribeToParams>(RPCMethod.ToggleSubscribeTo, {
       ev_addrs_changed: isSub,
@@ -148,6 +154,7 @@ export default class WasmWallet {
 
   async create(seed: string, pass: string, seedConfirmed: boolean) {
     try {
+      await WasmWallet.saveWallet(pass);
       WasmWallet.initSettings(seedConfirmed);
 
       if (this.ready) {
