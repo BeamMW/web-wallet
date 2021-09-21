@@ -11,6 +11,16 @@
     "page": "background.html",
     "persistent": true
   },
+  "content_scripts": [
+    {
+      "matches": ["file://*/*", "http://*/*", "https://*/*"],
+      "js": [
+        "contentscript.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
   "icons": {
     "16": "assets/chrome-extention-icon-16x16.png",
     "48": "assets/chrome-extention-icon-48x48.png",
@@ -21,5 +31,8 @@
     "notifications",
     "storage"
   ],
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "web_accessible_resources": [
+    "inpage.js"
+  ]
 }

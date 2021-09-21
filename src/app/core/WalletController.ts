@@ -1,5 +1,3 @@
-import { sendWalletEvent } from '@core/api';
-
 let backgroundProvider;
 
 export default class WalletController {
@@ -14,45 +12,34 @@ export default class WalletController {
   }
 
   static start(pass: string) {
-    backgroundProvider.postMessage({ type: 'start', pass });
+    backgroundProvider.start(pass);
   }
 
-  static create(seed, pass, isSeedConfirmed) {
-    backgroundProvider.postMessage({
-      type: 'create', seed, pass, isSeedConfirmed,
-    });
+  static create(params) {
+    backgroundProvider.create(params);
   }
 
-  private portMap = new Map();
+  static setNotificationApproved(req) {
+    backgroundProvider.setNotificationApproved(req);
+  }
 
-  private portMessageId = 0;
+  static setNotificationRejected(req) {
+    backgroundProvider.setNotificationRejected(req);
+  }
 
-  initBgProvider = async (provider, cb, tab) => {
+  approveConnection = async (res) => {
+    return backgroundProvider.approveConnection(res);
+  } 
+
+  init = (provider) => {
     backgroundProvider = provider;
+  }
 
-    backgroundProvider.onMessage.addListener((msg) => {
-      console.info(msg);
-      if (msg.isrunning !== undefined && msg.onboarding !== undefined) {
-        cb(msg, tab);
-      } else if (msg.event !== undefined) {
-        sendWalletEvent(msg.event);
-      } else if (msg.id !== undefined && msg.result !== undefined) {
-        const { id, result } = msg;
-        const resolve = this.portMap.get(id);
-        this.portMap.delete(id);
-        resolve(result);
-      }
-    });
-  };
-
-  sendRequest = (data) => new Promise((resolve) => {
-    const id = ++this.portMessageId;
-    this.portMap.set(id, resolve);
-    backgroundProvider.postMessage({ id, data });
-  });
+  send = async (data) => {
+    return backgroundProvider.send(data)
+  }
 
   getSeedPhrase = async () => {
-    const seed = await this.sendRequest('get_seed');
-    return seed;
+    return backgroundProvider.getSeedPhrase();
   };
 }

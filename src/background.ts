@@ -2,125 +2,125 @@
 
 import * as extensionizer from 'extensionizer';
 import { EnvironmentType } from '@core/types';
-import WasmWallet from '@core/WasmWallet';
-import { isNil } from '@app/core/utils';
+
+import { PortStream } from "@core/PortStream";
+import { DnodeApp } from "@core/DnodeApp";
+import NotificationManager from '@core/NotificationManager';
+import { NotificationType } from '@core/types';
 
 window.global = globalThis;
 
-const wallet = WasmWallet.getInstance();
+const notificationManager = new NotificationManager();
 
-let isPortConnected = false;
-let remotePortObj = null;
+let uiIsTriggering = false;
+let popupIsOpen = false;
+let notificationIsOpen = false;
+let contentPortObj = null;
+const openBeamTabsIDs = {};
 
-const postMessage = (data) => {
-  if (remotePortObj !== null && isPortConnected) {
-    remotePortObj.postMessage(data);
-  }
-};
+const approveContractInfoHandler = (req, info, amounts, cb) => {
+    app.setNotificationInfo({type: NotificationType.APPROVE_INVOKE, params: {
+      req, info, amounts,
+    }}, cb);
+    notificationIsOpen = true;
+    openPopup();
+}
 
-const reconnectHandler = () => {
-  wallet.updateHandler((event) => {
-    postMessage({ event });
-  });
-};
-
-const initWallet = async () => {
-  try {
-    const result = await wallet.init((event) => {
-      postMessage({ event });
-    });
-    postMessage({ onboarding: !result, isrunning: false });
-  } catch (e) {
-    postMessage({ onboarding: true, isrunning: false });
-  }
-};
+const app = new DnodeApp(approveContractInfoHandler);
 
 const connectRemote = (remotePort) => {
-  isPortConnected = true;
-  remotePortObj = remotePort;
   const processName = remotePort.name;
-  console.log('remote connected', remotePort);
 
-  remotePort.onDisconnect.addListener(() => {
-    isPortConnected = false;
-  });
+  if (processName === EnvironmentType.CONTENT) {
+    const portStream = new PortStream(remotePort);
+    const origin = remotePort.sender.url
+    app.connectPage(portStream, origin)
 
-  remotePort.onMessage.addListener(async (msg) => {
-    if (msg.type !== undefined) {
-      if (msg.type === 'start') {
-        wallet.start(msg.pass);
-      } else if (msg.type === 'create') {
-        wallet.create(msg.seed, msg.pass, msg.isSeedConfirmed);
+    contentPortObj = remotePort;
+    contentPortObj.onMessage.addListener((msg) => {
+      if (msg.data === 'create_beam_api') {
+        app.setNotificationInfo({type: NotificationType.CONNECT, name: msg.name}, (res) => {
+          contentPortObj.postMessage({result: res});
+        });
+        notificationIsOpen = true;
+        openPopup();
       }
-    }
+    });
+  } else if (
+      processName === EnvironmentType.POPUP || 
+      processName === EnvironmentType.FULLSCREEN ||
+      processName === EnvironmentType.NOTIFICATION) {
+    popupIsOpen = true;
+    console.log('popup connected', remotePort);
 
-    if (!isNil(msg)) {
-      const { id, data } = msg;
-      let sendResult = null;
-      if (msg.data === 'get_seed') {
-        sendResult = WasmWallet.getSeedPhrase();
-      } else {
-        sendResult = await wallet.send(data.method, data.params);
-      }
-      postMessage({ id, result: sendResult });
-    }
-  });
+    const portStream = new PortStream(remotePort);
+    app.connectPopup(portStream);
 
-  if (processName === EnvironmentType.POPUP) {
-    if (!wallet.isRunning()) {
-      initWallet();
-    } else {
-      reconnectHandler();
-      wallet.subunsubTo(false);
-      wallet.subunsubTo(true);
-      postMessage({ onboarding: false, isrunning: true });
-    }
+    remotePort.onDisconnect.addListener(() => {
+      popupIsOpen = false;
+      notificationIsOpen = false;
+      console.log('popup disconnected');
+    });
   }
+
+  // if (processName === EnvironmentType.FULLSCREEN) {
+  //   const tabId = remotePort.sender.tab.id;
+  //   openBeamTabsIDs[tabId] = true;
+  // }
 };
 
 extensionizer.runtime.onConnect.addListener(connectRemote);
 
-// function openExtensionInBrowser() {
-//   const extensionURL = chrome.runtime.getURL('popup.html');
+async function openPopup() {
+  await triggerUi();
+  await new Promise((resolve) => {
+    const interval = setInterval(() => {
+      if (!notificationIsOpen) {
+        clearInterval(interval);
+        resolve(true);
+      }
+    }, 1000);
+  });
+}
 
-//   chrome.tabs.create({ url: extensionURL });
-// }
+async function triggerUi() {
+  const tabs = await getActiveTabs();
+  const currentlyActiveBeamTab = Boolean(
+    tabs.find((tab) => openBeamTabsIDs[tab.id]),
+  );
+  if (
+    !uiIsTriggering &&
+    !popupIsOpen &&
+    !currentlyActiveBeamTab
+  ) {
+    uiIsTriggering = true;
+    try {
+      await notificationManager.showPopup();
+    } finally {
+      uiIsTriggering = false;
+    }
+  }
+}
 
-// chrome.runtime.onInstalled.addListener(({ reason }) => {
-//   if (reason === 'install') {
-//     // openExtensionInBrowser();
-//   }
-// });
+const getActiveTabs = () => {
+  return new Promise<any[]>((resolve, reject) => {
+    extensionizer.tabs.query({ active: true }, (tabs) => {
+      const error = checkForError();
+      if (error) {
+        return reject(error);
+      }
+      return resolve(tabs);
+    });
+  });
+}
 
-// function getOwnTabs(): Promise<chrome.tabs.Tab[]> {
-//   return Promise.all<chrome.tabs.Tab>(
-//     chrome.extension
-//       .getViews({ type: 'tab' })
-//       .map(
-//         (view) => new Promise(
-//           (resolve) => view.chrome.tabs.getCurrent(
-//             (tab) => resolve(Object.assign(tab, { url: view.location.href })),
-//           ),
-//         ),
-//       ),
-//   );
-// }
-
-// function openOptions(url) {
-//   getOwnTabs().then((ownTabs) => {
-//     const target = ownTabs.find((tab) => tab.url.includes(url));
-//     if (target) {
-//       if (target.active && target.status === 'complete') {
-//         chrome.runtime.sendMessage({ text: 'stop-loading' });
-//       } else {
-//         chrome.tabs.update(target.id, { active: true });
-//       }
-//     }
-//   });
-// }
-
-// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-//   if (message.text === 'wallet-opened') {
-//     openOptions('index.html');
-//   }
-// });
+const checkForError = () => {
+  const { lastError } = extensionizer.runtime;
+  if (!lastError) {
+    return undefined;
+  }
+  if (lastError.stack && lastError.message) {
+    return lastError;
+  }
+  return new Error(lastError.message);
+}

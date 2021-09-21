@@ -1,5 +1,6 @@
 const path = require('path');
 const { IgnorePlugin } = require('webpack');
+const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
@@ -7,11 +8,13 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const IN_DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 const config = {
-  target: 'node',
+  target: 'web',
   cache: false,
   entry: {
-    index: path.join(__dirname, './src/index.tsx'),
+    popup: path.join(__dirname, './src/popup.ts'),
     background: path.join(__dirname, './src/background.ts'),
+    contentscript: path.join(__dirname, './src/contentscript.ts'),
+    inpage: path.join(__dirname, './src/inpage.ts'),
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -96,6 +99,9 @@ const config = {
           context: 'public',
         },
       ],
+    }),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
     }),
   ],
   externals: ['fs'],

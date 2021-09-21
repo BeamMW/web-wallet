@@ -34,7 +34,7 @@ const SetPassword = () => {
 
   const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
-    WalletController.create(seed.join(' '), pass, true);
+    WalletController.create({seed: seed.join(' '), pass, isConfirmed: true});
     setView(View.PROGRESS);
   };
 

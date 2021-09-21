@@ -14,6 +14,9 @@ export enum View {
   SEND_CONFIRM,
   RECEIVE,
   UTXO,
+  //notifications
+  CONNECT,
+  APPROVEINVOKE
 }
 
 export const setView = createEvent<View>();

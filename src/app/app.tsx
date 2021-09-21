@@ -6,6 +6,13 @@ import { styled } from '@linaria/react';
 import { $view, setView, View } from '@app/model/view';
 import { setOnboarding } from '@app/model/base';
 
+import { setName } from '@pages/notifications/connect/model';
+import { setParams } from "@pages/notifications/approveinvoke/model";
+
+import { sendWalletEvent } from '@app/core/api';
+import WalletController from '@app/core/WalletController';
+import { EnvironmentType, Notification, NotificationType } from '@core/types';
+
 import ROUTES from './core/routes';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -128,22 +135,39 @@ css`
   }
 `;
 
-async function initWallet(state) {
-  try {
-    if (state.params.isrunning) {
+const walletController = WalletController.getInstance();
+
+async function initWallet(bg) {
+  walletController.init(bg);
+  bg.init((state) => {
+    const {onboarding, isrunning} = state;
+    if (isrunning) {
       setView(View.PROGRESS);
     } else {
-      setOnboarding(state.params.onboarding);
+      setOnboarding(onboarding);
     }
-  } catch (e) {
-    console.log('init error', e)
-    setOnboarding(state.params.onboarding);
+  }, sendWalletEvent);
+}
+
+async function initNotification(bg) {
+  walletController.init(bg);
+  const data: Notification  = await bg.loadNotificationInfo();
+  if (data.type === NotificationType.CONNECT) {
+    setView(View.CONNECT);
+    setName(data.name);
+  } else if (data.type === NotificationType.APPROVE_INVOKE) {
+    setView(View.APPROVEINVOKE);
+    setParams(data.params);
   }
 }
 
-const App = (state) => {
+const App = (bg) => {
   useEffect(() => {
-    initWallet(state);
+    if (bg.windowType === EnvironmentType.FULLSCREEN || bg.windowType === EnvironmentType.POPUP) {
+      initWallet(bg.background);
+    } else if (bg.windowType === EnvironmentType.NOTIFICATION) {
+      initNotification(bg.background);
+    }
   }, []);
 
   const view = useStore($view);
