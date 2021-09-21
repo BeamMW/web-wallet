@@ -1,4 +1,4 @@
-import ExtensionPlatform from './extension';
+import ExtensionPlatform from './Extension';
 
 const NOTIFICATION_HEIGHT = 600;
 const NOTIFICATION_WIDTH = 375;
