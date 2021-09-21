@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
 
 import { $view, setView, View } from '@app/model/view';
 import { setOnboarding } from '@app/model/base';
@@ -12,8 +11,6 @@ import ROUTES from './core/routes';
 css`
   :global() {
     :root {
-      --color-popup: #003f6f;
-
       --color-purple: #da68f5;
       --color-red: #ff5354;
       --color-yellow: #f4ce4a;
@@ -23,11 +20,8 @@ css`
       --color-white: #ffffff;
       --color-gray: #8196a4;
 
+      --color-popup: #003f6f;
       --color-select: #184469;
-
-      --color-ghost: rgba(255, 255, 255, 0.1);
-      --color-ghost-medium: rgba(255, 255, 255, 0.2);
-      --color-ghost-active: rgba(255, 255, 255, 0.3);
 
       --color-disabled: #8da1ad;
     }
@@ -136,7 +130,7 @@ async function initWallet(state) {
       setOnboarding(state.params.onboarding);
     }
   } catch (e) {
-    console.log('init error', e)
+    console.log('init error', e);
     setOnboarding(state.params.onboarding);
   }
 }

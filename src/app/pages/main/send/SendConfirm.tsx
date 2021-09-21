@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 
-import { gotoForm } from '@app/model/view';
 import { GROTHS_IN_BEAM } from '@app/model/rates';
 
 import {
@@ -37,7 +36,6 @@ const Send = () => {
     <Window
       title="Send"
       pallete="purple"
-      onBackClick={gotoForm}
     >
       <form onSubmit={onConfirmSubmit}>
         <Section title="Send to">{ address }</Section>

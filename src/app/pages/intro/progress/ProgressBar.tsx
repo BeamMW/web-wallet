@@ -17,7 +17,7 @@ const ContainerStyled = styled.div`
     left: 0;
     width: 100%;
     height: 4px;
-    border: 1px solid var(--color-ghost);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 2px;
   }
 `;

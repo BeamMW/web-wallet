@@ -2,30 +2,32 @@
 import React, { useEffect } from 'react';
 import { useStore } from 'effector-react';
 
-import { gotoWallet } from '@app/model/view';
-
 import {
   Window, Section, Button,
 } from 'app/uikit';
 
-import { $addressMine, getAddressFx } from './model';
+import {
+  $addressPreview,
+  getAddressFx,
+  onSubmit,
+} from './model';
 
-const SendForm = () => {
+const Receive = () => {
   useEffect(() => {
     getAddressFx();
   }, []);
 
-  const address = useStore($addressMine);
+  const address = useStore($addressPreview);
 
   return (
     <Window
       title="Send"
       pallete="blue"
-      onBackClick={gotoWallet}
     >
-      <form>
+      <form onSubmit={onSubmit}>
         <Section title="Address" variant="gray">
           { address }
+          &nbsp;
         </Section>
         <Button
           pallete="blue"
@@ -38,4 +40,4 @@ const SendForm = () => {
   );
 };
 
-export default SendForm;
+export default Receive;

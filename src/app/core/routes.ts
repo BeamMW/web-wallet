@@ -3,7 +3,7 @@ import {
 } from '@pages/intro';
 
 import {
-  Wallet, Receive, SendConfirm, SendForm, Utxo,
+  Wallet, Receive, SendConfirm, SendForm, Utxo, Settings,
 } from '@pages/main';
 
 import { View } from '@app/model/view';
@@ -19,6 +19,7 @@ const ROUTES = {
   [View.SEND_CONFIRM]: SendConfirm,
   [View.RECEIVE]: Receive,
   [View.UTXO]: Utxo,
+  [View.SETTINGS]: Settings,
 };
 
 export default ROUTES;

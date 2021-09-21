@@ -3,9 +3,8 @@ import React from 'react';
 import { useStore } from 'effector-react';
 
 import { GROTHS_IN_BEAM } from '@app/model/rates';
-import { gotoConfirm, gotoWallet } from '@app/model/view';
 import {
-  Window, Section, Input, Button, Title, Select,
+  Window, Section, Input, Button, Title,
 } from 'app/uikit';
 import ArrowIcon from '@icons/icon-arrow.svg';
 
@@ -14,8 +13,9 @@ import {
   $address,
   $addressLabel,
   $addressValid,
-  onAddressInput,
   $totalSelected,
+  onAddressInput,
+  onFormSubmit,
 } from './model';
 
 import AmountInput from './AmountInput';
@@ -36,9 +36,8 @@ const SendForm = () => {
     <Window
       title="Send"
       pallete="purple"
-      onBackClick={gotoWallet}
     >
-      <form onSubmit={gotoConfirm}>
+      <form onSubmit={onFormSubmit}>
         <Section title="Send to" variant="gray">
           <Input
             variant="gray"

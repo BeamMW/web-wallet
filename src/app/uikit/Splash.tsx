@@ -8,7 +8,7 @@ import BackButton from './BackButton';
 interface SplashProps {
   size?: 'large' | 'small';
   blur?: boolean;
-  onBackClick?: React.MouseEventHandler;
+  onReturn?: React.MouseEventHandler;
 }
 
 const ContainerStyled = styled.div<SplashProps>`
@@ -31,11 +31,11 @@ const TitleStyled = styled.div<SplashProps>`
 export const Splash: React.FC<SplashProps> = ({
   size,
   blur,
-  onBackClick,
+  onReturn,
   children,
 }) => (
   <ContainerStyled blur={blur}>
-    {!isNil(onBackClick) && <BackButton onClick={onBackClick} />}
+    {!isNil(onReturn) && <BackButton onClick={onReturn} />}
     <Logo size={size} />
     <TitleStyled size={size}>Scalable confidential cryptocurrency</TitleStyled>
     {children}

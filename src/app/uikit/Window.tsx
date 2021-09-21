@@ -1,6 +1,8 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
+import { useStore } from 'effector-react';
+import { $backButtonShown, onPreviousClick } from '@app/model/base';
 import Logo from './Logo';
 import BackButton from './BackButton';
 import Title from './Title';
@@ -9,7 +11,6 @@ interface WindowProps {
   title?: string;
   blur?: boolean;
   pallete?: 'default' | 'blue' | 'purple';
-  onBackClick?: React.MouseEventHandler;
 }
 
 function getColor(pallete: string): string {
@@ -26,7 +27,7 @@ function getColor(pallete: string): string {
 const ContainerStyled = styled.div<WindowProps>`
   position: relative;
   height: 600px;
-  padding: 130px 30px 0;
+  padding: 140px 30px 0;
   text-align: center;
   filter: ${({ blur }) => (blur ? 'blur(3px)' : 'none')};
 
@@ -72,7 +73,7 @@ const HeadingStyled = styled.div<{ pallete: string }>`
 const FrameStyled = styled.div`
   overflow: hidden;
   position: absolute;
-  top: -40px;
+  top: 10px;
   left: 50%;
   width: 42px;
   height: 30px;
@@ -83,19 +84,22 @@ export const Window: React.FC<WindowProps> = ({
   title,
   blur,
   pallete = 'default',
-  onBackClick,
   children,
-}) => (
-  <ContainerStyled blur={blur} pallete={pallete}>
-    <HeadingStyled pallete={pallete}>
-      <FrameStyled>
-        <Logo size="icon" />
-      </FrameStyled>
-      <Title variant="heading">{title}</Title>
-    </HeadingStyled>
-    {onBackClick && <BackButton onClick={onBackClick} />}
-    {children}
-  </ContainerStyled>
-);
+}) => {
+  const backButtonShown = useStore($backButtonShown);
+
+  return (
+    <ContainerStyled blur={blur} pallete={pallete}>
+      <HeadingStyled pallete={pallete}>
+        <FrameStyled>
+          <Logo size="icon" />
+        </FrameStyled>
+        <Title variant="heading">{title}</Title>
+      </HeadingStyled>
+      {backButtonShown && <BackButton onClick={onPreviousClick} />}
+      {children}
+    </ContainerStyled>
+  );
+};
 
 export default Window;

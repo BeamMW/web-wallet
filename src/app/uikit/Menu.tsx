@@ -19,6 +19,10 @@ const MENU_ITEMS = [
     title: 'UTXO',
     value: View.UTXO,
   },
+  {
+    title: 'Settings',
+    value: View.SETTINGS,
+  },
 ];
 
 const ContainerStyled = styled.nav`

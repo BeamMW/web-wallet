@@ -99,10 +99,6 @@ const Create = () => {
     setView(View.SET_PASSWORD);
   };
 
-  const handleBackClick: React.MouseEventHandler = () => {
-    setView(View.LOGIN);
-  };
-
   const handleSkipClick: React.MouseEventHandler = () => {
     setView(View.SET_PASSWORD);
   };
@@ -118,7 +114,6 @@ const Create = () => {
           <Window
             title="Seed phrase"
             blur={warningVisible}
-            onBackClick={handleBackClick}
           >
             <p>
               Your seed phrase is the access key to all the funds in your
@@ -167,7 +162,7 @@ const Create = () => {
       );
     case 2: // confirm seed phrase
       return (
-        <Window title="Confirm seed phrase" onBackClick={handleBackClick}>
+        <Window title="Confirm seed phrase">
           <p>
             Your seed phrase is the access key to all the funds in your wallet.
             Print or write down the phrase to keep it in a safe or in a locked
@@ -180,7 +175,7 @@ const Create = () => {
     default:
       // warning
       return (
-        <Window title="Create new wallet" onBackClick={handleBackClick}>
+        <Window title="Create new wallet">
           <p>
             If you ever lose your device, you will need this phrase to recover
             your wallet!

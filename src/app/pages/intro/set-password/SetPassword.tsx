@@ -10,8 +10,8 @@ import { View, setView } from '@app/model/view';
 import { makeOnChange } from '@core/utils';
 import ArrowIcon from '@icons/icon-arrow.svg';
 
-import PasswordStrength from './PasswordStrength';
 import WalletController from '@app/core/WalletController';
+import PasswordStrength from './PasswordStrength';
 
 const FormStyled = styled.form`
   text-align: left;
@@ -39,7 +39,7 @@ const SetPassword = () => {
   };
 
   return (
-    <Window title="Password" onBackClick={() => setView(View.LOGIN)}>
+    <Window title="Password" onReturn={() => setView(View.LOGIN)}>
       <FormStyled onSubmit={handleSubmit}>
         <Input
           type="password"

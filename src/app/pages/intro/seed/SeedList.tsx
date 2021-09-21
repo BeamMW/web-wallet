@@ -33,11 +33,10 @@ const baseClassName = css`
     width: 20px;
     height: 20px;
     line-height: 18px;
-    border: 1px solid var(--color-ghost-medium);
-    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     text-align: center;
     font-size: 10px;
-    color: var(--color-ghost-medium);
+    color: rgba(255, 255, 255, 0.2);
     box-sizing: border-box;
   }
 

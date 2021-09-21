@@ -5,35 +5,40 @@ export const isNil = (value: any) => value == null;
 
 export const getInputValue = ({ target }: React.ChangeEvent<HTMLInputElement>) => target.value;
 
-export const preventDefault = (event: React.SyntheticEvent) => event.preventDefault();
-
 export const curry = <T>(event: Event<T>, payload: T) => event.prepend(() => payload);
 
 type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
 
 type Callback<T = unknown> = (value: T) => void;
 
-export const makeOnChange = (event: Event<string> | Callback<string>) => {
+export function makeOnChange(event: Event<string> | Callback<string>) {
   const onChange = createEvent<ReactChangeEvent>();
   onChange.map<string>(getInputValue).watch(event);
   return onChange;
-};
+}
 
-export const makePrevented = (callback: Event<void> | Callback<void>) => {
-  const clock = createEvent<React.SyntheticEvent>();
+export function preventEvent(event: React.SyntheticEvent) {
+  event.preventDefault();
+  event.stopPropagation();
+  return event;
+}
 
-  clock.watch((event) => {
-    if (!isNil) {
-      event.preventDefault();
-    }
-
-    callback();
-  });
-
+export function makePrevented(
+  callback: Event<void> | Callback<void>,
+) {
+  const clock = createEvent<React.SyntheticEvent>().map(preventEvent);
+  clock.watch(() => callback());
   return clock;
-};
+}
 
-export const toUSD = (amount: number, rate: number) => {
+export function compact(value: string): string {
+  if (value.length <= 11) {
+    return value;
+  }
+  return `${value.substr(0, 5)}…${value.substr(-5, 5)}`;
+}
+
+export function toUSD(amount: number, rate: number): string {
   switch (true) {
     case amount === 0:
       return '0 USD';
@@ -44,4 +49,4 @@ export const toUSD = (amount: number, rate: number) => {
     default:
       return '< 1 cent';
   }
-};
+}

@@ -14,6 +14,7 @@ export enum View {
   SEND_CONFIRM,
   RECEIVE,
   UTXO,
+  SETTINGS,
 }
 
 export const setView = createEvent<View>();
@@ -27,14 +28,10 @@ export const gotoReceive = makePrevented(
   curry(setView, View.RECEIVE),
 );
 
-export const gotoWallet = makePrevented(
-  curry(setView, View.WALLET),
-);
+export const gotoWallet = curry(setView, View.WALLET);
 
 export const gotoForm = makePrevented(
   curry(setView, View.SEND_FORM),
 );
 
-export const gotoConfirm = makePrevented(
-  curry(setView, View.SEND_CONFIRM),
-);
+export const gotoConfirm = curry(setView, View.SEND_CONFIRM);

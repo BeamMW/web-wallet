@@ -6,7 +6,7 @@ import { debounce } from 'patronum/debounce';
 import { spread } from 'patronum/spread';
 
 import {
-  setView, View, gotoWallet,
+  gotoWallet, gotoConfirm,
 } from '@app/model/view';
 
 import {
@@ -17,38 +17,35 @@ import { TransactionType, WalletTotal } from '@app/core/types';
 import {
   getInputValue, isNil, makePrevented,
 } from '@app/core/utils';
+
 import {
-  calculateChange, createAddress, sendTransaction, SendTransactionParams, validateAddress,
+  calculateChange,
+  sendTransaction,
+  validateAddress,
+  SendTransactionParams,
 } from '@app/core/api';
 
 import { $assets, $totals } from '../wallet/model';
 
 /* Misc */
 
+type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
+
 export const $options = combine($totals, $assets, (totals, assets) => (
   totals.map(({ asset_id }) => assets[asset_id].metadata_pairs.N)
 ));
 
-/* Receive Address */
-
-export const getAddressFx = createEffect(createAddress);
-
-export const $addressMine = restore(getAddressFx.doneData, '');
-
 /* Send Address */
 
-type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
+export const onFormSubmit = makePrevented(gotoConfirm);
+export const onConfirmSubmit = makePrevented(gotoWallet);
 
 export const onAddressInput = createEvent<ReactChangeEvent>();
-
 export const setAddress = onAddressInput.map(getInputValue);
 export const setAddressType = createEvent<TransactionType>();
 export const setAddressValid = createEvent<boolean>();
 
 export const $address = restore(setAddress, '');
-
-$address.reset(gotoWallet);
-
 export const $addressType = restore(setAddressType, null);
 export const $addressValid = restore(setAddressValid, true);
 
@@ -61,21 +58,6 @@ export const $addressLabel = combine($addressValid, $addressType, (valid, addres
     default:
       return `${TransactionType[addressType]} address.`;
   }
-});
-
-const setAddressDebounced = debounce({ source: setAddress, timeout: 200 });
-const validateAddressFx = createEffect(validateAddress);
-
-// call ValidateAddress on setAddress w/ debounce
-setAddressDebounced.watch(validateAddressFx);
-
-// receive Validate data
-spread({
-  source: validateAddressFx.doneData,
-  targets: {
-    type: $addressType,
-    is_valid: $addressValid,
-  },
 });
 
 /* Asset Select */
@@ -103,9 +85,9 @@ export const $totalSelected = combine($totals, $selected,
 
 const calculateChangeFx = createEffect(calculateChange);
 
-export const onAmountInput = createEvent<ReactChangeEvent>();
-
 const REG_AMOUNT = /^(?:[1-9]\d*|0)?(?:\.(\d+)?)?$/;
+
+export const onAmountInput = createEvent<ReactChangeEvent>();
 
 const setAmount = onAmountInput
   .map(getInputValue)
@@ -132,30 +114,8 @@ const setAmountDebounced = debounce({
   timeout: 200,
 });
 
-// call CalculateChange on setAmount w/ debounce
-sample({
-  source: $totalSelected,
-  clock: setAmountDebounced,
-  fn: ({ asset_id }, payload) => ({
-    asset_id,
-    amount: parseFloat(payload) * GROTHS_IN_BEAM,
-    fee: FEE_DEFAULT,
-    is_push_transaction: false,
-  }),
-})
-  .watch(calculateChangeFx);
-
-// receive Change data
 export const $fee = createStore(FEE_DEFAULT);
 export const $change = createStore(0);
-
-spread({
-  source: calculateChangeFx.doneData,
-  targets: {
-    explicit_fee: $fee,
-    asset_change: $change,
-  },
-});
 
 export const $amount = restore(setAmount, '');
 export const $amountGroths = $amount.map((value) => parseFloat(value) * GROTHS_IN_BEAM);
@@ -165,6 +125,9 @@ export const $amountError = combine($totalSelected, $amountGroths, $fee,
     return total > available
       ? `Insufficient funds: you would need ${total / GROTHS_IN_BEAM} BEAM to complete the transaction` : null;
   });
+
+const setAddressDebounced = debounce({ source: setAddress, timeout: 200 });
+const validateAddressFx = createEffect(validateAddress);
 
 export const $valid = combine(
   $address,
@@ -179,10 +142,6 @@ export const $valid = combine(
 
 const sendTransactionFx = createEffect(sendTransaction);
 
-export const onConfirmSubmit = makePrevented(() => {
-  setView(View.WALLET);
-});
-
 const $params: Store<SendTransactionParams> = combine(
   $amountGroths,
   $fee,
@@ -196,9 +155,46 @@ const $params: Store<SendTransactionParams> = combine(
   }),
 );
 
+// reset address when user leaves Send
+$address.reset(gotoWallet);
+
+// call ValidateAddress on setAddress w/ debounce
+setAddressDebounced.watch(validateAddressFx);
+
+// receive Validate data
+spread({
+  source: validateAddressFx.doneData,
+  targets: {
+    type: $addressType,
+    is_valid: $addressValid,
+  },
+});
+
+// call CalculateChange on setAmount w/ debounce
+sample({
+  source: $totalSelected,
+  clock: setAmountDebounced,
+  fn: ({ asset_id }, payload) => ({
+    asset_id,
+    amount: parseFloat(payload) * GROTHS_IN_BEAM,
+    fee: FEE_DEFAULT,
+    is_push_transaction: false,
+  }),
+})
+  .watch(calculateChangeFx);
+
+// receive Change data
+spread({
+  source: calculateChangeFx.doneData,
+  targets: {
+    explicit_fee: $fee,
+    asset_change: $change,
+  },
+});
+
 // call SendTransaction on submit
 sample({
   source: $params,
   clock: onConfirmSubmit,
-  target: sendTransactionFx,
+  target: [sendTransactionFx],
 });

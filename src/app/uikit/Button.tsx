@@ -4,8 +4,8 @@ import { isNil } from '@core/utils';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.FC;
-  pallete?: 'green' | 'ghost' | 'purple' | 'blue';
-  variant?: 'regular' | 'ghost' | 'link' | 'icon';
+  pallete?: 'green' | 'ghost' | 'purple' | 'blue' | 'red';
+  variant?: 'regular' | 'ghost' | 'block' | 'link' | 'icon';
 }
 
 const BaseButtonStyled = styled.button<ButtonProps>`
@@ -47,13 +47,32 @@ const ButtonStyled = styled(BaseButtonStyled)`
 `;
 
 const GhostButtonStyled = styled(ButtonStyled)`
-  background-color: var(--color-ghost);
+  background-color: rgba(255, 255, 255, 0.1);
   color: white;
 
   &:hover,
   &:active {
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
-    background-color: var(--color-ghost-active);
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+`;
+
+const BlockButtonStyled = styled(GhostButtonStyled)`
+  width: auto;
+  max-width: none;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.03);
+  font-size: 14px;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: ${({ pallete }) => `var(--color-${pallete})`};
+
+  &:hover,
+  &:active {
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
   }
 `;
 
@@ -79,6 +98,7 @@ const VARIANTS = {
   ghost: GhostButtonStyled,
   link: LinkButtonStyled,
   icon: IconButtonStyled,
+  block: BlockButtonStyled,
 };
 
 const Button: React.FC<ButtonProps> = ({

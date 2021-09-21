@@ -6,7 +6,7 @@ import { styled } from '@linaria/react';
 import {
   Button, Window, Section, Menu,
 } from 'app/uikit';
-import { isNil } from '@core/utils';
+import { compact, isNil } from '@core/utils';
 import { gotoSend, gotoReceive } from '@app/model/view';
 import { getRateFx, GROTHS_IN_BEAM } from '@app/model/rates';
 
@@ -19,13 +19,6 @@ import { $totals, $transactions } from './model';
 
 import Assets from './Assets';
 import Transactions from './Transactions';
-
-function compact(value: string): string {
-  if (value.length <= 11) {
-    return value;
-  }
-  return `${value.substr(0, 5)}…${value.substr(-5, 5)}`;
-}
 
 const TXS_MAX = 4;
 

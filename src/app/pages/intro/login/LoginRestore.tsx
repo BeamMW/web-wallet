@@ -26,7 +26,7 @@ const LoginRestore: React.FC = () => {
   const phase = useStore($phase);
   const active = phase === LoginPhase.RESTORE;
 
-  const handleBackClick = () => {
+  const handleReturn = () => {
     setLoginPhase(LoginPhase.ACTIVE);
   };
 
@@ -34,7 +34,7 @@ const LoginRestore: React.FC = () => {
     <>
       <Splash
         blur={warningVisible}
-        onBackClick={active ? handleBackClick : null}
+        onReturn={active ? handleReturn : null}
       >
         <Button
           type="button"
