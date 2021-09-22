@@ -26,11 +26,11 @@ export class DnodeApp {
     pageApi(){
         return {
             createAppAPI: async (id: string, name: string, cb) => {
-                wallet.createAppAPI(id, name, cb, (api) => {
-                    this.appApi = api;
-                });
                 return new Promise((resolve, reject) => {
-                    resolve(true);
+                    wallet.createAppAPI(id, name, cb, (api) => {
+                        this.appApi = api;
+                        resolve(true);
+                    });
                 })
             },
             callWalletApi: async (callid: string, method: string, params) => {
