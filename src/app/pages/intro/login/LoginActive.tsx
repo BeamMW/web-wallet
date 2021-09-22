@@ -8,13 +8,13 @@ import WalletSmallIcon from '@icons/icon-wallet-small.svg';
 import { isNil } from '@app/core/utils';
 import { useStore } from 'effector-react';
 import {
-  $error, checkPasswordFx, tryStartWallet, LoginPhase, setLoginPhase,
+  $error, startWalletFx, LoginPhase, setLoginPhase,
 } from './model';
 
 const LoginActive: React.FC = () => {
   const [warningVisible, toggleWarning] = useState(false);
 
-  const pending = useStore(checkPasswordFx.pending);
+  const pending = useStore(startWalletFx.pending);
   const error = useStore($error);
 
   const inputRef = useRef<HTMLInputElement>();
@@ -22,7 +22,7 @@ const LoginActive: React.FC = () => {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const { value } = inputRef.current;
-    tryStartWallet(value);
+    startWalletFx(value);
   }
 
   return (

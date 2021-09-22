@@ -7,7 +7,7 @@ import {
   Input,
   Popup,
 } from '@app/uikit';
-import { tryRemoveWallet } from '@app/pages/intro/login/model';
+import { deleteWalletFx } from './model';
 
 interface RemovePopupProps {
   visible?: boolean;
@@ -31,7 +31,7 @@ const RemovePopup = ({
   const handleConfirm: React.MouseEventHandler = () => {
     if (warned) {
       const { value } = inputRef.current;
-      tryRemoveWallet(value);
+      deleteWalletFx(value);
     } else {
       setWarned(true);
     }

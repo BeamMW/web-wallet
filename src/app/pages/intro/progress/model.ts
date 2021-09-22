@@ -2,7 +2,7 @@ import { createEvent, guard, restore } from 'effector';
 
 import { RPCEvent, SyncProgress } from '@app/core/types';
 import { setView, View } from '@app/model/view';
-import { sendWalletEvent } from '@core/api';
+import { remoteEvent } from '@core/api';
 
 export const setSyncProgress = createEvent<[number, number]>();
 
@@ -17,17 +17,17 @@ export const $syncPercent = $syncProgress.map<number>((state, last) => {
   return next;
 });
 
-const setLoading = createEvent<boolean>();
+export const setLoading = createEvent<boolean>();
 
-const $loding = restore(setLoading, true);
+export const $loading = restore(setLoading, true);
 
 // receive Progress data
-const onProgress = sendWalletEvent.filterMap(({ id, result }) => (
+const onProgress = remoteEvent.filterMap(({ id, result }) => (
   id === RPCEvent.SYNC_PROGRESS ? result as SyncProgress : undefined
 ));
 
 guard(onProgress, {
-  filter: $loding,
+  filter: $loading,
 })
   .watch(({
     sync_requests_done,

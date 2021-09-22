@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
@@ -7,7 +7,7 @@ import {
 } from '@uikit';
 import { SeedConfirm } from '@pages/intro/seed';
 import { View, setView } from '@app/model/view';
-import { $seed } from '@app/model/base';
+import { $ids, $seed, generateSeedFx } from '@app/model/base';
 
 import EyeIcon from '@icons/icon-eye.svg';
 import PassIcon from '@icons/icon-pass.svg';
@@ -15,8 +15,6 @@ import CopyIcon from '@icons/icon-copy.svg';
 import DoneIcon from '@icons/icon-done.svg';
 import LockIcon from '@icons/icon-lock.svg';
 import ArrowIcon from '@icons/icon-arrow.svg';
-
-const SEED_CONFIRM_COUNT = 6;
 
 const WarningListStyled = styled.ul`
   > li {
@@ -76,23 +74,15 @@ const SeedListStyled = styled.ol`
   }
 `;
 
-const getRandomIds = () => {
-  const result = [];
-  while (result.length < SEED_CONFIRM_COUNT) {
-    const value = Math.floor(Math.random() * 12);
-    if (!result.includes(value)) {
-      result.push(value);
-    }
-  }
-  return result;
-};
-
 const Create = () => {
   const [step, setStep] = useState(0);
   const [warningVisible, toggleWarning] = useState(false);
   const seed = useStore($seed);
-  // const onboarding = useStore($onboarding);
-  const ids = useMemo(getRandomIds, seed);
+  const ids = useStore($ids);
+
+  useEffect(() => {
+    generateSeedFx();
+  }, []);
 
   const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();

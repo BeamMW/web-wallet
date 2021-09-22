@@ -1,36 +1,21 @@
-import React, { useState } from 'react';
-
-import WasmWallet from '@core/WasmWallet';
+import React from 'react';
 
 import { Button, Footer } from 'app/uikit';
+import { useStore } from 'effector-react';
 import SeedList from './SeedList';
-
-const SEED_PHRASE_COUNT = 12;
+import { $errors, $valid, onInput } from './model';
 
 interface SeedInputProps {
   onSubmit: React.FormEventHandler;
 }
 
 const SeedRestore: React.FC<SeedInputProps> = ({ onSubmit }) => {
-  const [errors, setErrors] = useState(new Array(SEED_PHRASE_COUNT).fill(null));
-  const valid = errors.every((value) => value === false);
-
-  const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    event.preventDefault();
-    const { name, value } = event.target;
-    const index = parseInt(name, 10);
-    const result = !WasmWallet.isAllowedWord(value);
-    if (errors[index] !== result) {
-      const next = errors.slice();
-      next[index] = result;
-
-      setErrors(next);
-    }
-  };
+  const errors = useStore($errors);
+  const valid = useStore($valid);
 
   return (
     <form autoComplete="off" onSubmit={onSubmit}>
-      <SeedList data={errors} onInput={handleInput} />
+      <SeedList data={errors} onInput={onInput} />
       <Footer>
         <Button type="submit" disabled={!valid}>
           Submit

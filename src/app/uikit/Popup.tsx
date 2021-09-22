@@ -43,7 +43,7 @@ const FooterStyled = styled.div`
   margin-top: 20px;
 
   > button {
-    margin: 0 7px;
+    margin: 0 7px !important;
   }
 `;
 

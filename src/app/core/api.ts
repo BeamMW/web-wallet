@@ -1,50 +1,139 @@
-import { createEvent } from 'effector';
+import { createEvent, Subscription } from 'effector';
+import * as extensionizer from 'extensionizer';
+
 import {
-  AddressValidation, ChangeData, RPCMethod, WalletStatus,
+  AddressValidation,
+  ChangeData,
   RPCEvent,
+  RPCMethod,
+  WalletMethod,
+  RemoteResponse,
+  WalletStatus,
+  Environment,
+  CreateWalletParams,
+  BackgroundEvent,
 } from './types';
-import WalletController from './WalletController';
-import { WalletEvent } from './WasmWallet';
+import { isNil } from './utils';
 
-const walletController = WalletController.getInstance();
+let port;
+let counter = 0;
 
-export const sendWalletEvent = createEvent<WalletEvent>();
+export const remoteEvent = createEvent<RemoteResponse>();
 
-export function handleWalletEvent<E>(event: RPCEvent | RPCMethod, handler: (payload: E) => void) {
-  sendWalletEvent.filterMap(({ id, result }) => (
+// async function queryCurrentActiveTab(windowType) {
+//   return new Promise((resolve) => {
+//     if (windowType !== EnvironmentType.POPUP) {
+//       resolve({});
+//       return;
+//     }
+
+//     extensionizer.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+//       const [activeTab] = tabs;
+//       const { id, title, url } = activeTab;
+//       const { origin, protocol } = url ? new URL(url) : { origin: null, protocol: null };
+
+//       if (!origin || origin === 'null') {
+//         resolve({});
+//         return;
+//       }
+
+//       resolve({
+//         id, title, origin, protocol, url,
+//       });
+//     });
+//   });
+// }
+
+function getEnvironment(href = window.location.href) {
+  const url = new URL(href);
+  switch (url.pathname) {
+    case '/popup.html':
+      return Environment.POPUP;
+    case '/page.html':
+      return Environment.FULLSCREEN;
+    case '/notification.html':
+      return Environment.NOTIFICATION;
+    default:
+      return Environment.BACKGROUND;
+  }
+}
+
+export function initRemoteWallet() {
+  const name = getEnvironment();
+  port = extensionizer.runtime.connect({ name });
+  port.onMessage.addListener(remoteEvent);
+}
+
+export function handleWalletEvent<E>(
+  event: RPCEvent | BackgroundEvent,
+  handler: (payload: E) => void,
+): Subscription {
+  return remoteEvent.filterMap(({ id, result }) => (
     id === event ? result as E : undefined
   ))
     .watch(handler);
 }
 
-export function sendRequest<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
-  return new Promise(async (resolve) => {
-    const target = await walletController.sendRequest({ method, params });
-    console.info(`sending ${method}:${target}`);
+export function postMessage<T = any, P = unknown>(
+  method: WalletMethod | RPCMethod,
+  params?: P,
+): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const target = counter;
 
-    const unwatch = sendWalletEvent
+    counter += 1;
+
+    const unwatch = remoteEvent
       .filter({
         fn: ({ id }) => id === target,
       })
-      .watch(({ result }) => {
-        console.info(`received ${method}:${target} with`, result);
+      .watch(({ result, error }) => {
+        if (isNil(error)) {
+          console.info(`received ${method}:${target} with`, result);
+          resolve(result);
+        } else {
+          console.error(`received ${method}:${target} with`, error);
+          reject(result);
+        }
 
-        resolve(result);
         unwatch();
       });
+
+    console.info(`sending ${method}:${target}`);
+    port.postMessage({ id: target, method, params });
   });
 }
 
+export function startWallet(pass: string) {
+  return postMessage(WalletMethod.StartWallet, pass);
+}
+
+export function deleteWallet(pass: string) {
+  return postMessage(WalletMethod.DeleteWallet, pass);
+}
+
+export function createWallet(params: CreateWalletParams) {
+  return postMessage(WalletMethod.CreateWallet, params);
+}
+
+export function isAllowedWord(value: string) {
+  return postMessage<boolean>(WalletMethod.IsAllowedWord, value);
+}
+
+export function generateSeed() {
+  return postMessage<string[]>(WalletMethod.GenerateSeed);
+}
+
 export function getWalletStatus() {
-  return sendRequest<WalletStatus>(RPCMethod.GetWalletStatus);
+  return postMessage<WalletStatus>(RPCMethod.GetWalletStatus);
 }
 
 export function createAddress() {
-  return sendRequest<string>(RPCMethod.CreateAddress);
+  return postMessage<string>(RPCMethod.CreateAddress);
 }
 
 export function validateAddress(address: string) {
-  return sendRequest<AddressValidation>(RPCMethod.ValidateAddress, { address });
+  return postMessage<AddressValidation>(RPCMethod.ValidateAddress, { address });
 }
 
 export interface CalculateChangeParams {
@@ -55,7 +144,7 @@ export interface CalculateChangeParams {
 }
 
 export function calculateChange(params: CalculateChangeParams) {
-  return sendRequest<ChangeData>(RPCMethod.CalculateChange, params);
+  return postMessage<ChangeData>(RPCMethod.CalculateChange, params);
 }
 
 export interface SendTransactionParams {
@@ -69,5 +158,5 @@ export interface SendTransactionParams {
 }
 
 export function sendTransaction(params: SendTransactionParams) {
-  return sendRequest(RPCMethod.SendTransaction, params);
+  return postMessage(RPCMethod.SendTransaction, params);
 }

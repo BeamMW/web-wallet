@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import {
   Window, Button, Input, Footer,
 } from 'app/uikit';
-import { $seed } from '@app/model/base';
 import { View, setView } from '@app/model/view';
 import { makeOnChange } from '@core/utils';
 import ArrowIcon from '@icons/icon-arrow.svg';
 
-import WalletController from '@app/core/WalletController';
+import { createWallet } from '@app/core/api';
+import { useStore } from 'effector-react';
+import { $seed } from '@app/model/base';
 import PasswordStrength from './PasswordStrength';
 
 const FormStyled = styled.form`
@@ -23,9 +23,9 @@ const FormStyled = styled.form`
 `;
 
 const SetPassword = () => {
-  const seed = useStore($seed);
   const [pass, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const seed = useStore($seed);
 
   const valid = pass !== '' && pass === confirm;
 
@@ -34,12 +34,16 @@ const SetPassword = () => {
 
   const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
-    WalletController.create(seed.join(' '), pass, true);
+    createWallet({
+      seed: seed.join(' '),
+      password: pass,
+      isSeedConfirmed: true,
+    });
     setView(View.PROGRESS);
   };
 
   return (
-    <Window title="Password" onReturn={() => setView(View.LOGIN)}>
+    <Window title="Password">
       <FormStyled onSubmit={handleSubmit}>
         <Input
           type="password"

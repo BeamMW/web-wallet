@@ -34,6 +34,7 @@ const baseClassName = css`
     height: 20px;
     line-height: 18px;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
     text-align: center;
     font-size: 10px;
     color: rgba(255, 255, 255, 0.2);

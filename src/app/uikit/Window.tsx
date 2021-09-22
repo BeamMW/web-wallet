@@ -2,7 +2,7 @@ import React from 'react';
 import { styled } from '@linaria/react';
 
 import { useStore } from 'effector-react';
-import { $backButtonShown, onPreviousClick } from '@app/model/base';
+import { $backButtonShown, onPreviousClick } from '@app/model/view';
 import Logo from './Logo';
 import BackButton from './BackButton';
 import Title from './Title';
@@ -27,7 +27,7 @@ function getColor(pallete: string): string {
 const ContainerStyled = styled.div<WindowProps>`
   position: relative;
   height: 600px;
-  padding: 140px 30px 0;
+  padding: 130px 30px 0;
   text-align: center;
   filter: ${({ blur }) => (blur ? 'blur(3px)' : 'none')};
 

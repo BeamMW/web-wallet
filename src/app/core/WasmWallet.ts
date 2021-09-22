@@ -2,7 +2,9 @@ import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
 
 import { isNil } from '@core/utils';
-import { RPCMethod, RPCEvent, ToggleSubscribeToParams } from './types';
+import {
+  RPCMethod, RPCEvent, BackgroundEvent, WalletMethod, CreateWalletParams,
+} from './types';
 
 declare const BeamModule: any;
 
@@ -11,8 +13,9 @@ const PATH_NODE = 'eu-node01.masternet.beam.mw:8200';
 
 let WasmWalletClient;
 export interface WalletEvent<T = any> {
-  id: number | RPCEvent;
+  id: number | RPCEvent | BackgroundEvent;
   result: T;
+  error?: any;
 }
 
 export enum ErrorMessage {
@@ -40,10 +43,7 @@ export default class WasmWallet {
     WasmWalletClient = module.WasmWalletClient;
 
     return new Promise((resolve) => {
-      WasmWalletClient.MountFS(() => {
-        const result = WasmWalletClient.IsInitialized(PATH_DB);
-        resolve(result);
-      });
+      WasmWalletClient.MountFS(resolve);
     });
   }
 
@@ -101,27 +101,65 @@ export default class WasmWallet {
     return WasmWalletClient.IsAllowedWord(word);
   }
 
-  static getSeedPhrase() {
+  static isInitialized(): boolean {
+    return WasmWalletClient.IsInitialized(PATH_DB);
+  }
+
+  static generateSeed() {
     const seed: string = WasmWalletClient.GeneratePhrase();
     return seed.split(' ');
   }
 
   private wallet: typeof WasmWalletClient;
 
-  private ready: boolean = false;
-
-  private counter: number = 0;
+  private mounted: boolean = false;
 
   private eventHandler: WalletEventHandler;
 
   async init(handler: WalletEventHandler) {
-    this.updateHandler(handler);
-    this.ready = await WasmWallet.mount();
-    return this.ready;
+    this.eventHandler = handler;
+
+    if (this.isRunning()) {
+      this.emit(BackgroundEvent.CONNECTED, {
+        onboarding: false,
+        is_running: true,
+      });
+
+      this.toggleEvents(false);
+      this.toggleEvents(true);
+      return;
+    }
+
+    try {
+      if (!this.mounted) {
+        await WasmWallet.mount();
+
+        this.mounted = true;
+      }
+
+      this.emit(BackgroundEvent.CONNECTED, {
+        is_running: false,
+        onboarding: !WasmWalletClient.IsInitialized(PATH_DB),
+      });
+    } catch {
+      this.emit(BackgroundEvent.CONNECTED, {
+        is_running: false,
+        onboarding: true,
+      });
+    }
   }
 
-  updateHandler(handler: WalletEventHandler) {
-    this.eventHandler = handler;
+  emit(
+    id: number | RPCEvent | BackgroundEvent,
+    result?: any,
+    error?: any,
+  ) {
+    console.info(`emitted event "${id}" with`, result);
+    this.eventHandler({
+      id,
+      result,
+      error,
+    });
   }
 
   start(pass: string) {
@@ -138,36 +176,40 @@ export default class WasmWallet {
     this.wallet.startWallet();
     this.wallet.subscribe(responseHandler);
 
-    this.subunsubTo(true);
+    this.toggleEvents(true);
   }
 
   // TODO: will be updated after sub response fix in wallet api
-  subunsubTo(isSub: boolean) {
-    this.send<ToggleSubscribeToParams>(RPCMethod.ToggleSubscribeTo, {
-      ev_addrs_changed: isSub,
-      ev_assets_changed: isSub,
-      ev_sync_progress: isSub,
-      ev_system_state: isSub,
-      ev_txs_changed: isSub,
-      ev_utxos_changed: isSub,
+  toggleEvents(value: boolean) {
+    this.send(-1, RPCMethod.SubUnsub, {
+      ev_addrs_changed: value,
+      ev_assets_changed: value,
+      ev_sync_progress: value,
+      ev_system_state: value,
+      ev_txs_changed: value,
+      ev_utxos_changed: value,
     });
   }
 
   isRunning(): boolean {
-    return !isNil(this.wallet) ? this.wallet.isRunning() : false;
+    return isNil(this.wallet) ? false : this.wallet.isRunning();
   }
 
-  async create(seed: string, pass: string, seedConfirmed: boolean) {
+  async create({
+    seed,
+    password,
+    isSeedConfirmed,
+  }: CreateWalletParams) {
     try {
-      await WasmWallet.saveWallet(pass);
-      WasmWallet.initSettings(seedConfirmed);
+      await WasmWallet.saveWallet(password);
+      WasmWallet.initSettings(isSeedConfirmed);
 
-      if (this.ready) {
+      if (WasmWallet.isInitialized()) {
         WasmWallet.removeWallet();
       }
 
-      WasmWalletClient.CreateWallet(seed, PATH_DB, pass);
-      this.start(pass);
+      WasmWalletClient.CreateWallet(seed, PATH_DB, password);
+      this.start(password);
     } catch (error) {
       console.error(error);
     }
@@ -195,9 +237,46 @@ export default class WasmWallet {
     });
   }
 
-  send<T>(method: RPCMethod, params?: T): number {
-    const id = this.counter;
-    this.counter += 1;
+  async callInternal(id: number, method: WalletMethod, params: any) {
+    switch (method) {
+      case WalletMethod.GenerateSeed: {
+        const result = WasmWallet.generateSeed();
+        this.emit(id, result);
+        break;
+      }
+      case WalletMethod.IsAllowedWord: {
+        const result = WasmWallet.isAllowedWord(params);
+        this.emit(id, result);
+        break;
+      }
+      case WalletMethod.CreateWallet:
+        this.create(params);
+        break;
+      case WalletMethod.StartWallet:
+        await WasmWallet.checkPassword(params);
+        this.start(params);
+        break;
+      case WalletMethod.DeleteWallet:
+        await WasmWallet.checkPassword(params);
+        WasmWallet.removeWallet();
+        break;
+      default:
+        break;
+    }
+  }
+
+  send(id: number, method: RPCMethod | WalletMethod, params?: any) {
+    const internal = Object.values(WalletMethod).includes(method as WalletMethod);
+
+    if (internal) {
+      try {
+        this.callInternal(id, method as WalletMethod, params);
+      } catch (error) {
+        this.emit(id, null, error);
+      }
+      return;
+    }
+
     this.wallet.sendRequest(
       JSON.stringify({
         jsonrpc: '2.0',
@@ -206,6 +285,5 @@ export default class WasmWallet {
         params,
       }),
     );
-    return id;
   }
 }

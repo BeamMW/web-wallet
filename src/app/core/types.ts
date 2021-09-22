@@ -1,5 +1,11 @@
+export interface CreateWalletParams {
+  seed: string;
+  password: string;
+  isSeedConfirmed: boolean;
+}
+
 export enum RPCMethod {
-  ToggleSubscribeTo = 'ev_subunsub',
+  SubUnsub = 'ev_subunsub',
   GetUTXO = 'get_utxo',
   GetAssetInfo = 'get_asset_info',
   GetWalletStatus = 'wallet_status',
@@ -9,6 +15,30 @@ export enum RPCMethod {
   ValidateAddress = 'validate_address',
   GetTXList = 'tx_list',
   SendTransaction = 'tx_send',
+}
+
+export enum WalletMethod {
+  StartWallet = 'wasm_start_wallet',
+  CreateWallet = 'wasm_create_wallet',
+  DeleteWallet = 'wasm_delete_wallet',
+  IsAllowedWord = 'wasm_is_allowed_word',
+  GenerateSeed = 'wasm_generate_seed',
+}
+
+export interface RemoteRequest {
+  id: number;
+  method: WalletMethod | RPCMethod,
+  params: any;
+}
+export interface RemoteResponse {
+  id: number | RPCEvent;
+  method: WalletMethod | RPCMethod,
+  result: any;
+  error: any;
+}
+
+export enum BackgroundEvent {
+  CONNECTED = 'connected',
 }
 
 export enum RPCEvent {
@@ -27,6 +57,11 @@ export interface ToggleSubscribeToParams {
 }
 
 // data
+
+export interface ConnectedData {
+  is_running: boolean;
+  onboarding: boolean;
+}
 
 export interface SyncHash {
   is_in_sync: boolean;
@@ -192,9 +227,9 @@ export interface TxsEvent extends WalletChangeEvent {
   txs: Transaction[];
 }
 
-export enum EnvironmentType {
+export enum Environment {
   POPUP = 'popup',
   NOTIFICATION = 'notification',
   FULLSCREEN = 'fullscreen',
-  BACKGROUND = 'background'
+  BACKGROUND = 'background',
 }

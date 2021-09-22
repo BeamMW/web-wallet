@@ -4,9 +4,8 @@ import {
 
 import { $onboarding } from '@model/base';
 import { isNil } from '@core/utils';
-import WasmWallet, { ErrorMessage } from '@core/WasmWallet';
-import { setView, View } from '@app/model/view';
-import WalletController from '@app/core/WalletController';
+import { ErrorMessage } from '@core/WasmWallet';
+import { startWallet } from '@app/core/api';
 
 export enum LoginPhase {
   LOADING,
@@ -19,37 +18,12 @@ export const setLoginPhase = createEvent<LoginPhase>();
 
 export const $phase = restore(setLoginPhase, LoginPhase.LOADING);
 
-export const checkPasswordFx = createEffect<string, string, ErrorMessage>(
-  WasmWallet.checkPassword,
-);
+export const startWalletFx = createEffect<string, string, ErrorMessage>(startWallet);
 
 export const $error = createStore<ErrorMessage>(null);
 
-$error.on(checkPasswordFx.failData, (state, payload) => payload);
-$error.reset(checkPasswordFx.done);
-
-export const startWallet = createEvent<string>();
-
-export const tryStartWallet = (pass: string) => {
-  const unwatch = checkPasswordFx.doneData.watch(() => {
-    unwatch();
-    setView(View.PROGRESS);
-    WalletController.start(pass);
-  });
-
-  checkPasswordFx(pass);
-};
-
-export const tryRemoveWallet = (pass: string) => {
-  const unwatch = checkPasswordFx.doneData.watch(() => {
-    unwatch();
-    setView(View.LOGIN);
-    WasmWallet.getInstance().stop();
-    WasmWallet.removeWallet();
-  });
-
-  checkPasswordFx(pass);
-};
+$error.on(startWalletFx.failData, (state, payload) => payload);
+$error.reset(startWalletFx.done);
 
 const unwatch = $onboarding.watch((value) => {
   if (!isNil(value)) {

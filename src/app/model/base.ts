@@ -1,27 +1,49 @@
-import { createEvent, restore, sample } from 'effector';
-import { $view, setView, View } from './view';
+import {
+  createEffect,
+  createEvent, forward, restore,
+} from 'effector';
+import { generateSeed, handleWalletEvent } from '@core/api';
+import { BackgroundEvent, ConnectedData } from '@app/core/types';
+
+import { setView, View } from './view';
 
 export const setSeed = createEvent<string[]>();
+export const setIds = createEvent<number[]>();
 export const setOnboarding = createEvent<boolean>();
 
-export const $seed = restore(setSeed, null);
+export const $seed = restore(setSeed, []);
+export const $ids = restore(setIds, []);
 export const $onboarding = restore(setOnboarding, null);
 
-export const $backButtonShown = $view.map((view) => view !== View.WALLET);
+const SEED_CONFIRM_COUNT = 6;
 
-export const onPreviousClick = createEvent<React.SyntheticEvent>();
-
-// go back 1 screen
-sample({
-  source: $view,
-  clock: onPreviousClick,
-  fn: (view) => {
-    switch (view) {
-      case View.SEND_CONFIRM:
-        return View.SEND_FORM;
-      default:
-        return View.WALLET;
+const getRandomIds = () => {
+  const result = [];
+  while (result.length < SEED_CONFIRM_COUNT) {
+    const value = Math.floor(Math.random() * 12);
+    if (!result.includes(value)) {
+      result.push(value);
     }
-  },
-  target: setView,
+  }
+  return result;
+};
+
+$ids.on(setSeed, () => getRandomIds());
+
+export const generateSeedFx = createEffect(generateSeed);
+
+forward({
+  from: generateSeedFx.doneData,
+  to: setSeed,
 });
+
+handleWalletEvent<ConnectedData>(
+  BackgroundEvent.CONNECTED,
+  ({
+    is_running,
+    onboarding,
+  }) => {
+    setOnboarding(onboarding);
+    setView(is_running ? View.WALLET : View.LOGIN);
+  },
+);

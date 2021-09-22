@@ -8,7 +8,9 @@ import CancelIcon from '@icons/icon-cancel.svg';
 import WasmWallet from '@core/WasmWallet';
 
 import ProgressBar from './ProgressBar';
-import { $syncPercent, $syncProgress } from './model';
+import {
+  $syncPercent, $syncProgress, $loading, setLoading,
+} from './model';
 
 const TitleStyled = styled.h2`
   margin: 0;
@@ -30,9 +32,11 @@ const wallet = WasmWallet.getInstance();
 const Progress = () => {
   const [done, total] = useStore($syncProgress);
   const syncPercent = useStore($syncPercent);
+  const loading = useStore($loading);
 
   const handleCancelClick = () => {
     wallet.stop();
+    setLoading(false);
     setView(View.LOGIN);
   };
 
@@ -45,9 +49,11 @@ const Progress = () => {
       <SubtitleStyled>{active && progress}</SubtitleStyled>
       <ProgressBar active={active} percent={syncPercent} />
       <Footer>
+        { loading && (
         <Button variant="ghost" icon={CancelIcon} onClick={handleCancelClick}>
           cancel
         </Button>
+        ) }
       </Footer>
     </Splash>
   );

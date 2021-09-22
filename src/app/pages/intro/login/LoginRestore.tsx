@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 
-import WalletController from '@app/core/WalletController';
 import { setView, View } from '@app/model/view';
-import { setSeed } from '@app/model/base';
 import {
   Popup, Splash, Button,
 } from 'app/uikit';
@@ -12,16 +10,7 @@ import addIcon from '@icons/icon-add.svg';
 
 import { $phase, LoginPhase, setLoginPhase } from './model';
 
-const walletController = WalletController.getInstance();
-
 const LoginRestore: React.FC = () => {
-  let seed = null;
-  useEffect(() => {
-    (async () => {
-      seed = await walletController.getSeedPhrase();
-    })();
-  });
-
   const [warningVisible, toggleWarning] = useState(false);
   const phase = useStore($phase);
   const active = phase === LoginPhase.RESTORE;
@@ -39,10 +28,7 @@ const LoginRestore: React.FC = () => {
         <Button
           type="button"
           icon={addIcon}
-          onClick={() => {
-            setSeed(seed);
-            setView(View.CREATE);
-          }}
+          onClick={() => setView(View.CREATE)}
         >
           create new wallet
         </Button>

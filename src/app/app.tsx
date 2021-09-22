@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 
-import { $view, setView, View } from '@app/model/view';
-import { setOnboarding } from '@app/model/base';
+import { $view } from '@app/model/view';
 
 import ROUTES from './core/routes';
 
@@ -122,24 +121,7 @@ css`
   }
 `;
 
-async function initWallet(state) {
-  try {
-    if (state.params.isrunning) {
-      setView(View.PROGRESS);
-    } else {
-      setOnboarding(state.params.onboarding);
-    }
-  } catch (e) {
-    console.log('init error', e);
-    setOnboarding(state.params.onboarding);
-  }
-}
-
-const App = (state) => {
-  useEffect(() => {
-    initWallet(state);
-  }, []);
-
+const App = () => {
   const view = useStore($view);
   const ViewComponent = ROUTES[view];
 
