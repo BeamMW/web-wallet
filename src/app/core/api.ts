@@ -19,7 +19,7 @@ export function handleWalletEvent<E>(event: RPCEvent | RPCMethod, handler: (payl
 
 export function sendRequest<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
   return new Promise(async (resolve) => {
-    const target = await walletController.sendRequest({method, params});
+    const target = await walletController.sendRequest({ method, params });
     console.info(`sending ${method}:${target}`);
 
     const unwatch = sendWalletEvent

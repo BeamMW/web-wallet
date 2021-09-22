@@ -76,6 +76,11 @@ export default class WasmWallet {
     return data;
   }
 
+  static removeWallet() {
+    WasmWalletClient.DeleteWallet(PATH_DB);
+    extensionizer.storage.local.remove(['wallet']);
+  }
+
   static checkPassword(pass: string): Promise<string> {
     return new Promise((resolve, reject) => {
       if (pass === '') {
@@ -158,7 +163,7 @@ export default class WasmWallet {
       WasmWallet.initSettings(seedConfirmed);
 
       if (this.ready) {
-        WasmWalletClient.DeleteWallet(PATH_DB);
+        WasmWallet.removeWallet();
       }
 
       WasmWalletClient.CreateWallet(seed, PATH_DB, pass);

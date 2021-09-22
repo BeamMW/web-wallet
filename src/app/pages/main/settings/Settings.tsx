@@ -9,17 +9,36 @@ import {
   Button,
   Window,
 } from '@app/uikit';
+import RemovePopup from './RemovePopup';
 
 const ContainerStyled = styled.div`
   margin: 0 -10px;
 `;
 
-const Settings = () => (
-  <Window title="Settings">
-    <ContainerStyled>
-      <Button variant="block" pallete="red" icon={IconRemove}>Remove current wallet</Button>
-    </ContainerStyled>
-  </Window>
-);
+const Settings = () => {
+  const [warningVisible, toggleWarning] = useState(false);
+
+  return (
+    <>
+      <Window title="Settings">
+        <ContainerStyled>
+          <Button
+            variant="block"
+            pallete="red"
+            icon={IconRemove}
+            onClick={() => toggleWarning(true)}
+          >
+            Remove current wallet
+
+          </Button>
+        </ContainerStyled>
+      </Window>
+      <RemovePopup
+        visible={warningVisible}
+        onCancel={() => toggleWarning(false)}
+      />
+    </>
+  );
+};
 
 export default Settings;

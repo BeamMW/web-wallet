@@ -8,7 +8,7 @@ import WalletSmallIcon from '@icons/icon-wallet-small.svg';
 import { isNil } from '@app/core/utils';
 import { useStore } from 'effector-react';
 import {
-  $error, checkPasswordFx, LoginPhase, setLoginPhase,
+  $error, checkPasswordFx, tryStartWallet, LoginPhase, setLoginPhase,
 } from './model';
 
 const LoginActive: React.FC = () => {
@@ -22,7 +22,7 @@ const LoginActive: React.FC = () => {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const { value } = inputRef.current;
-    checkPasswordFx(value);
+    tryStartWallet(value);
   }
 
   return (

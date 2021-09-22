@@ -15,10 +15,10 @@ const MENU_ITEMS = [
     title: 'Wallet',
     value: View.WALLET,
   },
-  {
-    title: 'UTXO',
-    value: View.UTXO,
-  },
+  // {
+  //   title: 'UTXO',
+  //   value: View.UTXO,
+  // },
   {
     title: 'Settings',
     value: View.SETTINGS,
