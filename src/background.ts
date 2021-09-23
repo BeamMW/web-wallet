@@ -13,7 +13,6 @@ window.global = globalThis;
 const notificationManager = new NotificationManager();
 
 let uiIsTriggering = false;
-let popupIsOpen = false;
 let notificationIsOpen = false;
 let contentPortObj = null;
 const openBeamTabsIDs = {};
@@ -50,14 +49,12 @@ const connectRemote = (remotePort) => {
       processName === EnvironmentType.POPUP || 
       processName === EnvironmentType.FULLSCREEN ||
       processName === EnvironmentType.NOTIFICATION) {
-    popupIsOpen = true;
     console.log('popup connected', remotePort);
 
     const portStream = new PortStream(remotePort);
     app.connectPopup(portStream);
 
     remotePort.onDisconnect.addListener(() => {
-      popupIsOpen = false;
       notificationIsOpen = false;
       console.log('popup disconnected');
     });
@@ -90,7 +87,6 @@ async function triggerUi() {
   );
   if (
     !uiIsTriggering &&
-    !popupIsOpen &&
     !currentlyActiveBeamTab
   ) {
     uiIsTriggering = true;
