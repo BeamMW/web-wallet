@@ -21,18 +21,20 @@ const Connect = () => {
 
   return (
     <>
-      <StyledTitle> APROVE CONNECT FROM "{dappname}" ?</StyledTitle>
+      <StyledTitle>DApp Connection Request</StyledTitle>
+      <div>"{dappname}" is trying to connect to the BEAM Web Wallet.</div>
+      <div>Approve connection?</div>
       <Button type="button"
           onClick={ async () => {
             const res = await walletController.approveConnection(true);
             if (res) {
               window.close();
             }
-          }}>YES</Button>
+          }}>Approve</Button>
       <Button type="button"
           onClick={() => {
             window.close();
-          }}>NO</Button>
+          }}>Reject</Button>
     </>
   );
 };
