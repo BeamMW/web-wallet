@@ -6,6 +6,10 @@ import {
   Wallet, Receive, SendConfirm, SendForm, Utxo, Settings,
 } from '@pages/main';
 
+import {
+  Connect, ApproveInvoke
+} from '@pages/notifications'
+
 import { View } from '@app/model/view';
 
 const ROUTES = {
@@ -19,7 +23,11 @@ const ROUTES = {
   [View.SEND_CONFIRM]: SendConfirm,
   [View.RECEIVE]: Receive,
   [View.UTXO]: Utxo,
+  [View.CONNECT]: Connect,
+  [View.APPROVEINVOKE]: ApproveInvoke,
+
   [View.SETTINGS]: Settings,
 };
 
 export default ROUTES;
+

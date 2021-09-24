@@ -227,9 +227,27 @@ export interface TxsEvent extends WalletChangeEvent {
   txs: Transaction[];
 }
 
+export enum NotificationType {
+  CONNECT = 'connect',
+  APPROVE_INVOKE = 'approve_invoke'
+}
+
+export interface NotificationParams {
+  info: string,
+  amounts: string,
+  req: string
+}
+
+export interface Notification {
+  type: NotificationType.APPROVE_INVOKE | NotificationType.CONNECT;
+  name?: string,
+  params?: NotificationParams
+}
+
 export enum Environment {
   POPUP = 'popup',
   NOTIFICATION = 'notification',
   FULLSCREEN = 'fullscreen',
   BACKGROUND = 'background',
+  CONTENT = 'content'
 }

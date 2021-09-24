@@ -195,6 +195,21 @@ export default class WasmWallet {
     return isNil(this.wallet) ? false : this.wallet.isRunning();
   }
 
+  createAppAPI(id: string, name: string, handler, apiSet) {
+    this.wallet.createAppAPI(id, name, (api) => {
+      apiSet(api);
+      api.setHandler(handler);
+    });
+  }
+
+  setApproveSendHandler(handler) {
+    this.wallet.setApproveSendHandler(handler);
+  }
+
+  setApproveContractInfoHandler(handler) {
+    this.wallet.setApproveContractInfoHandler(handler);
+  }
+
   async create({
     seed,
     password,
