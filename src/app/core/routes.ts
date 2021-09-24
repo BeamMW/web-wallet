@@ -7,8 +7,8 @@ import {
 } from '@pages/main';
 
 import {
-  Connect, ApproveInvoke
-} from '@pages/notifications'
+  Connect, ApproveInvoke,
+} from '@pages/notifications';
 
 import { View } from '@app/model/view';
 
@@ -30,4 +30,3 @@ const ROUTES = {
 };
 
 export default ROUTES;
-

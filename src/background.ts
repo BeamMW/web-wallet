@@ -19,6 +19,7 @@ const notificationManager = new NotificationManager();
 const wallet = WasmWallet.getInstance();
 
 let port = null;
+let contentPort = null;
 let connected = false;
 
 let uiIsTriggering = false;
@@ -110,6 +111,27 @@ function handleConnect(remote) {
 
   if (port.name === Environment.POPUP) {
     wallet.init(postMessage);
+  }
+
+  if (port.name === Environment.CONTENT) {
+    const portStream = new PortStream(port);
+    const origin = port.sender.url;
+    app.connectPage(portStream, origin);
+
+    contentPort = remote;
+    contentPort.onMessage.addListener((msg) => {
+      if (msg.data === 'create_beam_api') {
+        app.setNotificationInfo({
+          type: NotificationType.CONNECT, name: msg.name,
+        }, (res) => {
+          contentPort.postMessage({
+            result: res,
+          });
+        });
+        notificationIsOpen = true;
+        openPopup();
+      }
+    });
   }
 
   // const connectRemote = (remotePort) => {

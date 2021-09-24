@@ -229,7 +229,7 @@ export interface TxsEvent extends WalletChangeEvent {
 
 export enum NotificationType {
   CONNECT = 'connect',
-  APPROVE_INVOKE = 'approve_invoke'
+  APPROVE_INVOKE = 'approve_invoke',
 }
 
 export interface NotificationParams {
@@ -249,5 +249,5 @@ export enum Environment {
   NOTIFICATION = 'notification',
   FULLSCREEN = 'fullscreen',
   BACKGROUND = 'background',
-  CONTENT = 'content'
+  CONTENT = 'content',
 }

@@ -22,14 +22,17 @@ export default class DnodeApp {
     this.notificationCb = callback;
   }
 
-  private reconnectHandler = (handler) => {
-    wallet.updateHandler(handler);
-  };
+  // private reconnectHandler = (handler) => {
+  //   wallet.updateHandler(handler);
+  // };
 
   pageApi() {
     return {
       createAppAPI: async (id: string, name: string, cb) => new Promise((resolve, reject) => {
         wallet.createAppAPI(id, name, cb, (api) => {
+          if (api === undefined) {
+            reject();
+          }
           this.appApi = api;
           resolve(true);
         });
@@ -46,59 +49,59 @@ export default class DnodeApp {
     };
   }
 
-  popupApi() {
-    return {
-      init: async (cb, eventHandler) => {
-        if (!wallet.isRunning()) {
-          try {
-            const result = await wallet.init(eventHandler);
-            cb({ onboarding: !result, isrunning: false });
-          } catch (e) {
-            cb({ onboarding: true, isrunning: false });
-          }
-        } else {
-          this.reconnectHandler(eventHandler);
-          wallet.subunsubTo(false);
-          wallet.subunsubTo(true);
-          cb({ onboarding: false, isrunning: true });
-        }
-      },
-      start: async (pass) => {
-        wallet.start(pass);
-        wallet.setApproveContractInfoHandler(this.approveContractInfoHandler);
-      },
-      send: async (data) => {
-        const { method, params } = data;
-        const result = wallet.send(method, params);
-        return result;
-      },
-      create: async (params) => {
-        const { seed, pass, isSeedConfirmed } = params;
-        wallet.create(seed, pass, isSeedConfirmed);
-      },
-      getSeedPhrase: async () => WasmWallet.getSeedPhrase(),
-      loadNotificationInfo: async () => this.notificationInfo,
-      setNotificationApproved: async (req) => {
-        this.notificationCb.sendApproved(req);
-      },
-      setNotificationRejected: async (req) => {
-        this.notificationCb.sendRejected(req);
-      },
-      approveConnection: async () => new Promise((resolve, reject) => {
-        this.notificationCb(true);
-        resolve(true);
-      }),
-    };
-  }
+  // popupApi() {
+  //   return {
+  //     init: async (cb, eventHandler) => {
+  //       if (!wallet.isRunning()) {
+  //         try {
+  //           const result = await wallet.init(eventHandler);
+  //           cb({ onboarding: !result, isrunning: false });
+  //         } catch (e) {
+  //           cb({ onboarding: true, isrunning: false });
+  //         }
+  //       } else {
+  //         this.reconnectHandler(eventHandler);
+  //         wallet.subunsubTo(false);
+  //         wallet.subunsubTo(true);
+  //         cb({ onboarding: false, isrunning: true });
+  //       }
+  //     },
+  //     start: async (pass) => {
+  //       wallet.start(pass);
+  //       wallet.setApproveContractInfoHandler(this.approveContractInfoHandler);
+  //     },
+  //     send: async (data) => {
+  //       const { method, params } = data;
+  //       const result = wallet.send(method, params);
+  //       return result;
+  //     },
+  //     create: async (params) => {
+  //       const { seed, pass, isSeedConfirmed } = params;
+  //       wallet.create(seed, pass, isSeedConfirmed);
+  //     },
+  //     getSeedPhrase: async () => WasmWallet.getSeedPhrase(),
+  //     loadNotificationInfo: async () => this.notificationInfo,
+  //     setNotificationApproved: async (req) => {
+  //       this.notificationCb.sendApproved(req);
+  //     },
+  //     setNotificationRejected: async (req) => {
+  //       this.notificationCb.sendRejected(req);
+  //     },
+  //     approveConnection: async () => new Promise((resolve, reject) => {
+  //       this.notificationCb(true);
+  //       resolve(true);
+  //     }),
+  //   };
+  // }
 
-  connectPopup(connectionStream) {
-    const api = this.popupApi();
-    const dnode = setupDnode(connectionStream, api);
+  // connectPopup(connectionStream) {
+  //   const api = this.popupApi();
+  //   const dnode = setupDnode(connectionStream, api);
 
-    dnode.on('remote', (remote) => {
-      console.log(remote);
-    });
-  }
+  //   dnode.on('remote', (remote) => {
+  //     console.log(remote);
+  //   });
+  // }
 
   connectPage(connectionStream, origin) {
     const api = this.pageApi();

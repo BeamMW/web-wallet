@@ -5,14 +5,15 @@ const NOTIFICATION_WIDTH = 375;
 
 export default class NotificationManager {
   platform = null;
-  private _popupId = null;
+
+  private popupId = null;
 
   constructor() {
     this.platform = new ExtensionPlatform();
   }
 
   async showPopup() {
-    const popup = await this._getPopup();
+    const popup = await this.getPopup();
 
     if (popup) {
       await this.platform.focusWindow(popup.id);
@@ -41,20 +42,18 @@ export default class NotificationManager {
       if (popupWindow.left !== left && popupWindow.state !== 'fullscreen') {
         await this.platform.updateWindowPosition(popupWindow.id, left, top);
       }
-      this._popupId = popupWindow.id;
+      this.popupId = popupWindow.id;
     }
   }
 
-  async _getPopup() {
+  private async getPopup() {
     const windows = await this.platform.getAllWindows();
-    return this._getPopupIn(windows);
+    return this.getPopupIn(windows);
   }
 
-  _getPopupIn(windows) {
+  private getPopupIn(windows) {
     return windows
-      ? windows.find((win) => {
-          return win && win.type === 'popup' && win.id === this._popupId;
-        })
+      ? windows.find((win) => (win && win.type === 'popup' && win.id === this.popupId))
       : null;
   }
 }

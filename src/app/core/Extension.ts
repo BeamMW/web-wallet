@@ -1,33 +1,34 @@
 import extension from 'extensionizer';
-import { EnvironmentType } from '@core/types';
+import { Environment } from '@core/types';
 
 export default class ExtensionPlatform {
-  reload() {
+  reload = () => {
     extension.runtime.reload();
-  }
+  };
 
-    checkForError() {
-      const { lastError } = extension.runtime;
-      if (!lastError) {
-        return undefined;
-      }
-      if (lastError.stack && lastError.message) {
-        return lastError;
-      }
-      return new Error(lastError.message);
+  checkForError = () => {
+    const { lastError } = extension.runtime;
+    if (!lastError) {
+      return undefined;
     }
+    if (lastError.stack && lastError.message) {
+      return lastError;
+    }
+    return new Error(lastError.message);
+  };
 
-    getEnvironmentType = (url = window.location.href) => {
-      const parsedUrl = new URL(url);
-      if (parsedUrl.pathname === '/popup.html') {
-          return EnvironmentType.POPUP;
-      } else if (parsedUrl.pathname === '/page.html') {
-          return EnvironmentType.FULLSCREEN;
-      } else if (parsedUrl.pathname === '/notification.html') {
-          return EnvironmentType.NOTIFICATION;
-      }
-      return EnvironmentType.BACKGROUND;
-    };
+  getEnvironmentType = (url = window.location.href) => {
+    const parsedUrl = new URL(url);
+    let res = Environment.BACKGROUND;
+    if (parsedUrl.pathname === '/popup.html') {
+      res = Environment.POPUP;
+    } else if (parsedUrl.pathname === '/page.html') {
+      res = Environment.FULLSCREEN;
+    } else if (parsedUrl.pathname === '/notification.html') {
+      res = Environment.NOTIFICATION;
+    }
+    return res;
+  };
 
   openTab(options) {
     return new Promise((resolve, reject) => {
@@ -89,17 +90,16 @@ export default class ExtensionPlatform {
     });
   }
 
-  closeCurrentWindow() {
-    return extension.windows.getCurrent((windowDetails) => {
+  closeCurrentWindow = () => extension.windows.getCurrent((windowDetails) => {
+    if (windowDetails.id !== undefined) {
       return extension.windows.remove(windowDetails.id);
-    });
-  }
+    }
+    return false;
+  });
 
-  getVersion() {
-    return extension.runtime.getManifest().version;
-  }
+  getVersion = () => extension.runtime.getManifest().version;
 
-  openExtensionInBrowser(route = null, queryString = null) {
+  openExtensionInBrowser = (route = null, queryString = null) => {
     let extensionURL = extension.runtime.getURL('home.html');
 
     if (queryString) {
@@ -110,12 +110,12 @@ export default class ExtensionPlatform {
       extensionURL += `#${route}`;
     }
     this.openTab({ url: extensionURL });
-    if (this.getEnvironmentType() !== EnvironmentType.BACKGROUND) {
+    if (this.getEnvironmentType() !== Environment.BACKGROUND) {
       window.close();
     }
-  }
+  };
 
-  getPlatformInfo(cb) {
+  getPlatformInfo = (cb) => {
     try {
       extension.runtime.getPlatformInfo((platform) => {
         cb(null, platform);
@@ -125,7 +125,7 @@ export default class ExtensionPlatform {
       // eslint-disable-next-line no-useless-return
       return;
     }
-  }
+  };
 
   getAllWindows() {
     return new Promise((resolve, reject) => {

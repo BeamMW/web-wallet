@@ -11,7 +11,7 @@ const config = {
   target: 'web',
   cache: false,
   entry: {
-    popup: path.join(__dirname, './src/popup.ts'),
+    index: path.join(__dirname, './src/index.tsx'),
     background: path.join(__dirname, './src/background.ts'),
     contentscript: path.join(__dirname, './src/contentscript.ts'),
     inpage: path.join(__dirname, './src/inpage.ts'),
