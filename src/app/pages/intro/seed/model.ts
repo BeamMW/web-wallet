@@ -16,7 +16,7 @@ const INITIAL = new Array(SEED_PHRASE_COUNT).fill(null);
 export const $errors = restore(setErrors, INITIAL);
 
 export const $valid = $errors.map(
-  (errors) => errors.every((value) => value === false),
+  (errors) => errors.every((value) => value === true),
 );
 
 interface InputChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
