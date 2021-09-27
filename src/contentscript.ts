@@ -72,8 +72,7 @@ window.addEventListener('message', (event) => {
 
   if (event.data.type === 'create_beam_api') {
     const extensionPort = extensionizer.runtime.connect({ name: Environment.CONTENT });
-    extensionPort.postMessage({ data: event.data.type, name: event.data.name });
-
+    extensionPort.postMessage({ data: event.data.type, apiver: event.data.apiver, minapiver: event.data.minapiver, appname: event.data.appname});
     extensionPort.onMessage.addListener((msg) => {
       if (msg.result !== undefined && msg.result) {
         if (shouldInjectProvider()) {

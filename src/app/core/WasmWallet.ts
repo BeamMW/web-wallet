@@ -217,9 +217,16 @@ export default class WasmWallet {
     return isNil(this.wallet) ? false : this.wallet.isRunning();
   }
 
-  createAppAPI(id: string, name: string, handler, apiSet) {
-    this.wallet.createAppAPI(id, name, (api) => {
-      apiSet(api);
+  createAppAPI(apiver: string, minapiver: string, appurl: string, appname: string, handler: any, apiSet: any) {
+    // TODO: create appid here?
+    let appid = appurl + appname;// this.wallet.generateAppID(url, appname)
+    console.log("createAppAPI: appid is ", appid);
+    // TODO: pass minapiver
+    this.wallet.createAppAPI(apiver, appid, appname, (err, api) => {
+      if (err) {
+         return apiSet(err, null);
+      }
+      apiSet(null, api);
       api.setHandler(handler);
     });
   }
