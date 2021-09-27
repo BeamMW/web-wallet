@@ -2,7 +2,8 @@ import React from 'react';
 import { styled } from '@linaria/react';
 
 import { useStore } from 'effector-react';
-import { $backButtonShown, onPreviousClick } from '@app/model/view';
+import { $backButtonShown, gotoBack } from '@app/model/view';
+import { isNil } from '@app/core/utils';
 import Logo from './Logo';
 import BackButton from './BackButton';
 import Title from './Title';
@@ -11,6 +12,7 @@ interface WindowProps {
   title?: string;
   blur?: boolean;
   pallete?: 'default' | 'blue' | 'purple';
+  onPrevious?: React.MouseEventHandler;
 }
 
 function getColor(pallete: string): string {
@@ -85,8 +87,10 @@ export const Window: React.FC<WindowProps> = ({
   blur,
   pallete = 'default',
   children,
+  onPrevious,
 }) => {
   const backButtonShown = useStore($backButtonShown);
+  const previousAllowed = !isNil(onPrevious) || backButtonShown;
 
   return (
     <ContainerStyled blur={blur} pallete={pallete}>
@@ -96,7 +100,8 @@ export const Window: React.FC<WindowProps> = ({
         </FrameStyled>
         <Title variant="heading">{title}</Title>
       </HeadingStyled>
-      {backButtonShown && <BackButton onClick={onPreviousClick} />}
+      { previousAllowed
+      && <BackButton onClick={isNil(onPrevious) ? gotoBack : onPrevious} />}
       {children}
     </ContainerStyled>
   );

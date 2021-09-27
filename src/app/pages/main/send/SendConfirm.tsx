@@ -6,7 +6,7 @@ import { GROTHS_IN_BEAM } from '@app/model/rates';
 import {
   Window, Section, Button,
 } from 'app/uikit';
-import ArrowIcon from '@icons/icon-arrow.svg';
+import ArrowRightIcon from '@icons/icon-arrow-right.svg';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';
@@ -48,7 +48,7 @@ const Send = () => {
           For the transaction to complete, the recipient must get online
           within the next 12 hours and you should get online within 2 hours afterwards.
         </WarningSyled>
-        <Button type="submit" pallete="purple" icon={ArrowIcon}>
+        <Button type="submit" pallete="purple" icon={ArrowRightIcon}>
           next
         </Button>
       </form>

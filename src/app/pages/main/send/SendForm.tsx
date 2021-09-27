@@ -6,7 +6,7 @@ import { GROTHS_IN_BEAM } from '@app/model/rates';
 import {
   Window, Section, Input, Button, Title,
 } from 'app/uikit';
-import ArrowIcon from '@icons/icon-arrow.svg';
+import ArrowRightIcon from '@icons/icon-arrow-right.svg';
 
 import {
   $valid,
@@ -58,7 +58,7 @@ const SendForm = () => {
         </Section>
         <Button
           pallete="purple"
-          icon={ArrowIcon}
+          icon={ArrowRightIcon}
           type="submit"
           disabled={!valid}
         >

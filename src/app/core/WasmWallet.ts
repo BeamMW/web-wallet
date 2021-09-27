@@ -181,7 +181,7 @@ export default class WasmWallet {
 
   // TODO: will be updated after sub response fix in wallet api
   toggleEvents(value: boolean) {
-    this.send(-1, RPCMethod.SubUnsub, {
+    this.send(0, RPCMethod.SubUnsub, {
       ev_addrs_changed: value,
       ev_assets_changed: value,
       ev_sync_progress: value,
@@ -274,6 +274,7 @@ export default class WasmWallet {
       case WalletMethod.DeleteWallet:
         await WasmWallet.checkPassword(params);
         WasmWallet.removeWallet();
+        this.emit(id);
         break;
       default:
         break;

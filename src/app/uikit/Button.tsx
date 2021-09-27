@@ -1,11 +1,12 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 import { isNil } from '@core/utils';
+import { ButtonVariant, Pallete } from '@app/core/types';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.FC;
-  pallete?: 'green' | 'ghost' | 'purple' | 'blue' | 'red';
-  variant?: 'regular' | 'ghost' | 'block' | 'link' | 'icon';
+  pallete?: Pallete;
+  variant?: ButtonVariant;
 }
 
 const BaseButtonStyled = styled.button<ButtonProps>`

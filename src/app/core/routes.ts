@@ -1,13 +1,25 @@
 import {
-  Login, Restore, Create, SetPassword, Progress,
+  Login,
+  Restore,
+  SetPassword,
+  Progress,
+  SeedWarning,
+  SeedWrite,
+  SeedConfirm,
 } from '@pages/intro';
 
 import {
-  Wallet, Receive, SendConfirm, SendForm, Utxo, Settings,
+  Wallet,
+  Receive,
+  SendConfirm,
+  SendForm,
+  Utxo,
+  Settings,
 } from '@pages/main';
 
 import {
-  Connect, ApproveInvoke,
+  Connect,
+  ApproveInvoke,
 } from '@pages/notifications';
 
 import { View } from '@app/model/view';
@@ -15,7 +27,9 @@ import { View } from '@app/model/view';
 const ROUTES = {
   [View.LOGIN]: Login,
   [View.RESTORE]: Restore,
-  [View.CREATE]: Create,
+  [View.SEED_WARNING]: SeedWarning,
+  [View.SEED_WRITE]: SeedWrite,
+  [View.SEED_CONFIRM]: SeedConfirm,
   [View.SET_PASSWORD]: SetPassword,
   [View.PROGRESS]: Progress,
   [View.WALLET]: Wallet,
@@ -23,10 +37,9 @@ const ROUTES = {
   [View.SEND_CONFIRM]: SendConfirm,
   [View.RECEIVE]: Receive,
   [View.UTXO]: Utxo,
+  [View.SETTINGS]: Settings,
   [View.CONNECT]: Connect,
   [View.APPROVEINVOKE]: ApproveInvoke,
-
-  [View.SETTINGS]: Settings,
 };
 
 export default ROUTES;

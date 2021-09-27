@@ -1,3 +1,7 @@
+export type Pallete = 'green' | 'ghost' | 'purple' | 'blue' | 'red';
+
+export type ButtonVariant = 'regular' | 'ghost' | 'block' | 'link' | 'icon';
+
 export interface CreateWalletParams {
   seed: string;
   password: string;

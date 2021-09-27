@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { styled } from '@linaria/react';
 
 import {
-  Window, Button, Input, Footer,
+  Window, Button, Input, Footer, Popup,
 } from 'app/uikit';
 import { View, setView } from '@app/model/view';
 import { makeOnChange } from '@core/utils';
-import ArrowIcon from '@icons/icon-arrow.svg';
+import ArrowRightIcon from '@icons/icon-arrow-right.svg';
+import ArrowLeftIcon from '@icons/icon-arrow-left.svg';
 
 import { createWallet } from '@app/core/api';
 import { useStore } from 'effector-react';
@@ -25,6 +26,7 @@ const FormStyled = styled.form`
 const SetPassword = () => {
   const [pass, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [warningVisible, toggleWarning] = useState(false);
   const seed = useStore($seed);
 
   const valid = pass !== '' && pass === confirm;
@@ -42,34 +44,60 @@ const SetPassword = () => {
     setView(View.PROGRESS);
   };
 
+  const handlePrevious: React.MouseEventHandler = () => {
+    toggleWarning(true);
+  };
+
+  const handleReturnClick: React.MouseEventHandler = () => {
+    setView(View.SEED_WRITE);
+  };
+
   return (
-    <Window title="Password">
-      <FormStyled onSubmit={handleSubmit}>
-        <Input
-          type="password"
-          placeholder="Password"
-          onChange={onPasswordChange}
-        />
-        <PasswordStrength value={pass} />
-        <p>Strong password needs to meet the following requirements:</p>
-        <ul>
-          <li>the length must be at least 10 characters</li>
-          <li>must contain at least one lowercase letter</li>
-          <li>must contain at least one uppercase letter</li>
-          <li>must contain at least one number</li>
-        </ul>
-        <Input
-          type="password"
-          placeholder="Confirm password"
-          onChange={onConfirmChange}
-        />
-        <Footer>
-          <Button type="submit" icon={ArrowIcon} disabled={!valid}>
-            next
+    <>
+      <Window title="Password" onPrevious={handlePrevious}>
+        <FormStyled onSubmit={handleSubmit}>
+          <Input
+            type="password"
+            placeholder="Password"
+            onChange={onPasswordChange}
+          />
+          <PasswordStrength value={pass} />
+          <p>Strong password needs to meet the following requirements:</p>
+          <ul>
+            <li>the length must be at least 10 characters</li>
+            <li>must contain at least one lowercase letter</li>
+            <li>must contain at least one uppercase letter</li>
+            <li>must contain at least one number</li>
+          </ul>
+          <Input
+            type="password"
+            placeholder="Confirm password"
+            onChange={onConfirmChange}
+          />
+          <Footer>
+            <Button type="submit" icon={ArrowRightIcon} disabled={!valid}>
+              next
+            </Button>
+          </Footer>
+        </FormStyled>
+      </Window>
+      <Popup
+        visible={warningVisible}
+        title="Return to seed phrase"
+        confirmButton={(
+          <Button
+            icon={ArrowLeftIcon}
+            onClick={handleReturnClick}
+          >
+            return
           </Button>
-        </Footer>
-      </FormStyled>
-    </Window>
+            )}
+        onCancel={() => toggleWarning(false)}
+      >
+        Please write the seed phrase down. Storing it in a file makes it
+        prone to cyber attacks and, therefore, less secure.
+      </Popup>
+    </>
   );
 };
 

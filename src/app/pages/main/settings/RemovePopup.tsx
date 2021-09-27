@@ -1,12 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef, useState } from 'react';
-import { useStore } from 'effector-react';
-import { styled } from '@linaria/react';
 
 import {
+  Button,
   Input,
   Popup,
 } from '@app/uikit';
+
+import CancelIcon from '@icons/icon-cancel.svg';
+import ArrowRightIcon from '@icons/icon-arrow-right.svg';
+import RemoveIcon from '@icons/icon-remove.svg';
+
 import { deleteWalletFx } from './model';
 
 interface RemovePopupProps {
@@ -20,7 +24,7 @@ Make sure you’ve saved your seed phrase if you want to restore this wallet lat
 Are you sure you want to remove your wallet?
 `;
 
-const RemovePopup = ({
+const RemovePopup: React.FC<RemovePopupProps> = ({
   visible,
   onCancel,
 }) => {
@@ -37,8 +41,20 @@ const RemovePopup = ({
     }
   };
 
+  const confirmButton = warned
+    ? <Button pallete="red" icon={RemoveIcon} onClick={handleConfirm}>remove</Button>
+    : <Button pallete="red" icon={ArrowRightIcon} onClick={handleConfirm}>next</Button>;
+
   return (
-    <Popup visible={visible} title={title} onCancel={onCancel} onConfirm={handleConfirm}>
+    <Popup
+      visible={visible}
+      title={title}
+      cancelButton={
+        <Button variant="ghost" icon={CancelIcon} onClick={onCancel}>cancel</Button>
+      }
+      confirmButton={confirmButton}
+      onCancel={onCancel}
+    >
       { warned ? (
         <Input label="Password" type="password" ref={inputRef} />
       ) : TEXT_WARNING }

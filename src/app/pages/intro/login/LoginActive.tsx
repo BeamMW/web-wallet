@@ -1,12 +1,15 @@
 import React, { useState, useRef } from 'react';
+import { useStore } from 'effector-react';
 
 import {
   Popup, Button, Input, Splash,
-} from 'app/uikit';
+} from '@uikit';
+
+import { isNil } from '@app/core/utils';
 
 import WalletSmallIcon from '@icons/icon-wallet-small.svg';
-import { isNil } from '@app/core/utils';
-import { useStore } from 'effector-react';
+import DoneIcon from '@icons/icon-done.svg';
+
 import {
   $error, startWalletFx, LoginPhase, setLoginPhase,
 } from './model';
@@ -59,13 +62,16 @@ const LoginActive: React.FC = () => {
       <Popup
         visible={warningVisible}
         title="Restore wallet or create a new one"
-        cancel="cancel"
-        confirm="proceed"
+        confirmButton={(
+          <Button
+            icon={DoneIcon}
+            onClick={() => setLoginPhase(LoginPhase.RESTORE)}
+          >
+            I agree
+          </Button>
+        )}
         onCancel={() => {
           toggleWarning(false);
-        }}
-        onConfirm={() => {
-          setLoginPhase(LoginPhase.RESTORE);
         }}
       >
         If you&apos;ll restore a wallet all transaction history and addresses will be

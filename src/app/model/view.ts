@@ -4,7 +4,9 @@ import { createEvent, restore, sample } from 'effector';
 export enum View {
   // intro
   LOGIN,
-  CREATE,
+  SEED_WARNING,
+  SEED_WRITE,
+  SEED_CONFIRM,
   RESTORE,
   SET_PASSWORD,
   PROGRESS,
@@ -39,21 +41,23 @@ export const gotoForm = makePrevented(
 
 export const gotoConfirm = curry(setView, View.SEND_CONFIRM);
 
-export const onPreviousClick = createEvent<React.SyntheticEvent>();
+export const gotoBack = createEvent<React.SyntheticEvent>();
 
 export const $backButtonShown = $view.map((view) => view !== View.WALLET);
 
 // go back 1 screen
 sample({
   source: $view,
-  clock: onPreviousClick,
+  clock: gotoBack,
   fn: (view) => {
     switch (view) {
       case View.SEND_CONFIRM:
         return View.SEND_FORM;
+      case View.SEED_CONFIRM:
+        return View.SEED_WRITE;
       case View.RESTORE:
-      case View.CREATE:
-      case View.SET_PASSWORD:
+      case View.SEED_WARNING:
+      case View.SEED_WRITE:
         return View.LOGIN;
       default:
         return View.WALLET;

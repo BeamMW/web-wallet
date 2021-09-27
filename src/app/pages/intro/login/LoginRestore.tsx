@@ -6,7 +6,8 @@ import {
   Popup, Splash, Button,
 } from 'app/uikit';
 
-import addIcon from '@icons/icon-add.svg';
+import AddIcon from '@icons/icon-add.svg';
+import DoneIcon from '@icons/icon-done.svg';
 
 import { $phase, LoginPhase, setLoginPhase } from './model';
 
@@ -27,17 +28,14 @@ const LoginRestore: React.FC = () => {
       >
         <Button
           type="button"
-          icon={addIcon}
-          onClick={() => setView(View.CREATE)}
+          icon={AddIcon}
+          onClick={() => setView(View.SEED_WARNING)}
         >
           create new wallet
         </Button>
         <Button
           variant="link"
-          onClick={(event) => {
-            event.preventDefault();
-            toggleWarning(true);
-          }}
+          onClick={() => toggleWarning(true)}
         >
           Restore wallet
         </Button>
@@ -45,17 +43,21 @@ const LoginRestore: React.FC = () => {
       <Popup
         visible={warningVisible}
         title="Restore wallet"
-        cancel="cancel"
-        confirm="proceed"
-        onCancel={() => {
-          toggleWarning(false);
-        }}
-        onConfirm={() => {
-          setView(View.RESTORE);
-        }}
+        confirmButton={(
+          <Button
+            icon={DoneIcon}
+            onClick={() => setView(View.RESTORE)}
+          >
+            I agree
+          </Button>
+        )}
+        onCancel={() => toggleWarning(false)}
       >
-        If you&apos;ll restore a wallet all transaction history and addresses will be
-        lost
+        You are trying to restore an existing Beam Wallet.
+        <br />
+        Please notice that if you use your wallet on another device,
+        your balance will be up to date, but transaction history
+        and addresses will be kept separately on each device.
       </Popup>
     </>
   );

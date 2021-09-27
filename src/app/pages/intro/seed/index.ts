@@ -1,2 +1,2 @@
 export { default as SeedRestore } from './SeedRestore';
-export { default as SeedConfirm } from './SeedConfirm';
+export { default as SeedList } from './SeedList';

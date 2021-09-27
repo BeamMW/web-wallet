@@ -1,17 +1,15 @@
 import {
   createEffect,
-  createEvent, forward, restore,
+  createEvent, restore,
 } from 'effector';
 import { generateSeed, handleWalletEvent } from '@core/api';
 import { BackgroundEvent, ConnectedData } from '@app/core/types';
 
 import { setView, View } from './view';
 
-export const setSeed = createEvent<string[]>();
 export const setIds = createEvent<number[]>();
 export const setOnboarding = createEvent<boolean>();
 
-export const $seed = restore(setSeed, []);
 export const $ids = restore(setIds, []);
 export const $onboarding = restore(setOnboarding, null);
 
@@ -28,14 +26,16 @@ const getRandomIds = () => {
   return result;
 };
 
-$ids.on(setSeed, () => getRandomIds());
+export const setSeed = createEvent<string[]>();
 
 export const generateSeedFx = createEffect(generateSeed);
 
-forward({
-  from: generateSeedFx.doneData,
-  to: setSeed,
-});
+export const $seed = restore(generateSeedFx.doneData, []);
+
+$seed.reset(generateSeedFx);
+$seed.on(setSeed, (state, payload) => payload);
+
+$ids.on(generateSeedFx.doneData, () => getRandomIds());
 
 handleWalletEvent<ConnectedData>(
   BackgroundEvent.CONNECTED,

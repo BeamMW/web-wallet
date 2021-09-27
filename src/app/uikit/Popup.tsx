@@ -1,21 +1,17 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import { isNil } from '@core/utils';
-
 import CancelIcon from '@icons/icon-cancel.svg';
-import DoneIcon from '@icons/icon-done.svg';
 
-import Button from './Button';
 import Backdrop from './Backdrop';
+import Button from './Button';
 
 interface PopupProps {
   title?: string;
-  cancel?: string;
-  confirm?: string;
+  cancelButton?: React.ReactElement;
+  confirmButton?: React.ReactElement;
   visible?: boolean;
   onCancel?: React.MouseEventHandler;
-  onConfirm?: React.MouseEventHandler;
 }
 
 const ContainerStyled = styled.div`
@@ -49,11 +45,18 @@ const FooterStyled = styled.div`
 
 const Popup: React.FC<PopupProps> = ({
   title,
-  cancel,
-  confirm,
   visible,
   onCancel,
-  onConfirm,
+  cancelButton = (
+    <Button
+      variant="ghost"
+      icon={CancelIcon}
+      onClick={onCancel}
+    >
+      cancel
+    </Button>
+  ),
+  confirmButton,
   children,
 }) => (visible ? (
   <Backdrop onCancel={onCancel}>
@@ -61,19 +64,8 @@ const Popup: React.FC<PopupProps> = ({
       <TitleStyled>{title}</TitleStyled>
       {children}
       <FooterStyled>
-        {!isNil(cancel) && (
-        <Button
-          icon={CancelIcon}
-          variant="ghost"
-          type="button"
-          onClick={onCancel}
-        >
-          {cancel}
-        </Button>
-        )}
-        <Button icon={DoneIcon} type="button" onClick={onConfirm}>
-          {confirm}
-        </Button>
+        {cancelButton}
+        {confirmButton}
       </FooterStyled>
     </ContainerStyled>
   </Backdrop>
