@@ -83,8 +83,8 @@ const SeedList: React.FC<SeedListProps> = ({
       const err = isNil(errors) ? value : errors[index];
       const className = cx(
         baseClassName,
-        err === true && errorClassName,
-        err === false && validClassName,
+        err === false && errorClassName,
+        err === true && validClassName,
       );
 
       return (

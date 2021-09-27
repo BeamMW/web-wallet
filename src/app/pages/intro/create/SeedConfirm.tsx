@@ -6,7 +6,7 @@ import ArrowRightIcon from '@icons/icon-arrow-right.svg';
 import { $ids, $seed } from '@app/model/base';
 import { useStore } from 'effector-react';
 import { setView, View } from '@app/model/view';
-import { SeedList } from '@pages/intro/seed';
+import SeedList from '@pages/intro/seed';
 
 const SEED_CONFIRM_COUNT = 6;
 

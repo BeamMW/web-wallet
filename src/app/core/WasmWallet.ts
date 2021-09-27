@@ -282,7 +282,8 @@ export default class WasmWallet {
         break;
       }
       case WalletMethod.IsAllowedWord: {
-        const result = WasmWallet.isAllowedWord(params);
+        const result = params === ''
+          ? null : WasmWallet.isAllowedWord(params);
         this.emit(id, result);
         break;
       }

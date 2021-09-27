@@ -15,6 +15,8 @@ const INITIAL = new Array(SEED_PHRASE_COUNT).fill(null);
 
 export const $errors = restore(setErrors, INITIAL);
 
+$errors.watch((value) => console.log(value));
+
 export const $valid = $errors.map(
   (errors) => errors.every((value) => value === false),
 );
@@ -51,7 +53,7 @@ sample({
   clock: isAllowedWordFx.doneData,
   fn: ([errors, target], result) => {
     const next = errors.slice();
-    next[target] = !result;
+    next[target] = result;
     return next;
   },
   target: setErrors,

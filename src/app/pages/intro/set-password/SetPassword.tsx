@@ -29,7 +29,11 @@ const SetPassword = () => {
   const [warningVisible, toggleWarning] = useState(false);
   const seed = useStore($seed);
 
-  const valid = pass !== '' && pass === confirm;
+  const matched = pass === confirm;
+  const valid = confirm === '' || matched;
+  const ready = pass !== '' && matched;
+
+  const error = valid ? null : 'Passwords do not match';
 
   const onPasswordChange = makeOnChange(setPassword);
   const onConfirmChange = makeOnChange(setConfirm);
@@ -71,11 +75,13 @@ const SetPassword = () => {
           </ul>
           <Input
             type="password"
+            valid={valid}
+            label={error}
             placeholder="Confirm password"
             onChange={onConfirmChange}
           />
           <Footer>
-            <Button type="submit" icon={ArrowRightIcon} disabled={!valid}>
+            <Button type="submit" icon={ArrowRightIcon} disabled={!ready}>
               next
             </Button>
           </Footer>
