@@ -1,6 +1,6 @@
 import * as extensionizer from 'extensionizer';
 import { Environment } from '@core/types';
-import { PortStream } from '@core/PortStream';
+import PortStream from '@core/PortStream';
 import PostMessageStream from 'post-message-stream';
 
 function setupConnection() {

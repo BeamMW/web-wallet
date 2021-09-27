@@ -3,7 +3,9 @@ import {
   createEvent, restore,
 } from 'effector';
 import { generateSeed, handleWalletEvent } from '@core/api';
-import { BackgroundEvent, ConnectedData } from '@app/core/types';
+import { BackgroundEvent, ConnectedData, NotificationType } from '@app/core/types';
+import { isNil } from '@app/core/utils';
+import NotificationController from '@core/NotificationController';
 
 import { setView, View } from './view';
 
@@ -42,8 +44,18 @@ handleWalletEvent<ConnectedData>(
   ({
     is_running,
     onboarding,
+    notification,
   }) => {
-    setOnboarding(onboarding);
-    setView(is_running ? View.WALLET : View.LOGIN);
+    if (!isNil(notification)) {
+      NotificationController.setNotification(notification);
+      if (notification.type === NotificationType.APPROVE_INVOKE) {
+        setView(is_running ? View.APPROVEINVOKE : View.LOGIN);
+      } else if (notification.type === NotificationType.CONNECT) {
+        setView(is_running ? View.CONNECT : View.LOGIN);
+      }
+    } else {
+      setOnboarding(onboarding);
+      setView(is_running ? View.WALLET : View.LOGIN);
+    }
   },
 );

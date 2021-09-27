@@ -3,8 +3,14 @@ import * as passworder from 'browser-passworder';
 
 import { isNil } from '@core/utils';
 import {
-  RPCMethod, RPCEvent, BackgroundEvent, WalletMethod, CreateWalletParams,
+  RPCMethod,
+  RPCEvent,
+  BackgroundEvent,
+  WalletMethod,
+  CreateWalletParams,
+  Notification,
 } from './types';
+import NotificationManager from './NotificationManager';
 
 declare const BeamModule: any;
 
@@ -29,6 +35,10 @@ type WalletEventHandler = {
 
 export default class WasmWallet {
   private static instance: WasmWallet;
+
+  private contractInfoHandler;
+
+  private contractInfoHandlerCallback;
 
   static getInstance() {
     if (this.instance != null) {
@@ -116,13 +126,14 @@ export default class WasmWallet {
 
   private eventHandler: WalletEventHandler;
 
-  async init(handler: WalletEventHandler) {
+  async init(handler: WalletEventHandler, notification: Notification) {
     this.eventHandler = handler;
 
     if (this.isRunning()) {
       this.emit(BackgroundEvent.CONNECTED, {
         onboarding: false,
         is_running: true,
+        notification: !isNil(notification) ? notification : null,
       });
 
       this.toggleEvents(false);
@@ -140,13 +151,23 @@ export default class WasmWallet {
       this.emit(BackgroundEvent.CONNECTED, {
         is_running: false,
         onboarding: !WasmWalletClient.IsInitialized(PATH_DB),
+        notification: !isNil(notification) ? notification : null,
       });
     } catch {
       this.emit(BackgroundEvent.CONNECTED, {
         is_running: false,
         onboarding: true,
+        notification: null,
       });
     }
+  }
+
+  initContractInfoHandler(handler) {
+    this.contractInfoHandler = handler;
+  }
+
+  initcontractInfoHandlerCallback(cb) {
+    this.contractInfoHandlerCallback = cb;
   }
 
   emit(
@@ -175,6 +196,7 @@ export default class WasmWallet {
 
     this.wallet.startWallet();
     this.wallet.subscribe(responseHandler);
+    this.wallet.setApproveContractInfoHandler(this.contractInfoHandler);
 
     this.toggleEvents(true);
   }
@@ -275,6 +297,24 @@ export default class WasmWallet {
         await WasmWallet.checkPassword(params);
         WasmWallet.removeWallet();
         this.emit(id);
+        break;
+      case WalletMethod.NotificationConnect:
+        if (params.result) {
+          const notificationPort = NotificationManager.getPort();
+          notificationPort.postMessage({
+            result: true,
+          });
+        }
+        break;
+      case WalletMethod.NotificationApproveInfo:
+        if (params.req) {
+          this.contractInfoHandlerCallback.contractInfoApproved(params.req);
+        }
+        break;
+      case WalletMethod.NotificationRejectInfo:
+        if (params.req) {
+          this.contractInfoHandlerCallback.contractInfoRejected(params.req);
+        }
         break;
       default:
         break;

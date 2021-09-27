@@ -1,8 +1,14 @@
 import { createEvent, guard, restore } from 'effector';
 
-import { RPCEvent, SyncProgress } from '@app/core/types';
+import {
+  RPCEvent,
+  SyncProgress,
+  Environment,
+  NotificationType,
+} from '@app/core/types';
 import { setView, View } from '@app/model/view';
-import { remoteEvent } from '@core/api';
+import { remoteEvent, getEnvironment } from '@core/api';
+import NotificationController from '@app/core/NotificationController';
 
 export const setSyncProgress = createEvent<[number, number]>();
 
@@ -37,7 +43,16 @@ guard(onProgress, {
   }) => {
     if (current_state_hash === tip_state_hash) {
       setLoading(false);
-      setView(View.WALLET);
+      if (getEnvironment() !== Environment.NOTIFICATION) {
+        setView(View.WALLET);
+      } else {
+        const notification = NotificationController.getNotification();
+        if (notification.type === NotificationType.CONNECT) {
+          setView(View.CONNECT);
+        } else if (notification.type === NotificationType.APPROVE_INVOKE) {
+          setView(View.APPROVEINVOKE);
+        }
+      }
     } else {
       setSyncProgress([sync_requests_done, sync_requests_total]);
     }
