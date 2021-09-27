@@ -295,6 +295,7 @@ export default class WasmWallet {
         break;
       case WalletMethod.DeleteWallet:
         await WasmWallet.checkPassword(params);
+        await this.stop();
         WasmWallet.removeWallet();
         this.emit(id);
         break;
