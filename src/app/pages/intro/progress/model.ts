@@ -49,6 +49,8 @@ guard(onProgress, {
         const notification = NotificationController.getNotification();
         if (notification.type === NotificationType.CONNECT) {
           setView(View.CONNECT);
+        } else if (notification.type === NotificationType.APPROVE_INVOKE) {
+          setView(View.APPROVEINVOKE);
         }
       }
     } else {

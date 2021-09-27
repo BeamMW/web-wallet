@@ -140,6 +140,14 @@ export function approveConnection() {
   return postMessage(WalletMethod.NotificationConnect, { result: true });
 }
 
+export function approveContractInfoRequest(req) {
+  return postMessage(WalletMethod.NotificationApproveInfo, { req });
+}
+
+export function rejectContractInfoRequest(req) {
+  return postMessage(WalletMethod.NotificationRejectInfo, { req });
+}
+
 export interface CalculateChangeParams {
   amount: number;
   asset_id: number;

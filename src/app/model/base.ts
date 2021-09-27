@@ -46,9 +46,13 @@ handleWalletEvent<ConnectedData>(
     onboarding,
     notification,
   }) => {
-    if (!isNil(notification) && notification.type === NotificationType.CONNECT) {
+    if (!isNil(notification)) {
       NotificationController.setNotification(notification);
-      setView(is_running ? View.CONNECT : View.LOGIN);
+      if (notification.type === NotificationType.APPROVE_INVOKE) {
+        setView(is_running ? View.APPROVEINVOKE : View.LOGIN);
+      } else if (notification.type === NotificationType.CONNECT) {
+        setView(is_running ? View.CONNECT : View.LOGIN);
+      }
     } else {
       setOnboarding(onboarding);
       setView(is_running ? View.WALLET : View.LOGIN);

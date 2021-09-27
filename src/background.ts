@@ -83,16 +83,7 @@ async function openPopup() {
   });
 }
 
-const app = new DnodeApp((req, info, amounts, cb) => {
-  app.setNotificationInfo({
-    type: NotificationType.APPROVE_INVOKE,
-    params: {
-      req, info, amounts,
-    },
-  }, cb);
-  notificationIsOpen = true;
-  openPopup();
-});
+const app = new DnodeApp();
 
 function handleConnect(remote) {
   port = remote;
@@ -145,83 +136,17 @@ function handleConnect(remote) {
   }
 }
 
-// const connectRemote = (remotePort) => {
-//   const processName = remotePort.name;
-
-//   if (processName === EnvironmentType.CONTENT) {
-//     const portStream = new PortStream(remotePort);
-//     const origin = remotePort.sender.url
-//     app.connectPage(portStream, origin)
-
-//     contentPortObj = remotePort;
-//     contentPortObj.onMessage.addListener((msg) => {
-//       if (msg.data === 'create_beam_api') {
-//         app.setNotificationInfo({type: NotificationType.CONNECT, name: msg.name}, (res) => {
-//           contentPortObj.postMessage({result: res});
-//         });
-//         notificationIsOpen = true;
-//         openPopup();
-//       }
-//     });
-//   } else if (
-//       processName === EnvironmentType.POPUP ||
-//       processName === EnvironmentType.FULLSCREEN ||
-//       processName === EnvironmentType.NOTIFICATION) {
-//     console.log('popup connected', remotePort);
-
-//     const portStream = new PortStream(remotePort);
-//     app.connectPopup(portStream);
-
-//     remotePort.onDisconnect.addListener(() => {
-//       notificationIsOpen = false;
-//       console.log('popup disconnected');
-//     });
-//   }
-// };
+wallet.initContractInfoHandler((req, info, amounts, cb) => {
+  wallet.initcontractInfoHandlerCallback(cb);
+  notification = {
+    type: NotificationType.APPROVE_INVOKE,
+    params: {
+      req, info, amounts,
+    },
+  };
+  notificationIsOpen = true;
+  openPopup();
+});
 
 extensionizer.runtime.onConnect.addListener(handleConnect);
 
-// function openExtensionInBrowser() {
-//   const extensionURL = chrome.runtime.getURL('popup.html');
-
-//   chrome.tabs.create({ url: extensionURL });
-// }
-
-// chrome.runtime.onInstalled.addListener(({ reason }) => {
-//   if (reason === 'install') {
-//     // openExtensionInBrowser();
-//   }
-// });
-
-// function getOwnTabs(): Promise<chrome.tabs.Tab[]> {
-//   return Promise.all<chrome.tabs.Tab>(
-//     chrome.extension
-//       .getViews({ type: 'tab' })
-//       .map(
-//         (view) => new Promise(
-//           (resolve) => view.chrome.tabs.getCurrent(
-//             (tab) => resolve(Object.assign(tab, { url: view.location.href })),
-//           ),
-//         ),
-//       ),
-//   );
-// }
-
-// function openOptions(url) {
-//   getOwnTabs().then((ownTabs) => {
-//     const target = ownTabs.find((tab) => tab.url.includes(url));
-//     if (target) {
-//       if (target.active && target.status === 'complete') {
-//         chrome.runtime.sendMessage({ text: 'stop-loading' });
-//       } else {
-//         chrome.tabs.update(target.id, { active: true });
-//       }
-//     }
-//   });
-// }
-
-// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-//   if (message.text === 'wallet-opened') {
-//     openOptions('index.html');
-//   }
-// });

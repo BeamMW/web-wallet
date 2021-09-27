@@ -24,6 +24,8 @@ export enum WalletMethod {
   IsAllowedWord = 'wasm_is_allowed_word',
   GenerateSeed = 'wasm_generate_seed',
   NotificationConnect = 'notification_connect',
+  NotificationApproveInfo = 'notification_approve_info',
+  NotificationRejectInfo = 'notification_reject_info',
 }
 
 export interface RemoteRequest {

@@ -36,6 +36,10 @@ type WalletEventHandler = {
 export default class WasmWallet {
   private static instance: WasmWallet;
 
+  private contractInfoHandler;
+
+  private contractInfoHandlerCallback;
+
   static getInstance() {
     if (this.instance != null) {
       return this.instance;
@@ -158,6 +162,14 @@ export default class WasmWallet {
     }
   }
 
+  initContractInfoHandler(handler) {
+    this.contractInfoHandler = handler;
+  }
+
+  initcontractInfoHandlerCallback(cb) {
+    this.contractInfoHandlerCallback = cb;
+  }
+
   emit(
     id: number | RPCEvent | BackgroundEvent,
     result?: any,
@@ -184,6 +196,7 @@ export default class WasmWallet {
 
     this.wallet.startWallet();
     this.wallet.subscribe(responseHandler);
+    this.wallet.setApproveContractInfoHandler(this.contractInfoHandler);
 
     this.toggleEvents(true);
   }
@@ -290,6 +303,16 @@ export default class WasmWallet {
           notificationPort.postMessage({
             result: true,
           });
+        }
+        break;
+      case WalletMethod.NotificationApproveInfo:
+        if (params.req) {
+          this.contractInfoHandlerCallback.contractInfoApproved(params.req);
+        }
+        break;
+      case WalletMethod.NotificationRejectInfo:
+        if (params.req) {
+          this.contractInfoHandlerCallback.contractInfoRejected(params.req);
         }
         break;
       default:

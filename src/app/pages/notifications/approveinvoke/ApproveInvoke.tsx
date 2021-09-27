@@ -1,11 +1,8 @@
 import React from 'react';
-import { useStore } from 'effector-react';
+import NotificationController from '@core/NotificationController';
 import { styled } from '@linaria/react';
-
+import { approveContractInfoRequest, rejectContractInfoRequest } from '@core/api';
 import { Button } from 'app/uikit';
-import { $params } from './model';
-
-// import WalletController from '@app/core/WalletController';
 
 const StyledTitle = styled.div`
   margin: 50px auto;
@@ -16,19 +13,17 @@ const StyledTitle = styled.div`
 `;
 
 const ApproveInvoke = () => {
-  // const walletController = WalletController.getInstance();
-
-  const params = useStore($params);
+  const notification = NotificationController.getNotification();
 
   return (
     <>
-      <StyledTitle>{params.info}</StyledTitle>
-      <StyledTitle>{params.amounts}</StyledTitle>
+      <StyledTitle>{notification.params.info}</StyledTitle>
+      <StyledTitle>{notification.params.amounts}</StyledTitle>
       <Button
         type="button"
         onClick={
           () => {
-            // WalletController.setNotificationApproved(params.req);
+            approveContractInfoRequest(notification.params.req);
             window.close();
           }
         }
@@ -39,7 +34,7 @@ const ApproveInvoke = () => {
         type="button"
         onClick={
           () => {
-            // WalletController.setNotificationRejected(params.req);
+            rejectContractInfoRequest(notification.params.req);
             window.close();
           }
         }
