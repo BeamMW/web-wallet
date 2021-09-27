@@ -26,8 +26,8 @@ const Connect = () => {
       <Button
         type="button"
         onClick={
-          async () => {
-            await approveConnection();
+          () => {
+            approveConnection();
             window.close();
           }
         }
