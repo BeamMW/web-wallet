@@ -1,11 +1,12 @@
 import React from 'react';
-import { css } from '@linaria/core';
+import { css, cx } from '@linaria/core';
 
 import AngleBackIcon from '@icons/icon-angle-back.svg';
 
 import Button from './Button';
 
 interface BackButtonProps {
+  className?: string;
   onClick: React.MouseEventHandler;
 }
 
@@ -16,8 +17,13 @@ const backStyle = css`
   left: 15px;
 `;
 
-const BackLink: React.FC<BackButtonProps> = ({ onClick }) => (
-  <Button variant="icon" icon={AngleBackIcon} className={backStyle} onClick={onClick} />
+const BackButton: React.FC<BackButtonProps> = ({ className, onClick }) => (
+  <Button
+    variant="icon"
+    icon={AngleBackIcon}
+    className={cx(backStyle, className)}
+    onClick={onClick}
+  />
 );
 
-export default BackLink;
+export default BackButton;

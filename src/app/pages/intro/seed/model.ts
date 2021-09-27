@@ -15,8 +15,6 @@ const INITIAL = new Array(SEED_PHRASE_COUNT).fill(null);
 
 export const $errors = restore(setErrors, INITIAL);
 
-$errors.watch((value) => console.log(value));
-
 export const $valid = $errors.map(
   (errors) => errors.every((value) => value === false),
 );
