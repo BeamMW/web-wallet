@@ -3,8 +3,14 @@ import * as passworder from 'browser-passworder';
 
 import { isNil } from '@core/utils';
 import {
-  RPCMethod, RPCEvent, BackgroundEvent, WalletMethod, CreateWalletParams,
+  RPCMethod,
+  RPCEvent,
+  BackgroundEvent,
+  WalletMethod,
+  CreateWalletParams,
+  Notification,
 } from './types';
+import NotificationManager from './NotificationManager';
 
 declare const BeamModule: any;
 
@@ -116,13 +122,14 @@ export default class WasmWallet {
 
   private eventHandler: WalletEventHandler;
 
-  async init(handler: WalletEventHandler) {
+  async init(handler: WalletEventHandler, notification: Notification) {
     this.eventHandler = handler;
 
     if (this.isRunning()) {
       this.emit(BackgroundEvent.CONNECTED, {
         onboarding: false,
         is_running: true,
+        notification: !isNil(notification) ? notification : null,
       });
 
       this.toggleEvents(false);
@@ -140,11 +147,13 @@ export default class WasmWallet {
       this.emit(BackgroundEvent.CONNECTED, {
         is_running: false,
         onboarding: !WasmWalletClient.IsInitialized(PATH_DB),
+        notification: !isNil(notification) ? notification : null,
       });
     } catch {
       this.emit(BackgroundEvent.CONNECTED, {
         is_running: false,
         onboarding: true,
+        notification: null,
       });
     }
   }
@@ -274,6 +283,14 @@ export default class WasmWallet {
       case WalletMethod.DeleteWallet:
         await WasmWallet.checkPassword(params);
         WasmWallet.removeWallet();
+        break;
+      case WalletMethod.NotificationConnect:
+        if (params.result) {
+          const notificationPort = NotificationManager.getPort();
+          notificationPort.postMessage({
+            result: true,
+          });
+        }
         break;
       default:
         break;

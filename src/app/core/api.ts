@@ -44,7 +44,7 @@ export const remoteEvent = createEvent<RemoteResponse>();
 //   });
 // }
 
-function getEnvironment(href = window.location.href) {
+export function getEnvironment(href = window.location.href) {
   const url = new URL(href);
   switch (url.pathname) {
     case '/popup.html':
@@ -134,6 +134,10 @@ export function createAddress() {
 
 export function validateAddress(address: string) {
   return postMessage<AddressValidation>(RPCMethod.ValidateAddress, { address });
+}
+
+export function approveConnection() {
+  return postMessage(WalletMethod.NotificationConnect, { result: true });
 }
 
 export interface CalculateChangeParams {

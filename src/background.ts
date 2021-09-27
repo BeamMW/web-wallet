@@ -7,7 +7,7 @@ import {
   Environment, RemoteRequest,
 } from '@app/core/types';
 
-import { PortStream } from '@core/PortStream';
+import PortStream from '@core/PortStream';
 import DnodeApp from '@core/DnodeApp';
 import NotificationManager from '@core/NotificationManager';
 import { NotificationType } from '@core/types';
@@ -15,17 +15,16 @@ import { NotificationType } from '@core/types';
 window.global = globalThis;
 
 const notificationManager = new NotificationManager();
-
 const wallet = WasmWallet.getInstance();
+const openBeamTabsIDs = {};
 
 let port = null;
 let contentPort = null;
 let connected = false;
 
 let uiIsTriggering = false;
+let notification = null;
 let notificationIsOpen = false;
-
-const openBeamTabsIDs = {};
 
 function postMessage(data) {
   if (!isNil(port) && connected) {
@@ -106,68 +105,79 @@ function handleConnect(remote) {
   });
 
   port.onMessage.addListener(({ id, method, params }: RemoteRequest) => {
-    wallet.send(id, method, params);
+    if (method !== undefined) {
+      wallet.send(id, method, params);
+    }
   });
 
-  if (port.name === Environment.POPUP) {
-    wallet.init(postMessage);
+  switch (port.name) {
+    case Environment.POPUP: {
+      wallet.init(postMessage, null);
+      break;
+    }
+    case Environment.NOTIFICATION: {
+      wallet.init(postMessage, notification);
+      break;
+    }
+    case Environment.CONTENT: {
+      NotificationManager.setPort(remote);
+      const portStream = new PortStream(remote);
+      const origin = remote.sender.url;
+      app.connectPage(portStream, origin);
+
+      contentPort = remote;
+      contentPort.onMessage.addListener((msg) => {
+        if (msg.data === 'create_beam_api') {
+          notification = {
+            type: NotificationType.CONNECT,
+            params: {
+              name: msg.name,
+            },
+          };
+          notificationIsOpen = true;
+          openPopup();
+        }
+      });
+      break;
+    }
+    default:
+      break;
   }
-
-  if (port.name === Environment.CONTENT) {
-    const portStream = new PortStream(port);
-    const origin = port.sender.url;
-    app.connectPage(portStream, origin);
-
-    contentPort = remote;
-    contentPort.onMessage.addListener((msg) => {
-      if (msg.data === 'create_beam_api') {
-        app.setNotificationInfo({
-          type: NotificationType.CONNECT, name: msg.name,
-        }, (res) => {
-          contentPort.postMessage({
-            result: res,
-          });
-        });
-        notificationIsOpen = true;
-        openPopup();
-      }
-    });
-  }
-
-  // const connectRemote = (remotePort) => {
-  //   const processName = remotePort.name;
-
-  //   if (processName === EnvironmentType.CONTENT) {
-  //     const portStream = new PortStream(remotePort);
-  //     const origin = remotePort.sender.url
-  //     app.connectPage(portStream, origin)
-
-  //     contentPortObj = remotePort;
-  //     contentPortObj.onMessage.addListener((msg) => {
-  //       if (msg.data === 'create_beam_api') {
-  //         app.setNotificationInfo({type: NotificationType.CONNECT, name: msg.name}, (res) => {
-  //           contentPortObj.postMessage({result: res});
-  //         });
-  //         notificationIsOpen = true;
-  //         openPopup();
-  //       }
-  //     });
-  //   } else if (
-  //       processName === EnvironmentType.POPUP ||
-  //       processName === EnvironmentType.FULLSCREEN ||
-  //       processName === EnvironmentType.NOTIFICATION) {
-  //     console.log('popup connected', remotePort);
-
-  //     const portStream = new PortStream(remotePort);
-  //     app.connectPopup(portStream);
-
-  //     remotePort.onDisconnect.addListener(() => {
-  //       notificationIsOpen = false;
-  //       console.log('popup disconnected');
-  //     });
-  //   }
-  // };
 }
+
+// const connectRemote = (remotePort) => {
+//   const processName = remotePort.name;
+
+//   if (processName === EnvironmentType.CONTENT) {
+//     const portStream = new PortStream(remotePort);
+//     const origin = remotePort.sender.url
+//     app.connectPage(portStream, origin)
+
+//     contentPortObj = remotePort;
+//     contentPortObj.onMessage.addListener((msg) => {
+//       if (msg.data === 'create_beam_api') {
+//         app.setNotificationInfo({type: NotificationType.CONNECT, name: msg.name}, (res) => {
+//           contentPortObj.postMessage({result: res});
+//         });
+//         notificationIsOpen = true;
+//         openPopup();
+//       }
+//     });
+//   } else if (
+//       processName === EnvironmentType.POPUP ||
+//       processName === EnvironmentType.FULLSCREEN ||
+//       processName === EnvironmentType.NOTIFICATION) {
+//     console.log('popup connected', remotePort);
+
+//     const portStream = new PortStream(remotePort);
+//     app.connectPopup(portStream);
+
+//     remotePort.onDisconnect.addListener(() => {
+//       notificationIsOpen = false;
+//       console.log('popup disconnected');
+//     });
+//   }
+// };
 
 extensionizer.runtime.onConnect.addListener(handleConnect);
 

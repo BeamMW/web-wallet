@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import Dnode from 'dnode/browser';
 import 'setimmediate';
 

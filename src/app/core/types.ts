@@ -23,6 +23,7 @@ export enum WalletMethod {
   DeleteWallet = 'wasm_delete_wallet',
   IsAllowedWord = 'wasm_is_allowed_word',
   GenerateSeed = 'wasm_generate_seed',
+  NotificationConnect = 'notification_connect',
 }
 
 export interface RemoteRequest {
@@ -61,6 +62,7 @@ export interface ToggleSubscribeToParams {
 export interface ConnectedData {
   is_running: boolean;
   onboarding: boolean;
+  notification: Notification
 }
 
 export interface SyncHash {
@@ -233,15 +235,15 @@ export enum NotificationType {
 }
 
 export interface NotificationParams {
-  info: string,
-  amounts: string,
-  req: string
+  name?: string,
+  info?: string,
+  amounts?: string,
+  req?: string
 }
 
 export interface Notification {
   type: NotificationType.APPROVE_INVOKE | NotificationType.CONNECT;
-  name?: string,
-  params?: NotificationParams
+  params: NotificationParams
 }
 
 export enum Environment {
