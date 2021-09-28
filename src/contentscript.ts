@@ -79,6 +79,7 @@ window.addEventListener('message', (event) => {
       appname: event.data.appname,
     };
 
+    // TODO: check
     setupConnection();
 
     extensionPort.postMessage(reqData);
