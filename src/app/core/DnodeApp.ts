@@ -1,22 +1,20 @@
 import { setupDnode } from '@core/setupDnode';
-import WasmWallet from './WasmWallet';
-
-const wallet = WasmWallet.getInstance();
 
 export default class DnodeApp {
   private appApi = null;
+  private appApiHandler = null;
 
-  pageApi(origin: string) {
+  async createAppAPI (wallet: any, apiver: string, apivermin: string, appname: string, origin: string) {
+    this.appApi = await wallet.createAppAPI(apiver, apivermin, origin, appname, (...args) => {
+      this.appApiHandler(...args)
+    })
+  }
+
+  pageApi() {
     return {
-      createAppAPI: async (apiver: string, minapiver: string, appname: string, handler: any) => new Promise((resolve, reject) => {
-        wallet.createAppAPI(apiver, minapiver, origin, appname, handler, (err, api) => {
-          if (err) {
-              reject(err);
-          }
-          this.appApi = api;
-          resolve(true);
-        });
-      }),
+      callWalletApiResult: async (handler: any) => {
+        this.appApiHandler = handler
+      },
       callWalletApi: async (callid: string, method: string, params) => {
         const request = {
           jsonrpc: '2.0',
@@ -26,11 +24,11 @@ export default class DnodeApp {
         };
         this.appApi.callWalletApi(JSON.stringify(request));
       },
-    };
+    }
   }
 
-  connectPage(connectionStream, origin) {
-    const api = this.pageApi(origin);
+  connectPage (connectionStream, origin) {
+    const api = this.pageApi();
     const dnode = setupDnode(connectionStream, api);
 
     dnode.on('remote', (remote) => {

@@ -1,5 +1,6 @@
 import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
+import PortStream from '@core/PortStream';
 
 import { isNil } from '@core/utils';
 import {
@@ -11,6 +12,7 @@ import {
   Notification,
 } from './types';
 import NotificationManager from './NotificationManager';
+import DnodeApp from './DnodeApp';
 
 declare const BeamModule: any;
 
@@ -34,11 +36,15 @@ type WalletEventHandler = {
 };
 
 export default class WasmWallet {
+  
   private static instance: WasmWallet;
 
   private contractInfoHandler;
 
   private contractInfoHandlerCallback;
+
+  // TODO:BRO map [url->app]
+  private app = undefined;
 
   static getInstance() {
     if (this.instance != null) {
@@ -109,6 +115,14 @@ export default class WasmWallet {
 
   static isAllowedWord(word: string): boolean {
     return WasmWalletClient.IsAllowedWord(word);
+  }
+
+  static isAppSupported(apiver:string, apivermin: string): boolean {
+    return WasmWalletClient.IsAppSupported(apiver, apivermin);
+  }
+  
+  static generateAppID(appurl: string, appname: string): string {
+    return WasmWalletClient.GenerateAppID(appurl, appname);
   }
 
   static isInitialized(): boolean {
@@ -217,17 +231,17 @@ export default class WasmWallet {
     return isNil(this.wallet) ? false : this.wallet.isRunning();
   }
 
-  createAppAPI(apiver: string, minapiver: string, appurl: string, appname: string, handler: any, apiSet: any) {
-    // TODO: create appid here?
-    let appid = appurl + appname;// this.wallet.generateAppID(url, appname)
-    console.log("createAppAPI: appid is ", appid);
-    // TODO: pass minapiver
-    this.wallet.createAppAPI(apiver, appid, appname, (err, api) => {
-      if (err) {
-         return apiSet(err, null);
-      }
-      apiSet(null, api);
-      api.setHandler(handler);
+  async createAppAPI(apiver: string, apivermin: string, appurl: string, appname: string, handler: any) {
+    return new Promise((resolve, reject) =>{
+      let appid = WasmWallet.generateAppID(appname, appurl);
+      console.log(`createAppAPI for ${appname}, ${appid}`);
+      this.wallet.createAppAPI(apiver, apivermin, appid, appname, (err, api) => {
+        if (err) {
+          return reject(err);
+        }
+        api.setHandler(handler);
+        resolve(api)
+      });
     });
   }
 
@@ -308,11 +322,33 @@ export default class WasmWallet {
         this.emit(id);
         break;
       case WalletMethod.NotificationConnect:
+        const notificationPort = NotificationManager.getPort();
         if (params.result) {
-          const notificationPort = NotificationManager.getPort();
-          notificationPort.postMessage({
-            result: true,
-          });
+          if(!WasmWallet.isAppSupported(params.apiver, params.apivermin)) {
+            return notificationPort.postMessage({
+              result: false,
+              errcode: -1,
+              ermsg: "Unsupported API version required"
+            });
+            // TODO: handle error in Utils.js
+          }
+          try {
+            this.app = new DnodeApp()
+            await this.app.createAppAPI(WasmWallet.getInstance(), params.apiver, params.apivermin, params.appname, params.appurl);
+            const portStream = new PortStream(NotificationManager.getPort2());
+            this.app.connectPage(portStream, params.appurl);
+            notificationPort.postMessage({
+              result: true,
+            });
+          }
+          catch(err) {
+            // TODO: handle error in Utils.js
+            notificationPort.postMessage({
+              result: false,
+              errcode: -2,
+              ermsg: err
+            });
+          }
         }
         break;
       case WalletMethod.NotificationApproveInfo:

@@ -38,7 +38,8 @@ const Connect = () => {
         type="button"
         onClick={
           () => {
-            approveConnection(notification.params.apiver, notification.params.apivermin, notification.params.appname);
+            // TODO: pass origin
+            approveConnection(notification.params.apiver, notification.params.apivermin, notification.params.appname, notification.params.appurl);
             window.close();
           }
         }

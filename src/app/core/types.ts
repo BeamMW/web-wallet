@@ -241,10 +241,13 @@ export enum NotificationType {
 }
 
 export interface NotificationParams {
-  name?: string,
+  appname?: string,
   info?: string,
   amounts?: string,
-  req?: string
+  req?: string,
+  apiver?: string,
+  apivermin?: string,
+  appurl?:string
 }
 
 export interface Notification {
@@ -258,4 +261,11 @@ export enum Environment {
   FULLSCREEN = 'fullscreen',
   BACKGROUND = 'background',
   CONTENT = 'content',
+}
+
+export interface ConnectRequest {
+  type: string;
+  apiver: string;
+  apivermin: string;
+  appname: string;
 }

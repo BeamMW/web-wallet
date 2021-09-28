@@ -4,6 +4,7 @@ const NOTIFICATION_HEIGHT = 600;
 const NOTIFICATION_WIDTH = 375;
 
 let contentPort;
+let contentPort2;
 
 export default class NotificationManager {
   platform = null;
@@ -14,8 +15,16 @@ export default class NotificationManager {
     contentPort = port;
   }
 
+  static setPort2(port) {
+    contentPort2 = port;
+  }
+
   static getPort() {
     return contentPort;
+  }
+
+  static getPort2() {
+    return contentPort2;
   }
 
   constructor() {
