@@ -1,5 +1,5 @@
 import * as extensionizer from 'extensionizer';
-import { Environment } from '@core/types';
+import { Environment, ConnectRequest } from '@core/types';
 import PortStream from '@core/PortStream';
 import PostMessageStream from 'post-message-stream';
 
@@ -72,7 +72,15 @@ window.addEventListener('message', (event) => {
 
   if (event.data.type === 'create_beam_api') {
     const extensionPort = extensionizer.runtime.connect({ name: Environment.CONTENT });
-    extensionPort.postMessage({ data: event.data.type, apiver: event.data.apiver, minapiver: event.data.minapiver, appname: event.data.appname});
+    const reqData: ConnectRequest = {
+      type: event.data.type,
+      apiver: event.data.apiver,
+      minapiver: event.data.minapiver,
+      appname: event.data.appname,
+    };
+
+    extensionPort.postMessage(reqData);
+
     extensionPort.onMessage.addListener((msg) => {
       if (msg.result !== undefined && msg.result) {
         if (shouldInjectProvider()) {

@@ -4,7 +4,7 @@ import * as extensionizer from 'extensionizer';
 import WasmWallet from '@core/WasmWallet';
 import { isNil } from '@app/core/utils';
 import {
-  Environment, RemoteRequest,
+  Environment, RemoteRequest, ConnectRequest,
 } from '@app/core/types';
 
 import PortStream from '@core/PortStream';
@@ -117,26 +117,21 @@ function handleConnect(remote) {
       app.connectPage(portStream, origin);
 
       contentPort = remote;
-      contentPort.onMessage.addListener((msg) => {
-        if (msg.data === 'create_beam_api') {
+      contentPort.onMessage.addListener((msg: ConnectRequest) => {
+        if (msg.type === 'create_beam_api') {
+          app.loadApiParams(msg);
           // TODO: check if api is supported
           // let supported = wasm.appSupported(msg.apiver, msg.minapiver)
-          // 
-          let supported = true
-          if (supported) {
-            notification = {
-              type: NotificationType.CONNECT,
-              params: {
-                name: msg.appname,
-                supported,
-              },
-            };
-            notificationIsOpen = true;
-            openPopup();
-          } else {
-            // TODO: ask permission, if allowed notify utils.js, show error in utils.js
-            // "appname requires version msg.apiver of Beam Wallet or higher. Please update your wallet."
-          }
+          notification = {
+            type: NotificationType.CONNECT,
+            params: {
+              name: msg.appname,
+            },
+          };
+          notificationIsOpen = true;
+          openPopup();
+        // TODO: ask permission, if allowed notify utils.js, show error in utils.js
+        // "appname requires version msg.apiver of Beam Wallet or higher. Please update your wallet."
         }
       });
       break;

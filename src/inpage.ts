@@ -7,8 +7,8 @@ async function setupInpageApi() {
     target: 'content',
   });
 
-  const api = {};
-  const dnode = setupDnode(connectionStream, api);
+  const inpageApi = {};
+  const dnode = setupDnode(connectionStream, inpageApi);
 
   await new Promise((resolve) => {
     dnode.once('remote', (remoteApi) => {

@@ -259,3 +259,10 @@ export enum Environment {
   BACKGROUND = 'background',
   CONTENT = 'content',
 }
+
+export interface ConnectRequest {
+  type: string;
+  apiver: string;
+  minapiver: string;
+  appname: string;
+}

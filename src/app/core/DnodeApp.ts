@@ -1,4 +1,5 @@
 import { setupDnode } from '@core/setupDnode';
+import { ConnectRequest } from '@core/types';
 import WasmWallet from './WasmWallet';
 
 const wallet = WasmWallet.getInstance();
@@ -6,16 +7,28 @@ const wallet = WasmWallet.getInstance();
 export default class DnodeApp {
   private appApi = null;
 
+  private apiParams: ConnectRequest;
+
+  loadApiParams(params: ConnectRequest) {
+    this.apiParams = params;
+  }
+
   pageApi(origin: string) {
     return {
-      createAppAPI: async (apiver: string, minapiver: string, appname: string, handler: any) => new Promise((resolve, reject) => {
-        wallet.createAppAPI(apiver, minapiver, origin, appname, handler, (err, api) => {
-          if (err) {
+      createAppAPI: async (handler: any) => new Promise((resolve, reject) => {
+        wallet.createAppAPI(
+          this.apiParams.apiver,
+          this.apiParams.minapiver,
+          origin, this.apiParams.appname,
+          handler,
+          (err, api) => {
+            if (err) {
               reject(err);
-          }
-          this.appApi = api;
-          resolve(true);
-        });
+            }
+            this.appApi = api;
+            resolve(true);
+          },
+        );
       }),
       callWalletApi: async (callid: string, method: string, params) => {
         const request = {
