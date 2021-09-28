@@ -330,7 +330,7 @@ export default class WasmWallet {
               errcode: -1,
               ermsg: "Unsupported API version required"
             });
-            // TODO: handle error in Utils.js
+            // TODO:BRO handle error in Utils.js
           }
           try {
             this.app = new DnodeApp()
@@ -342,7 +342,7 @@ export default class WasmWallet {
             });
           }
           catch(err) {
-            // TODO: handle error in Utils.js
+            // TODO:BRO handle error in Utils.js
             notificationPort.postMessage({
               result: false,
               errcode: -2,

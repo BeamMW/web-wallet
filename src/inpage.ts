@@ -11,11 +11,9 @@ async function setupInpageApi() {
   const dnode = setupDnode(connectionStream, inpageApi);
   await new Promise((resolve) => {
     dnode.once('remote', (remoteApi) => {
-      alert('once remote')
       resolve(transformMethods(cbToPromise, remoteApi));
     });
   }).then((api) => {
-    alert('then api')
     global.BeamApi = api;
     window.postMessage('apiInjected', window.origin);
     console.log('BEAM WALLET API INJECTED');

@@ -79,16 +79,14 @@ window.addEventListener('message', (event) => {
       appname: event.data.appname,
     };
 
-    // TODO: светится на странице
-    if (shouldInjectProvider()) {
-      injectScript();
-      setupConnection();
-    }
+    setupConnection();
 
     extensionPort.postMessage(reqData);
     extensionPort.onMessage.addListener((msg) => {
       if (msg.result) {  
-          alert('inject script');
+          if (shouldInjectProvider()) {
+            injectScript();
+          }
         }
     });
   }

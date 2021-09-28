@@ -110,8 +110,8 @@ function handleConnect(remote) {
       wallet.init(postMessage, notification);
       break;
     }
+    
     case 'content2':
-      alert('content2');
       NotificationManager.setPort2(remote);
       break;
 
