@@ -149,4 +149,3 @@ wallet.initContractInfoHandler((req, info, amounts, cb) => {
 });
 
 extensionizer.runtime.onConnect.addListener(handleConnect);
-

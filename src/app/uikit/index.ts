@@ -5,7 +5,7 @@ export { default as Table } from './Table';
 export { default as Menu } from './Menu';
 export { default as Button } from './Button';
 export { default as Input } from './Input';
-export { default as BackLink } from './BackButton';
+export { default as BackButton } from './BackButton';
 export { default as Footer } from './Footer';
 export { default as Section } from './Section';
 export { default as Select } from './Select';

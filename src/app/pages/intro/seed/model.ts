@@ -1,4 +1,4 @@
-import { isAllowedWord } from '@app/core/api';
+import { isAllowedSeed, isAllowedWord } from '@app/core/api';
 import { getInputValue } from '@app/core/utils';
 import {
   combine,
@@ -9,11 +9,15 @@ import React from 'react';
 
 const setErrors = createEvent<any[]>();
 
-const SEED_PHRASE_COUNT = 12;
+export const SEED_PHRASE_COUNT = 12;
 
 const INITIAL = new Array(SEED_PHRASE_COUNT).fill(null);
 
 export const $errors = restore(setErrors, INITIAL);
+
+export const resetErrors = createEvent();
+
+$errors.reset(resetErrors);
 
 export const $valid = $errors.map(
   (errors) => errors.every((value) => value === true),
@@ -41,6 +45,10 @@ const setTarget = sample({
 });
 
 const isAllowedWordFx = createEffect(isAllowedWord);
+
+export const isAllowedSeedFx = createEffect(isAllowedSeed);
+
+$errors.on(isAllowedSeedFx.doneData, (state, payload) => payload);
 
 onInputDebounced.map(getInputValue).watch(isAllowedWordFx);
 

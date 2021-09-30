@@ -11,6 +11,7 @@
   "rules": {
     "no-use-before-define": "off",
     "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/no-autofocus": "off",
     "react/prop-types": "off",
     "react/require-default-props": "off",
     "react/no-array-index-key": "off",

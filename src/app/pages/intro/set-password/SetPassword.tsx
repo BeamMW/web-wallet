@@ -61,6 +61,7 @@ const SetPassword = () => {
       <Window title="Password" onPrevious={handlePrevious}>
         <FormStyled onSubmit={handleSubmit}>
           <Input
+            autoFocus
             type="password"
             placeholder="Password"
             onChange={onPasswordChange}

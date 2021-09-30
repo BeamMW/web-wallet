@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { css, cx } from '@linaria/core';
-import React from 'react';
+import React, { RefObject, useEffect, useState } from 'react';
 import { isNil } from '@core/utils';
+import { isAllowedSeedFx, resetErrors, SEED_PHRASE_COUNT } from './model';
 
 interface SeedListProps {
   data: any[];
@@ -71,29 +72,87 @@ const validClassName = css`
   }
 `;
 
+const refs: HTMLInputElement[] = new Array(SEED_PHRASE_COUNT).fill(null);
+
 const SeedList: React.FC<SeedListProps> = ({
   data,
   errors,
   indexByValue,
   onInput,
-}) => (
-  <ListStyled>
-    {data.map((value, index) => {
-      const idx = indexByValue ? value : index;
-      const err = isNil(errors) ? value : errors[index];
-      const className = cx(
-        baseClassName,
-        err === false && errorClassName,
-        err === true && validClassName,
-      );
+}) => {
+  useEffect(() => {
+    resetErrors();
+  }, []);
 
-      return (
-        <li key={index} className={className} data-index={idx + 1}>
-          <input required type="text" name={idx} onInput={onInput} />
-        </li>
-      );
-    })}
-  </ListStyled>
-);
+  const handleRef = (ref: HTMLInputElement) => {
+    if (!isNil(ref)) {
+      const { name } = ref;
+      const index = parseInt(name, 10);
+      refs[index] = ref;
+    }
+  };
+
+  const handlePaste: React.ClipboardEventHandler = (event) => {
+    if (!indexByValue) {
+      event.preventDefault();
+      const seed = event.clipboardData.getData('text');
+      const array = seed.split(' ');
+
+      if (array.length === SEED_PHRASE_COUNT) {
+        isAllowedSeedFx(seed);
+
+        array.forEach((value, index) => {
+          const target = refs[index];
+
+          if (!isNil(target)) {
+            target.value = value;
+          }
+        });
+      }
+    }
+  };
+
+  return (
+    <ListStyled>
+      {data.map((value, index) => {
+        const idx = indexByValue ? value : index;
+        const err = isNil(errors) ? value : errors[index];
+        const className = cx(
+          baseClassName,
+          err === false && errorClassName,
+          err === true && validClassName,
+        );
+
+        if (index === 0) {
+          return (
+            <li key={index} className={className} data-index={idx + 1}>
+              <input
+                required
+                autoFocus
+                type="text"
+                name={idx}
+                ref={handleRef}
+                onInput={onInput}
+                onPaste={handlePaste}
+              />
+            </li>
+          );
+        }
+
+        return (
+          <li key={index} className={className} data-index={idx + 1}>
+            <input
+              required
+              type="text"
+              name={idx}
+              ref={handleRef}
+              onInput={onInput}
+            />
+          </li>
+        );
+      })}
+    </ListStyled>
+  );
+};
 
 export default SeedList;

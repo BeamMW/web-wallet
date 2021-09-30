@@ -20,29 +20,11 @@ let counter = 0;
 
 export const remoteEvent = createEvent<RemoteResponse>();
 
-// async function queryCurrentActiveTab(windowType) {
-//   return new Promise((resolve) => {
-//     if (windowType !== EnvironmentType.POPUP) {
-//       resolve({});
-//       return;
-//     }
-
-//     extensionizer.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-//       const [activeTab] = tabs;
-//       const { id, title, url } = activeTab;
-//       const { origin, protocol } = url ? new URL(url) : { origin: null, protocol: null };
-
-//       if (!origin || origin === 'null') {
-//         resolve({});
-//         return;
-//       }
-
-//       resolve({
-//         id, title, origin, protocol, url,
-//       });
-//     });
-//   });
-// }
+remoteEvent.watch(({
+  method = 'event', id, result, error,
+}) => {
+  console.info(`received ${method}:${id} with`, result, error);
+});
 
 export function getEnvironment(href = window.location.href) {
   const url = new URL(href);
@@ -89,10 +71,8 @@ export function postMessage<T = any, P = unknown>(
       })
       .watch(({ result, error }) => {
         if (isNil(error)) {
-          console.info(`received ${method}:${target} with`, result);
           resolve(result);
         } else {
-          console.error(`received ${method}:${target} with`, error);
           reject(result);
         }
 
@@ -118,6 +98,10 @@ export function createWallet(params: CreateWalletParams) {
 
 export function isAllowedWord(value: string) {
   return postMessage<boolean>(WalletMethod.IsAllowedWord, value);
+}
+
+export function isAllowedSeed(value: string) {
+  return postMessage<boolean[]>(WalletMethod.IsAllowedSeed, value);
 }
 
 export function generateSeed() {

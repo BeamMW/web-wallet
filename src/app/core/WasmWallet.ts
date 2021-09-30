@@ -111,6 +111,10 @@ export default class WasmWallet {
     return WasmWalletClient.IsAllowedWord(word);
   }
 
+  static isAllowedSeed(seed: string) {
+    return seed.split(' ').map(WasmWallet.isAllowedWord);
+  }
+
   static isInitialized(): boolean {
     return WasmWalletClient.IsInitialized(PATH_DB);
   }
@@ -238,12 +242,12 @@ export default class WasmWallet {
     isSeedConfirmed,
   }: CreateWalletParams) {
     try {
-      await WasmWallet.saveWallet(password);
-      WasmWallet.initSettings(isSeedConfirmed);
-
       if (WasmWallet.isInitialized()) {
         WasmWallet.removeWallet();
       }
+
+      WasmWallet.saveWallet(password);
+      WasmWallet.initSettings(isSeedConfirmed);
 
       WasmWalletClient.CreateWallet(seed, PATH_DB, password);
       this.start(password);
@@ -284,6 +288,11 @@ export default class WasmWallet {
       case WalletMethod.IsAllowedWord: {
         const result = params === ''
           ? null : WasmWallet.isAllowedWord(params);
+        this.emit(id, result);
+        break;
+      }
+      case WalletMethod.IsAllowedSeed: {
+        const result = WasmWallet.isAllowedSeed(params);
         this.emit(id, result);
         break;
       }

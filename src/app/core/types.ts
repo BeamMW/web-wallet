@@ -26,6 +26,7 @@ export enum WalletMethod {
   CreateWallet = 'wasm_create_wallet',
   DeleteWallet = 'wasm_delete_wallet',
   IsAllowedWord = 'wasm_is_allowed_word',
+  IsAllowedSeed = 'wasm_is_allowed_seed',
   GenerateSeed = 'wasm_generate_seed',
   NotificationConnect = 'notification_connect',
   NotificationApproveInfo = 'notification_approve_info',
