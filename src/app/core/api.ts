@@ -100,7 +100,7 @@ export function isAllowedWord(value: string) {
   return postMessage<boolean>(WalletMethod.IsAllowedWord, value);
 }
 
-export function isAllowedSeed(value: string) {
+export function isAllowedSeed(value: string[]) {
   return postMessage<boolean[]>(WalletMethod.IsAllowedSeed, value);
 }
 

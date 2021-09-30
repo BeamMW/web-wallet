@@ -124,8 +124,8 @@ export default class WasmWallet {
     return WasmWalletClient.GenerateAppID(appurl, appname);
   }
 
-  static isAllowedSeed(seed: string) {
-    return seed.split(';').map(WasmWallet.isAllowedWord);
+  static isAllowedSeed(seed: string[]) {
+    return seed.map(WasmWallet.isAllowedWord);
   }
 
   static isInitialized(): boolean {
@@ -385,6 +385,8 @@ export default class WasmWallet {
       default:
         break;
     }
+
+    return null;
   }
 
   send(id: number, method: RPCMethod | WalletMethod, params?: any) {
