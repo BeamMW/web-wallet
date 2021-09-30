@@ -1,16 +1,16 @@
 import * as extensionizer from 'extensionizer';
-import { Environment } from '@core/types';
+import { Environment, ConnectRequest } from '@core/types';
 import PortStream from '@core/PortStream';
 import PostMessageStream from 'post-message-stream';
 
 function setupConnection() {
   const backgroundPort = extensionizer.runtime.connect({
-    name: 'content',
+    name: 'content2',
   });
   const backgroundStream = new PortStream(backgroundPort);
 
   const pageStream = new PostMessageStream({
-    name: 'content',
+    name: 'content2',
     target: 'page',
   });
 
@@ -72,15 +72,23 @@ window.addEventListener('message', (event) => {
 
   if (event.data.type === 'create_beam_api') {
     const extensionPort = extensionizer.runtime.connect({ name: Environment.CONTENT });
-    extensionPort.postMessage({ data: event.data.type, name: event.data.name });
+    const reqData: ConnectRequest = {
+      type: event.data.type,
+      apiver: event.data.apiver,
+      apivermin: event.data.apivermin,
+      appname: event.data.appname,
+    };
 
+    // TODO: check
+    setupConnection();
+
+    extensionPort.postMessage(reqData);
     extensionPort.onMessage.addListener((msg) => {
-      if (msg.result !== undefined && msg.result) {
-        if (shouldInjectProvider()) {
-          injectScript();
-          setupConnection();
+      if (msg.result) {  
+          if (shouldInjectProvider()) {
+            injectScript();
+          }
         }
-      }
     });
   }
 });

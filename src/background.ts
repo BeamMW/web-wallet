@@ -4,7 +4,7 @@ import * as extensionizer from 'extensionizer';
 import WasmWallet from '@core/WasmWallet';
 import { isNil } from '@app/core/utils';
 import {
-  Environment, RemoteRequest,
+  Environment, RemoteRequest, ConnectRequest
 } from '@app/core/types';
 
 import PortStream from '@core/PortStream';
@@ -83,7 +83,7 @@ async function openPopup() {
   });
 }
 
-const app = new DnodeApp();
+var app = undefined;
 
 function handleConnect(remote) {
   port = remote;
@@ -110,19 +110,23 @@ function handleConnect(remote) {
       wallet.init(postMessage, notification);
       break;
     }
+    
+    case 'content2':
+      NotificationManager.setPort2(remote);
+      break;
+
     case Environment.CONTENT: {
       NotificationManager.setPort(remote);
-      const portStream = new PortStream(remote);
-      const origin = remote.sender.url;
-      app.connectPage(portStream, origin);
-
       contentPort = remote;
       contentPort.onMessage.addListener((msg) => {
-        if (msg.data === 'create_beam_api') {
+        if (msg.type === 'create_beam_api') {
           notification = {
             type: NotificationType.CONNECT,
             params: {
-              name: msg.name,
+              appurl: remote.sender.url,
+              appname: msg.appname,
+              apiver: msg.apiver,
+              apivermin: msg.apivermin,
             },
           };
           notificationIsOpen = true;

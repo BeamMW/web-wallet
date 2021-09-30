@@ -120,8 +120,14 @@ export function validateAddress(address: string) {
   return postMessage<AddressValidation>(RPCMethod.ValidateAddress, { address });
 }
 
-export function approveConnection() {
-  return postMessage(WalletMethod.NotificationConnect, { result: true });
+export function approveConnection(apiver: string, apivermin: string, appname: string, appurl: string) {
+  return postMessage(WalletMethod.NotificationConnect, { 
+      result: true,
+      apiver,
+      apivermin,
+      appname,
+      appurl
+  });
 }
 
 export function approveContractInfoRequest(req) {

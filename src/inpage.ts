@@ -4,12 +4,11 @@ import { cbToPromise, setupDnode, transformMethods } from '@core/setupDnode';
 async function setupInpageApi() {
   const connectionStream = new PostMessageStream({
     name: 'page',
-    target: 'content',
+    target: 'content2',
   });
 
-  const api = {};
-  const dnode = setupDnode(connectionStream, api);
-
+  const inpageApi = {};
+  const dnode = setupDnode(connectionStream, inpageApi);
   await new Promise((resolve) => {
     dnode.once('remote', (remoteApi) => {
       resolve(transformMethods(cbToPromise, remoteApi));
