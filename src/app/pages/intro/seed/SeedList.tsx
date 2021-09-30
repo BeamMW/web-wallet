@@ -95,8 +95,8 @@ const SeedList: React.FC<SeedListProps> = ({
   const handlePaste: React.ClipboardEventHandler = (event) => {
     if (!indexByValue) {
       event.preventDefault();
-      const seed = event.clipboardData.getData('text');
-      const array = seed.split(' ');
+      const seed: string = event.clipboardData.getData('text');
+      const array = seed.split(';').slice(0, SEED_PHRASE_COUNT);
 
       if (array.length === SEED_PHRASE_COUNT) {
         isAllowedSeedFx(seed);
