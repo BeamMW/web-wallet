@@ -4,11 +4,9 @@ import * as extensionizer from 'extensionizer';
 import WasmWallet from '@core/WasmWallet';
 import { isNil } from '@app/core/utils';
 import {
-  Environment, RemoteRequest, ConnectRequest
+  Environment, RemoteRequest,
 } from '@app/core/types';
 
-import PortStream from '@core/PortStream';
-import DnodeApp from '@core/DnodeApp';
 import NotificationManager from '@core/NotificationManager';
 import { NotificationType } from '@core/types';
 
@@ -83,8 +81,6 @@ async function openPopup() {
   });
 }
 
-var app = undefined;
-
 function handleConnect(remote) {
   port = remote;
   connected = true;
@@ -110,7 +106,7 @@ function handleConnect(remote) {
       wallet.init(postMessage, notification);
       break;
     }
-    
+
     case 'content2':
       NotificationManager.setPort2(remote);
       break;

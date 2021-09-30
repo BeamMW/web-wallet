@@ -36,7 +36,6 @@ type WalletEventHandler = {
 };
 
 export default class WasmWallet {
-
   private static instance: WasmWallet;
 
   private contractInfoHandler;
@@ -235,16 +234,23 @@ export default class WasmWallet {
     return isNil(this.wallet) ? false : this.wallet.isRunning();
   }
 
-  async createAppAPI(apiver: string, apivermin: string, appurl: string, appname: string, handler: any) {
-    return new Promise((resolve, reject) =>{
-      let appid = WasmWallet.generateAppID(appname, appurl);
+  async createAppAPI(
+    apiver: string,
+    apivermin: string,
+    appurl: string,
+    appname:string,
+    handler: any,
+  ) {
+    return new Promise((resolve, reject) => {
+      const appid = WasmWallet.generateAppID(appname, appurl);
       console.log(`createAppAPI for ${appname}, ${appid}`);
+      // eslint-disable-next-line consistent-return
       this.wallet.createAppAPI(apiver, apivermin, appid, appname, (err, api) => {
         if (err) {
           return reject(err);
         }
         api.setHandler(handler);
-        resolve(api)
+        resolve(api);
       });
     });
   }
@@ -331,31 +337,37 @@ export default class WasmWallet {
         this.emit(id);
         break;
       case WalletMethod.NotificationConnect:
+        // eslint-disable-next-line no-case-declarations
         const notificationPort = NotificationManager.getPort();
         if (params.result) {
-          if(!WasmWallet.isAppSupported(params.apiver, params.apivermin)) {
+          if (!WasmWallet.isAppSupported(params.apiver, params.apivermin)) {
             return notificationPort.postMessage({
               result: false,
               errcode: -1,
-              ermsg: "Unsupported API version required"
+              ermsg: 'Unsupported API version required',
             });
             // TODO:BRO handle error in Utils.js
           }
           try {
-            this.app = new DnodeApp()
-            await this.app.createAppAPI(WasmWallet.getInstance(), params.apiver, params.apivermin, params.appname, params.appurl);
+            this.app = new DnodeApp();
+            await this.app.createAppAPI(
+              WasmWallet.getInstance(),
+              params.apiver,
+              params.apivermin,
+              params.appname,
+              params.appurl,
+            );
             const portStream = new PortStream(NotificationManager.getPort2());
             this.app.connectPage(portStream, params.appurl);
             notificationPort.postMessage({
               result: true,
             });
-          }
-          catch(err) {
+          } catch (err) {
             // TODO:BRO handle error in Utils.js
             notificationPort.postMessage({
               result: false,
               errcode: -2,
-              ermsg: err
+              ermsg: err,
             });
           }
         }
