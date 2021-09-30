@@ -126,7 +126,7 @@ export default class WasmWallet {
   }
 
   static isAllowedSeed(seed: string) {
-    return seed.split(' ').map(WasmWallet.isAllowedWord);
+    return seed.split(';').map(WasmWallet.isAllowedWord);
   }
 
   static isInitialized(): boolean {
