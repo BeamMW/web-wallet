@@ -99,7 +99,7 @@ const SeedList: React.FC<SeedListProps> = ({
       const array = seed.split(';').slice(0, SEED_PHRASE_COUNT);
 
       if (array.length === SEED_PHRASE_COUNT) {
-        isAllowedSeedFx(seed);
+        isAllowedSeedFx(array);
 
         array.forEach((value, index) => {
           const target = refs[index];
