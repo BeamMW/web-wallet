@@ -7,12 +7,14 @@ import { $rate, GROTHS_IN_BEAM } from '@app/model/rates';
 import { $assets } from '@pages/main/wallet/model';
 
 import { isNil, toUSD } from '@app/core/utils';
+import { Contract } from '@app/core/types';
 import AssetIcon from './AssetIcon';
 
 interface AssetLabelProps {
   value: number;
   asset_id: number;
   income?: boolean;
+  invoke_data?: Contract[];
 }
 
 const ContainerStyled = styled.div`
@@ -21,11 +23,17 @@ const ContainerStyled = styled.div`
   position: relative;
 `;
 
-const LabelStyled = styled.span`
+const LabelStyled = styled.span<{ income: boolean }>`
   text-align: left;
   font-size: 16px;
   font-weight: 600;
-  color: white;
+  color: ${({ income }) => {
+    if (isNil(income)) {
+      return 'white';
+    }
+
+    return income ? 'var(--color-blue)' : 'var(--color-purple)';
+  }};
 `;
 
 const RateStyled = styled.div`
@@ -48,26 +56,27 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   value,
   asset_id,
   income,
+  invoke_data,
 }) => {
   const assets = useStore($assets);
   const rate = useStore($rate);
 
+  const hasMultipleAssets = !isNil(invoke_data) && invoke_data.some((cont) => (
+    cont.amounts.length > 1
+  ));
+
   const amount = value / GROTHS_IN_BEAM;
   const sign = !isNil(income) ? getSign(income) : '';
-  const name = assets[asset_id].metadata_pairs.N;
-  const label = `${sign}${amount} ${name}`;
-  const usd = toUSD(amount, rate);
+  const meta = assets[asset_id];
+  const name = isNil(meta) ? '' : meta.metadata_pairs.N;
+  const label = hasMultipleAssets ? 'Multiple Assets' : `${sign}${amount} ${name}`;
+  const usd = isNil(value) ? '' : `${sign}${toUSD(amount, rate)}`;
 
   return (
     <ContainerStyled>
       <AssetIcon asset_id={asset_id} className={iconClassName} />
-      <LabelStyled>
-        { label}
-      </LabelStyled>
-      <RateStyled>
-        { sign }
-        { usd }
-      </RateStyled>
+      <LabelStyled income={income}>{ label}</LabelStyled>
+      <RateStyled>{ usd }</RateStyled>
     </ContainerStyled>
   );
 };

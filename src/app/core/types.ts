@@ -205,6 +205,15 @@ export enum TxType {
   CONTRACT = 12,
 }
 
+export interface Amount {
+  amount: number;
+  asset_id: number;
+}
+export interface Contract {
+  amounts?: Amount[];
+  contract_id: string;
+}
+
 export interface Transaction {
   asset_id: number;
   comment: string;
@@ -222,6 +231,7 @@ export interface Transaction {
   tx_type: TxType;
   tx_type_string: string;
   value: number;
+  invoke_data: Contract[];
 }
 
 export interface WalletChangeEvent {

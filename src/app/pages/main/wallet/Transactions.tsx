@@ -4,6 +4,7 @@ import { styled } from '@linaria/react';
 import { Transaction } from '@app/core/types';
 
 import { AssetLabel, StatusLabel } from '@app/uikit';
+import { isNil } from '@app/core/utils';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;
@@ -29,7 +30,7 @@ const Transactions: React.FC<TransactionsProps> = ({
   <ListStyled>
     { data.map((tx, index) => (
       <ListItemStyled key={index}>
-        <AssetLabel income={tx.income} value={tx.value} asset_id={tx.asset_id} />
+        <AssetLabel {...tx} />
         <StatusLabel data={tx} />
       </ListItemStyled>
     ))}

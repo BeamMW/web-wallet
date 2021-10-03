@@ -32,7 +32,11 @@ import { $assets, $totals } from '../wallet/model';
 type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
 
 export const $options = combine($totals, $assets, (totals, assets) => (
-  totals.map(({ asset_id }) => assets[asset_id].metadata_pairs.N)
+  totals
+    .map(({ asset_id }) => {
+      const meta = assets[asset_id];
+      return isNil(meta) ? '' : meta.metadata_pairs.N;
+    })
 ));
 
 /* Send Address */
