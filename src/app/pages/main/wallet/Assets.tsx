@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { WalletTotal } from '@app/core/types';
 
 import AssetLabel from '@app/uikit/AssetLabel';
-import { PALLETE_ASSETS } from './model';
+import { AssetTotal, PALLETE_ASSETS } from '@app/model/wallet';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;
@@ -12,15 +12,14 @@ const ListStyled = styled.ul`
 `;
 
 interface AssetsProps {
-  data: WalletTotal[];
+  data: AssetTotal[];
 }
 
 const ListItemStyled = styled.li<{ asset_id: number }>`
   margin-bottom: 10px;
   position: relative;
   padding: 20px;
-  padding-left: 62px;
-  color: ${({ asset_id }) => PALLETE_ASSETS[asset_id]};
+  padding-left: 56px;
 
   &:before {
     opacity: 0.3;

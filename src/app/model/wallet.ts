@@ -1,4 +1,5 @@
 import {
+  combine,
   createEvent, restore, Store,
 } from 'effector';
 
@@ -38,14 +39,18 @@ export const PALLETE_ASSETS = [
   '#c81f68',
 ];
 
-export interface AssetMap {
-  [id: number]: Partial<Asset>;
-}
+const META_BLANK: Partial<Asset> = {
+  metadata_pairs: {
+    N: '',
+    SN: '',
+  },
+};
 
-const BEAM_METADATA: Partial<Asset> = {
+const META_BEAM: Partial<Asset> = {
   metadata_pairs: {
     N: 'BEAM',
     SN: 'BEAM',
+    UN: 'BEAM',
   },
 };
 
@@ -57,17 +62,31 @@ export const setTotals = createEvent<WalletTotal[]>();
 export const $totals = restore(setTotals, []);
 export const $transactions = $$transactions.getStore();
 
-export const $assets: Store<AssetMap> = $$assets
-  .getStore()
-  .map((assets) => (
-    assets.reduce((result, item) => {
-      // eslint-disable-next-line
-      result[item.asset_id] = item;
-      return result;
-    }, {
-      0: BEAM_METADATA,
-    })
-  ));
+export type AssetTotal = WalletTotal & Partial<Asset>;
+
+function getMetadata(assets: Asset[], id: number): Partial<Asset> {
+  if (id === 0) {
+    return META_BEAM;
+  }
+
+  return assets.find(({ asset_id }) => asset_id === id) ?? META_BLANK;
+}
+
+export const $assets: Store<AssetTotal[]> = combine(
+  $totals, $$assets.getStore(),
+  (totals, assets) => totals.map(
+    (data) => {
+      const target = getMetadata(assets, data.asset_id);
+      return {
+        ...data,
+        ...target,
+      };
+    },
+  ),
+);
+
+export const $options = $assets
+  .map((arr) => arr.map((item) => item.metadata_pairs.N));
 
 // receive System State
 handleWalletEvent<any>(

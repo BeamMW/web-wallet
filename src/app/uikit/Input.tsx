@@ -5,7 +5,8 @@ import { isNil } from '@core/utils';
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   valid?: boolean;
-  variant?: 'regular' | 'gray' | 'send';
+  variant?: 'regular' | 'gray' | 'amount';
+  pallete?: 'purple' | 'blue';
   margin?: 'none' | 'large';
 }
 
@@ -47,11 +48,11 @@ const InputGrayStyled = styled(InputStyled)`
   border-color: ${({ valid }) => (valid ? 'rgba(255,255,255,0.3)' : 'var(--color-red)')};
 `;
 
-const InputSendStyled = styled(InputGrayStyled)`
+const InputAmountStyled = styled(InputGrayStyled)<{ pallete: string }>`
   font-size: 18px;
   font-weight: 600;
   letter-spacing: 0.34px;
-  color: var(--color-purple);
+  color: ${({ pallete }) => `var(--color-${pallete})`};
 `;
 
 const LabelStyled = styled.div<InputProps>`
@@ -67,18 +68,19 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     valid = true,
     variant = 'regular',
     margin = 'none',
+    pallete,
     className,
     ...rest
   }, ref) => {
     const InputComponent = {
       regular: InputRegularStyled,
       gray: InputGrayStyled,
-      send: InputSendStyled,
+      amount: InputAmountStyled,
     }[variant];
 
     return (
       <ContainerStyled className={className} margin={margin}>
-        <InputComponent ref={ref} valid={valid} {...rest} />
+        <InputComponent ref={ref} valid={valid} pallete={pallete} {...rest} />
         {!isNil(label) && <LabelStyled valid={valid}>{label}</LabelStyled>}
       </ContainerStyled>
     );

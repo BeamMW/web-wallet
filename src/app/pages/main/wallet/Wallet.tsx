@@ -15,7 +15,7 @@ import ArrowDownIcon from '@icons/icon-arrow-down.svg';
 import MenuIcon from '@icons/icon-menu.svg';
 
 import { css } from '@linaria/core';
-import { $totals, $transactions } from './model';
+import { $assets, $transactions } from '@app/model/wallet';
 
 import Assets from './Assets';
 import Transactions from './Transactions';
@@ -75,7 +75,7 @@ const Wallet = () => {
 
   const [menuVisible, setVisible] = useState(false);
   const [active, setActive] = useState(null);
-  const totals = useStore($totals);
+  const assets = useStore($assets);
   const transactions = useStore($transactions);
 
   const toggleActive = (asset_id: number) => {
@@ -102,7 +102,7 @@ const Wallet = () => {
         </Button>
       </ActionsStyled>
       <Section title="Assets">
-        <Assets data={totals} />
+        <Assets data={assets} />
       </Section>
       <Section title="Transactions">
         <Transactions data={filtered} />

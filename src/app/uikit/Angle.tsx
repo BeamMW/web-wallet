@@ -6,6 +6,7 @@ import AngleSmallUpIcon from '@icons/icon-angle-small-up.svg';
 interface AngleProps {
   value?: number;
   margin?: number;
+  className?: string;
 }
 
 const ContainerStyled = styled.div<AngleProps>`
@@ -25,8 +26,8 @@ const ContainerStyled = styled.div<AngleProps>`
   }
 `;
 
-const Angle: React.FC<AngleProps> = ({ value = 0, margin = 0 }) => (
-  <ContainerStyled value={value} margin={margin}>
+const Angle: React.FC<AngleProps> = ({ value = 0, margin = 0, className }) => (
+  <ContainerStyled value={value} margin={margin} className={className}>
     <AngleSmallUpIcon />
   </ContainerStyled>
 );

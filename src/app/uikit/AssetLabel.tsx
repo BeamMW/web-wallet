@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
 import { $rate, GROTHS_IN_BEAM } from '@app/model/rates';
-import { $assets } from '@pages/main/wallet/model';
+import { $assets } from '@app/model/wallet';
 
 import { isNil, toUSD } from '@app/core/utils';
 import { Contract } from '@app/core/types';
@@ -19,11 +19,11 @@ interface AssetLabelProps {
 
 const ContainerStyled = styled.div`
   display: flex;
-  justify-content: space-between;
   position: relative;
 `;
 
 const LabelStyled = styled.span<{ income: boolean }>`
+  flex-grow: 1;
   text-align: left;
   font-size: 16px;
   font-weight: 600;
@@ -45,7 +45,6 @@ const iconClassName = css`
   position: absolute;
   right: 100%;
   margin-top: -4px;
-  margin-right: 16px;
 `;
 
 function getSign(positive: boolean): string {
@@ -60,6 +59,7 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
 }) => {
   const assets = useStore($assets);
   const rate = useStore($rate);
+  const target = assets.find(({ asset_id: id }) => id === asset_id);
 
   const hasMultipleAssets = !isNil(invoke_data) && invoke_data.some((cont) => (
     cont.amounts.length > 1
@@ -67,15 +67,14 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
 
   const amount = value / GROTHS_IN_BEAM;
   const sign = !isNil(income) ? getSign(income) : '';
-  const meta = assets[asset_id];
-  const name = isNil(meta) ? '' : meta.metadata_pairs.N;
+  const name = target?.metadata_pairs.UN ?? '';
   const label = hasMultipleAssets ? 'Multiple Assets' : `${sign}${amount} ${name}`;
   const usd = isNil(value) ? '' : `${sign}${toUSD(amount, rate)}`;
 
   return (
     <ContainerStyled>
       <AssetIcon asset_id={asset_id} className={iconClassName} />
-      <LabelStyled income={income}>{ label}</LabelStyled>
+      <LabelStyled income={income}>{ label }</LabelStyled>
       <RateStyled>{ usd }</RateStyled>
     </ContainerStyled>
   );

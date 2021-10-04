@@ -12,7 +12,7 @@ import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';
 
 import {
-  $address, $amount, $totalSelected, $change, $fee, onConfirmSubmit,
+  $address, $amount, $selected, $change, $fee, onConfirmSubmit,
 } from './model';
 
 const WarningSyled = styled.p`
@@ -24,9 +24,9 @@ const WarningSyled = styled.p`
 
 const Send = () => {
   const fee = useStore($fee);
-  const asset = useStore($totalSelected);
+  const asset = useStore($selected);
   const change = useStore($change);
-  const amount = useStore($amount);
+  const [amount] = useStore($amount);
   const address = useStore($address);
 
   const amountGroths = parseFloat(amount) * GROTHS_IN_BEAM;

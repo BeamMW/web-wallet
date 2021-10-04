@@ -4,7 +4,6 @@ import { styled } from '@linaria/react';
 import { Transaction } from '@app/core/types';
 
 import { AssetLabel, StatusLabel } from '@app/uikit';
-import { isNil } from '@app/core/utils';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;
@@ -17,7 +16,7 @@ interface TransactionsProps {
 const ListItemStyled = styled.li`
   position: relative;
   padding: 20px;
-  padding-left: 70px;
+  padding-left: 46px;
 
   &:nth-child(odd) {
     background-color: rgba(255, 255, 255, 0.05);

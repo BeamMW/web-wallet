@@ -3,8 +3,10 @@ import React, { useEffect } from 'react';
 import { useStore } from 'effector-react';
 
 import {
-  Window, Section, Button,
-} from 'app/uikit';
+  Window, Section, Button, Input,
+} from '@uikit';
+
+import AmountInput from '@uikit/AmountInput';
 
 import {
   $addressPreview,
@@ -26,8 +28,16 @@ const Receive = () => {
     >
       <form onSubmit={onSubmit}>
         <Section title="Address" variant="gray">
-          { address }
-          &nbsp;
+          <span>
+            { address }
+            &nbsp;
+          </span>
+        </Section>
+        <Section title="Amount" variant="gray">
+          <AmountInput pallete="blue" />
+        </Section>
+        <Section title="Comment" variant="gray" collapse>
+          <Input variant="gray" />
         </Section>
         <Button
           pallete="blue"

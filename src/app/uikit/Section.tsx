@@ -1,20 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@linaria/react';
 
 import Title from './Title';
+import Angle from './Angle';
 
 interface SectionProps {
   title?: string;
+  collapse?: boolean;
   variant?: 'regular' | 'gray';
 }
 
 const SectionStyled = styled.div`
+  position: relative;
   margin: 0 -10px;
   padding-top: 20px;
   text-align: left;
 `;
 
 const SectionGrayStyled = styled.div`
+  position: relative;
   margin: 0 -30px;
   margin-bottom: 20px;
   padding: 20px;
@@ -22,11 +26,30 @@ const SectionGrayStyled = styled.div`
   text-align: left;
 `;
 
+const ButtonStyled = styled.button`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  text-decoration: none;
+  color: white;
+  white-space: nowrap;
+`;
+
 const Section: React.FC<SectionProps> = ({
   title,
+  collapse = false,
   variant = 'regular',
   children,
 }) => {
+  const [hidden, setHidden] = useState(false);
+
+  const handleMouseDown: React.MouseEventHandler = () => {
+    setHidden(!hidden);
+  };
+
   const SectionComponent = {
     regular: SectionStyled,
     gray: SectionGrayStyled,
@@ -34,8 +57,13 @@ const Section: React.FC<SectionProps> = ({
 
   return (
     <SectionComponent>
+      { collapse && (
+      <ButtonStyled type="button" onMouseDown={handleMouseDown}>
+        <Angle value={hidden ? 180 : 0} margin={hidden ? 3 : 3} />
+      </ButtonStyled>
+      )}
       <Title>{title}</Title>
-      {children}
+      { !hidden && children }
     </SectionComponent>
   );
 };

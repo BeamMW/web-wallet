@@ -27,6 +27,10 @@ const HeadingStyled = styled.h2`
 const TitleStyled = styled.h3`
   ${STYLE_BASE}
   margin-bottom: 20px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
 `;
 
 const SubtitleStyled = styled.h4`

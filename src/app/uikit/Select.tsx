@@ -5,7 +5,7 @@ import { isNil } from '@core/utils';
 import Angle from './Angle';
 
 interface SelectProps {
-  options: string[];
+  options: React.ReactNode[];
   selected: number;
   className?: string;
   onSelect: (index: number) => void;
@@ -50,8 +50,10 @@ const OptionActiveStyled = styled(OptionStyled)`
   }
 `;
 
-const LinkStyled = styled.a`
+const ButtonStyled = styled.button`
   cursor: pointer;
+  border: none;
+  background-color: transparent;
   text-decoration: none;
   color: white;
   white-space: nowrap;
@@ -100,17 +102,17 @@ export const Select: React.FC<SelectProps> = ({
 
   return (
     <ContainerStyled className={className}>
-      <LinkStyled href="#" onMouseDown={handleMouseDown}>
+      <ButtonStyled type="button" onMouseDown={handleMouseDown}>
         <TitleStyled>{title}</TitleStyled>
         <Angle value={opened ? 180 : 90} margin={opened ? 3 : 1} />
-      </LinkStyled>
+      </ButtonStyled>
       {opened && (
         <SelectStyled ref={selectRef} tabIndex={-1} onBlur={handleBlur}>
-          {options.map((value, index) => {
+          {options.map((elem, index) => {
             if (index === selected) {
               return (
                 <OptionActiveStyled key={index}>
-                  {value}
+                  {elem}
                 </OptionActiveStyled>
               );
             }
@@ -121,7 +123,7 @@ export const Select: React.FC<SelectProps> = ({
                 data-index={index}
                 onClick={handleSelect}
               >
-                {value}
+                {elem}
               </OptionStyled>
             );
           })}

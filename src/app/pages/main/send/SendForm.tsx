@@ -8,27 +8,30 @@ import {
 } from 'app/uikit';
 import ArrowRightIcon from '@icons/icon-arrow-right.svg';
 
+import { AmountInput } from '@uikit';
+
+import { $assets } from '@app/model/wallet';
 import {
   $valid,
   $address,
   $addressLabel,
   $addressValid,
-  $totalSelected,
+  $selected,
   onAddressInput,
   onFormSubmit,
+  $amountError,
+  setAmount,
 } from './model';
-
-import AmountInput from './AmountInput';
-import { $assets } from '../wallet/model';
 
 const SendForm = () => {
   const address = useStore($address);
   const addressValid = useStore($addressValid);
   const addressLabel = useStore($addressLabel);
 
-  const assets = useStore($assets);
-  const total = useStore($totalSelected);
-  const groths = total.available / GROTHS_IN_BEAM;
+  const amountError = useStore($amountError);
+
+  const selected = useStore($selected);
+  const groths = selected.available / GROTHS_IN_BEAM;
 
   const valid = useStore($valid);
 
@@ -49,11 +52,11 @@ const SendForm = () => {
           />
         </Section>
         <Section title="Amount" variant="gray">
-          <AmountInput />
+          <AmountInput error={amountError} onChange={setAmount} />
           <Title variant="subtitle">Available</Title>
-          {`${groths} ${assets[total.asset_id].metadata_pairs.N}`}
+          {`${groths} ${selected.metadata_pairs.N}`}
         </Section>
-        <Section title="Comment" variant="gray">
+        <Section title="Comment" variant="gray" collapse>
           <Input variant="gray" />
         </Section>
         <Button

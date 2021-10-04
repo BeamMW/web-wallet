@@ -10,10 +10,10 @@ import {
 } from '@app/model/view';
 
 import {
-  AMOUNT_MAX, FEE_DEFAULT, GROTHS_IN_BEAM,
+  FEE_DEFAULT, GROTHS_IN_BEAM,
 } from '@app/model/rates';
 
-import { TransactionType, WalletTotal } from '@app/core/types';
+import { TransactionType } from '@app/core/types';
 import {
   getInputValue, isNil, makePrevented,
 } from '@app/core/utils';
@@ -25,19 +25,11 @@ import {
   SendTransactionParams,
 } from '@app/core/api';
 
-import { $assets, $totals } from '../wallet/model';
+import { $assets, AssetTotal } from '@app/model/wallet';
 
 /* Misc */
 
 type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
-
-export const $options = combine($totals, $assets, (totals, assets) => (
-  totals
-    .map(({ asset_id }) => {
-      const meta = assets[asset_id];
-      return isNil(meta) ? '' : meta.metadata_pairs.N;
-    })
-));
 
 /* Send Address */
 
@@ -66,7 +58,7 @@ export const $addressLabel = combine($addressValid, $addressType, (valid, addres
 
 /* Asset Select */
 
-const ASSET_BLANK: WalletTotal = {
+const ASSET_BLANK: AssetTotal = {
   asset_id: 0,
   available: 0,
   available_str: '0',
@@ -78,39 +70,14 @@ const ASSET_BLANK: WalletTotal = {
   sending_str: '0',
 };
 
-export const setSelected = createEvent<number>();
-
-export const $selected = restore(setSelected, 0);
-
-export const $totalSelected = combine($totals, $selected,
-  (array, index) => (array.length > 0 ? array[index] : ASSET_BLANK));
-
 /* Amount Field */
 
 const calculateChangeFx = createEffect(calculateChange);
 
-const REG_AMOUNT = /^(?:[1-9]\d*|0)?(?:\.(\d+)?)?$/;
-
-export const onAmountInput = createEvent<ReactChangeEvent>();
-
-const setAmount = onAmountInput
-  .map(getInputValue)
-  // should be a valid number
-  .filter({
-    fn: (value) => REG_AMOUNT.test(value),
-  })
-  // cap at max amount
-  .map((value) => {
-    if (value === '0') {
-      return '';
-    }
-
-    return parseFloat(value) > AMOUNT_MAX
-      ? AMOUNT_MAX.toString() : value;
-  });
+export const setAmount = createEvent<[string, number]>();
 
 const setAmountPositive = setAmount.filter({
-  fn: (value) => parseFloat(value) > 0,
+  fn: ([amount]) => parseFloat(amount) > 0,
 });
 
 const setAmountDebounced = debounce({
@@ -120,15 +87,45 @@ const setAmountDebounced = debounce({
 
 export const $fee = createStore(FEE_DEFAULT);
 export const $change = createStore(0);
+export const $amount = restore<[string, number]>(setAmount, ['', 0]);
 
-export const $amount = restore(setAmount, '');
-export const $amountGroths = $amount.map((value) => parseFloat(value) * GROTHS_IN_BEAM);
-export const $amountError = combine($totalSelected, $amountGroths, $fee,
-  ({ available }, amount, fee) => {
-    const total = amount + fee;
-    return total > available
-      ? `Insufficient funds: you would need ${total / GROTHS_IN_BEAM} BEAM to complete the transaction` : null;
-  });
+export const $selected = combine($assets, $amount,
+  (array, [, index]) => array[index] ?? ASSET_BLANK);
+
+enum AmountError {
+  FEE = 'Insufficient funds to pay transaction fee.',
+  AMOUNT = 'Insufficient funds to complete the transaction. Maximum amount is ',
+}
+
+export const $amountError = combine(
+  $fee,
+  $assets,
+  $amount,
+  (fee, assets, [value, index]) => {
+    if (value === '') {
+      return null;
+    }
+
+    const beam = assets[0];
+    const target = assets[index];
+    const { available } = target;
+    const amount = parseInt(value, 10) * GROTHS_IN_BEAM;
+    const groths = available / GROTHS_IN_BEAM;
+
+    if (amount > available) {
+      return `${AmountError.AMOUNT} ${groths} ${target.metadata_pairs.N}`;
+    }
+
+    if (
+      beam.available < fee
+      || (index === 0 && amount + fee > available)
+    ) {
+      return AmountError.FEE;
+    }
+
+    return null;
+  },
+);
 
 const setAddressDebounced = debounce({ source: setAddress, timeout: 200 });
 const validateAddressFx = createEffect(validateAddress);
@@ -139,20 +136,20 @@ export const $valid = combine(
   $addressValid,
   $amount,
   $amountError,
-  (address, pending, addressValid, amount, amountError) => (
-    address !== '' && !pending && addressValid && amount !== '' && isNil(amountError)
+  (address, pending, addressValid, [value], amountError) => (
+    address !== '' && !pending && addressValid && value !== '' && isNil(amountError)
   ),
 );
 
 const sendTransactionFx = createEffect(sendTransaction);
 
 const $params: Store<SendTransactionParams> = combine(
-  $amountGroths,
+  $amount,
   $fee,
   $address,
-  $totalSelected,
-  (value, fee, address, { asset_id }) => ({
-    value,
+  $selected,
+  ([value], fee, address, { asset_id }) => ({
+    value: parseInt(value, 10) / GROTHS_IN_BEAM,
     fee,
     address,
     asset_id,
@@ -176,11 +173,11 @@ spread({
 
 // call CalculateChange on setAmount w/ debounce
 sample({
-  source: $totalSelected,
+  source: $selected,
   clock: setAmountDebounced,
-  fn: ({ asset_id }, payload) => ({
+  fn: ({ asset_id }, [amount]) => ({
     asset_id,
-    amount: parseFloat(payload) * GROTHS_IN_BEAM,
+    amount: parseFloat(amount) * GROTHS_IN_BEAM,
     fee: FEE_DEFAULT,
     is_push_transaction: false,
   }),
