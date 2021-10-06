@@ -28,8 +28,7 @@ function getColor(pallete: string): string {
 
 const ContainerStyled = styled.div<WindowProps>`
   position: relative;
-  height: 600px;
-  padding: 130px 30px 0;
+  padding: 130px 30px 30px;
   text-align: center;
   filter: ${({ blur }) => (blur ? 'blur(3px)' : 'none')};
 

@@ -64,7 +64,7 @@ const SendForm = () => {
           <Input
             variant="gray"
             label={addressLabel}
-            valid={addressValid}
+            valid={address === '' || addressValid}
             placeholder="Paste recipient address here"
             value={address}
             onInput={onAddressInput}
