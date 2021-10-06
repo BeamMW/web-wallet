@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  combine, createEffect, createEvent, createStore, restore, sample, Store,
+  combine, createEffect, createEvent, createStore, guard, restore, sample, Store,
 } from 'effector';
 import { debounce } from 'patronum/debounce';
 import { spread } from 'patronum/spread';
@@ -44,6 +44,8 @@ export const $address = restore(setAddress, '');
 export const $addressType = createStore<AddressType>(null);
 export const $addressValid = restore(setAddressValid, true);
 export const $payments = createStore<number>(null);
+
+$addressType.on(setAddress, (state, value) => (value === '' ? null : state));
 
 export const $addressLabel = combine(
   $address, $addressValid, $addressType,
@@ -183,7 +185,11 @@ const $params: Store<SendTransactionParams> = combine(
 $address.reset(gotoWallet);
 
 // call ValidateAddress on setAddress w/ debounce
-setAddressDebounced.watch(validateAddressFx);
+guard({
+  source: setAddressDebounced,
+  filter: (value) => value !== '',
+  target: validateAddressFx,
+});
 
 // receive Validate data
 spread({
