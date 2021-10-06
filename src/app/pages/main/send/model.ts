@@ -13,7 +13,7 @@ import {
   FEE_DEFAULT, GROTHS_IN_BEAM,
 } from '@app/model/rates';
 
-import { TransactionType } from '@app/core/types';
+import { AddressType } from '@app/core/types';
 import {
   getInputValue, isNil, makePrevented,
 } from '@app/core/utils';
@@ -38,23 +38,38 @@ export const onConfirmSubmit = makePrevented(gotoWallet);
 
 export const onAddressInput = createEvent<ReactChangeEvent>();
 export const setAddress = onAddressInput.map(getInputValue);
-export const setAddressType = createEvent<TransactionType>();
 export const setAddressValid = createEvent<boolean>();
 
 export const $address = restore(setAddress, '');
-export const $addressType = restore(setAddressType, null);
+export const $addressType = createStore<AddressType>(null);
 export const $addressValid = restore(setAddressValid, true);
+export const $payments = createStore<number>(null);
 
-export const $addressLabel = combine($addressValid, $addressType, (valid, addressType) => {
-  switch (true) {
-    case isNil(addressType):
+export const $addressLabel = combine(
+  $address, $addressValid, $addressType,
+  (address, valid, addressType) => {
+    if (address === '') {
       return null;
-    case !valid:
+    }
+
+    if (!valid) {
       return 'Invalid wallet address';
-    default:
-      return `${TransactionType[addressType]} address.`;
-  }
-});
+    }
+
+    switch (addressType) {
+      case 'max_privacy':
+        return 'Guarantees maximum anonymity set of up to 64K.';
+      case 'offline':
+      case 'public_offline':
+        return 'Offline addresss';
+      case 'regular':
+      case 'regular_new':
+        return 'Online address';
+      default:
+        return null;
+    }
+  },
+);
 
 /* Asset Select */
 
@@ -69,6 +84,10 @@ const ASSET_BLANK: AssetTotal = {
   sending: 0,
   sending_str: '0',
 };
+
+export const setOffline = createEvent<boolean>();
+
+export const $offline = restore(setOffline, false);
 
 /* Amount Field */
 
@@ -130,6 +149,8 @@ export const $amountError = combine(
 const setAddressDebounced = debounce({ source: setAddress, timeout: 200 });
 const validateAddressFx = createEffect(validateAddress);
 
+validateAddressFx.doneData.watch((data) => console.log(data));
+
 export const $valid = combine(
   $address,
   validateAddressFx.pending,
@@ -144,15 +165,17 @@ export const $valid = combine(
 const sendTransactionFx = createEffect(sendTransaction);
 
 const $params: Store<SendTransactionParams> = combine(
-  $amount,
-  $fee,
-  $address,
   $selected,
-  ([value], fee, address, { asset_id }) => ({
+  $amount,
+  $address,
+  $offline,
+  $fee,
+  ({ asset_id }, [value], address, offline, fee) => ({
     value: parseInt(value, 10) / GROTHS_IN_BEAM,
     fee,
     address,
     asset_id,
+    offline,
   }),
 );
 
@@ -170,6 +193,10 @@ spread({
     is_valid: $addressValid,
   },
 });
+
+validateAddressFx.doneData.watch(
+  ({ type }) => setOffline(type.includes('offline')),
+);
 
 // call CalculateChange on setAmount w/ debounce
 sample({

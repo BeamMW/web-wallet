@@ -84,6 +84,10 @@ export function postMessage<T = any, P = unknown>(
   });
 }
 
+export function convertTokenToJson(token: string) {
+  return postMessage(WalletMethod.ConvertTokenToJson, token);
+}
+
 export function startWallet(pass: string) {
   return postMessage(WalletMethod.StartWallet, pass);
 }
@@ -116,8 +120,18 @@ export function createAddress() {
   return postMessage<string>(RPCMethod.CreateAddress);
 }
 
-export function validateAddress(address: string) {
-  return postMessage<AddressValidation>(RPCMethod.ValidateAddress, { address });
+export async function validateAddress(address: string) {
+  const result = await postMessage<AddressValidation>(RPCMethod.ValidateAddress, { address });
+  const json = await postMessage(WalletMethod.ConvertTokenToJson, address);
+
+  if (isNil(json)) {
+    return result;
+  }
+
+  return {
+    ...result,
+    ...json,
+  };
 }
 
 export function approveConnection(

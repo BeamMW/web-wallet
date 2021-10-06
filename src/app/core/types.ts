@@ -28,6 +28,7 @@ export enum WalletMethod {
   IsAllowedWord = 'wasm_is_allowed_word',
   IsAllowedSeed = 'wasm_is_allowed_seed',
   GenerateSeed = 'wasm_generate_seed',
+  ConvertTokenToJson = 'wasm_convert_token_to_json',
   NotificationConnect = 'notification_connect',
   NotificationApproveInfo = 'notification_approve_info',
   NotificationRejectInfo = 'notification_reject_info',
@@ -122,15 +123,13 @@ export interface ChangeData {
   explicit_fee: number;
 }
 
-export enum TransactionType {
-  regular = 'Regular',
-  maxPrivacy = 'Max Privacy',
-  offline = 'Offline',
-}
+export type AddressType =
+  'regular' | 'regular_new' | 'max_privacy' | 'offline' | 'public_offline' | 'unknown';
+
 export interface AddressValidation {
   is_mine: boolean;
   is_valid: boolean;
-  type: TransactionType;
+  type: AddressType;
 }
 
 export interface SyncProgress extends SyncHash {

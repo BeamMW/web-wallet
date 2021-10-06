@@ -57,6 +57,7 @@ const InputAmountStyled = styled(InputGrayStyled)<{ pallete: string }>`
 
 const LabelStyled = styled.div<InputProps>`
   margin-top: 4px;
+  font-family: SFProDisplay;
   font-size: 14px;
   font-style: italic;
   color: ${({ valid }) => (valid ? 'var(--color-gray)' : 'var(--color-red)')};

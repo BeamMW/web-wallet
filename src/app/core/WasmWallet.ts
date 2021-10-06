@@ -132,6 +132,15 @@ export default class WasmWallet {
     return WasmWalletClient.IsInitialized(PATH_DB);
   }
 
+  static convertTokenToJson(token: string) {
+    try {
+      return WasmWalletClient.ConvertTokenToJson(token);
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
   static generateSeed() {
     const seed: string = WasmWalletClient.GeneratePhrase();
     return seed.split(' ');
@@ -307,6 +316,11 @@ export default class WasmWallet {
 
   async callInternal(id: number, method: WalletMethod, params: any) {
     switch (method) {
+      case WalletMethod.ConvertTokenToJson: {
+        const result = WasmWallet.convertTokenToJson(params);
+        this.emit(id, result);
+        break;
+      }
       case WalletMethod.GenerateSeed: {
         const result = WasmWallet.generateSeed();
         this.emit(id, result);
@@ -329,6 +343,7 @@ export default class WasmWallet {
       case WalletMethod.StartWallet:
         await WasmWallet.checkPassword(params);
         this.start(params);
+        this.emit(id);
         break;
       case WalletMethod.DeleteWallet:
         await WasmWallet.checkPassword(params);
