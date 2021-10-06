@@ -79,7 +79,7 @@ const SendForm = () => {
           <AmountInput error={amountError} onChange={setAmount} />
           <Title variant="subtitle">Available</Title>
           {`${groths} ${selected.metadata_pairs.N}`}
-          <Ratetyled>{toUSD(groths, rate)}</Ratetyled>
+          { selected.asset_id === 0 && <Ratetyled>{toUSD(groths, rate)}</Ratetyled> }
         </Section>
         <Section title="Comment" variant="gray" collapse>
           <Input variant="gray" />
