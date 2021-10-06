@@ -47,28 +47,37 @@ export const $payments = createStore<number>(null);
 
 $addressType.on(setAddress, (state, value) => (value === '' ? null : state));
 
-export const $addressLabel = combine(
+export const $description: Store<[string, string]> = combine(
   $address, $addressValid, $addressType,
   (address, valid, addressType) => {
     if (address === '') {
-      return null;
+      return [null, null];
     }
 
     if (!valid) {
-      return 'Invalid wallet address';
+      return ['Invalid wallet address', null];
     }
 
     switch (addressType) {
       case 'max_privacy':
-        return 'Guarantees maximum anonymity set of up to 64K.';
+        return [
+          'Guarantees maximum anonymity set of up to 64K.',
+          'Transaction can last at most 72 hours.',
+        ];
       case 'offline':
       case 'public_offline':
-        return 'Offline addresss';
+        return [
+          'Offline addresss',
+          'Make sure the address is correct as offline transactions cannot be canceled.',
+        ];
       case 'regular':
       case 'regular_new':
-        return 'Online address';
+        return [
+          'Online address',
+          'The recipient must get online within the next 12 hours and you should get online within 2 hours afterwards.',
+        ];
       default:
-        return null;
+        return [null, null];
     }
   },
 );

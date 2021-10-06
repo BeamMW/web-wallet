@@ -16,7 +16,7 @@ import LabeledToggle from '@app/uikit/LabeledToggle';
 import {
   $valid,
   $address,
-  $addressLabel,
+  $description,
   $addressValid,
   $selected,
   onAddressInput,
@@ -29,7 +29,7 @@ import {
 } from './model';
 
 const WarningStyled = styled.div`
-  margin: 30px 0;
+  margin: 30px -20px;
   font-family: 'SFProDisplay';
   font-style: italic;
   color: var(--color-gray);
@@ -43,9 +43,9 @@ const Ratetyled = styled.div`
 const SendForm = () => {
   const address = useStore($address);
   const addressValid = useStore($addressValid);
-  const addressLabel = useStore($addressLabel);
   const addressType = useStore($addressType);
   const amountError = useStore($amountError);
+  const [label, warning] = useStore($description);
 
   const selected = useStore($selected);
   const rate = useStore($rate);
@@ -63,7 +63,7 @@ const SendForm = () => {
         <Section title="Send to" variant="gray">
           <Input
             variant="gray"
-            label={addressLabel}
+            label={label}
             valid={address === '' || addressValid}
             placeholder="Paste recipient address here"
             value={address}
@@ -84,7 +84,7 @@ const SendForm = () => {
         <Section title="Comment" variant="gray" collapse>
           <Input variant="gray" />
         </Section>
-        <WarningStyled>Transaction can last at most 72 hours.</WarningStyled>
+        <WarningStyled>{ warning }</WarningStyled>
         <Button
           pallete="purple"
           icon={ArrowRightIcon}
