@@ -139,7 +139,7 @@ export const $amountError = combine(
     const beam = assets[0];
     const target = assets[index];
     const { available } = target;
-    const amount = parseInt(value, 10) * GROTHS_IN_BEAM;
+    const amount = parseFloat(value) * GROTHS_IN_BEAM;
     const groths = available / GROTHS_IN_BEAM;
 
     if (amount > available) {

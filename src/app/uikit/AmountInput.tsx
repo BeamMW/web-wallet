@@ -35,7 +35,7 @@ interface AmountInputProps {
   onChange?: (value: [string, number]) => void;
 }
 
-const REG_AMOUNT = /^(?:[1-9]\d*|0)?(?:\.(\d+)?)?$/;
+const REG_AMOUNT = /^^(?!0\d)(\d+)(\.)?(\d+)?$/;
 
 const AmountInput: React.FC<AmountInputProps> = ({
   error,
@@ -46,7 +46,6 @@ const AmountInput: React.FC<AmountInputProps> = ({
   const [selected, setSelected] = useState(0);
 
   const assets = useStore($assets);
-  const target = assets[selected];
 
   const options = assets
     .map(({ asset_id, metadata_pairs }) => (
