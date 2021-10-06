@@ -35,7 +35,7 @@ interface AmountInputProps {
   onChange?: (value: [string, number]) => void;
 }
 
-const REG_AMOUNT = /^^(?!0\d)(\d+)(\.)?(\d+)?$/;
+const REG_AMOUNT = /^(?!0\d)(\d+)(\.)?(\d+)?$/;
 
 const AmountInput: React.FC<AmountInputProps> = ({
   error,
@@ -58,7 +58,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
   const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     const { value } = event.target;
 
-    if (!REG_AMOUNT.test(value)) {
+    if (value !== '' && !REG_AMOUNT.test(value)) {
       return;
     }
 
