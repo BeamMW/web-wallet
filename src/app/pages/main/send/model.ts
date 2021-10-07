@@ -47,9 +47,13 @@ export const $payments = createStore<number>(null);
 
 $addressType.on(setAddress, (state, value) => (value === '' ? null : state));
 
+export const setOffline = createEvent<boolean>();
+
+export const $offline = restore(setOffline, false);
+
 export const $description: Store<[string, string]> = combine(
-  $address, $addressValid, $addressType,
-  (address, valid, addressType) => {
+  $address, $addressValid, $addressType, $offline,
+  (address, valid, addressType, offline) => {
     if (address === '') {
       return [null, null];
     }
@@ -67,7 +71,7 @@ export const $description: Store<[string, string]> = combine(
       case 'offline':
       case 'public_offline':
         return [
-          'Offline addresss',
+          offline ? 'Offline addresss' : 'Regular address',
           'Make sure the address is correct as offline transactions cannot be canceled.',
         ];
       case 'regular':
@@ -95,10 +99,6 @@ const ASSET_BLANK: AssetTotal = {
   sending: 0,
   sending_str: '0',
 };
-
-export const setOffline = createEvent<boolean>();
-
-export const $offline = restore(setOffline, false);
 
 /* Amount Field */
 
@@ -169,7 +169,7 @@ export const $valid = combine(
   $amount,
   $amountError,
   (address, pending, addressValid, [value], amountError) => (
-    address !== '' && !pending && addressValid && value !== '' && isNil(amountError)
+    address !== '' && !pending && addressValid && parseFloat(value) > 0 && isNil(amountError)
   ),
 );
 
@@ -182,7 +182,7 @@ const $params: Store<SendTransactionParams> = combine(
   $offline,
   $fee,
   ({ asset_id }, [value], address, offline, fee) => ({
-    value: parseInt(value, 10) / GROTHS_IN_BEAM,
+    value: parseFloat(value) * GROTHS_IN_BEAM,
     fee,
     address,
     asset_id,
@@ -208,10 +208,6 @@ spread({
     is_valid: $addressValid,
   },
 });
-
-validateAddressFx.doneData.watch(
-  ({ type }) => setOffline(type.includes('offline')),
-);
 
 // call CalculateChange on setAmount w/ debounce
 sample({
@@ -239,5 +235,6 @@ spread({
 sample({
   source: $params,
   clock: onConfirmSubmit,
+  fn: (params) => params,
   target: [sendTransactionFx],
 });

@@ -79,7 +79,7 @@ export function postMessage<T = any, P = unknown>(
         unwatch();
       });
 
-    console.info(`sending ${method}:${target}`);
+    console.info(`sending ${method}:${target} with`, params);
     port.postMessage({ id: target, method, params });
   });
 }
