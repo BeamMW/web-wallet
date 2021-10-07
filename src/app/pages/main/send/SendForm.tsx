@@ -22,10 +22,12 @@ import {
   onAddressInput,
   onFormSubmit,
   $amountError,
-  setAmount,
+  onInputChange,
   setOffline,
   $addressType,
   $offline,
+  $amount,
+  $currency,
 } from './model';
 
 const WarningStyled = styled.div`
@@ -44,8 +46,11 @@ const SendForm = () => {
   const address = useStore($address);
   const addressValid = useStore($addressValid);
   const addressType = useStore($addressType);
-  const amountError = useStore($amountError);
   const [label, warning] = useStore($description);
+
+  const amount = useStore($amount);
+  const amountError = useStore($amountError);
+  const currency = useStore($currency);
 
   const selected = useStore($selected);
   const rate = useStore($rate);
@@ -76,7 +81,12 @@ const SendForm = () => {
         </Section>
         ) }
         <Section title="Amount" variant="gray">
-          <AmountInput error={amountError} onChange={setAmount} />
+          <AmountInput
+            value={amount}
+            index={currency}
+            error={amountError}
+            onChange={onInputChange}
+          />
           <Title variant="subtitle">Available</Title>
           {`${groths} ${selected.metadata_pairs.N}`}
           { selected.asset_id === 0 && <Ratetyled>{toUSD(groths, rate)}</Ratetyled> }

@@ -130,6 +130,9 @@ export interface AddressValidation {
   is_mine: boolean;
   is_valid: boolean;
   type: AddressType;
+  payments: number;
+  amount: string;
+  asset_id: number;
 }
 
 export interface SyncProgress extends SyncHash {

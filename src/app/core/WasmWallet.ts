@@ -134,7 +134,18 @@ export default class WasmWallet {
 
   static convertTokenToJson(token: string) {
     try {
-      return WasmWalletClient.ConvertTokenToJson(token);
+      const json = WasmWalletClient.ConvertTokenToJson(token);
+      const result = JSON.parse(json);
+
+      const {
+        Amount: amount,
+        AssetID: id,
+      } = result.params;
+
+      return {
+        amount,
+        asset_id: isNil(id) ? null : parseInt(id, 10),
+      };
     } catch (error) {
       console.error(error);
       return null;

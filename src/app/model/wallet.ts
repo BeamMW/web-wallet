@@ -43,6 +43,7 @@ const META_BLANK: Partial<Asset> = {
   metadata_pairs: {
     N: '',
     SN: '',
+    UN: '',
   },
 };
 

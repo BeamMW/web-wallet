@@ -120,7 +120,7 @@ export function createAddress() {
   return postMessage<string>(RPCMethod.CreateAddress);
 }
 
-export async function validateAddress(address: string) {
+export async function validateAddress(address: string): Promise<AddressValidation> {
   const result = await postMessage<AddressValidation>(RPCMethod.ValidateAddress, { address });
   const json = await postMessage(WalletMethod.ConvertTokenToJson, address);
 

@@ -43,17 +43,17 @@ export const setAddressValid = createEvent<boolean>();
 export const $address = restore(setAddress, '');
 export const $addressType = createStore<AddressType>(null);
 export const $addressValid = restore(setAddressValid, true);
-export const $payments = createStore<number>(null);
 
 $addressType.on(setAddress, (state, value) => (value === '' ? null : state));
 
 export const setOffline = createEvent<boolean>();
 
 export const $offline = restore(setOffline, false);
+export const $payments = createStore<number>(null);
 
 export const $description: Store<[string, string]> = combine(
-  $address, $addressValid, $addressType, $offline,
-  (address, valid, addressType, offline) => {
+  $address, $addressValid, $addressType, $offline, $payments,
+  (address, valid, addressType, offline, payments) => {
     if (address === '') {
       return [null, null];
     }
@@ -61,6 +61,10 @@ export const $description: Store<[string, string]> = combine(
     if (!valid) {
       return ['Invalid wallet address', null];
     }
+
+    const txs = payments === 1
+      ? `${payments} transaction left. Ask receiver to come online to support more offline transaction.`
+      : `${payments} transactions left.`;
 
     switch (addressType) {
       case 'max_privacy':
@@ -70,15 +74,15 @@ export const $description: Store<[string, string]> = combine(
         ];
       case 'offline':
       case 'public_offline':
-        return [
-          offline ? 'Offline addresss' : 'Regular address',
-          'Make sure the address is correct as offline transactions cannot be canceled.',
-        ];
       case 'regular':
       case 'regular_new':
         return [
-          'Online address',
-          'The recipient must get online within the next 12 hours and you should get online within 2 hours afterwards.',
+          offline
+            ? `Offline address. ${txs}`
+            : 'Regular address',
+          offline
+            ? 'Make sure the address is correct as offline transactions cannot be canceled.'
+            : 'The recipient must get online within the next 12 hours and you should get online within 2 hours afterwards.',
         ];
       default:
         return [null, null];
@@ -98,16 +102,24 @@ const ASSET_BLANK: AssetTotal = {
   receiving_str: '0',
   sending: 0,
   sending_str: '0',
+  metadata_pairs: {
+    N: '',
+    SN: '',
+    UN: '',
+  },
 };
 
 /* Amount Field */
 
 const calculateChangeFx = createEffect(calculateChange);
 
-export const setAmount = createEvent<[string, number]>();
+export const onInputChange = createEvent<[string, number]>();
+
+const setAmount = onInputChange.map(([value]) => value);
+const setCurrency = onInputChange.map(([,value]) => value);
 
 const setAmountPositive = setAmount.filter({
-  fn: ([amount]) => parseFloat(amount) > 0,
+  fn: (amount) => parseFloat(amount) > 0,
 });
 
 const setAmountDebounced = debounce({
@@ -117,7 +129,8 @@ const setAmountDebounced = debounce({
 
 export const $fee = createStore(FEE_DEFAULT);
 export const $change = createStore(0);
-export const $amount = restore<[string, number]>(setAmount, ['', 0]);
+export const $amount = restore(setAmount, '');
+export const $currency = restore(setCurrency, 0);
 
 export const $selected = combine($assets, $amount,
   (array, [, index]) => array[index] ?? ASSET_BLANK);
@@ -131,7 +144,8 @@ export const $amountError = combine(
   $fee,
   $assets,
   $amount,
-  (fee, assets, [value, index]) => {
+  $currency,
+  (fee, assets, value, index) => {
     if (value === '') {
       return null;
     }
@@ -206,7 +220,33 @@ spread({
   targets: {
     type: $addressType,
     is_valid: $addressValid,
+    payments: $payments,
   },
+});
+
+sample({
+  source: combine($currency, $assets),
+  clock: validateAddressFx.doneData,
+  fn: ([selected, assets], { asset_id }) => {
+    const index = assets.findIndex(({ asset_id: id }) => id === asset_id);
+
+    return index === -1 ? selected : index;
+  },
+  target: setCurrency,
+});
+
+sample({
+  source: $amount,
+  clock: validateAddressFx.doneData,
+  fn: (value, { amount }) => {
+    if (isNil(amount)) {
+      return value;
+    }
+
+    const next = parseInt(amount, 10) / GROTHS_IN_BEAM;
+    return next.toString();
+  },
+  target: setAmount,
 });
 
 // call CalculateChange on setAmount w/ debounce

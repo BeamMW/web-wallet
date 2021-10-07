@@ -30,6 +30,8 @@ const containerStyle = css`
 `;
 
 interface AmountInputProps {
+  value: string;
+  index: number;
   error?: string;
   pallete?: 'purple' | 'blue';
   onChange?: (value: [string, number]) => void;
@@ -38,13 +40,12 @@ interface AmountInputProps {
 const REG_AMOUNT = /^(?!0\d)(\d+)(\.)?(\d+)?$/;
 
 const AmountInput: React.FC<AmountInputProps> = ({
+  value,
+  index,
   error,
   pallete = 'purple',
   onChange,
 }) => {
-  const [amount, setAmount] = useState('');
-  const [selected, setSelected] = useState(0);
-
   const assets = useStore($assets);
 
   const options = assets
@@ -56,22 +57,19 @@ const AmountInput: React.FC<AmountInputProps> = ({
     ));
 
   const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    const { value } = event.target;
+    const { value: raw } = event.target;
 
-    if (value !== '' && !REG_AMOUNT.test(value)) {
+    if (raw !== '' && !REG_AMOUNT.test(raw)) {
       return;
     }
 
-    const next = parseFloat(value) > AMOUNT_MAX
-      ? AMOUNT_MAX.toString() : value;
-    setAmount(next);
-    onChange([next, selected]);
+    const next = parseFloat(raw) > AMOUNT_MAX
+      ? AMOUNT_MAX.toString() : raw;
+    onChange([next, index]);
   };
 
-  const handleSelect = (value: number) => {
-    setSelected(value);
-    setAmount('');
-    onChange(['', value]);
+  const handleSelect = (next: number) => {
+    onChange(['', next]);
   };
 
   return (
@@ -80,7 +78,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
         variant="amount"
         valid={isNil(error)}
         label={error}
-        value={amount}
+        value={value}
         pallete={pallete}
         maxLength={16}
         placeholder="0"
@@ -89,7 +87,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
       />
       <Select
         options={options}
-        selected={selected}
+        selected={index}
         className={selectClassName}
         onSelect={handleSelect}
       />
