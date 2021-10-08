@@ -4,9 +4,8 @@ import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
-import {
-  Input, Select,
-} from '@uikit';
+import { AssetLabel, Input } from '@uikit';
+import Select, { Option } from '@uikit/Select';
 
 import { isNil } from '@app/core/utils';
 
@@ -20,6 +19,11 @@ const ContainerStyled = styled.div`
   margin-bottom: 20px;
 `;
 
+const TitleStyled = styled.div`
+  height: 26px;
+  line-height: 26px;
+`;
+
 const selectClassName = css`
   align-self: flex-start;
   margin-top: 10px;
@@ -31,7 +35,7 @@ const containerStyle = css`
 
 interface AmountInputProps {
   value: string;
-  selected: number;
+  asset_id: number;
   error?: string;
   pallete?: 'purple' | 'blue';
   onChange?: (value: [string, number]) => void;
@@ -41,20 +45,12 @@ const REG_AMOUNT = /^(?!0\d)(\d+)(\.)?(\d+)?$/;
 
 const AmountInput: React.FC<AmountInputProps> = ({
   value,
-  selected,
+  asset_id,
   error,
   pallete = 'purple',
   onChange,
 }) => {
   const assets = useStore($assets);
-
-  const options = assets
-    .map(({ asset_id, metadata_pairs }) => (
-      <span>
-        <AssetIcon asset_id={asset_id} />
-        { metadata_pairs.UN }
-      </span>
-    ));
 
   const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     const { value: raw } = event.target;
@@ -65,7 +61,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
 
     const next = parseFloat(raw) > AMOUNT_MAX
       ? AMOUNT_MAX.toString() : raw;
-    onChange([next, selected]);
+    onChange([next, asset_id]);
   };
 
   const handleSelect = (next: number) => {
@@ -86,11 +82,18 @@ const AmountInput: React.FC<AmountInputProps> = ({
         onInput={handleInput}
       />
       <Select
-        options={options}
-        selected={selected}
+        value={asset_id}
         className={selectClassName}
         onSelect={handleSelect}
-      />
+      >
+        { assets
+          .map(({ asset_id: id, metadata_pairs }) => (
+            <Option key={id} value={id}>
+              <AssetIcon asset_id={id} />
+              { metadata_pairs.UN }
+            </Option>
+          ))}
+      </Select>
     </ContainerStyled>
   );
 };

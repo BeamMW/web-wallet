@@ -10,6 +10,7 @@
   },
   "rules": {
     "no-use-before-define": "off",
+    "@typescript-eslint/naming-convention": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/no-autofocus": "off",
     "react/prop-types": "off",

@@ -73,7 +73,7 @@ export function postMessage<T = any, P = unknown>(
         if (isNil(error)) {
           resolve(result);
         } else {
-          reject(result);
+          reject(error);
         }
 
         unwatch();

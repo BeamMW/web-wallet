@@ -3,6 +3,7 @@ import * as passworder from 'browser-passworder';
 import PortStream from '@core/PortStream';
 
 import { isNil } from '@core/utils';
+import { GROTHS_IN_BEAM } from '@app/model/rates';
 import {
   RPCMethod,
   RPCEvent,
@@ -143,7 +144,7 @@ export default class WasmWallet {
       } = result.params;
 
       return {
-        amount,
+        amount: isNil(amount) ? null : parseFloat(amount) / GROTHS_IN_BEAM,
         asset_id: isNil(id) ? null : parseInt(id, 10),
       };
     } catch (error) {
@@ -352,15 +353,23 @@ export default class WasmWallet {
         this.create(params);
         break;
       case WalletMethod.StartWallet:
-        await WasmWallet.checkPassword(params);
-        this.start(params);
-        this.emit(id);
+        try {
+          await WasmWallet.checkPassword(params);
+          this.start(params);
+          this.emit(id);
+        } catch (error) {
+          this.emit(id, null, error);
+        }
         break;
       case WalletMethod.DeleteWallet:
-        await WasmWallet.checkPassword(params);
-        await this.stop();
-        WasmWallet.removeWallet();
-        this.emit(id);
+        try {
+          await WasmWallet.checkPassword(params);
+          await this.stop();
+          WasmWallet.removeWallet();
+          this.emit(id);
+        } catch (error) {
+          this.emit(id, null, error);
+        }
         break;
       case WalletMethod.NotificationConnect:
         // eslint-disable-next-line no-case-declarations

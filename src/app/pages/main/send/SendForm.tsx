@@ -19,18 +19,14 @@ import {
   $valid,
   $address,
   $description,
-  $addressValid,
   $selected,
-  onAddressInput,
+  onAddressChange,
   onFormSubmit,
   $amountError,
-  onInputChange,
+  onAmountChange,
   setOffline,
-  $addressType,
-  $offline,
-  $amount,
-  $currency,
-  setMaximum,
+  setMaxAmount,
+  $form,
 } from './model';
 
 const WarningStyled = styled.div`
@@ -52,19 +48,25 @@ const maxButtonStyle = css`
 `;
 
 const SendForm = () => {
-  const address = useStore($address);
-  const addressValid = useStore($addressValid);
-  const addressType = useStore($addressType);
-  const [label, warning] = useStore($description);
+  const {
+    amount,
+    address,
+    offline,
+    asset_id,
+  } = useStore($form);
 
-  const amount = useStore($amount);
+  const {
+    type: addressType,
+    is_valid: addressValid,
+  } = useStore($address);
+
   const amountError = useStore($amountError);
-  const currency = useStore($currency);
+
+  const [label, warning] = useStore($description);
 
   const selected = useStore($selected);
   const rate = useStore($rate);
   const valid = useStore($valid);
-  const offline = useStore($offline);
 
   const groths = selected.available / GROTHS_IN_BEAM;
 
@@ -81,7 +83,7 @@ const SendForm = () => {
             valid={address === '' || addressValid}
             placeholder="Paste recipient address here"
             value={address}
-            onInput={onAddressInput}
+            onInput={onAddressChange}
           />
         </Section>
         { addressType === 'offline' && (
@@ -92,9 +94,9 @@ const SendForm = () => {
         <Section title="Amount" variant="gray">
           <AmountInput
             value={amount}
-            selected={currency}
+            asset_id={asset_id}
             error={amountError}
-            onChange={onInputChange}
+            onChange={onAmountChange}
           />
           <Title variant="subtitle">Available</Title>
           {`${groths} ${selected.metadata_pairs.N}`}
@@ -104,7 +106,7 @@ const SendForm = () => {
             icon={ArrowUpIcon}
             pallete="purple"
             className={maxButtonStyle}
-            onClick={setMaximum}
+            onClick={setMaxAmount}
           >
             max
           </Button>

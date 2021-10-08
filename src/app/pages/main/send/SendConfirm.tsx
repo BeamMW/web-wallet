@@ -12,7 +12,7 @@ import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';
 
 import {
-  $address, $amount, $selected, $change, $fee, onConfirmSubmit,
+  $form, onConfirmSubmit, $selected,
 } from './model';
 
 const WarningSyled = styled.p`
@@ -23,14 +23,23 @@ const WarningSyled = styled.p`
 `;
 
 const Send = () => {
-  const fee = useStore($fee);
-  const asset = useStore($selected);
-  const change = useStore($change);
-  const [amount] = useStore($amount);
-  const address = useStore($address);
+  const {
+    fee,
+    value,
+    amount,
+    change,
+    address,
+    offline,
+    asset_id,
+  } = useStore($form);
 
-  const amountGroths = parseFloat(amount) * GROTHS_IN_BEAM;
-  const remaining = asset.available - fee - amountGroths;
+  const {
+    available,
+  } = useStore($selected);
+
+  const remaining = asset_id === 0 ? available - fee - value : available - value;
+
+  const txType = offline ? 'Offline' : 'Regular';
 
   return (
     <Window
@@ -39,7 +48,7 @@ const Send = () => {
     >
       <form onSubmit={onConfirmSubmit}>
         <Section title="Send to">{ address }</Section>
-        <Section title="Transaction type">Regular</Section>
+        <Section title="Transaction type">{ txType }</Section>
         <Section title="Amount">{ amount }</Section>
         <Section title="Transaction Fee">{ fee / GROTHS_IN_BEAM }</Section>
         <Section title="Change">{ change / GROTHS_IN_BEAM }</Section>

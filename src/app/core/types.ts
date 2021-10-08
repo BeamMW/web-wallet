@@ -131,7 +131,7 @@ export interface AddressValidation {
   is_valid: boolean;
   type: AddressType;
   payments: number;
-  amount: string;
+  amount: number;
   asset_id: number;
 }
 
