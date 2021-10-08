@@ -92,7 +92,7 @@ const SendForm = () => {
         <Section title="Amount" variant="gray">
           <AmountInput
             value={amount}
-            index={currency}
+            selected={currency}
             error={amountError}
             onChange={onInputChange}
           />

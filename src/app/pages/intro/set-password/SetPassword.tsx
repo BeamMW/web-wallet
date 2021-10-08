@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import {
   Window, Button, Input, Footer, Popup,
 } from 'app/uikit';
-import { View, setView } from '@app/model/view';
+import { View, setView, gotoProgress } from '@app/model/view';
 import { makeOnChange } from '@core/utils';
 import ArrowRightIcon from '@icons/icon-arrow-right.svg';
 import ArrowLeftIcon from '@icons/icon-arrow-left.svg';
@@ -45,7 +45,7 @@ const SetPassword = () => {
       password: pass,
       isSeedConfirmed: true,
     });
-    setView(View.PROGRESS);
+    gotoProgress();
   };
 
   const handlePrevious: React.MouseEventHandler = () => {

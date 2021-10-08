@@ -31,7 +31,7 @@ const containerStyle = css`
 
 interface AmountInputProps {
   value: string;
-  index: number;
+  selected: number;
   error?: string;
   pallete?: 'purple' | 'blue';
   onChange?: (value: [string, number]) => void;
@@ -41,7 +41,7 @@ const REG_AMOUNT = /^(?!0\d)(\d+)(\.)?(\d+)?$/;
 
 const AmountInput: React.FC<AmountInputProps> = ({
   value,
-  index,
+  selected,
   error,
   pallete = 'purple',
   onChange,
@@ -65,7 +65,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
 
     const next = parseFloat(raw) > AMOUNT_MAX
       ? AMOUNT_MAX.toString() : raw;
-    onChange([next, index]);
+    onChange([next, selected]);
   };
 
   const handleSelect = (next: number) => {
@@ -87,7 +87,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
       />
       <Select
         options={options}
-        selected={index}
+        selected={selected}
         className={selectClassName}
         onSelect={handleSelect}
       />

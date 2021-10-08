@@ -6,9 +6,11 @@ import {
   Environment,
   NotificationType,
 } from '@app/core/types';
-import { setView, View } from '@app/model/view';
+import { $view, setView, View } from '@app/model/view';
 import { remoteEvent, getEnvironment } from '@core/api';
 import NotificationController from '@app/core/NotificationController';
+
+import { startWalletFx } from '../login/model';
 
 export const setSyncProgress = createEvent<[number, number]>();
 
@@ -25,7 +27,7 @@ export const $syncPercent = $syncProgress.map<number>((state, last) => {
 
 export const setLoading = createEvent<boolean>();
 
-export const $loading = restore(setLoading, true);
+export const $loading = $view.map((view) => view === View.PROGRESS);
 
 // receive Progress data
 const onProgress = remoteEvent.filterMap(({ id, result }) => (

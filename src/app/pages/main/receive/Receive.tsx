@@ -10,7 +10,10 @@ import AmountInput from '@uikit/AmountInput';
 
 import {
   $addressPreview,
+  $amount,
+  $currency,
   getAddressFx,
+  onInputChange,
   onSubmit,
 } from './model';
 
@@ -20,10 +23,12 @@ const Receive = () => {
   }, []);
 
   const address = useStore($addressPreview);
+  const amount = useStore($amount);
+  const currency = useStore($currency);
 
   return (
     <Window
-      title="Send"
+      title="Receive"
       pallete="blue"
     >
       <form onSubmit={onSubmit}>
@@ -34,7 +39,12 @@ const Receive = () => {
           </span>
         </Section>
         <Section title="Amount" variant="gray">
-          <AmountInput pallete="blue" />
+          <AmountInput
+            value={amount}
+            selected={currency}
+            pallete="blue"
+            onChange={onInputChange}
+          />
         </Section>
         <Section title="Comment" variant="gray" collapse>
           <Input variant="gray" />

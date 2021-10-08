@@ -1,4 +1,5 @@
 import { curry, makePrevented } from '@core/utils';
+import exp from 'constants';
 import { createEvent, restore, sample } from 'effector';
 
 export enum View {
@@ -34,6 +35,8 @@ export const gotoReceive = makePrevented(
 );
 
 export const gotoWallet = curry(setView, View.WALLET);
+
+export const gotoProgress = curry(setView, View.PROGRESS);
 
 export const gotoForm = makePrevented(
   curry(setView, View.SEND_FORM),
