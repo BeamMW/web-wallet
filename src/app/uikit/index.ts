@@ -1,3 +1,4 @@
+export { default as Rate } from './Rate';
 export { default as Splash } from './Splash';
 export { default as Window } from './Window';
 export { default as Popup } from './Popup';

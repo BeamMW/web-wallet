@@ -1,3 +1,4 @@
+import { GROTHS_IN_BEAM } from '@app/model/rates';
 import { createEvent, Event } from 'effector';
 import React from 'react';
 
@@ -49,4 +50,16 @@ export function toUSD(amount: number, rate: number): string {
     default:
       return '< 1 cent';
   }
+}
+
+export function fromGroths(value: number): number {
+  return value / GROTHS_IN_BEAM;
+}
+
+export function toGroths(value: number): number {
+  return value * GROTHS_IN_BEAM;
+}
+
+export function getSign(positive: boolean): string {
+  return positive ? '+ ' : '- ';
 }

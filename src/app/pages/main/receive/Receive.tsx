@@ -11,7 +11,7 @@ import AmountInput from '@uikit/AmountInput';
 import {
   $addressPreview,
   $amount,
-  $currency,
+  $asset,
   getAddressFx,
   onInputChange,
   onSubmit,
@@ -24,7 +24,7 @@ const Receive = () => {
 
   const address = useStore($addressPreview);
   const amount = useStore($amount);
-  const currency = useStore($currency);
+  const asset = useStore($asset);
 
   return (
     <Window
@@ -41,7 +41,7 @@ const Receive = () => {
         <Section title="Amount" variant="gray">
           <AmountInput
             value={amount}
-            selected={currency}
+            asset_id={asset}
             pallete="blue"
             onChange={onInputChange}
           />

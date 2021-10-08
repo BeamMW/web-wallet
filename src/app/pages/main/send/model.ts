@@ -8,13 +8,16 @@ import {
   gotoWallet, gotoConfirm, gotoSend,
 } from '@app/model/view';
 
-import {
-  FEE_DEFAULT, GROTHS_IN_BEAM,
-} from '@app/model/rates';
+import { FEE_DEFAULT } from '@app/model/rates';
 
 import { AddressValidation } from '@app/core/types';
+
 import {
-  getInputValue, isNil, makePrevented,
+  isNil,
+  toGroths,
+  fromGroths,
+  getInputValue,
+  makePrevented,
 } from '@app/core/utils';
 
 import {
@@ -26,6 +29,8 @@ import {
 import { $assets, AssetTotal } from '@app/model/wallet';
 
 /* Constants */
+
+type Amount = [string, number];
 
 const ASSET_BLANK: AssetTotal = {
   asset_id: 0,
@@ -63,7 +68,7 @@ interface SendForm {
   comment: '',
 }
 
-export const onAmountChange = createEvent<[string, number]>();
+export const onAmountChange = createEvent<Amount>();
 export const onAddressChange = createEvent<ReactChangeEvent>();
 
 export const setOffline = createEvent<boolean>();
@@ -98,9 +103,11 @@ export const $ready = createStore(false);
 export const $selected = combine($assets, $form,
   (assets, { asset_id }) => assets.find(({ asset_id: id }) => id === asset_id) ?? ASSET_BLANK);
 
-const $beam = $assets.map((array) => array[0]);
+const $beam = $assets.map(([asset]) => asset);
 
-$ready.reset(onAmountChange);
+$ready.reset(onAmountChange, onAddressChange);
+$ready.on(validateAddressFx.done, () => true);
+$ready.on(calculateChangeFx.done, () => true);
 
 $form.on(setOffline, (state, offline) => ({
   ...state,
@@ -114,7 +121,7 @@ $form.on(onAmountChange, (state, [amount, asset_id]) => {
 
   return {
     ...state,
-    value: parseFloat(amount) * GROTHS_IN_BEAM,
+    value: toGroths(parseFloat(amount)),
     amount,
     asset_id,
   };
@@ -141,27 +148,6 @@ guard({
   source: setAddressDebounced,
   filter: (value) => value !== '',
   target: validateAddressFx,
-});
-
-const onAmountFromToken = validateAddressFx.doneData.filter({
-  fn: ({ amount }) => !isNil(amount),
-});
-
-// update amount and asset id
-sample({
-  source: $form,
-  clock: onAmountFromToken,
-  fn: ({
-    amount,
-    asset_id: previous,
-  }, {
-    amount: next,
-    asset_id,
-  }) => [
-    isNil(next) ? amount : next.toString(),
-    isNil(asset_id) ? previous : asset_id,
-  ] as [string, number],
-  target: onAmountChange,
 });
 
 /* Validate Amount */
@@ -201,40 +187,41 @@ $form.on(calculateChangeFx.doneData, (state, { explicit_fee: fee, change }) => (
   change,
 }));
 
-// call SendTransaction on submit
-sample({
-  source: $form,
-  clock: onConfirmSubmit,
-  fn: ({
-    fee,
-    value,
-    address,
-    offline,
-    comment,
-    asset_id,
-  }) => ({
-    fee,
-    value,
-    address,
-    offline,
-    comment,
-    asset_id,
-  }),
-  target: sendTransactionFx,
-});
-
-/* Set Max Amount */
-
+// set max amount
 sample({
   source: combine($selected, $form),
   clock: setMaxAmount,
   fn: ([{ available }, { asset_id, fee }]) => {
     const total = asset_id === 0 ? available - fee : available;
-    const amount = total / GROTHS_IN_BEAM;
-    const payload: [string, number] = [amount.toString(), asset_id];
-    return payload;
+    const amount = fromGroths(total);
+    return [amount.toString(), asset_id] as Amount;
   },
   target: onAmountChange,
+});
+
+const onAmountFromToken = validateAddressFx.doneData.filter({
+  fn: ({ amount }) => !isNil(amount),
+});
+
+// update amount and asset id
+sample({
+  source: $form,
+  clock: onAmountFromToken,
+  fn: ({
+    asset_id: previous,
+  }, { amount, asset_id }) => [
+    amount.toString(),
+    isNil(asset_id) ? previous : asset_id,
+  ] as Amount,
+  target: onAmountChange,
+});
+
+// call SendTransaction on submit
+sample({
+  source: $form,
+  clock: onConfirmSubmit,
+  fn: ({ amount, ...payload }) => payload,
+  target: sendTransactionFx,
 });
 
 /* Misc */
@@ -303,29 +290,25 @@ enum AmountError {
 }
 
 export const $amountError = combine(
-  $beam,
-  $form,
-  $selected,
-  (beam, {
-    fee,
-    amount,
-    value,
-  }, {
-    asset_id,
-    available,
-    metadata_pairs,
-  }) => {
+  $beam, $form, $selected,
+  (
+    beam,
+    { fee, amount, value },
+    { asset_id, available, metadata_pairs },
+  ) => {
     if (amount === '') {
       return null;
     }
 
-    if (value > available) {
-      return `${AmountError.AMOUNT} ${value} ${metadata_pairs.UN}`;
+    const total = value + fee;
+
+    if (total > available) {
+      const max = fromGroths(available - fee);
+      return `${AmountError.AMOUNT} ${max} ${metadata_pairs.UN}`;
     }
 
     if (
-      beam.available < fee
-      || (asset_id === 0 && value + fee > available)
+      beam.available < fee || (asset_id === 0 && total > available)
     ) {
       return AmountError.FEE;
     }

@@ -54,7 +54,7 @@ const TABLE_CONFIG = [
 const ActionsStyled = styled.div`
   display: flex;
   justify-content: space-between;
-  margin: 10px -4px 0;
+  margin: 10px -14px 0;
 
   > button {
     margin: 0 4px !important;

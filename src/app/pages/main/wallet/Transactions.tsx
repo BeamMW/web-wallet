@@ -16,7 +16,7 @@ interface TransactionsProps {
 const ListItemStyled = styled.li`
   position: relative;
   padding: 20px;
-  padding-left: 46px;
+  padding-left: 56px;
 
   &:nth-child(odd) {
     background-color: rgba(255, 255, 255, 0.05);

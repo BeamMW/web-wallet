@@ -2,9 +2,9 @@
 import React from 'react';
 import { useStore } from 'effector-react';
 
-import { $rate, GROTHS_IN_BEAM } from '@app/model/rates';
+import { GROTHS_IN_BEAM } from '@app/model/rates';
 import {
-  Window, Section, Input, Button, Title,
+  Window, Section, Input, Button, Title, Rate,
 } from 'app/uikit';
 import ArrowRightIcon from '@icons/icon-arrow-right.svg';
 import ArrowUpIcon from '@icons/icon-arrow-up.svg';
@@ -12,9 +12,9 @@ import ArrowUpIcon from '@icons/icon-arrow-up.svg';
 import { AmountInput } from '@uikit';
 
 import { styled } from '@linaria/react';
-import { toUSD } from '@app/core/utils';
 import LabeledToggle from '@app/uikit/LabeledToggle';
 import { css } from '@linaria/core';
+import { fromGroths } from '@app/core/utils';
 import {
   $valid,
   $address,
@@ -33,11 +33,6 @@ const WarningStyled = styled.div`
   margin: 30px -20px;
   font-family: 'SFProDisplay';
   font-style: italic;
-  color: var(--color-gray);
-`;
-
-const Ratetyled = styled.div`
-  margin-top: 4px;
   color: var(--color-gray);
 `;
 
@@ -65,10 +60,9 @@ const SendForm = () => {
   const [label, warning] = useStore($description);
 
   const selected = useStore($selected);
-  const rate = useStore($rate);
   const valid = useStore($valid);
 
-  const groths = selected.available / GROTHS_IN_BEAM;
+  const groths = fromGroths(selected.available);
 
   return (
     <Window
@@ -100,7 +94,7 @@ const SendForm = () => {
           />
           <Title variant="subtitle">Available</Title>
           {`${groths} ${selected.metadata_pairs.N}`}
-          { selected.asset_id === 0 && <Ratetyled>{toUSD(groths, rate)}</Ratetyled> }
+          { selected.asset_id === 0 && <Rate value={groths} /> }
           <Button
             variant="link"
             icon={ArrowUpIcon}
