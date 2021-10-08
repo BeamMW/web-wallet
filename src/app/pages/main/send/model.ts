@@ -6,7 +6,7 @@ import { debounce } from 'patronum/debounce';
 import { spread } from 'patronum/spread';
 
 import {
-  gotoWallet, gotoConfirm,
+  gotoWallet, gotoConfirm, gotoSend,
 } from '@app/model/view';
 
 import {
@@ -44,8 +44,6 @@ export const $address = restore(setAddress, '');
 export const $addressType = createStore<AddressType>(null);
 export const $addressValid = restore(setAddressValid, true);
 
-$addressType.on(setAddress, (state, value) => (value === '' ? null : state));
-
 export const setOffline = createEvent<boolean>();
 
 export const $offline = restore(setOffline, false);
@@ -54,41 +52,40 @@ export const $payments = createStore<number>(null);
 export const $description: Store<[string, string]> = combine(
   $address, $addressValid, $addressType, $offline, $payments,
   (address, valid, addressType, offline, payments) => {
-    if (address === '') {
+    if (address === '' || isNil(addressType)) {
       return [null, null];
     }
 
-    if (!valid) {
+    if (!valid || addressType === 'unknown') {
       return ['Invalid wallet address', null];
     }
 
-    const txs = payments === 1
-      ? `${payments} transaction left. Ask receiver to come online to support more offline transaction.`
-      : `${payments} transactions left.`;
-
-    switch (addressType) {
-      case 'max_privacy':
-        return [
-          'Guarantees maximum anonymity set of up to 64K.',
-          'Transaction can last at most 72 hours.',
-        ];
-      case 'offline':
-      case 'public_offline':
-      case 'regular':
-      case 'regular_new':
-        return [
-          offline
-            ? `Offline address. ${txs}`
-            : 'Regular address',
-          offline
-            ? 'Make sure the address is correct as offline transactions cannot be canceled.'
-            : 'The recipient must get online within the next 12 hours and you should get online within 2 hours afterwards.',
-        ];
-      default:
-        return [null, null];
+    if (addressType === 'max_privacy') {
+      return [
+        'Guarantees maximum anonymity set of up to 64K.',
+        'Transaction can last at most 72 hours.',
+      ];
     }
+
+    if (offline) {
+      const warning = payments === 1
+        ? 'transaction left. Ask receiver to come online to support more offline transaction.'
+        : 'transactions left.';
+
+      return [
+        `Offline address. ${payments} ${warning}`,
+        'Make sure the address is correct as offline transactions cannot be canceled.',
+      ];
+    }
+
+    return [
+      'Regular address',
+      'The recipient must get online within the next 12 hours and you should get online within 2 hours afterwards.',
+    ];
   },
 );
+
+$addressType.on(setAddress, (state, value) => (value === '' ? null : state));
 
 /* Asset Select */
 
@@ -118,6 +115,8 @@ export const onInputChange = createEvent<[string, number]>();
 const setAmount = onInputChange.map(([value]) => value);
 const setCurrency = onInputChange.map(([,value]) => value);
 
+export const setMaximum = createEvent<React.MouseEvent>();
+
 const setAmountPositive = setAmount.filter({
   fn: (amount) => parseFloat(amount) > 0,
 });
@@ -132,8 +131,33 @@ export const $change = createStore(0);
 export const $amount = restore(setAmount, '');
 export const $currency = restore(setCurrency, 0);
 
-export const $selected = combine($assets, $amount,
-  (array, [, index]) => array[index] ?? ASSET_BLANK);
+const STORES = [
+  $address,
+  $addressType,
+  $addressValid,
+  $offline,
+  $payments,
+  $fee,
+  $change,
+  $amount,
+  $currency,
+];
+
+STORES.forEach((store) => store.reset(gotoSend));
+
+export const $selected = combine($assets, $currency,
+  (array, index) => array[index] ?? ASSET_BLANK);
+
+sample({
+  source: combine($selected, $fee),
+  clock: setMaximum,
+  fn: ([{ available, asset_id }, fee]) => {
+    const total = asset_id === 0 ? available - fee : available;
+    const amount = total / GROTHS_IN_BEAM;
+    return amount.toString();
+  },
+  target: setAmount,
+});
 
 enum AmountError {
   FEE = 'Insufficient funds to pay transaction fee.',
@@ -173,8 +197,6 @@ export const $amountError = combine(
 
 const setAddressDebounced = debounce({ source: setAddress, timeout: 200 });
 const validateAddressFx = createEffect(validateAddress);
-
-validateAddressFx.doneData.watch((data) => console.log(data));
 
 export const $valid = combine(
   $address,

@@ -85,6 +85,11 @@ const IconButtonStyled = styled(BaseButtonStyled)`
   background-color: transparent;
   border: none;
   cursor: pointer;
+
+  > svg {
+    vertical-align: sub;
+    margin-right: 10px;
+  }
 `;
 
 const LinkButtonStyled = styled(IconButtonStyled)`

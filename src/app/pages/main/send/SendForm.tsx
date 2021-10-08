@@ -7,12 +7,14 @@ import {
   Window, Section, Input, Button, Title,
 } from 'app/uikit';
 import ArrowRightIcon from '@icons/icon-arrow-right.svg';
+import ArrowUpIcon from '@icons/icon-arrow-up.svg';
 
 import { AmountInput } from '@uikit';
 
 import { styled } from '@linaria/react';
 import { toUSD } from '@app/core/utils';
 import LabeledToggle from '@app/uikit/LabeledToggle';
+import { css } from '@linaria/core';
 import {
   $valid,
   $address,
@@ -28,6 +30,7 @@ import {
   $offline,
   $amount,
   $currency,
+  setMaximum,
 } from './model';
 
 const WarningStyled = styled.div`
@@ -40,6 +43,12 @@ const WarningStyled = styled.div`
 const Ratetyled = styled.div`
   margin-top: 4px;
   color: var(--color-gray);
+`;
+
+const maxButtonStyle = css`
+  position: absolute;
+  right: 20px;
+  top: 138px;
 `;
 
 const SendForm = () => {
@@ -90,6 +99,15 @@ const SendForm = () => {
           <Title variant="subtitle">Available</Title>
           {`${groths} ${selected.metadata_pairs.N}`}
           { selected.asset_id === 0 && <Ratetyled>{toUSD(groths, rate)}</Ratetyled> }
+          <Button
+            variant="link"
+            icon={ArrowUpIcon}
+            pallete="purple"
+            className={maxButtonStyle}
+            onClick={setMaximum}
+          >
+            max
+          </Button>
         </Section>
         <Section title="Comment" variant="gray" collapse>
           <Input variant="gray" />
