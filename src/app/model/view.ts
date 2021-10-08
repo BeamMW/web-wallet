@@ -1,5 +1,4 @@
 import { curry, makePrevented } from '@core/utils';
-import exp from 'constants';
 import { createEvent, restore, sample } from 'effector';
 
 export enum View {

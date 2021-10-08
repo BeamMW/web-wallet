@@ -273,13 +273,13 @@ sample({
 
 // call CalculateChange on setAmount w/ debounce
 sample({
-  source: $selected,
+  source: combine($offline, $selected),
   clock: setAmountDebounced,
-  fn: ({ asset_id }, [amount]) => ({
+  fn: ([offline, { asset_id }], amount) => ({
     asset_id,
     amount: parseFloat(amount) * GROTHS_IN_BEAM,
     fee: FEE_DEFAULT,
-    is_push_transaction: false,
+    is_push_transaction: offline,
   }),
 })
   .watch(calculateChangeFx);

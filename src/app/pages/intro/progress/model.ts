@@ -10,8 +10,6 @@ import { $view, setView, View } from '@app/model/view';
 import { remoteEvent, getEnvironment } from '@core/api';
 import NotificationController from '@app/core/NotificationController';
 
-import { startWalletFx } from '../login/model';
-
 export const setSyncProgress = createEvent<[number, number]>();
 
 export const $syncProgress = restore(setSyncProgress, [0, 0]);
