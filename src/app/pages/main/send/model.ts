@@ -123,7 +123,7 @@ $ready.reset(setAmount, onAddressChange);
 $ready.on(validateAddressFx.done, () => true);
 $ready.on(calculateChangeFx.done, () => true);
 
-const onSetMaxPrivacy = guard({
+const onMaxPrivacy = guard({
   source: validateAddressFx.doneData,
   filter: ({ type: addressType }) => addressType === 'max_privacy',
 });
@@ -152,12 +152,10 @@ const setAmountDebounced = debounce({
 });
 
 const $changeParams = $form.map(({
-  fee,
   value: amount,
   asset_id,
   offline: is_push_transaction,
 }) => ({
-  fee,
   amount,
   asset_id,
   is_push_transaction,
@@ -166,7 +164,7 @@ const $changeParams = $form.map(({
 // call CalculateChange on amount (should be positive) change w/ debounce
 const requestChange = sample({
   source: $changeParams,
-  clock: [setAmountDebounced, onSetMaxPrivacy, $offline],
+  clock: [setAmountDebounced, onMaxPrivacy, $offline],
 });
 
 guard({
@@ -271,7 +269,10 @@ export const $description: Store<[string, string]> = combine(
 /* Amount Field */
 
 const STORES = [
-  $form,
+  $address,
+  $amount,
+  $change,
+  $comment,
   $addressData,
   $ready,
 ];
