@@ -1,0 +1,38 @@
+{
+  "manifest_version": 2,
+  "name": "Beam Web Wallet%BEAM_NETWORK%",
+  "short_name": "Beam Web Wallet%BEAM_NETWORK%",
+  "description": "Beam Web Wallet%BEAM_NETWORK%",
+  "version": "%BEAM_VERSION%",
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "page": "background.html",
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["file://*/*", "http://*/*", "https://*/*"],
+      "js": [
+        "contentscript.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "icons": {
+    "16": "assets/chrome-extention-icon-16x16.png",
+    "48": "assets/chrome-extention-icon-48x48.png",
+    "128": "assets/chrome-extention-icon-128x128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "notifications",
+    "storage"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "web_accessible_resources": [
+    "inpage.js"
+  ]
+}
