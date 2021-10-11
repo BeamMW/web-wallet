@@ -22,7 +22,9 @@ jobs:
       - run: yarn --frozen-lockfile
 
       - name: Build wallet
-        run: yarn build
+        run: |
+          ./update_version.sh
+          yarn build
 
       - name: Upload build
         if: success()
