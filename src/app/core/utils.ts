@@ -57,7 +57,7 @@ export function fromGroths(value: number): number {
 }
 
 export function toGroths(value: number): number {
-  return value * GROTHS_IN_BEAM;
+  return Math.floor(value * GROTHS_IN_BEAM);
 }
 
 export function getSign(positive: boolean): string {

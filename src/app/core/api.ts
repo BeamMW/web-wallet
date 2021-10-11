@@ -2,7 +2,7 @@ import { createEvent, Subscription } from 'effector';
 import * as extensionizer from 'extensionizer';
 
 import {
-  AddressValidation,
+  AddressData,
   ChangeData,
   RPCEvent,
   RPCMethod,
@@ -120,8 +120,8 @@ export function createAddress() {
   return postMessage<string>(RPCMethod.CreateAddress);
 }
 
-export async function validateAddress(address: string): Promise<AddressValidation> {
-  const result = await postMessage<AddressValidation>(RPCMethod.ValidateAddress, { address });
+export async function validateAddress(address: string): Promise<AddressData> {
+  const result = await postMessage<AddressData>(RPCMethod.ValidateAddress, { address });
   const json = await postMessage(WalletMethod.ConvertTokenToJson, address);
 
   if (isNil(json)) {

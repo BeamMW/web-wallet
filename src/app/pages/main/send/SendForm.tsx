@@ -16,17 +16,24 @@ import LabeledToggle from '@app/uikit/LabeledToggle';
 import { css } from '@linaria/core';
 import { fromGroths } from '@app/core/utils';
 import {
-  $valid,
   $address,
-  $description,
-  $selected,
+  $offline,
+  $amount,
+  $comment,
+
   onAddressChange,
-  onFormSubmit,
-  $amountError,
-  onAmountChange,
+  onCommentChange,
+
   setOffline,
+  setAmount,
   setMaxAmount,
-  $form,
+  onFormSubmit,
+
+  $valid,
+  $selected,
+  $addressData,
+  $description,
+  $amountError,
 } from './model';
 
 const WarningStyled = styled.div`
@@ -43,17 +50,15 @@ const maxButtonStyle = css`
 `;
 
 const SendForm = () => {
-  const {
-    amount,
-    address,
-    offline,
-    asset_id,
-  } = useStore($form);
+  const address = useStore($address);
+  const offline = useStore($offline);
+  const comment = useStore($comment);
+  const [amount, asset_id] = useStore($amount);
 
   const {
     type: addressType,
     is_valid: addressValid,
-  } = useStore($address);
+  } = useStore($addressData);
 
   const amountError = useStore($amountError);
 
@@ -74,7 +79,7 @@ const SendForm = () => {
           <Input
             variant="gray"
             label={label}
-            valid={address === '' || addressValid}
+            valid={address === '' || label === null || addressValid}
             placeholder="Paste recipient address here"
             value={address}
             onInput={onAddressChange}
@@ -82,7 +87,12 @@ const SendForm = () => {
         </Section>
         { addressType === 'offline' && (
         <Section title="Transaction Type" variant="gray">
-          <LabeledToggle left="Online" right="Offline" value={offline} onChange={setOffline} />
+          <LabeledToggle
+            left="Online"
+            right="Offline"
+            value={offline}
+            onChange={setOffline}
+          />
         </Section>
         ) }
         <Section title="Amount" variant="gray">
@@ -90,14 +100,14 @@ const SendForm = () => {
             value={amount}
             asset_id={asset_id}
             error={amountError}
-            onChange={onAmountChange}
+            onChange={setAmount}
           />
           <Title variant="subtitle">Available</Title>
           {`${groths} ${selected.metadata_pairs.N}`}
           { selected.asset_id === 0 && <Rate value={groths} /> }
           <Button
-            variant="link"
             icon={ArrowUpIcon}
+            variant="link"
             pallete="purple"
             className={maxButtonStyle}
             onClick={setMaxAmount}
@@ -106,7 +116,11 @@ const SendForm = () => {
           </Button>
         </Section>
         <Section title="Comment" variant="gray" collapse>
-          <Input variant="gray" />
+          <Input
+            variant="gray"
+            value={comment}
+            onInput={onCommentChange}
+          />
         </Section>
         <WarningStyled>{ warning }</WarningStyled>
         <Button

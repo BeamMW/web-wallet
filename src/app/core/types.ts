@@ -126,11 +126,12 @@ export interface ChangeData {
 export type AddressType =
   'regular' | 'regular_new' | 'max_privacy' | 'offline' | 'public_offline' | 'unknown';
 
-export interface AddressValidation {
+export interface AddressData {
+  type: AddressType;
   is_mine: boolean;
   is_valid: boolean;
-  type: AddressType;
   payments: number;
+  // extra data from token
   amount: number;
   asset_id: number;
 }

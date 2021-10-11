@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 
-import { GROTHS_IN_BEAM } from '@app/model/rates';
-
 import {
-  Window, Section, Button,
+  Window, Section, Button, Rate,
 } from 'app/uikit';
 import ArrowRightIcon from '@icons/icon-arrow-right.svg';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';
 
+import { fromGroths, compact } from '@app/core/utils';
+import { AddressType } from '@app/core/types';
 import {
-  $form, onConfirmSubmit, $selected,
+  $form, onConfirmSubmit, $selected, $description, $change, $addressData,
 } from './model';
 
 const WarningSyled = styled.p`
@@ -22,24 +22,30 @@ const WarningSyled = styled.p`
   font-style: italic;
 `;
 
+const getTxType = (type: AddressType, offline: boolean): string => {
+  if (type === 'max_privacy') {
+    return 'Max Privacy';
+  }
+
+  return offline ? 'Offline' : 'Regular';
+};
+
 const Send = () => {
   const {
-    fee,
     value,
-    amount,
-    change,
     address,
     offline,
     asset_id,
   } = useStore($form);
 
-  const {
-    available,
-  } = useStore($selected);
+  const { available, metadata_pairs } = useStore($selected);
+  const [fee, change] = useStore($change);
+  const [, warning] = useStore($description);
+  const { type: addressType } = useStore($addressData);
 
   const remaining = asset_id === 0 ? available - fee - value : available - value;
 
-  const txType = offline ? 'Offline' : 'Regular';
+  const txType = getTxType(addressType, offline);
 
   return (
     <Window
@@ -47,16 +53,30 @@ const Send = () => {
       pallete="purple"
     >
       <form onSubmit={onConfirmSubmit}>
-        <Section title="Send to">{ address }</Section>
-        <Section title="Transaction type">{ txType }</Section>
-        <Section title="Amount">{ amount }</Section>
-        <Section title="Transaction Fee">{ fee / GROTHS_IN_BEAM }</Section>
-        <Section title="Change">{ change / GROTHS_IN_BEAM }</Section>
-        <Section title="Remaining">{ remaining / GROTHS_IN_BEAM }</Section>
-        <WarningSyled>
-          For the transaction to complete, the recipient must get online
-          within the next 12 hours and you should get online within 2 hours afterwards.
-        </WarningSyled>
+        <Section subtitle="Send to">{ compact(address) }</Section>
+        <Section subtitle="Transaction type">{ txType }</Section>
+        <Section subtitle="Amount">
+          { fromGroths(value) }
+          &nbsp;
+          { metadata_pairs.UN }
+        </Section>
+        <Section subtitle="Transaction Fee">
+          { fromGroths(fee) }
+          &nbsp;BEAM
+          <Rate value={fee} groths />
+        </Section>
+        <Section subtitle="Change">
+          { fromGroths(change) }
+          &nbsp;BEAM
+          <Rate value={change} groths />
+        </Section>
+        <Section subtitle="Remaining">
+          { fromGroths(remaining) }
+          { asset_id === 0 && (
+            <Rate value={remaining} groths />
+          ) }
+        </Section>
+        <WarningSyled>{ warning }</WarningSyled>
         <Button type="submit" pallete="purple" icon={ArrowRightIcon}>
           next
         </Button>

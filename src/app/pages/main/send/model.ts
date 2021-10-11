@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  combine, createEffect, createEvent, createStore, guard, sample, Store,
+  combine, createEffect, createEvent, createStore, guard, restore, sample, Store,
 } from 'effector';
 import { debounce } from 'patronum/debounce';
 
@@ -9,8 +9,6 @@ import {
 } from '@app/model/view';
 
 import { FEE_DEFAULT } from '@app/model/rates';
-
-import { AddressValidation } from '@app/core/types';
 
 import {
   isNil,
@@ -31,6 +29,7 @@ import { $assets, AssetTotal } from '@app/model/wallet';
 /* Constants */
 
 type Amount = [string, number];
+type Change = [number, number];
 
 const ASSET_BLANK: AssetTotal = {
   asset_id: 0,
@@ -57,39 +56,28 @@ const sendTransactionFx = createEffect(sendTransaction);
 
 /* Form */
 
-interface SendForm {
-  fee: number;
-  value: number;
-  change: number;
-  amount: string;
-  address: string;
-  offline: boolean;
-  asset_id: number;
-  comment: '',
-}
-
-export const onAmountChange = createEvent<Amount>();
-export const onAddressChange = createEvent<ReactChangeEvent>();
-
-export const setOffline = createEvent<boolean>();
 export const setMaxAmount = createEvent<React.MouseEvent>();
-export const setAddress = onAddressChange.map(getInputValue);
 
 export const onFormSubmit = makePrevented(gotoConfirm);
 export const onConfirmSubmit = makePrevented(gotoWallet);
 
-export const $form = createStore<SendForm>({
-  fee: FEE_DEFAULT,
-  value: 0,
-  change: 0,
-  amount: '',
-  address: '',
-  offline: false,
-  asset_id: 0,
-  comment: '',
-});
+export const onAddressChange = createEvent<ReactChangeEvent>();
+export const onCommentChange = createEvent<ReactChangeEvent>();
 
-export const $address = createStore<AddressValidation>({
+export const setAddress = onAddressChange.map(getInputValue);
+export const setComment = onCommentChange.map(getInputValue);
+
+export const setOffline = createEvent<boolean>();
+export const setAmount = createEvent<Amount>();
+export const setChange = createEvent<Change>();
+
+export const $address = restore(setAddress, '');
+export const $offline = restore(setOffline, false);
+export const $amount = restore<Amount>(setAmount, ['', 0]);
+export const $comment = restore(setComment, '');
+export const $change = restore(setChange, [FEE_DEFAULT, 0]);
+
+export const $addressData = restore(validateAddressFx.doneData, {
   type: null,
   amount: null,
   is_mine: null,
@@ -98,6 +86,32 @@ export const $address = createStore<AddressValidation>({
   payments: null,
 });
 
+export const $form = combine(
+  $addressData,
+  $change,
+  $amount,
+  $address,
+  $offline,
+  $comment,
+  (
+    { type },
+    [fee], [amount, asset_id],
+    address, offline, comment,
+  ) => {
+    const isMaxPrivacy = type === 'max_privacy';
+    const value = amount === '' ? 0 : toGroths(parseFloat(amount));
+
+    return {
+      fee,
+      value,
+      address,
+      comment,
+      asset_id,
+      offline: offline || isMaxPrivacy,
+    };
+  },
+);
+
 export const $ready = createStore(false);
 
 export const $selected = combine($assets, $form,
@@ -105,36 +119,16 @@ export const $selected = combine($assets, $form,
 
 const $beam = $assets.map(([asset]) => asset);
 
-$ready.reset(onAmountChange, onAddressChange);
+$ready.reset(setAmount, onAddressChange);
 $ready.on(validateAddressFx.done, () => true);
 $ready.on(calculateChangeFx.done, () => true);
 
-$form.on(setOffline, (state, offline) => ({
-  ...state,
-  offline,
-}));
-
-$form.on(onAmountChange, (state, [amount, asset_id]) => {
-  if (state.amount === amount && state.asset_id === asset_id) {
-    return state;
-  }
-
-  return {
-    ...state,
-    value: toGroths(parseFloat(amount)),
-    amount,
-    asset_id,
-  };
+const onSetMaxPrivacy = guard({
+  source: validateAddressFx.doneData,
+  filter: ({ type: addressType }) => addressType === 'max_privacy',
 });
 
-$form.on(setAddress, (state, address) => ({
-  ...state,
-  address,
-}));
-
-$address.on(validateAddressFx.doneData, (state, payload) => payload);
-
-$address.reset(setAddress);
+$addressData.reset(setAddress);
 
 /* Validate Address */
 
@@ -152,40 +146,37 @@ guard({
 
 /* Validate Amount */
 
-const onAmountChangeDebounced = debounce({
-  source: onAmountChange,
+const setAmountDebounced = debounce({
+  source: setAmount,
   timeout: 200,
 });
 
-const onAmountChangePositive = guard({
-  source: $form,
-  clock: onAmountChangeDebounced,
-  filter: ({ value }) => value > 0,
+const $changeParams = $form.map(({
+  fee,
+  value: amount,
+  asset_id,
+  offline: is_push_transaction,
+}) => ({
+  fee,
+  amount,
+  asset_id,
+  is_push_transaction,
+}));
+
+// call CalculateChange on amount (should be positive) change w/ debounce
+const requestChange = sample({
+  source: $changeParams,
+  clock: [setAmountDebounced, onSetMaxPrivacy, $offline],
 });
 
-// call CalculateChange on amount change w/ debounce
-sample({
-  clock: onAmountChangePositive,
-  fn: ({
-    fee,
-    asset_id,
-    value: amount,
-    offline: is_push_transaction,
-  }) => ({
-    fee,
-    amount,
-    asset_id,
-    is_push_transaction,
-  }),
+guard({
+  source: requestChange,
+  filter: ({ amount }) => amount > 0,
   target: calculateChangeFx,
 });
 
 // update fee & change
-$form.on(calculateChangeFx.doneData, (state, { explicit_fee: fee, change }) => ({
-  ...state,
-  fee,
-  change,
-}));
+$change.on(calculateChangeFx.doneData, (state, { explicit_fee: fee, change }) => [fee, change]);
 
 // set max amount
 sample({
@@ -193,10 +184,10 @@ sample({
   clock: setMaxAmount,
   fn: ([{ available }, { asset_id, fee }]) => {
     const total = asset_id === 0 ? available - fee : available;
-    const amount = fromGroths(total);
-    return [amount.toString(), asset_id] as Amount;
+    const amount = fromGroths(total).toString();
+    return [amount, asset_id] as Amount;
   },
-  target: onAmountChange,
+  target: setAmount,
 });
 
 const onAmountFromToken = validateAddressFx.doneData.filter({
@@ -207,20 +198,17 @@ const onAmountFromToken = validateAddressFx.doneData.filter({
 sample({
   source: $form,
   clock: onAmountFromToken,
-  fn: ({
-    asset_id: previous,
-  }, { amount, asset_id }) => [
+  fn: ({ asset_id: previous }, { amount, asset_id }) => [
     amount.toString(),
     isNil(asset_id) ? previous : asset_id,
   ] as Amount,
-  target: onAmountChange,
+  target: setAmount,
 });
 
 // call SendTransaction on submit
 sample({
   source: $form,
   clock: onConfirmSubmit,
-  fn: ({ amount, ...payload }) => payload,
   target: sendTransactionFx,
 });
 
@@ -230,9 +218,22 @@ type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
 
 /* Send Address */
 
+enum AddressLabel {
+  ERROR = 'Invalid wallet address',
+  MAX_PRIVACY = 'Guarantees maximum anonymity set of up to 64K.',
+  OFFLINE = 'Offline address.',
+  REGULAR = 'Regular address',
+}
+
+enum AddresssTip {
+  MAX_PRIVACY = 'Transaction can last at most 72 hours.',
+  OFFLINE = 'Make sure the address is correct as offline transactions cannot be canceled.',
+  REGULAR = 'The recipient must get online within the next 12 hours and you should get online within 2 hours afterwards.',
+}
+
 export const $description: Store<[string, string]> = combine(
   $form,
-  $address,
+  $addressData,
   ({
     address,
     offline,
@@ -246,31 +247,24 @@ export const $description: Store<[string, string]> = combine(
     }
 
     if (!is_valid || addressType === 'unknown') {
-      return ['Invalid wallet address', null];
+      return [AddressLabel.ERROR, null];
     }
 
     if (addressType === 'max_privacy') {
-      return [
-        'Guarantees maximum anonymity set of up to 64K.',
-        'Transaction can last at most 72 hours.',
-      ];
+      return [AddressLabel.MAX_PRIVACY, AddresssTip.MAX_PRIVACY];
     }
 
     if (offline) {
       const warning = payments === 1
-        ? 'transaction left. Ask receiver to come online to support more offline transaction.'
-        : 'transactions left.';
+        ? 'transactions left.'
+        : 'transaction left. Ask receiver to come online to support more offline transaction.';
 
-      return [
-        `Offline address. ${payments} ${warning}`,
-        'Make sure the address is correct as offline transactions cannot be canceled.',
-      ];
+      const label = `${AddressLabel.OFFLINE} ${payments} ${warning}`;
+
+      return [label, AddresssTip.OFFLINE];
     }
 
-    return [
-      'Regular address',
-      'The recipient must get online within the next 12 hours and you should get online within 2 hours afterwards.',
-    ];
+    return [AddressLabel.REGULAR, AddresssTip.REGULAR];
   },
 );
 
@@ -278,7 +272,7 @@ export const $description: Store<[string, string]> = combine(
 
 const STORES = [
   $form,
-  $address,
+  $addressData,
   $ready,
 ];
 
@@ -293,24 +287,22 @@ export const $amountError = combine(
   $beam, $form, $selected,
   (
     beam,
-    { fee, amount, value },
-    { asset_id, available, metadata_pairs },
+    { fee, value },
+    { available, metadata_pairs },
   ) => {
-    if (amount === '') {
+    if (value === 0 || isNil(beam)) {
       return null;
     }
 
     const total = value + fee;
 
+    if (beam.available < fee) {
+      return AmountError.FEE;
+    }
+
     if (total > available) {
       const max = fromGroths(available - fee);
       return `${AmountError.AMOUNT} ${max} ${metadata_pairs.UN}`;
-    }
-
-    if (
-      beam.available < fee || (asset_id === 0 && total > available)
-    ) {
-      return AmountError.FEE;
     }
 
     return null;
@@ -321,7 +313,7 @@ export const $valid = combine(
   validateAddressFx.pending,
   $ready,
   $form,
-  $address,
+  $addressData,
   $amountError,
   (pending, ready, { value }, { is_valid }, amountError) => (
     !pending && ready && is_valid && value > 0 && isNil(amountError)

@@ -67,11 +67,13 @@ interface OptionProps {
   // eslint-disable-next-line
   value: any;
   active?: boolean;
+  onClick?: React.MouseEventHandler,
 }
 
 export const Option: React.FC<OptionProps> = ({
   active,
   children,
+  onClick,
 }) => {
   if (active) {
     return (
@@ -82,7 +84,7 @@ export const Option: React.FC<OptionProps> = ({
   }
 
   return (
-    <OptionStyled>
+    <OptionStyled onClick={onClick}>
       {children}
     </OptionStyled>
   );
@@ -134,6 +136,7 @@ export const Select: React.FC<SelectProps> = ({
         }
 
         onSelect(next);
+        setOpened(false);
       };
 
       return React.cloneElement(child as React.ReactElement, {

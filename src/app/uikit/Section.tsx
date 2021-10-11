@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { styled } from '@linaria/react';
 
+import { isNil } from '@app/core/utils';
 import Title from './Title';
 import Angle from './Angle';
 
 interface SectionProps {
   title?: string;
+  subtitle?: string;
   collapse?: boolean;
   variant?: 'regular' | 'gray';
 }
@@ -42,6 +44,7 @@ const Section: React.FC<SectionProps> = ({
   title,
   collapse = false,
   variant = 'regular',
+  subtitle,
   children,
 }) => {
   const [hidden, setHidden] = useState(false);
@@ -62,7 +65,8 @@ const Section: React.FC<SectionProps> = ({
         <Angle value={hidden ? 180 : 0} margin={hidden ? 3 : 3} />
       </ButtonStyled>
       )}
-      <Title>{title}</Title>
+      { !isNil(title) && (<Title>{title}</Title>) }
+      { !isNil(subtitle) && (<Title variant="subtitle">{subtitle}</Title>) }
       { !hidden && children }
     </SectionComponent>
   );
