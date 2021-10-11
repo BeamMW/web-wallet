@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 REGEX="beam-wasm-client\-?([a-z]*)@([0-9]+\.[0-9]+\.[0-9]+)"
 OUTPUT=$(npm list | grep beam-wasm-client*)
