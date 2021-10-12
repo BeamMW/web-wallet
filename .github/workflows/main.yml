@@ -27,14 +27,14 @@ jobs:
         run: |
           ./update_version.sh
           echo "BEAM_VERSION=$(cat version.gen)" >> $GITHUB_ENV
-          echo "BEAM_TARGET_PREFIX=$(cat network.gen)" >> $GITHUB_ENV
+          echo "BEAM_TARGET_SUFFIX=$(cat suffix.gen)" >> $GITHUB_ENV
           rm version.gen
-          rm network.gen
+          rm suffix.gen
           yarn build
 
       - name: Upload build
         if: success()
         uses: actions/upload-artifact@v1
         with:
-          name: {{env.BEAM_TARGET_PREFIX}} Web-wallet{{env.BEAM_VERSION}}
+          name: beam-web-wallet${{env.BEAM_TARGET_SUFFIX}}-${{env.BEAM_VERSION}}
           path: dist
