@@ -13,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v2
         with:
@@ -24,11 +26,15 @@ jobs:
       - name: Build wallet
         run: |
           ./update_version.sh
+          echo "BEAM_VERSION=$(cat version.gen)" >> $GITHUB_ENV
+          echo "BEAM_TARGET_PREFIX=$(cat network.gen)" >> $GITHUB_ENV
+          rm version.gen
+          rm network.gen
           yarn build
 
       - name: Upload build
         if: success()
         uses: actions/upload-artifact@v1
         with:
-          name: Masternet Web-wallet
+          name: {{env.BEAM_TARGET_PREFIX}} Web-wallet{{env.BEAM_VERSION}}
           path: dist
