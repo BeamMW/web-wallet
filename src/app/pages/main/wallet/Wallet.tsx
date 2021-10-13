@@ -10,9 +10,11 @@ import { compact, isNil } from '@core/utils';
 import { gotoSend, gotoReceive } from '@app/model/view';
 import { getRateFx, GROTHS_IN_BEAM } from '@app/model/rates';
 
-import ArrowUpIcon from '@icons/icon-arrow-up.svg';
-import ArrowDownIcon from '@icons/icon-arrow-down.svg';
-import MenuIcon from '@icons/icon-menu.svg';
+import {
+  ArrowUpIcon,
+  ArrowDownIcon,
+  MenuIcon,
+} from '@app/icons';
 
 import { css } from '@linaria/core';
 import { $assets, $transactions } from '@app/model/wallet';
@@ -66,6 +68,7 @@ const menuButtonStyle = css`
   z-index: 3;
   top: 74px;
   left: 24px;
+  margin: 0;
 `;
 
 const Wallet = () => {

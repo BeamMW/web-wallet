@@ -8,9 +8,11 @@ import {
 import { View, setView } from '@app/model/view';
 import { $seed, generateSeedFx } from '@app/model/base';
 
-import DoneIcon from '@icons/icon-done.svg';
-import LockIcon from '@icons/icon-lock.svg';
-import ArrowRightIcon from '@icons/icon-arrow-right.svg';
+import {
+  DoneIcon,
+  LockIcon,
+  ArrowRightIcon,
+} from '@app/icons';
 
 const SeedListStyled = styled.ol`
   counter-reset: counter;

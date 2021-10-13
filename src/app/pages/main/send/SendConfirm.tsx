@@ -4,7 +4,10 @@ import React from 'react';
 import {
   Window, Section, Button, Rate,
 } from 'app/uikit';
-import ArrowRightIcon from '@icons/icon-arrow-right.svg';
+
+import {
+  ArrowRightIcon,
+} from '@app/icons';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';

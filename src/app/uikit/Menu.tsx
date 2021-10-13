@@ -4,7 +4,7 @@ import { $view, setView, View } from '@app/model/view';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
-import CancelIcon from '@icons/icon-cancel.svg';
+import { CancelIcon } from '@app/icons';
 
 import { useStore } from 'effector-react';
 import Button from './Button';
@@ -45,16 +45,19 @@ const ListItemStyled = styled.li<{ active: boolean }>`
   padding-left: 70px;
   background-image: ${
   ({ active }) => (
-    active ? 'linear-gradient(to right, rgba(5, 226, 194, 0.1), rgba(5, 226, 194, 0))' : 'none'
+    !active ? 'none'
+      : 'linear-gradient(to right, rgba(5, 226, 194, 0.1), rgba(5, 226, 194, 0))'
   )};
   text-align: left;
   font-size: 16px;
+  cursor: ${({ active }) => (active ? 'default' : 'pointer')};
 `;
 
 const buttonStyle = css`
   position: absolute;
   top: 24px;
   left: 24px;
+  margin: 0;
 `;
 
 interface MenuProps {

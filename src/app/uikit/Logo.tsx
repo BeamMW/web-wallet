@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from '@linaria/core';
 
-import LogoIcon from '@icons/icon-logo.svg';
+import { LogoIcon } from '@app/icons';
 
 interface LogoProps {
   size?: 'large' | 'small' | 'icon';

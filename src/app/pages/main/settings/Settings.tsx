@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
-import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
-import IconRemove from '@icons/icon-remove.svg';
+import { RemoveIcon } from '@app/icons';
 
 import {
   Button,
@@ -25,7 +24,7 @@ const Settings = () => {
           <Button
             variant="block"
             pallete="red"
-            icon={IconRemove}
+            icon={RemoveIcon}
             onClick={() => toggleWarning(true)}
           >
             Remove current wallet

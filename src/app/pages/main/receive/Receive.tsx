@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect } from 'react';
+import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';
 
 import {
   Window, Section, Button, Input,
 } from '@uikit';
+
+import { CopySmallIcon } from '@app/icons';
 
 import AmountInput from '@uikit/AmountInput';
 
@@ -14,8 +17,13 @@ import {
   $asset,
   getAddressFx,
   onInputChange,
-  onSubmit,
+  copyAddress,
+  copyAndClose,
 } from './model';
+
+const AddresStyled = styled.div`
+  line-height: 24px;
+`;
 
 const Receive = () => {
   useEffect(() => {
@@ -31,12 +39,18 @@ const Receive = () => {
       title="Receive"
       pallete="blue"
     >
-      <form onSubmit={onSubmit}>
+      <form onSubmit={copyAndClose}>
         <Section title="Address" variant="gray">
-          <span>
+          <AddresStyled>
             { address }
             &nbsp;
-          </span>
+            <Button
+              variant="icon"
+              pallete="white"
+              icon={CopySmallIcon}
+              onClick={copyAddress}
+            />
+          </AddresStyled>
         </Section>
         <Section title="Amount" variant="gray">
           <AmountInput
@@ -46,9 +60,9 @@ const Receive = () => {
             onChange={onInputChange}
           />
         </Section>
-        <Section title="Comment" variant="gray" collapse>
+        {/* <Section title="Comment" variant="gray" collapse>
           <Input variant="gray" />
-        </Section>
+        </Section> */}
         <Button
           pallete="blue"
           type="submit"

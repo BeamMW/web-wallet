@@ -6,8 +6,10 @@ import {
   Popup, Splash, Button,
 } from 'app/uikit';
 
-import AddIcon from '@icons/icon-add.svg';
-import DoneIcon from '@icons/icon-done.svg';
+import {
+  AddIcon,
+  DoneIcon,
+} from '@app/icons';
 
 import { $phase, LoginPhase, setLoginPhase } from './model';
 

@@ -2,8 +2,11 @@ import React from 'react';
 
 import { WalletTotal } from '@core/types';
 
-import BeamIconSvg from '@icons/icon-beam.svg';
-import AssetIconSvg from '@icons/icon-asset.svg';
+import {
+  BeamIcon as BeamIconSvg,
+  AssetIcon as AssetIconSvg,
+} from '@app/icons';
+
 import { styled } from '@linaria/react';
 import { PALLETE_ASSETS } from '@app/model/wallet';
 

@@ -1,4 +1,4 @@
-export type Pallete = 'green' | 'ghost' | 'purple' | 'blue' | 'red';
+export type Pallete = 'green' | 'ghost' | 'purple' | 'blue' | 'red' | 'white';
 
 export type ButtonVariant = 'regular' | 'ghost' | 'block' | 'link' | 'icon';
 

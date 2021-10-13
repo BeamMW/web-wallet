@@ -2,12 +2,14 @@
 import React from 'react';
 import { useStore } from 'effector-react';
 
-import { GROTHS_IN_BEAM } from '@app/model/rates';
 import {
   Window, Section, Input, Button, Title, Rate,
 } from 'app/uikit';
-import ArrowRightIcon from '@icons/icon-arrow-right.svg';
-import ArrowUpIcon from '@icons/icon-arrow-up.svg';
+
+import {
+  ArrowRightIcon,
+  ArrowUpIcon,
+} from '@app/icons';
 
 import { AmountInput } from '@uikit';
 
@@ -105,23 +107,25 @@ const SendForm = () => {
           <Title variant="subtitle">Available</Title>
           {`${groths} ${selected.metadata_pairs.N}`}
           { selected.asset_id === 0 && <Rate value={groths} /> }
-          <Button
-            icon={ArrowUpIcon}
-            variant="link"
-            pallete="purple"
-            className={maxButtonStyle}
-            onClick={setMaxAmount}
-          >
-            max
-          </Button>
+          { groths > 0 && (
+            <Button
+              icon={ArrowUpIcon}
+              variant="link"
+              pallete="purple"
+              className={maxButtonStyle}
+              onClick={setMaxAmount}
+            >
+              max
+            </Button>
+          )}
         </Section>
-        <Section title="Comment" variant="gray" collapse>
+        {/* <Section title="Comment" variant="gray" collapse>
           <Input
             variant="gray"
             value={comment}
             onInput={onCommentChange}
           />
-        </Section>
+        </Section> */}
         <WarningStyled>{ warning }</WarningStyled>
         <Button
           pallete="purple"

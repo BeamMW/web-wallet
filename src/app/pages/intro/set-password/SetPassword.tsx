@@ -6,8 +6,8 @@ import {
 } from 'app/uikit';
 import { View, setView, gotoProgress } from '@app/model/view';
 import { makeOnChange } from '@core/utils';
-import ArrowRightIcon from '@icons/icon-arrow-right.svg';
-import ArrowLeftIcon from '@icons/icon-arrow-left.svg';
+
+import { ArrowLeftIcon, ArrowRightIcon } from '@app/icons';
 
 import { createWallet } from '@app/core/api';
 import { useStore } from 'effector-react';

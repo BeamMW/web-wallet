@@ -6,10 +6,12 @@ import {
 } from '@uikit';
 import { View, setView } from '@app/model/view';
 
-import EyeIcon from '@icons/icon-eye.svg';
-import PassIcon from '@icons/icon-pass.svg';
-import CopyIcon from '@icons/icon-copy.svg';
-import DoneIcon from '@icons/icon-done.svg';
+import {
+  EyeIcon,
+  PassIcon,
+  CopyIcon,
+  DoneIcon,
+} from '@app/icons';
 
 const WarningListStyled = styled.ul`
   > li {

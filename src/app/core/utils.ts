@@ -53,11 +53,11 @@ export function toUSD(amount: number, rate: number): string {
 }
 
 export function fromGroths(value: number): number {
-  return value / GROTHS_IN_BEAM;
+  return value > 0 ? value / GROTHS_IN_BEAM : 0;
 }
 
 export function toGroths(value: number): number {
-  return Math.floor(value * GROTHS_IN_BEAM);
+  return value > 0 ? Math.floor(value * GROTHS_IN_BEAM) : 0;
 }
 
 export function getSign(positive: boolean): string {

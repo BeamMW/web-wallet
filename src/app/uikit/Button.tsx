@@ -79,16 +79,17 @@ const BlockButtonStyled = styled(GhostButtonStyled)`
 
 const IconButtonStyled = styled(BaseButtonStyled)`
   display: inline-block;
+  vertical-align: sub;
   line-height: 0;
-  margin: 0;
+  margin: 0 10px;
   padding: 0;
   background-color: transparent;
   border: none;
   cursor: pointer;
+  color: ${({ pallete }) => `var(--color-${pallete})`};
 
   > svg {
     vertical-align: sub;
-    margin-right: 10px;
   }
 `;
 

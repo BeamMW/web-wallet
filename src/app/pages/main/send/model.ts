@@ -181,7 +181,8 @@ sample({
   source: combine($selected, $form),
   clock: setMaxAmount,
   fn: ([{ available }, { asset_id, fee }]) => {
-    const total = asset_id === 0 ? available - fee : available;
+    const total = asset_id === 0
+      ? Math.max(available - fee, 0) : available;
     const amount = fromGroths(total).toString();
     return [amount, asset_id] as Amount;
   },

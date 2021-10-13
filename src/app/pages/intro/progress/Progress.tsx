@@ -4,8 +4,11 @@ import { styled } from '@linaria/react';
 
 import { Button, Splash, Footer } from 'app/uikit';
 import { setView, View } from '@app/model/view';
-import CancelIcon from '@icons/icon-cancel.svg';
 import WasmWallet from '@core/WasmWallet';
+
+import {
+  CancelIcon,
+} from '@app/icons';
 
 import ProgressBar from './ProgressBar';
 import {
@@ -30,7 +33,7 @@ const SubtitleStyled = styled.h3`
 const wallet = WasmWallet.getInstance();
 
 const Progress = () => {
-  const [done, total] = useStore($syncProgress);
+  const [total] = useStore($syncProgress);
   const syncPercent = useStore($syncPercent);
   const loading = useStore($loading);
 
@@ -41,20 +44,20 @@ const Progress = () => {
   };
 
   const active = total > 0;
-  const progress = `Syncing with blockchain ${syncPercent}% (${done}/${total})`;
+  const progress = `Syncing with blockchain ${syncPercent}%`;
 
   return (
     <Splash size="small">
       <TitleStyled>Loading</TitleStyled>
       <SubtitleStyled>{active && progress}</SubtitleStyled>
       <ProgressBar active={active} percent={syncPercent} />
-      <Footer>
+      {/* <Footer>
         { loading && (
         <Button variant="ghost" icon={CancelIcon} onClick={handleCancelClick}>
           cancel
         </Button>
         ) }
-      </Footer>
+      </Footer> */}
     </Splash>
   );
 };

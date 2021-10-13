@@ -20,7 +20,6 @@
       "@uikit/*": ["app/uikit/*"],
       "@pages/*": ["app/pages/*"],
       "@state/*": ["app/state/*"],
-      "@icons/*": ["app/icons/*"],
       "@assets/*": ["assets/*"]
     }
   },

@@ -18,6 +18,7 @@ css`
       --color-dark-blue: #042548;
       --color-white: #ffffff;
       --color-gray: #8196a4;
+      --color-white: white;
 
       --color-popup: #003f6f;
       --color-select: #184469;

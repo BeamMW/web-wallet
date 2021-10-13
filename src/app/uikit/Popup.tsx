@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import CancelIcon from '@icons/icon-cancel.svg';
+import { CancelIcon } from '@app/icons';
 
 import Backdrop from './Backdrop';
 import Button from './Button';

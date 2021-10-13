@@ -160,7 +160,6 @@ export function rejectContractInfoRequest(req) {
 export interface CalculateChangeParams {
   amount: number;
   asset_id: number;
-  fee: number;
   is_push_transaction: boolean;
 }
 

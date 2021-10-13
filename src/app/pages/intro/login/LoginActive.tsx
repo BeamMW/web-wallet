@@ -7,8 +7,10 @@ import {
 
 import { isNil } from '@app/core/utils';
 
-import WalletSmallIcon from '@icons/icon-wallet-small.svg';
-import DoneIcon from '@icons/icon-done.svg';
+import {
+  WalletSmallIcon,
+  DoneIcon,
+} from '@app/icons';
 
 import {
   $error, startWalletFx, LoginPhase, setLoginPhase,

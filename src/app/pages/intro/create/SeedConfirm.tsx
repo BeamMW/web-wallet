@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Button, Footer, Window } from 'app/uikit';
-import ArrowRightIcon from '@icons/icon-arrow-right.svg';
+import { ArrowRightIcon } from '@app/icons';
 
 import { $ids, $seed } from '@app/model/base';
 import { useStore } from 'effector-react';

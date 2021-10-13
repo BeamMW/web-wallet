@@ -1,22 +1,24 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import TxCanceledIcon from '@icons/icon-tx-canceled.svg';
-import TxCompletedIcon from '@icons/icon-tx-completed.svg';
-import TxPendingIcon from '@icons/icon-tx-pending.svg';
+import {
+  TxCanceledIcon,
+  TxCanceledMPIcon,
+  TxCanceledOffIcon,
 
-import TxCanceledMPIcon from '@icons/icon-tx-canceled-mp.svg';
-import TxCompletedMPIcon from '@icons/icon-tx-completed-mp.svg';
-import TxPendingMPIcon from '@icons/icon-tx-pending-mp.svg';
+  TxCompletedIcon,
+  // TxCompletedMPOwnIcon,
+  TxCompletedMPIcon,
+  TxCompletedOffIcon,
+  TxCompletedOwnIcon,
 
-import TxCompletedOwnIcon from '@icons/icon-tx-completed-own.svg';
-import TxPendingOwnIcon from '@icons/icon-tx-pending-own.svg';
+  TxPendingIcon,
+  TxPendingMPIcon,
+  TxPendingOffIcon,
+  TxPendingOwnIcon,
 
-import TxCanceledOffIcon from '@icons/icon-tx-canceled-off.svg';
-import TxCompletedOffIcon from '@icons/icon-tx-completed-off.svg';
-import TxPendingOffIcon from '@icons/icon-tx-pending-off.svg';
-
-import TxExpiredIcon from '@icons/icon-tx-expired.svg';
+  TxExpiredIcon,
+} from '@app/icons';
 
 import {
   Transaction, TxStatus, TxStatusString,

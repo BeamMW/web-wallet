@@ -7,9 +7,11 @@ import {
   Popup,
 } from '@app/uikit';
 
-import CancelIcon from '@icons/icon-cancel.svg';
-import ArrowRightIcon from '@icons/icon-arrow-right.svg';
-import RemoveIcon from '@icons/icon-remove.svg';
+import {
+  CancelIcon,
+  ArrowRightIcon,
+  RemoveIcon,
+} from '@app/icons';
 
 import { deleteWalletFx } from './model';
 

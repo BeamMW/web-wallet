@@ -155,7 +155,9 @@ export const Select: React.FC<SelectProps> = ({
     <ContainerStyled className={className}>
       <ButtonStyled type="button" onMouseDown={handleMouseDown}>
         { (selected as ReactElement).props.children }
-        <Angle className={angleStyle} value={opened ? 180 : 90} margin={opened ? 3 : 1} />
+        { options.length > 1 && (
+          <Angle className={angleStyle} value={opened ? 180 : 90} margin={opened ? 3 : 1} />
+        )}
       </ButtonStyled>
       {opened && (
         <SelectStyled ref={selectRef} tabIndex={-1} onBlur={handleBlur}>

@@ -19,8 +19,9 @@ const ContainerStyled = styled.div`
   margin-bottom: 20px;
 `;
 
-const TitleStyled = styled.div`
-  height: 26px;
+const LabelStyled = styled.div`
+  display: inline-block;
+  vertical-align: bottom;
   line-height: 26px;
 `;
 
@@ -90,7 +91,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
           .map(({ asset_id: id, metadata_pairs }) => (
             <Option key={id} value={id}>
               <AssetIcon asset_id={id} />
-              { metadata_pairs.UN }
+              <LabelStyled>{ metadata_pairs.UN }</LabelStyled>
             </Option>
           ))}
       </Select>

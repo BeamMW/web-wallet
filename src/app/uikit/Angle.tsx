@@ -1,7 +1,9 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import AngleSmallUpIcon from '@icons/icon-angle-small-up.svg';
+import {
+  AngleSmallUpIcon,
+} from '@app/icons';
 
 interface AngleProps {
   value?: number;
