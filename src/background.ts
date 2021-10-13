@@ -107,12 +107,12 @@ function handleConnect(remote) {
       break;
     }
 
-    case 'content2':
-      NotificationManager.setPort2(remote);
+    case Environment.CONTENT:
+      NotificationManager.setPort(remote);
       break;
 
-    case Environment.CONTENT: {
-      NotificationManager.setPort(remote);
+    case Environment.CONTENT_REQ: {
+      NotificationManager.setReqPort(remote);
       contentPort = remote;
       contentPort.onMessage.addListener((msg) => {
         if (msg.type === 'create_beam_api') {

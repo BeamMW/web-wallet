@@ -275,6 +275,7 @@ export enum Environment {
   FULLSCREEN = 'fullscreen',
   BACKGROUND = 'background',
   CONTENT = 'content',
+  CONTENT_REQ = 'content_req',
 }
 
 export interface ConnectRequest {

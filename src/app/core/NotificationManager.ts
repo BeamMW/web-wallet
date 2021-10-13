@@ -3,28 +3,28 @@ import ExtensionPlatform from './Extension';
 const NOTIFICATION_HEIGHT = 600;
 const NOTIFICATION_WIDTH = 375;
 
+let contentReqPort;
 let contentPort;
-let contentPort2;
 
 export default class NotificationManager {
   platform = null;
 
   private popupId = null;
 
+  static setReqPort(port) {
+    contentReqPort = port;
+  }
+
   static setPort(port) {
     contentPort = port;
   }
 
-  static setPort2(port) {
-    contentPort2 = port;
+  static getReqPort() {
+    return contentReqPort;
   }
 
   static getPort() {
     return contentPort;
-  }
-
-  static getPort2() {
-    return contentPort2;
   }
 
   constructor() {

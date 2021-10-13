@@ -373,7 +373,7 @@ export default class WasmWallet {
         break;
       case WalletMethod.NotificationConnect:
         // eslint-disable-next-line no-case-declarations
-        const notificationPort = NotificationManager.getPort();
+        const notificationPort = NotificationManager.getReqPort();
         if (params.result) {
           if (!WasmWallet.isAppSupported(params.apiver, params.apivermin)) {
             return notificationPort.postMessage({
@@ -392,7 +392,7 @@ export default class WasmWallet {
               params.appname,
               params.appurl,
             );
-            const portStream = new PortStream(NotificationManager.getPort2());
+            const portStream = new PortStream(NotificationManager.getPort());
             this.app.connectPage(portStream, params.appurl);
             notificationPort.postMessage({
               result: true,

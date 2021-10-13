@@ -1,10 +1,11 @@
 import PostMessageStream from 'post-message-stream';
 import { cbToPromise, setupDnode, transformMethods } from '@core/setupDnode';
+import { Environment } from '@core/types';
 
 async function setupInpageApi() {
   const connectionStream = new PostMessageStream({
     name: 'page',
-    target: 'content2',
+    target: Environment.CONTENT,
   });
 
   const inpageApi = {};

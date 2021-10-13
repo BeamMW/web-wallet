@@ -5,12 +5,12 @@ import PostMessageStream from 'post-message-stream';
 
 function setupConnection() {
   const backgroundPort = extensionizer.runtime.connect({
-    name: 'content2',
+    name: Environment.CONTENT,
   });
   const backgroundStream = new PortStream(backgroundPort);
 
   const pageStream = new PostMessageStream({
-    name: 'content2',
+    name: Environment.CONTENT,
     target: 'page',
   });
 
@@ -71,7 +71,7 @@ window.addEventListener('message', (event) => {
   }
 
   if (event.data.type === 'create_beam_api') {
-    const extensionPort = extensionizer.runtime.connect({ name: Environment.CONTENT });
+    const extensionPort = extensionizer.runtime.connect({ name: Environment.CONTENT_REQ });
     const reqData: ConnectRequest = {
       type: event.data.type,
       apiver: event.data.apiver,
@@ -79,7 +79,6 @@ window.addEventListener('message', (event) => {
       appname: event.data.appname,
     };
 
-    // TODO: check
     setupConnection();
 
     extensionPort.postMessage(reqData);
