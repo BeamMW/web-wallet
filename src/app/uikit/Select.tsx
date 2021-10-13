@@ -47,7 +47,7 @@ const OptionActiveStyled = styled(OptionStyled)`
 `;
 
 const ButtonStyled = styled.button`
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   border: none;
   background-color: transparent;
   text-decoration: none;
@@ -114,15 +114,9 @@ export const Select: React.FC<SelectProps> = ({
     }
   }, [opened]);
 
-  const handleMouseDown = () => {
-    setOpened(!opened);
-  };
-
-  const handleBlur = () => {
-    setOpened(false);
-  };
-
   const array = React.Children.toArray(children);
+
+  const disabled = array.length === 1;
 
   const options = array.map(
     (child) => {
@@ -141,6 +135,7 @@ export const Select: React.FC<SelectProps> = ({
 
       return React.cloneElement(child as React.ReactElement, {
         active,
+        disabled,
         onClick: handleClick,
       });
     },
@@ -151,9 +146,17 @@ export const Select: React.FC<SelectProps> = ({
     return value === current;
   });
 
+  const handleMouseDown = () => {
+    setOpened(!opened);
+  };
+
+  const handleBlur = () => {
+    setOpened(false);
+  };
+
   return (
     <ContainerStyled className={className}>
-      <ButtonStyled type="button" onMouseDown={handleMouseDown}>
+      <ButtonStyled type="button" onMouseDown={handleMouseDown} disabled={disabled}>
         { (selected as ReactElement).props.children }
         { options.length > 1 && (
           <Angle className={angleStyle} value={opened ? 180 : 90} margin={opened ? 3 : 1} />
