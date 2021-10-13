@@ -1930,9 +1930,9 @@ base@^0.11.1:
     pascalcase "^0.1.1"
 
 beam-wasm-client-masternet@^6.2.11905:
-  version "6.2.11933"
-  resolved "https://registry.yarnpkg.com/beam-wasm-client-masternet/-/beam-wasm-client-masternet-6.2.11933.tgz#3128d02b2e9492bd4faee2d8346ae4c3b30d3a21"
-  integrity sha512-d8lgQIfVIXuLXIzUZJA5jwLrtKknqvnkWeQ1SwSY+kzSqSfYYqS/yKyYxWfmxX/0ZpxGtVhNrdBlrJNCiZbwlw==
+  version "6.2.11950"
+  resolved "https://registry.yarnpkg.com/beam-wasm-client-masternet/-/beam-wasm-client-masternet-6.2.11950.tgz#77a60c76018b6033877f1239d64601d8b9aaeb93"
+  integrity sha512-y99JGaxLrs64KpFIJlEU+zWy78w9jqWgCINe+wmXJpQU7Wbm09ypOI1BLLro7buAYvuEOE3XW2wBeiIgt5Kwqw==
 
 big.js@^5.2.2:
   version "5.2.2"
