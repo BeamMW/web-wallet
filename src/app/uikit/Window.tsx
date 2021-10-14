@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 
-import { useStore } from 'effector-react';
-import { $backButtonShown, gotoBack } from '@app/model/view';
+import { gotoBack } from '@app/model/view';
 import { isNil } from '@app/core/utils';
+import { MenuIcon } from '@app/icons';
+
 import Logo from './Logo';
 import BackButton from './BackButton';
 import Title from './Title';
+import Button from './Button';
+import Menu from './Menu';
 
 interface WindowProps {
   title?: string;
-  blur?: boolean;
+  primary?: boolean;
   pallete?: 'default' | 'blue' | 'purple';
   onPrevious?: React.MouseEventHandler;
 }
@@ -31,7 +35,6 @@ const ContainerStyled = styled.div<WindowProps>`
   min-height: 600px;
   padding: 130px 30px 30px;
   text-align: center;
-  filter: ${({ blur }) => (blur ? 'blur(3px)' : 'none')};
 
   &:before {
     content: '';
@@ -82,26 +85,46 @@ const FrameStyled = styled.div`
   transform: translateX(-50%);
 `;
 
+const menuButtonStyle = css`
+  position: fixed;
+  z-index: 3;
+  top: 74px;
+  left: 24px;
+  margin: 0;
+`;
+
 export const Window: React.FC<WindowProps> = ({
   title,
-  blur,
+  primary = false,
   pallete = 'default',
   children,
   onPrevious,
 }) => {
-  const backButtonShown = useStore($backButtonShown);
-  const previousAllowed = !isNil(onPrevious) || backButtonShown;
+  const [menuVisible, setVisible] = useState(false);
+
+  const handleBackClick = isNil(onPrevious) ? gotoBack : onPrevious;
+  const handleMenuClick = () => setVisible(true);
+  const handleCancelClick = () => setVisible(false);
 
   return (
-    <ContainerStyled blur={blur} pallete={pallete}>
+    <ContainerStyled pallete={pallete}>
       <HeadingStyled pallete={pallete}>
         <FrameStyled>
           <Logo size="icon" />
         </FrameStyled>
         <Title variant="heading">{title}</Title>
       </HeadingStyled>
-      { previousAllowed
-      && <BackButton onClick={isNil(onPrevious) ? gotoBack : onPrevious} />}
+      { primary ? (
+        <Button
+          variant="icon"
+          icon={MenuIcon}
+          className={menuButtonStyle}
+          onClick={handleMenuClick}
+        />
+      ) : (
+        <BackButton onClick={handleBackClick} />
+      ) }
+      { menuVisible && <Menu onCancel={handleCancelClick} />}
       {children}
     </ContainerStyled>
   );

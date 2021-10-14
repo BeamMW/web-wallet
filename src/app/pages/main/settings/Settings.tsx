@@ -19,7 +19,7 @@ const Settings = () => {
 
   return (
     <>
-      <Window title="Settings">
+      <Window title="Settings" primary>
         <ContainerStyled>
           <Button
             variant="block"

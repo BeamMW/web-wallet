@@ -45,8 +45,6 @@ export const gotoConfirm = curry(setView, View.SEND_CONFIRM);
 
 export const gotoBack = createEvent<React.SyntheticEvent>();
 
-export const $backButtonShown = $view.map((view) => view !== View.WALLET);
-
 // go back 1 screen
 sample({
   source: $view,

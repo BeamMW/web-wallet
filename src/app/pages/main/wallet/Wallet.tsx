@@ -13,7 +13,6 @@ import { getRateFx, GROTHS_IN_BEAM } from '@app/model/rates';
 import {
   ArrowUpIcon,
   ArrowDownIcon,
-  MenuIcon,
 } from '@app/icons';
 
 import { css } from '@linaria/core';
@@ -76,7 +75,6 @@ const Wallet = () => {
     getRateFx();
   }, []);
 
-  const [menuVisible, setVisible] = useState(false);
   const [active, setActive] = useState(null);
   const assets = useStore($assets);
   const transactions = useStore($transactions);
@@ -85,17 +83,11 @@ const Wallet = () => {
     setActive(active === asset_id ? null : asset_id);
   };
 
-  const handleMenuClick: React.MouseEventHandler = () => setVisible(true);
-
-  const handleCancelClick: React.MouseEventHandler = () => setVisible(false);
-
   const sliced = transactions.slice(0, TXS_MAX);
   const filtered = isNil(active) ? sliced : sliced.filter(({ asset_id }) => asset_id === active);
 
   return (
-    <Window title="Wallet">
-      <Button variant="icon" icon={MenuIcon} className={menuButtonStyle} onClick={handleMenuClick} />
-      { menuVisible && <Menu onCancel={handleCancelClick} />}
+    <Window title="Wallet" primary>
       <ActionsStyled>
         <Button pallete="purple" icon={ArrowUpIcon} onClick={gotoSend}>
           send
