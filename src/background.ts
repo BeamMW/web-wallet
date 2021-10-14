@@ -19,6 +19,7 @@ const openBeamTabsIDs = {};
 let port = null;
 let contentPort = null;
 let connected = false;
+let activeTab = null;
 
 let uiIsTriggering = false;
 let notification = null;
@@ -89,6 +90,9 @@ function handleConnect(remote) {
 
   port.onDisconnect.addListener(() => {
     connected = false;
+    if (!isNil(activeTab)) {
+      notificationManager.closeTab(activeTab);
+    }
   });
 
   port.onMessage.addListener(({ id, method, params }: RemoteRequest) => {
@@ -103,6 +107,9 @@ function handleConnect(remote) {
       break;
     }
     case Environment.NOTIFICATION: {
+      const tabId = remote.sender.tab.id;
+      openBeamTabsIDs[tabId] = true;
+      activeTab = remote.sender.tab.id;
       wallet.init(postMessage, notification);
       break;
     }

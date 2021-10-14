@@ -44,7 +44,7 @@ export default class WasmWallet {
   private contractInfoHandlerCallback;
 
   // TODO:BRO map [url->app]
-  private app = undefined;
+  private apps = {};
 
   static getInstance() {
     if (this.instance != null) {
@@ -384,8 +384,8 @@ export default class WasmWallet {
             // TODO:BRO handle error in Utils.js
           }
           try {
-            this.app = new DnodeApp();
-            await this.app.createAppAPI(
+            this.apps[params.appurl] = new DnodeApp();
+            await this.apps[params.appurl].createAppAPI(
               WasmWallet.getInstance(),
               params.apiver,
               params.apivermin,
@@ -393,7 +393,7 @@ export default class WasmWallet {
               params.appurl,
             );
             const portStream = new PortStream(NotificationManager.getPort());
-            this.app.connectPage(portStream, params.appurl);
+            this.apps[params.appurl].connectPage(portStream, params.appurl);
             notificationPort.postMessage({
               result: true,
             });

@@ -65,6 +65,10 @@ export default class NotificationManager {
     }
   }
 
+  closeTab(tabId) {
+    this.platform.closeTab(tabId);
+  }
+
   private async getPopup() {
     const windows = await this.platform.getAllWindows();
     return this.getPopupIn(windows);
