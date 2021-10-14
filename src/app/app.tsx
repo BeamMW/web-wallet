@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 import { $view } from '@app/model/view';
 
@@ -122,12 +123,23 @@ css`
   }
 `;
 
+const trackStyle = css`
+  z-index: 999;
+  background-color: rgba(255,255,255,0.2);
+`;
+
 const App = () => {
   const view = useStore($view);
   const ViewComponent = ROUTES[view];
 
   return (
-    <ViewComponent />
+    <Scrollbars
+      style={{ width: 375, height: 600 }}
+      renderThumbVertical={(props) => <div {...props} className={trackStyle} />}
+    >
+      <ViewComponent />
+    </Scrollbars>
+
   );
 };
 

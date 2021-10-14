@@ -63,6 +63,7 @@
     "post-message-stream": "^3.0.0",
     "process": "^0.11.10",
     "react": "^17.0.1",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^17.0.1",
     "readable-stream": "^3.1.1",
     "setimmediate": "^1.0.5",
