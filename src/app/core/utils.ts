@@ -41,7 +41,7 @@ export function compact(value: string): string {
 
 export function toUSD(amount: number, rate: number): string {
   switch (true) {
-    case amount === 0:
+    case amount === 0 || Number.isNaN(amount):
       return '0 USD';
     case amount > 0.01: {
       const value = amount * rate;

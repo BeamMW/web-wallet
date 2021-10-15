@@ -2,47 +2,56 @@ import { styled } from '@linaria/react';
 import React from 'react';
 
 interface LabeledToggleProps {
-  left?: string;
-  right?: string;
+  id?: string;
   value?: boolean
   onChange?: (value: boolean) => void;
 }
 
-const ContainerStyled = styled.button`
-  display: flex;
+const ContainerStyled = styled.div`
   position: relative;
-  width: 224px;  
-  height: 32px;
-  line-height: 32px;
-  padding: 0;
-  border-radius: 16px;
-  border: none;
-  background-color: rgba(255, 255, 255, 0.1);
-  font-family: 'SFProDisplay';
-  color: var(--color-gray);
+  width: 36px;  
+  height: 20px;
   cursor: pointer;
 `;
 
-const LabelStyled = styled.div`
-  width: 50%;
+const InputStyled = styled.input`
+  position: absolute;]
+  z-index: -1;
+  top: 0;
+  left: 0;
+  opacity: 0;
+`;
+
+const TrackStyled = styled.div`
+  width: 100%;
+  height: 100%;
+  border: solid 1px var(--color-disabled);
+  border-radius: 10px;
+  background-color: rgba(141, 161, 173, 0.1);
+
+  input[type="checkbox"]:checked ~ & {
+    border-color: var(--color-green);
+    background-color: rgba(0, 251, 209, 0.1);
+  }
 `;
 
 const SliderStyled = styled.div<{ active: boolean }>`
   position: absolute;
-  top: 0;
-  left: ${({ active }) => (!active ? '0' : '50%')};
-  width: 50%;
-  height: 100%;
-  line-height: 30px;
-  border: 1px solid var(--color-green);
-  border-radius: 16px;
-  background-color: #206978;
-  color: var(--color-green);
+  top: 2px;
+  left: 2px;
+  background-color: var(--color-disabled);;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+
+  input[type="checkbox"]:checked ~ & {
+    left: 18px;
+    background-color: var(--color-green);
+  }
 `;
 
 const LabeledToggle: React.FC<LabeledToggleProps> = ({
-  left = 'off',
-  right = 'on',
+  id,
   value,
   onChange,
 }) => {
@@ -52,10 +61,14 @@ const LabeledToggle: React.FC<LabeledToggleProps> = ({
   };
 
   return (
-    <ContainerStyled type="button" onClick={handleClick}>
-      <SliderStyled active={value}>{ !value ? left : right }</SliderStyled>
-      <LabelStyled>{ left }</LabelStyled>
-      <LabelStyled>{ right }</LabelStyled>
+    <ContainerStyled onClick={handleClick}>
+      <InputStyled
+        id={id}
+        type="checkbox"
+        checked={value}
+      />
+      <TrackStyled />
+      <SliderStyled active={value} />
     </ContainerStyled>
   );
 };

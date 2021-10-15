@@ -15,3 +15,5 @@ export { default as Title } from './Title';
 export { default as AssetLabel } from './AssetLabel';
 export { default as StatusLabel } from './StatusLabel';
 export { default as AmountInput } from './AmountInput';
+export { default as Toggle } from './Toggle';
+export { default as LabeledToggle } from './LabeledToggle';

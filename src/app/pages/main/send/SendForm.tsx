@@ -54,7 +54,7 @@ const maxButtonStyle = css`
 const SendForm = () => {
   const address = useStore($address);
   const offline = useStore($offline);
-  const comment = useStore($comment);
+  // const comment = useStore($comment);
   const [amount, asset_id] = useStore($amount);
 
   const {

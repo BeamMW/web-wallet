@@ -12,6 +12,7 @@ import {
   Environment,
   CreateWalletParams,
   BackgroundEvent,
+  CreateAddressParams,
 } from './types';
 import { isNil } from './utils';
 
@@ -116,8 +117,8 @@ export function getWalletStatus() {
   return postMessage<WalletStatus>(RPCMethod.GetWalletStatus);
 }
 
-export function createAddress() {
-  return postMessage<string>(RPCMethod.CreateAddress);
+export function createAddress(params: CreateAddressParams) {
+  return postMessage<string>(RPCMethod.CreateAddress, params);
 }
 
 export async function validateAddress(address: string): Promise<AddressData> {
