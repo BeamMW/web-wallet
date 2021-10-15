@@ -154,8 +154,7 @@ export default class WasmWallet {
   }
 
   static generateSeed() {
-    const seed: string = WasmWalletClient.GeneratePhrase();
-    return seed.split(' ');
+    return WasmWalletClient.GeneratePhrase();
   }
 
   private wallet: typeof WasmWalletClient;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
@@ -6,7 +6,7 @@ import {
   Window, Popup, Button, Footer,
 } from '@uikit';
 import { View, setView } from '@app/model/view';
-import { $seed, generateSeedFx } from '@app/model/base';
+import { $seed } from '@app/model/base';
 
 import {
   DoneIcon,
@@ -47,21 +47,16 @@ const SeedListStyled = styled.ol`
   }
 `;
 
-const Create = () => {
-  const [step, setStep] = useState(0);
+const SeedWrite: React.FC = () => {
   const [warningVisible, toggleWarning] = useState(false);
-  const seed = useStore($seed);
-
-  useEffect(() => {
-    generateSeedFx();
-  }, []);
+  const [seed] = useStore($seed);
 
   const handleSkipClick: React.MouseEventHandler = () => {
     setView(View.SET_PASSWORD);
   };
 
   const handleNextClick: React.MouseEventHandler = () => {
-    setStep(step + 1);
+    setView(View.SEED_CONFIRM);
   };
 
   const handleCancel: React.MouseEventHandler = () => {
@@ -72,7 +67,6 @@ const Create = () => {
     <>
       <Window
         title="Seed phrase"
-        blur={warningVisible}
       >
         <p>
           Your seed phrase is the access key to all the funds in your
@@ -81,7 +75,7 @@ const Create = () => {
           your money.
         </p>
         <SeedListStyled>
-          {seed.map((value, index) => (
+          {seed.split(' ').map((value, index) => (
             // eslint-disable-next-line
             <li key={index}>{value}</li>
           ))}
@@ -112,7 +106,7 @@ const Create = () => {
             icon={DoneIcon}
             onClick={handleNextClick}
           >
-            cancel
+            done
           </Button>
         )}
         onCancel={handleCancel}
@@ -124,4 +118,4 @@ const Create = () => {
   );
 };
 
-export default Create;
+export default SeedWrite;

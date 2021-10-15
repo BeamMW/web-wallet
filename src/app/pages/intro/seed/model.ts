@@ -13,11 +13,17 @@ export const SEED_PHRASE_COUNT = 12;
 
 const INITIAL = new Array(SEED_PHRASE_COUNT).fill(null);
 
+export const setCache = createEvent<string>();
+
+export const $cache = restore(setCache, null);
+
 export const $errors = restore(setErrors, INITIAL);
 
 export const resetErrors = createEvent();
+export const resetCache = createEvent();
 
 $errors.reset(resetErrors);
+$cache.reset(resetCache);
 
 export const $valid = $errors.map(
   (errors) => errors.every((value) => value === true),

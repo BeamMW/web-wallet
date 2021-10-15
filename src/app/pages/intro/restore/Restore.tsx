@@ -5,23 +5,28 @@ import { setSeed } from '@app/model/base';
 
 import { Button, Footer, Window } from 'app/uikit';
 import SeedList from '@pages/intro/seed';
-import { $errors, $valid, onInput } from '@pages/intro/seed/model';
+import {
+  $cache,
+  $errors, $valid, onInput, setCache,
+} from '@pages/intro/seed/model';
 import { useStore } from 'effector-react';
 
-const Restore = () => {
+const Restore: React.FC = () => {
   const errors = useStore($errors);
+  const cache = useStore($cache);
   const valid = useStore($valid);
 
   const handleSubmit: React.ChangeEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     const data = new FormData(event.target);
-    const seed = [];
-    let i = 0;
-    data.forEach((value) => {
-      seed[i] = value;
-      i += 1;
-    });
-    setSeed(seed);
+    const values = data.values() as IterableIterator<string>;
+
+    const seed = Array.from(values).reduce(
+      (result, value, index) => (index === 0 ? value : `${result} ${value}`),
+    );
+
+    setSeed([seed, true]);
+    setCache(seed);
     setView(View.SET_PASSWORD);
   };
 
@@ -29,7 +34,11 @@ const Restore = () => {
     <Window title="Restore wallet">
       <p>Type in your seed phrase</p>
       <form autoComplete="off" onSubmit={handleSubmit}>
-        <SeedList data={errors} onInput={onInput} />
+        <SeedList
+          data={errors}
+          initial={cache}
+          onInput={onInput}
+        />
         <Footer>
           <Button type="submit" disabled={!valid}>
             Submit

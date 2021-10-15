@@ -1,12 +1,13 @@
 import { styled } from '@linaria/react';
 import { css, cx } from '@linaria/core';
-import React, { RefObject, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { isNil } from '@core/utils';
-import { isAllowedSeedFx, resetErrors, SEED_PHRASE_COUNT } from './model';
+import { isAllowedSeedFx, SEED_PHRASE_COUNT } from './model';
 
 interface SeedListProps {
   data: any[];
   errors?: boolean[];
+  initial?: string;
   indexByValue?: boolean;
   onInput?: React.FormEventHandler;
 }
@@ -74,14 +75,35 @@ const validClassName = css`
 
 const refs: HTMLInputElement[] = new Array(SEED_PHRASE_COUNT).fill(null);
 
+const REGEXP_SEED = /(\w+;){12}/;
+
+function fillFromSeed(seed: string, safe: boolean = false): void {
+  const array = seed.split(';').slice(0, SEED_PHRASE_COUNT);
+
+  if (!safe) {
+    isAllowedSeedFx(array);
+  }
+
+  array.forEach((value, index) => {
+    const target = refs[index];
+
+    if (!isNil(target)) {
+      target.value = value;
+    }
+  });
+}
+
 const SeedList: React.FC<SeedListProps> = ({
   data,
   errors,
+  initial,
   indexByValue,
   onInput,
 }) => {
   useEffect(() => {
-    resetErrors();
+    if (!isNil(initial)) {
+      fillFromSeed(initial.replace(/\s/g, ';'), true);
+    }
   }, []);
 
   const handleRef = (ref: HTMLInputElement) => {
@@ -94,26 +116,17 @@ const SeedList: React.FC<SeedListProps> = ({
 
   const handlePaste: React.ClipboardEventHandler = (event) => {
     if (!indexByValue) {
-      event.preventDefault();
       const seed: string = event.clipboardData.getData('text');
-      const array = seed.split(';').slice(0, SEED_PHRASE_COUNT);
 
-      if (array.length === SEED_PHRASE_COUNT) {
-        isAllowedSeedFx(array);
-
-        array.forEach((value, index) => {
-          const target = refs[index];
-
-          if (!isNil(target)) {
-            target.value = value;
-          }
-        });
+      if (REGEXP_SEED.test(seed)) {
+        event.preventDefault();
+        fillFromSeed(seed);
       }
     }
   };
 
   return (
-    <ListStyled>
+    <ListStyled onPaste={handlePaste}>
       {data.map((value, index) => {
         const idx = indexByValue ? value : index;
         const err = isNil(errors) ? value : errors[index];
@@ -123,26 +136,15 @@ const SeedList: React.FC<SeedListProps> = ({
           err === true && validClassName,
         );
 
-        if (index === 0) {
-          return (
-            <li key={index} className={className} data-index={idx + 1}>
-              <input
-                required
-                autoFocus
-                type="text"
-                name={idx}
-                ref={handleRef}
-                onInput={onInput}
-                onPaste={handlePaste}
-              />
-            </li>
-          );
-        }
-
         return (
-          <li key={index} className={className} data-index={idx + 1}>
+          <li
+            key={index}
+            className={className}
+            data-index={idx + 1}
+          >
             <input
               required
+              autoFocus={index === 0}
               type="text"
               name={idx}
               ref={handleRef}

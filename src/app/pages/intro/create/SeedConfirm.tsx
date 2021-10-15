@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, Footer, Window } from 'app/uikit';
 import { ArrowRightIcon } from '@app/icons';
 
-import { $ids, $seed } from '@app/model/base';
+import { $ids, $seed, generateSeedFx } from '@app/model/base';
 import { useStore } from 'effector-react';
 import { setView, View } from '@app/model/view';
 import SeedList from '@pages/intro/seed';
@@ -11,7 +11,7 @@ import SeedList from '@pages/intro/seed';
 const SEED_CONFIRM_COUNT = 6;
 
 const SeedConfirm: React.FC = () => {
-  const seed = useStore($seed);
+  const [seed] = useStore($seed);
   const ids = useStore($ids);
 
   const [errors, setErrors] = useState(
@@ -38,8 +38,13 @@ const SeedConfirm: React.FC = () => {
     setView(View.SET_PASSWORD);
   };
 
+  const handlePrevious: React.MouseEventHandler = () => {
+    generateSeedFx();
+    setView(View.SEED_WRITE);
+  };
+
   return (
-    <Window title="Confirm seed phrase">
+    <Window title="Confirm seed phrase" onPrevious={handlePrevious}>
       <p>
         Your seed phrase is the access key to all the funds in your wallet.
         Print or write down the phrase to keep it in a safe or in a locked

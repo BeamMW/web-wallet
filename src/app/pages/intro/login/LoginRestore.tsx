@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStore } from 'effector-react';
 
 import { setView, View } from '@app/model/view';
@@ -11,9 +11,16 @@ import {
   DoneIcon,
 } from '@app/icons';
 
+import { resetCache, resetErrors } from '@pages/intro/seed/model';
+
 import { $phase, LoginPhase, setLoginPhase } from './model';
 
 const LoginRestore: React.FC = () => {
+  useEffect(() => {
+    resetCache();
+    resetErrors();
+  }, []);
+
   const [warningVisible, toggleWarning] = useState(false);
   const phase = useStore($phase);
   const active = phase === LoginPhase.RESTORE;

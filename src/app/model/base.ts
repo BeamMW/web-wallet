@@ -28,14 +28,16 @@ const getRandomIds = () => {
   return result;
 };
 
-export const setSeed = createEvent<string[]>();
+type Seed = [string, boolean];
+
+export const setSeed = createEvent<Seed>();
 
 export const generateSeedFx = createEffect(generateSeed);
 
-export const $seed = restore(generateSeedFx.doneData, []);
+export const $seed = restore(setSeed, ['', false] as Seed);
 
 $seed.reset(generateSeedFx);
-$seed.on(setSeed, (state, payload) => payload);
+$seed.on(generateSeedFx.doneData, (state, payload) => [payload, false]);
 
 $ids.on(generateSeedFx.doneData, () => getRandomIds());
 

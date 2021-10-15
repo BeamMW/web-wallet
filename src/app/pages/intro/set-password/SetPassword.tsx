@@ -27,7 +27,7 @@ const SetPassword = () => {
   const [pass, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [warningVisible, toggleWarning] = useState(false);
-  const seed = useStore($seed);
+  const [seed, restoring] = useStore($seed);
 
   const matched = pass === confirm;
   const valid = confirm === '' || matched;
@@ -41,7 +41,7 @@ const SetPassword = () => {
   const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
     createWallet({
-      seed: seed.join(' '),
+      seed,
       password: pass,
       isSeedConfirmed: true,
     });
@@ -49,7 +49,11 @@ const SetPassword = () => {
   };
 
   const handlePrevious: React.MouseEventHandler = () => {
-    toggleWarning(true);
+    if (restoring) {
+      setView(View.RESTORE);
+    } else {
+      toggleWarning(true);
+    }
   };
 
   const handleReturnClick: React.MouseEventHandler = () => {
@@ -101,8 +105,7 @@ const SetPassword = () => {
             )}
         onCancel={() => toggleWarning(false)}
       >
-        Please write the seed phrase down. Storing it in a file makes it
-        prone to cyber attacks and, therefore, less secure.
+        If you return to seed phrase, it would be changed and your local password won’t be saved.
       </Popup>
     </>
   );

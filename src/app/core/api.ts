@@ -109,7 +109,7 @@ export function isAllowedSeed(value: string[]) {
 }
 
 export function generateSeed() {
-  return postMessage<string[]>(WalletMethod.GenerateSeed);
+  return postMessage<string>(WalletMethod.GenerateSeed);
 }
 
 export function getWalletStatus() {

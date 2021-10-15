@@ -51,6 +51,8 @@ sample({
   clock: gotoBack,
   fn: (view) => {
     switch (view) {
+      case View.SET_PASSWORD:
+        return View.SEED_CONFIRM;
       case View.SEND_CONFIRM:
         return View.SEND_FORM;
       case View.SEED_CONFIRM:
