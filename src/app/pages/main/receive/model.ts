@@ -9,22 +9,22 @@ import {
 
 import { createAddress } from '@app/core/api';
 import { compact, preventEvent } from '@app/core/utils';
-import { gotoWallet } from '@app/model/view';
+import { gotoReceive, gotoWallet } from '@app/model/view';
+
+type Amount = [string, number];
 
 const copyToClipboard = (value: string) => navigator.clipboard.writeText(value);
 
-export const onInputChange = createEvent<[string, number]>();
+export const setAmount = createEvent<Amount>();
+export const setMaxAnonimity = createEvent<boolean>();
 
-const setAmount = onInputChange.map(([value]) => value);
-const setAsset = onInputChange.map(([,value]) => value);
+export const createAddressFx = createEffect(createAddress);
 
-export const getAddressFx = createEffect(createAddress);
-
-export const $address = restore(getAddressFx.doneData, '');
+export const $address = restore(createAddressFx.doneData, '');
 export const $addressPreview = $address.map(compact);
 
-export const $amount = restore(setAmount, '');
-export const $asset = restore(setAsset, 0);
+export const $amount = restore<Amount>(setAmount, ['', 0]);
+export const $maxAnonimity = restore(setMaxAnonimity, false);
 
 export const copyToClipboardFx = createEffect(copyToClipboard);
 
@@ -43,3 +43,10 @@ sample({
   clock: [copyAddress, copyAndClose],
   target: copyToClipboardFx,
 });
+
+const STORES = [
+  $address,
+  $amount,
+];
+
+STORES.forEach((store) => store.reset(gotoReceive));

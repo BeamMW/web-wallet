@@ -2,10 +2,16 @@ export type Pallete = 'green' | 'ghost' | 'purple' | 'blue' | 'red' | 'white';
 
 export type ButtonVariant = 'regular' | 'ghost' | 'block' | 'link' | 'icon';
 
+export type AddressType =
+  'regular' | 'regular_new' | 'max_privacy' | 'offline' | 'public_offline' | 'unknown';
 export interface CreateWalletParams {
   seed: string;
   password: string;
   isSeedConfirmed: boolean;
+}
+
+export interface CreateAddressParams {
+  type: AddressType,
 }
 
 export enum RPCMethod {
@@ -123,9 +129,6 @@ export interface ChangeData {
   change_str: string;
   explicit_fee: number;
 }
-
-export type AddressType =
-  'regular' | 'regular_new' | 'max_privacy' | 'offline' | 'public_offline' | 'unknown';
 
 export interface AddressData {
   type: AddressType;

@@ -4,10 +4,10 @@ import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
-import { AssetLabel, Input } from '@uikit';
+import { AssetLabel, Input, Rate } from '@uikit';
 import Select, { Option } from '@uikit/Select';
 
-import { isNil } from '@app/core/utils';
+import { isNil, toGroths } from '@app/core/utils';
 
 import { AMOUNT_MAX } from '@app/model/rates';
 import { $assets } from '@app/model/wallet';
@@ -43,6 +43,12 @@ interface AmountInputProps {
 }
 
 const REG_AMOUNT = /^(?!0\d)(\d+)(\.)?(\d+)?$/;
+
+const rateStyle = css`
+  position: absolute;
+  top: 33px;
+  left: 0;
+`;
 
 const AmountInput: React.FC<AmountInputProps> = ({
   value,
@@ -82,6 +88,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
         className={containerStyle}
         onInput={handleInput}
       />
+      { asset_id === 0 && <Rate value={parseFloat(value)} className={rateStyle} /> }
       <Select
         value={asset_id}
         className={selectClassName}
