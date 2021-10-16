@@ -19,6 +19,7 @@ export enum RPCMethod {
   ValidateAddress = 'validate_address',
   GetTXList = 'tx_list',
   SendTransaction = 'tx_send',
+  GetVersion = 'get_version',
 }
 
 export enum WalletMethod {
