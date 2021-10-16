@@ -9,6 +9,7 @@ import ArrowDownIcon from './icon-arrow-down.svg';
 import ArrowLeftIcon from './icon-arrow-left.svg';
 import ArrowRightIcon from './icon-arrow-right.svg';
 import ArrowUpIcon from './icon-arrow-up.svg';
+import ArrowsTowards from './icon-arrows-towards.svg';
 
 import AssetIcon from './icon-asset.svg';
 import BeamIcon from './icon-beam.svg';
@@ -53,6 +54,7 @@ export {
   ArrowLeftIcon,
   ArrowRightIcon,
   ArrowUpIcon,
+  ArrowsTowards,
 
   AssetIcon,
   BeamIcon,

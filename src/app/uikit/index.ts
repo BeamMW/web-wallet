@@ -17,3 +17,4 @@ export { default as StatusLabel } from './StatusLabel';
 export { default as AmountInput } from './AmountInput';
 export { default as Toggle } from './Toggle';
 export { default as LabeledToggle } from './LabeledToggle';
+export { default as AssetIcon } from './AssetIcon';

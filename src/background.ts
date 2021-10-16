@@ -20,6 +20,7 @@ let port = null;
 let contentPort = null;
 let connected = false;
 let activeTab = null;
+let appname = '';
 
 let uiIsTriggering = false;
 let notification = null;
@@ -132,6 +133,7 @@ function handleConnect(remote) {
               apivermin: msg.apivermin,
             },
           };
+          appname = msg.appname;
           notificationIsOpen = true;
           openPopup();
         }
@@ -148,7 +150,7 @@ wallet.initContractInfoHandler((req, info, amounts, cb) => {
   notification = {
     type: NotificationType.APPROVE_INVOKE,
     params: {
-      req, info, amounts,
+      req, info, amounts, appname
     },
   };
   notificationIsOpen = true;
