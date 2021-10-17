@@ -5,6 +5,7 @@ import { WalletTotal } from '@app/core/types';
 
 import AssetLabel from '@app/uikit/AssetLabel';
 import { AssetTotal, PALLETE_ASSETS } from '@app/model/wallet';
+import { isNil } from '@app/core/utils';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;
@@ -15,7 +16,7 @@ interface AssetsProps {
   data: AssetTotal[];
 }
 
-const ListItemStyled = styled.li<{ asset_id: number }>`
+const ListItemStyled = styled.li<{opt_color?: string, asset_id: number }>`
   margin-bottom: 10px;
   position: relative;
   padding: 20px;
@@ -33,7 +34,15 @@ const ListItemStyled = styled.li<{ asset_id: number }>`
     border-radius: 10px;
     background-image: linear-gradient(
       90deg,
-      ${({ asset_id }) => PALLETE_ASSETS[asset_id]} 0%,
+      ${({ asset_id, opt_color }) => {
+        if (!isNil(opt_color)) {
+          return opt_color;
+        }
+
+        return PALLETE_ASSETS[asset_id]
+          ? PALLETE_ASSETS[asset_id]
+          : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length];
+      }} 0%,
       var(--color-dark-blue) 110%
     );
   }
@@ -43,8 +52,11 @@ const Assets: React.FC<AssetsProps> = ({
   data,
 }) => (
   <ListStyled>
-    { data.map(({ asset_id, available }) => (
-      <ListItemStyled key={asset_id} asset_id={asset_id}>
+    { data.map(({ asset_id, available, metadata_pairs }) => (
+      <ListItemStyled 
+          opt_color={metadata_pairs.OPT_COLOR ? metadata_pairs.OPT_COLOR : null} 
+          key={asset_id} 
+          asset_id={asset_id}>
         <AssetLabel value={available} asset_id={asset_id} />
       </ListItemStyled>
     ))}

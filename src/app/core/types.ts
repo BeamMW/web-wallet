@@ -106,6 +106,7 @@ export interface MetadataPairs {
   SCH_VER?: string;
   SN: string;
   UN?: string;
+  OPT_COLOR?: string;
 }
 
 export interface Asset {

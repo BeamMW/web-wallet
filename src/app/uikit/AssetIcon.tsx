@@ -21,7 +21,11 @@ const ContainerStyled = styled.div<AssetIconProps>`
   width: 26px;
   height: 26px;
   margin-right: 10px;
-  color: ${({ asset_id }) => PALLETE_ASSETS[asset_id]};
+  color: ${({ asset_id }) => {
+    return PALLETE_ASSETS[asset_id]
+    ? PALLETE_ASSETS[asset_id]
+    : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length]
+  }};
 `;
 
 const AssetIcon: React.FC<AssetIconProps> = ({
