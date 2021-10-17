@@ -159,7 +159,7 @@ export const Select: React.FC<SelectProps> = ({
       <ButtonStyled type="button" onMouseDown={handleMouseDown} disabled={disabled}>
         { (selected as ReactElement).props.children }
         { options.length > 1 && (
-          <Angle className={angleStyle} value={opened ? 180 : 90} margin={opened ? 3 : 1} />
+          <Angle className={angleStyle} value={opened ? 0 : 180} margin={opened ? 3 : 1} />
         )}
       </ButtonStyled>
       {opened && (
