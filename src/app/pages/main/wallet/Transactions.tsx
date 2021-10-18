@@ -24,31 +24,37 @@ const ListItemStyled = styled.li`
   }
 `;
 
-const fromInvokeData = (data: Contract): Partial<Transaction> | boolean => {
+const fromInvokeData = (data: Contract): Partial<Transaction> => {
   if (data.amounts.length > 1) {
-    return false;
+    return null;
   }
 
-  const [{ amount: value, asset_id }] = data.amounts;
+  const [{ amount, asset_id }] = data.amounts;
 
   return {
-    value,
+    value: Math.abs(amount),
+    income: amount < 0,
     asset_id,
   };
 };
 
 const Transactions: React.FC<TransactionsProps> = ({
-  data,
+  data: transactions,
 }) => (
   <ListStyled>
-    { data.map((tx, index) => {
+    { transactions.map((tx, index) => {
       const { invoke_data: contracts } = tx;
-      const payload = isNil(contracts) ? false : fromInvokeData(contracts[0]);
+      const payload = isNil(contracts) ? null : fromInvokeData(contracts[0]);
+
+      const data = isNil(payload) ? tx : {
+        ...tx,
+        ...payload,
+      };
 
       return (
         <ListItemStyled key={index}>
-          <AssetLabel {...tx} {...payload} />
-          <StatusLabel data={tx} />
+          <AssetLabel {...data} />
+          <StatusLabel data={data} />
         </ListItemStyled>
       );
     })}
