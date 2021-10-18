@@ -7,7 +7,7 @@ import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 import { SaveIcon } from '@app/icons';
 import * as extensionizer from 'extensionizer';
-import JSZip from 'JSZip';
+import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
 const ReportStyled = styled.div`
