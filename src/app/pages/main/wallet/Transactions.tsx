@@ -1,9 +1,10 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import { Transaction } from '@app/core/types';
+import { Amount, Contract, Transaction } from '@app/core/types';
 
 import { AssetLabel, StatusLabel } from '@app/uikit';
+import { isNil } from '@app/core/utils';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;
@@ -23,16 +24,34 @@ const ListItemStyled = styled.li`
   }
 `;
 
+const fromInvokeData = (data: Contract): Partial<Transaction> | boolean => {
+  if (data.amounts.length > 1) {
+    return false;
+  }
+
+  const [{ amount: value, asset_id }] = data.amounts;
+
+  return {
+    value,
+    asset_id,
+  };
+};
+
 const Transactions: React.FC<TransactionsProps> = ({
   data,
 }) => (
   <ListStyled>
-    { data.map((tx, index) => (
-      <ListItemStyled key={index}>
-        <AssetLabel {...tx} />
-        <StatusLabel data={tx} />
-      </ListItemStyled>
-    ))}
+    { data.map((tx, index) => {
+      const { invoke_data: contracts } = tx;
+      const payload = isNil(contracts) ? false : fromInvokeData(contracts[0]);
+
+      return (
+        <ListItemStyled key={index}>
+          <AssetLabel {...tx} {...payload} />
+          <StatusLabel data={tx} />
+        </ListItemStyled>
+      );
+    })}
   </ListStyled>
 );
 
