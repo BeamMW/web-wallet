@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useStore } from 'effector-react';
 
 import { setView, View } from '@app/model/view';
-import {
-  Popup, Splash, Button,
-} from 'app/uikit';
+import { Popup, Splash, Button } from 'app/uikit';
 
 import {
   AddIcon,
