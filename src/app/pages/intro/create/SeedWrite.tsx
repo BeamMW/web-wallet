@@ -88,14 +88,6 @@ const SeedWrite: React.FC = () => {
           >
             Complete verification
           </Button>
-          <Button
-            icon={ArrowRightIcon}
-            type="button"
-            variant="ghost"
-            onClick={handleSkipClick}
-          >
-            I will do it later
-          </Button>
         </Footer>
       </Window>
       <Popup
