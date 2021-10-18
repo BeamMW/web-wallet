@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
+import * as extensionizer from 'extensionizer';
 import { styled } from '@linaria/react';
 import { getVersionFx, $version } from './model';
 import { useStore } from 'effector-react';
@@ -24,7 +25,8 @@ const VersionStyled = styled.div`
 
 const Settings = () => {
   const [warningVisible, toggleWarning] = useState(false);
-  const version = useStore($version);
+  const versionData = useStore($version);
+  const version = extensionizer.runtime.getManifest().version;
 
   useEffect(() => {
     getVersionFx();
@@ -34,7 +36,7 @@ const Settings = () => {
     <>
       <Window title="Settings" primary>
         <ContainerStyled>
-          <VersionStyled>v { version.beam_version } ({ version.beam_branch_name })</VersionStyled>
+          <VersionStyled>v { version } ({ versionData.beam_branch_name })</VersionStyled>
           <Button
             variant="block"
             pallete="red"
