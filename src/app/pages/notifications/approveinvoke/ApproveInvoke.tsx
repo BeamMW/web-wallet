@@ -31,7 +31,7 @@ const TextStyled = styled.div`
 const Amount = styled.div`
   margin-top: 32px;
   display: flex;
-  place-content: center;
+  margin-left: 55px;
 `;
 
 const Amounts = styled.div`
@@ -42,6 +42,8 @@ const AmountSubtitle = styled.div`
   font-size: 14px;
   color: #8da1ad;
   margin-top: 4px;
+  width: 55px;
+  text-align: end;
 `;
 
 const LabelStyled = styled.div<{ is_spend: boolean }>`
@@ -66,13 +68,15 @@ const AssetItem = styled.div`
 const Fee = styled.div`
   margin-top: 15px;
   display: flex;
-  place-content: center;
+  margin-left: 55px;
 `;
 
 const FeeSubtitle = styled.div`
   font-size: 14px;
   color: #8da1ad;
   margin-top: 4px;
+  width: 55px;
+  text-align: end;
 `;
 
 const FeeValue = styled.div`
@@ -134,6 +138,8 @@ const ApproveInvoke = () => {
 
   const amounts = JSON.parse(notification.params.amounts);
   const info = JSON.parse(notification.params.info);
+
+  console.log(amounts, info)
   
   const assets = useStore($assets);
   const text = getNotificationText(info, amounts, notification.params.appname);
@@ -158,6 +164,7 @@ const ApproveInvoke = () => {
           <Amounts>
             { amounts.length > 0 ? (
                 amounts.map((data) => {
+                  console.log('aaa:', assets)
                   const assetItem = assets.find((asset) => asset.asset_id === data.assetID);
                   if (assetItem) {
                   return (

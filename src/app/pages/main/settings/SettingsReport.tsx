@@ -6,6 +6,9 @@ import { $logs } from './model';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 import { SaveIcon } from '@app/icons';
+import * as extensionizer from 'extensionizer';
+import JSZip from 'JSZip';
+import { saveAs } from 'file-saver';
 
 const ReportStyled = styled.div`
     margin-bottom: 30px;
@@ -41,18 +44,15 @@ const SettingsReport = () => {
   }
 
   const saveLogsclicked = () => {
-    const element = document.createElement("a");
-    const common = logs.common.map(i => i + '\n');
-    const errors = logs.errors.map(i => i + '\n');
-    const warns = logs.warns.map(i => i + '\n');
-    let finalLogs = common.concat(errors);
-    finalLogs.concat(warns);
-    const file = new Blob(finalLogs, {type: 'text/plain'});
-    element.href = URL.createObjectURL(file);
-    element.download = "beam-web-wallet.log";
-    document.body.appendChild(element);
-    element.click();
-    element.remove();
+    const version = extensionizer.runtime.getManifest().version;
+    const zip = new JSZip();
+    let finalLogs = logs.common.concat(logs.errors).concat(logs.warns);
+    
+    zip.file(`logs.log`, finalLogs.join('\n'));
+    zip.generateAsync({type:"blob"}).then(function(content) {
+        saveAs(content, `beam-web-wallet-${version}-report.zip`);
+    });
+
     setView(View.SETTINGS);
   }
 

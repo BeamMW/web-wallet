@@ -59,6 +59,8 @@
     "effector": "^21.8.12",
     "effector-react": "^21.3.3",
     "extensionizer": "^1.0.1",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.7.1",
     "patronum": "^1.1.0",
     "post-message-stream": "^3.0.0",
     "process": "^0.11.10",
