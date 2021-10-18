@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import { Amount, Contract, Transaction } from '@app/core/types';
+import { Contract, Transaction } from '@app/core/types';
 
 import { AssetLabel, StatusLabel } from '@app/uikit';
 import { isNil } from '@app/core/utils';
@@ -28,7 +28,7 @@ const fromInvokeData = (data: Contract, fee: number): Partial<Transaction> => {
   if (data.amounts.length === 1) {
     const [{ amount, asset_id }] = data.amounts;
 
-    const value = amount < 0 ? Math.abs(amount + fee) : amount;
+    const value = asset_id === 0 && amount < 0 ? Math.abs(amount + fee) : amount;
 
     return {
       value,
