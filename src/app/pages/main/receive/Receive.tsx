@@ -18,8 +18,8 @@ import {
   setAmount,
   copyAddress,
   copyAndClose,
-  $maxAnonimity,
-  setMaxAnonimity,
+  $maxAnonymity,
+  onToggleChange,
 } from './model';
 
 const AddresStyled = styled.div`
@@ -50,7 +50,7 @@ const LabelStyled = styled.label`
 
 const Receive = () => {
   const address = useStore($addressPreview);
-  const maxAnonimity = useStore($maxAnonimity);
+  const maxAnonimity = useStore($maxAnonymity);
   const [amount, asset_id] = useStore($amount);
 
   useEffect(() => {
@@ -86,13 +86,13 @@ const Receive = () => {
             onChange={setAmount}
           />
         </Section>
-        <Section title="Advanced" variant="gray">
+        <Section title="Advanced" variant="gray" collapse>
           <RowStyled>
             <LabelStyled htmlFor="ma">Maximum anonymity set </LabelStyled>
             <Toggle
               id="ma"
               value={maxAnonimity}
-              onChange={setMaxAnonimity}
+              onChange={onToggleChange}
             />
           </RowStyled>
         </Section>

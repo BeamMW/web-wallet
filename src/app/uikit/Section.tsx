@@ -47,7 +47,7 @@ const Section: React.FC<SectionProps> = ({
   subtitle,
   children,
 }) => {
-  const [hidden, setHidden] = useState(false);
+  const [hidden, setHidden] = useState(collapse);
 
   const handleMouseDown: React.MouseEventHandler = () => {
     setHidden(!hidden);

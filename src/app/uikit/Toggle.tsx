@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
 import React from 'react';
 
-interface LabeledToggleProps {
+interface ToggleProps {
   id?: string;
   value?: boolean
-  onChange?: (value: boolean) => void;
+  onChange?: React.ChangeEventHandler;
 }
 
-const ContainerStyled = styled.div`
+const ContainerStyled = styled.label`
   position: relative;
   width: 36px;  
   height: 20px;
@@ -50,27 +50,21 @@ const SliderStyled = styled.div<{ active: boolean }>`
   }
 `;
 
-const LabeledToggle: React.FC<LabeledToggleProps> = ({
+const Toggle: React.FC<ToggleProps> = ({
   id,
   value,
   onChange,
-}) => {
-  const handleClick: React.MouseEventHandler = () => {
-    const next = !value;
-    onChange(next);
-  };
+}) => (
+  <ContainerStyled htmlFor={id}>
+    <InputStyled
+      id={id}
+      type="checkbox"
+      checked={value}
+      onChange={onChange}
+    />
+    <TrackStyled />
+    <SliderStyled active={value} />
+  </ContainerStyled>
+);
 
-  return (
-    <ContainerStyled onClick={handleClick}>
-      <InputStyled
-        id={id}
-        type="checkbox"
-        checked={value}
-      />
-      <TrackStyled />
-      <SliderStyled active={value} />
-    </ContainerStyled>
-  );
-};
-
-export default LabeledToggle;
+export default Toggle;

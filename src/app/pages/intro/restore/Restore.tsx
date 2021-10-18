@@ -1,15 +1,18 @@
 import React from 'react';
+import { useStore } from 'effector-react';
 
 import { View, setView } from '@app/model/view';
 import { setSeed } from '@app/model/base';
-
-import { Button, Footer, Window } from 'app/uikit';
+import { Button, Footer, Window } from '@app/uikit';
 import SeedList from '@pages/intro/seed';
+
 import {
   $cache,
-  $errors, $valid, onInput, setCache,
+  $errors,
+  $valid,
+  setCache,
+  onInput,
 } from '@pages/intro/seed/model';
-import { useStore } from 'effector-react';
 
 const Restore: React.FC = () => {
   const errors = useStore($errors);

@@ -4,7 +4,13 @@ import React from 'react';
 
 export const isNil = (value: any) => value == null;
 
-export const getInputValue = ({ target }: React.ChangeEvent<HTMLInputElement>) => target.value;
+export function getInputValue({ target }: React.ChangeEvent<HTMLInputElement>): string {
+  return target.value;
+}
+
+export function fromCheckbox({ target }: React.ChangeEvent<HTMLInputElement>): boolean {
+  return target.checked;
+}
 
 export const curry = <T>(event: Event<T>, payload: T) => event.prepend(() => payload);
 
