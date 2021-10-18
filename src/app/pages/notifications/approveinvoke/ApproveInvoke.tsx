@@ -31,11 +31,11 @@ const TextStyled = styled.div`
 const Amount = styled.div`
   margin-top: 32px;
   display: flex;
-  margin-left: 55px;
+  flex-direction: column;
 `;
 
 const Amounts = styled.div`
-  margin-left: 30px;
+  margin-top: 2px;
 `;
 
 const AmountSubtitle = styled.div`
@@ -43,7 +43,7 @@ const AmountSubtitle = styled.div`
   color: #8da1ad;
   margin-top: 4px;
   width: 55px;
-  text-align: end;
+  text-align: start;
 `;
 
 const LabelStyled = styled.div<{ is_spend: boolean }>`
@@ -68,7 +68,7 @@ const AssetItem = styled.div`
 const Fee = styled.div`
   margin-top: 15px;
   display: flex;
-  margin-left: 55px;
+  flex-direction: column;
 `;
 
 const FeeSubtitle = styled.div`
@@ -76,11 +76,12 @@ const FeeSubtitle = styled.div`
   color: #8da1ad;
   margin-top: 4px;
   width: 55px;
-  text-align: end;
+  text-align: start;
 `;
 
 const FeeValue = styled.div`
-  margin-left: 30px;
+  display: flex;
+  margin-top: 2px;
 `;
 
 const ControlsStyled = styled.div`
