@@ -24,18 +24,20 @@ const ListItemStyled = styled.li`
   }
 `;
 
-const fromInvokeData = (data: Contract): Partial<Transaction> => {
-  if (data.amounts.length > 1) {
-    return null;
+const fromInvokeData = (data: Contract, fee: number): Partial<Transaction> => {
+  if (data.amounts.length === 1) {
+    const [{ amount, asset_id }] = data.amounts;
+
+    const value = amount < 0 ? Math.abs(amount + fee) : amount;
+
+    return {
+      value,
+      income: amount < 0,
+      asset_id,
+    };
   }
 
-  const [{ amount, asset_id }] = data.amounts;
-
-  return {
-    value: Math.abs(amount),
-    income: amount < 0,
-    asset_id,
-  };
+  return null;
 };
 
 const Transactions: React.FC<TransactionsProps> = ({
@@ -44,7 +46,7 @@ const Transactions: React.FC<TransactionsProps> = ({
   <ListStyled>
     { transactions.map((tx, index) => {
       const { invoke_data: contracts } = tx;
-      const payload = isNil(contracts) ? null : fromInvokeData(contracts[0]);
+      const payload = isNil(contracts) ? null : fromInvokeData(contracts[0], tx.fee);
 
       const data = isNil(payload) ? tx : {
         ...tx,

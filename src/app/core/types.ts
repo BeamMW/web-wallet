@@ -229,6 +229,7 @@ export interface Transaction {
   confirmations: number;
   create_time: number;
   fee: number;
+  fee_only: boolean;
   height: number;
   income: boolean;
   kernel: string;
