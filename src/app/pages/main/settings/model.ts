@@ -3,7 +3,7 @@ import {
 } from 'effector';
 
 import { ErrorMessage } from '@core/WasmWallet';
-import { deleteWallet, getVersion } from '@app/core/api';
+import { deleteWallet, getVersion, loadBackgroundLogs } from '@app/core/api';
 import { setView, View } from '@app/model/view';
 import { LoginPhase, setLoginPhase } from '@app/pages/intro/login/model';
 
@@ -22,6 +22,10 @@ export const $version = restore(
     beam_branch_name: '', beam_version: '',
   },
 );
+
+export const loadLogsFx = createEffect(loadBackgroundLogs);
+
+export const $logs = restore(loadLogsFx.doneData, '');
 
 $error.on(deleteWalletFx.failData, (state, payload) => payload);
 $error.reset(deleteWalletFx.done);

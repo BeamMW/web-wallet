@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import * as extensionizer from 'extensionizer';
 import { styled } from '@linaria/react';
-import { getVersionFx, $version } from './model';
+import { getVersionFx, loadLogsFx, $version } from './model';
 import { useStore } from 'effector-react';
 
-import { RemoveIcon } from '@app/icons';
+import { RemoveIcon, SettingsReportIcon } from '@app/icons';
+import { View, setView } from '@app/model/view';
 
 import {
   Button,
@@ -28,6 +29,11 @@ const Settings = () => {
   const versionData = useStore($version);
   const version = extensionizer.runtime.getManifest().version;
 
+  const ReportClicked = () => {
+    loadLogsFx();
+    setView(View.SETTINGS_REPORT);
+  }
+
   useEffect(() => {
     getVersionFx();
   }, []);
@@ -37,6 +43,15 @@ const Settings = () => {
       <Window title="Settings" primary>
         <ContainerStyled>
           <VersionStyled>v { version } ({ versionData.beam_branch_name })</VersionStyled>
+          <Button
+            variant="block"
+            pallete="white"
+            icon={SettingsReportIcon}
+            onClick={() => ReportClicked()}
+          >
+            Report a problem
+
+          </Button>
           <Button
             variant="block"
             pallete="red"

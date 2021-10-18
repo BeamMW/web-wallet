@@ -16,7 +16,9 @@ export enum View {
   SEND_CONFIRM,
   RECEIVE,
   UTXO,
+  // settings
   SETTINGS,
+  SETTINGS_REPORT,
   // notifications
   CONNECT,
   APPROVEINVOKE,
