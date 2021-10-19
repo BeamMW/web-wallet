@@ -35,6 +35,7 @@ export const setSeed = createEvent<Seed>();
 export const generateSeedFx = createEffect(generateSeed);
 
 export const $seed = restore(setSeed, ['', false] as Seed);
+export const $words = $seed.map(([seed]) => seed.split(' '));
 
 $seed.reset(generateSeedFx);
 $seed.on(generateSeedFx.doneData, (state, payload) => [payload, false]);

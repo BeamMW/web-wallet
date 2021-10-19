@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, Footer, Window } from 'app/uikit';
 import { ArrowRightIcon } from '@app/icons';
 
-import { $ids, $seed, generateSeedFx } from '@app/model/base';
+import { $ids, $words, generateSeedFx } from '@app/model/base';
 import { useStore } from 'effector-react';
 import { setView, View } from '@app/model/view';
 import SeedList from '@pages/intro/seed';
@@ -11,19 +11,19 @@ import SeedList from '@pages/intro/seed';
 const SEED_CONFIRM_COUNT = 6;
 
 const SeedConfirm: React.FC = () => {
-  const [seed] = useStore($seed);
+  const seed = useStore($words);
   const ids = useStore($ids);
 
   const [errors, setErrors] = useState(
     new Array(SEED_CONFIRM_COUNT).fill(null),
   );
-  const valid = errors.every((value) => value === false);
+  const valid = errors.every((value) => value === true);
 
   const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     event.preventDefault();
     const { name, value } = event.target;
     const index = parseInt(name, 10);
-    const result = seed[index] !== value;
+    const result = seed[index] === value;
     const target = ids.indexOf(index);
 
     if (errors[target] !== result) {
