@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import { Amount, Contract, Transaction } from '@app/core/types';
+import { Contract, Transaction } from '@app/core/types';
 
 import { AssetLabel, StatusLabel } from '@app/uikit';
 import { isNil } from '@app/core/utils';
@@ -24,31 +24,39 @@ const ListItemStyled = styled.li`
   }
 `;
 
-const fromInvokeData = (data: Contract): Partial<Transaction> | boolean => {
-  if (data.amounts.length > 1) {
-    return false;
+const fromInvokeData = (data: Contract, fee: number): Partial<Transaction> => {
+  if (data.amounts.length === 1) {
+    const [{ amount, asset_id }] = data.amounts;
+
+    const value = asset_id === 0 && amount < 0 ? amount + fee : amount;
+
+    return {
+      value: Math.abs(value),
+      income: amount < 0,
+      asset_id,
+    };
   }
 
-  const [{ amount: value, asset_id }] = data.amounts;
-
-  return {
-    value,
-    asset_id,
-  };
+  return null;
 };
 
 const Transactions: React.FC<TransactionsProps> = ({
-  data,
+  data: transactions,
 }) => (
   <ListStyled>
-    { data.map((tx, index) => {
+    { transactions.map((tx, index) => {
       const { invoke_data: contracts } = tx;
-      const payload = isNil(contracts) ? false : fromInvokeData(contracts[0]);
+      const payload = isNil(contracts) ? null : fromInvokeData(contracts[0], tx.fee);
+
+      const data = isNil(payload) ? tx : {
+        ...tx,
+        ...payload,
+      };
 
       return (
         <ListItemStyled key={index}>
-          <AssetLabel {...tx} {...payload} />
-          <StatusLabel data={tx} />
+          <AssetLabel {...data} />
+          <StatusLabel data={data} />
         </ListItemStyled>
       );
     })}

@@ -36,6 +36,28 @@ type WalletEventHandler = {
   (event: WalletEvent): void;
 };
 
+let bgLogs = {
+  common: [],
+  commonDef: console.log.bind(console),
+  errors: [],
+  errorsDef: console.error.bind(console),
+  warns: [],
+  warnsDef: console.warn.bind(console),
+}
+
+console.log = function() {
+  bgLogs.commonDef.apply(console, arguments);
+  bgLogs.common.push(Array.from(arguments));
+}
+console.error = function() {
+  bgLogs.errorsDef.apply(console, arguments);
+  bgLogs.errors.push(Array.from(arguments));
+}
+console.warn = function() {
+  bgLogs.warnsDef.apply(console, arguments);
+  bgLogs.warns.push(Array.from(arguments));
+}
+
 export default class WasmWallet {
   private static instance: WasmWallet;
 
@@ -111,6 +133,10 @@ export default class WasmWallet {
         });
       });
     });
+  }
+
+  static loadLogs() {
+    return bgLogs;
   }
 
   static isAllowedWord(word: string): boolean {
@@ -415,6 +441,9 @@ export default class WasmWallet {
         if (params.req) {
           this.contractInfoHandlerCallback.contractInfoRejected(params.req);
         }
+        break;
+      case WalletMethod.LoadBackgroundLogs:
+        this.emit(id, WasmWallet.loadLogs());
         break;
       default:
         break;

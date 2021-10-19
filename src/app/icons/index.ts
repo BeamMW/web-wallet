@@ -27,6 +27,8 @@ import LogoIcon from './icon-logo.svg';
 import MenuIcon from './icon-menu.svg';
 import RemoveIcon from './icon-remove.svg';
 import WalletSmallIcon from './icon-wallet-small.svg';
+import SettingsReportIcon from './icon-settings-report.svg';
+import SaveIcon from './icon-save.svg';
 
 import TxCanceledIcon from './icon-tx-canceled.svg';
 import TxCanceledMPIcon from './icon-tx-canceled-mp.svg';
@@ -72,7 +74,9 @@ export {
   MenuIcon,
   RemoveIcon,
   WalletSmallIcon,
-
+  SettingsReportIcon,
+  SaveIcon,
+  
   TxCanceledIcon,
   TxCanceledMPIcon,
   TxCanceledOffIcon,

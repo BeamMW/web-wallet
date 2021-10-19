@@ -31,17 +31,19 @@ const TextStyled = styled.div`
 const Amount = styled.div`
   margin-top: 32px;
   display: flex;
-  place-content: center;
+  flex-direction: column;
 `;
 
 const Amounts = styled.div`
-  margin-left: 30px;
+  margin-top: 2px;
 `;
 
 const AmountSubtitle = styled.div`
   font-size: 14px;
   color: #8da1ad;
   margin-top: 4px;
+  width: 55px;
+  text-align: start;
 `;
 
 const LabelStyled = styled.div<{ is_spend: boolean }>`
@@ -66,17 +68,20 @@ const AssetItem = styled.div`
 const Fee = styled.div`
   margin-top: 15px;
   display: flex;
-  place-content: center;
+  flex-direction: column;
 `;
 
 const FeeSubtitle = styled.div`
   font-size: 14px;
   color: #8da1ad;
   margin-top: 4px;
+  width: 55px;
+  text-align: start;
 `;
 
 const FeeValue = styled.div`
-  margin-left: 30px;
+  display: flex;
+  margin-top: 2px;
 `;
 
 const ControlsStyled = styled.div`
@@ -134,6 +139,8 @@ const ApproveInvoke = () => {
 
   const amounts = JSON.parse(notification.params.amounts);
   const info = JSON.parse(notification.params.info);
+
+  console.log(amounts, info)
   
   const assets = useStore($assets);
   const text = getNotificationText(info, amounts, notification.params.appname);
@@ -158,6 +165,7 @@ const ApproveInvoke = () => {
           <Amounts>
             { amounts.length > 0 ? (
                 amounts.map((data) => {
+                  console.log('aaa:', assets)
                   const assetItem = assets.find((asset) => asset.asset_id === data.assetID);
                   if (assetItem) {
                   return (

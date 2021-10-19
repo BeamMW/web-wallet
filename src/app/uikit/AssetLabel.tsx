@@ -6,15 +6,12 @@ import { css } from '@linaria/core';
 import { $assets } from '@app/model/wallet';
 
 import { fromGroths, getSign, isNil } from '@app/core/utils';
-import { Contract } from '@app/core/types';
+import { Transaction } from '@app/core/types';
 import AssetIcon from './AssetIcon';
 import Rate from './Rate';
 
-interface AssetLabelProps {
-  value: number;
-  asset_id: number;
-  income?: boolean;
-  invoke_data?: Contract[];
+interface AssetLabelProps extends Transaction {
+
 }
 
 const ContainerStyled = styled.div`
@@ -46,6 +43,8 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   value,
   asset_id,
   income,
+  fee,
+  fee_only,
   invoke_data,
 }) => {
   const assets = useStore($assets);
@@ -55,7 +54,7 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
     cont.amounts.length > 1
   ));
 
-  const amount = fromGroths(value);
+  const amount = fromGroths(fee_only ? fee : value);
   const signed = !isNil(income);
   const sign = signed ? getSign(income) : '';
   const name = target?.metadata_pairs.UN ?? '';

@@ -39,6 +39,7 @@ export enum WalletMethod {
   NotificationConnect = 'notification_connect',
   NotificationApproveInfo = 'notification_approve_info',
   NotificationRejectInfo = 'notification_reject_info',
+  LoadBackgroundLogs = 'load_background_logs',
 }
 
 export interface RemoteRequest {
@@ -228,6 +229,7 @@ export interface Transaction {
   confirmations: number;
   create_time: number;
   fee: number;
+  fee_only: boolean;
   height: number;
   income: boolean;
   kernel: string;
