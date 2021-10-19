@@ -28,10 +28,10 @@ const fromInvokeData = (data: Contract, fee: number): Partial<Transaction> => {
   if (data.amounts.length === 1) {
     const [{ amount, asset_id }] = data.amounts;
 
-    const value = asset_id === 0 && amount < 0 ? Math.abs(amount + fee) : amount;
+    const value = asset_id === 0 && amount < 0 ? amount + fee : amount;
 
     return {
-      value,
+      value: Math.abs(value),
       income: amount < 0,
       asset_id,
     };
