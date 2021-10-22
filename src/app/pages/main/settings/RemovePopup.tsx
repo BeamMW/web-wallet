@@ -23,6 +23,7 @@ interface RemovePopupProps {
 const TEXT_WARNING = `
 All data will be erased.
 Make sure you’ve saved your seed phrase if you want to restore this wallet later on!
+\n\r
 Are you sure you want to remove your wallet?
 `;
 
@@ -45,7 +46,7 @@ const RemovePopup: React.FC<RemovePopupProps> = ({
 
   const confirmButton = warned
     ? <Button pallete="red" icon={RemoveIcon} onClick={handleConfirm}>remove</Button>
-    : <Button pallete="red" icon={ArrowRightIcon} onClick={handleConfirm}>next</Button>;
+    : <Button pallete="red" icon={ArrowRightIcon} onClick={handleConfirm}>proceed</Button>;
 
   return (
     <Popup

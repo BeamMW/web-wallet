@@ -150,7 +150,7 @@ wallet.initContractInfoHandler((req, info, amounts, cb) => {
   notification = {
     type: NotificationType.APPROVE_INVOKE,
     params: {
-      req, info, amounts, appname
+      req, info, amounts, appname,
     },
   };
   notificationIsOpen = true;
