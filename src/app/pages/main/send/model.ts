@@ -272,6 +272,7 @@ export const $description: Store<[string, string]> = combine(
 const STORES = [
   $address,
   $amount,
+  $offline,
   $change,
   $comment,
   $addressData,
@@ -317,7 +318,11 @@ export const $valid = combine(
   $form,
   $addressData,
   $amountError,
-  (pending, ready, { value }, { is_valid }, amountError) => (
-    !pending && ready && is_valid && value > 0 && isNil(amountError)
-  ),
+  (pending, ready, { value, offline }, { is_valid, payments }, amountError) => {
+    if (offline && payments === 0) {
+      return false;
+    }
+
+    return !pending && ready && is_valid && value > 0 && isNil(amountError);
+  },
 );
