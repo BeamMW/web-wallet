@@ -1,5 +1,5 @@
 import {
-  createEffect, createStore, restore,
+  createEffect, createEvent, createStore, restore,
 } from 'effector';
 
 import { ErrorMessage } from '@core/WasmWallet';
@@ -11,14 +11,12 @@ export const deleteWalletFx = createEffect<string, string, ErrorMessage>(deleteW
 
 export const $error = createStore<ErrorMessage>(null);
 
-export const getVersionFx = createEffect(async () => {
-  return await getVersion();
-});
+export const resetError = createEvent();
+
+export const getVersionFx = createEffect(getVersion);
 
 export const $version = restore(
-  getVersionFx.doneData.map((data) => {
-    return data;
-  }), {
+  getVersionFx.doneData.map((data) => data), {
     beam_branch_name: '', beam_version: '',
   },
 );
@@ -28,7 +26,7 @@ export const loadLogsFx = createEffect(loadBackgroundLogs);
 export const $logs = restore(loadLogsFx.doneData, '');
 
 $error.on(deleteWalletFx.failData, (state, payload) => payload);
-$error.reset(deleteWalletFx.done);
+$error.reset(deleteWalletFx.done, resetError);
 
 deleteWalletFx.done.watch(() => {
   setLoginPhase(LoginPhase.FIRSTTIME);

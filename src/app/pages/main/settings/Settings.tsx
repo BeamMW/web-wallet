@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import * as extensionizer from 'extensionizer';
 import { styled } from '@linaria/react';
-import { getVersionFx, loadLogsFx, $version } from './model';
 import { useStore } from 'effector-react';
 
 import { RemoveIcon, SettingsReportIcon } from '@app/icons';
@@ -12,6 +11,9 @@ import {
   Button,
   Window,
 } from '@app/uikit';
+import {
+  getVersionFx, loadLogsFx, $version, resetError,
+} from './model';
 import RemovePopup from './RemovePopup';
 
 const ContainerStyled = styled.div`
@@ -25,24 +27,28 @@ const VersionStyled = styled.div`
 `;
 
 const Settings = () => {
+  useEffect(() => {
+    getVersionFx();
+  }, []);
+
   const [warningVisible, toggleWarning] = useState(false);
   const versionData = useStore($version);
-  const version = extensionizer.runtime.getManifest().version;
+  const manifest = extensionizer.runtime.getManifest();
 
   const ReportClicked = () => {
     loadLogsFx();
     setView(View.SETTINGS_REPORT);
-  }
+  };
 
-  useEffect(() => {
-    getVersionFx();
-  }, []);
+  const version = `v ${manifest.version} (${versionData.beam_branch_name})`;
 
   return (
     <>
       <Window title="Settings" primary>
         <ContainerStyled>
-          <VersionStyled>v { version } ({ versionData.beam_branch_name })</VersionStyled>
+          <VersionStyled>
+            { version }
+          </VersionStyled>
           <Button
             variant="block"
             pallete="white"
@@ -56,7 +62,10 @@ const Settings = () => {
             variant="block"
             pallete="red"
             icon={RemoveIcon}
-            onClick={() => toggleWarning(true)}
+            onClick={() => {
+              resetError();
+              toggleWarning(true);
+            }}
           >
             Remove current wallet
 

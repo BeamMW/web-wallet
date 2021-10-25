@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
   Button,
@@ -13,19 +13,14 @@ import {
   RemoveIcon,
 } from '@app/icons';
 
-import { deleteWalletFx } from './model';
+import { useStore } from 'effector-react';
+import { isNil } from '@app/core/utils';
+import { $error, deleteWalletFx, resetError } from './model';
 
 interface RemovePopupProps {
   visible?: boolean;
   onCancel?: React.MouseEventHandler;
 }
-
-const TEXT_WARNING = `
-All data will be erased.
-Make sure you’ve saved your seed phrase if you want to restore this wallet later on!
-\n\r
-Are you sure you want to remove your wallet?
-`;
 
 const RemovePopup: React.FC<RemovePopupProps> = ({
   visible,
@@ -33,7 +28,7 @@ const RemovePopup: React.FC<RemovePopupProps> = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>();
   const [warned, setWarned] = useState(false);
-  const title = 'Remove current wallet';
+  const error = useStore($error);
 
   const handleConfirm: React.MouseEventHandler = () => {
     if (warned) {
@@ -51,7 +46,7 @@ const RemovePopup: React.FC<RemovePopupProps> = ({
   return (
     <Popup
       visible={visible}
-      title={title}
+      title="Remove current wallet"
       cancelButton={
         <Button variant="ghost" icon={CancelIcon} onClick={onCancel}>cancel</Button>
       }
@@ -59,8 +54,15 @@ const RemovePopup: React.FC<RemovePopupProps> = ({
       onCancel={onCancel}
     >
       { warned ? (
-        <Input label="Password" type="password" ref={inputRef} />
-      ) : TEXT_WARNING }
+        <Input label={isNil(error) ? 'Password' : error} type="password" ref={inputRef} valid={isNil(error)} />
+      ) : (
+        <>
+          All data will be erased.
+          Make sure you’ve saved your seed phrase if you want to restore this wallet later on!
+          <br />
+          Are you sure you want to remove your wallet?
+        </>
+      ) }
     </Popup>
   );
 };

@@ -5,7 +5,7 @@ css`
   :global() {
     :root {
       --color-purple: #da68f5;
-      --color-red: #ff5354;
+      --color-red: #f25f5b;
       --color-yellow: #f4ce4a;
       --color-green: #00f6d2;
       --color-blue: #0bccf7;
