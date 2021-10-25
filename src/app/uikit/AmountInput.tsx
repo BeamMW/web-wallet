@@ -23,6 +23,10 @@ const LabelStyled = styled.div`
   display: inline-block;
   vertical-align: bottom;
   line-height: 26px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
 `;
 
 const selectClassName = css`

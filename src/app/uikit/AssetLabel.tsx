@@ -17,14 +17,24 @@ interface AssetLabelProps extends Transaction {
 const ContainerStyled = styled.div`
   display: flex;
   position: relative;
-`;
-
-const LabelStyled = styled.span`
-  flex-grow: 1;
   text-align: left;
   font-size: 16px;
   font-weight: 600;
   color: white;
+`;
+
+const AmountStyled = styled.span`
+  flex-grow: 0;
+`;
+
+const OverflowStyled = styled.span`
+  flex-grow: 1;
+  display: inline-block;
+  vertical-align: bottom;
+  overflow: hidden;
+  white-space: nowrap;
+  padding-left: 10px;
+  text-overflow: ellipsis;
 `;
 
 const iconClassName = css`
@@ -37,6 +47,7 @@ const rateStyle = css`
   opacity: 0.8;
   margin: 0;
   color: white;
+  white-space: nowrap;
 `;
 
 const AssetLabel: React.FC<AssetLabelProps> = ({
@@ -58,12 +69,19 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   const signed = !isNil(income);
   const sign = signed ? getSign(income) : '';
   const name = target?.metadata_pairs.UN ?? '';
-  const label = hasMultipleAssets ? 'Multiple Assets' : `${sign}${amount} ${name}`;
+  const label = hasMultipleAssets ? 'Multiple Assets' : `${sign}${amount}`;
 
   return (
     <ContainerStyled>
       <AssetIcon asset_id={asset_id} className={iconClassName} />
-      <LabelStyled>{ label }</LabelStyled>
+      <AmountStyled>
+        { label }
+      </AmountStyled>
+      { name !== '' && (
+      <OverflowStyled>
+        { name }
+      </OverflowStyled>
+      )}
       <Rate value={amount} income={income} className={rateStyle} />
     </ContainerStyled>
   );

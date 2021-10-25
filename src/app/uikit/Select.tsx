@@ -47,7 +47,9 @@ const OptionActiveStyled = styled(OptionStyled)`
 `;
 
 const ButtonStyled = styled.button`
+  line-height: 26px;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  padding: 0;
   border: none;
   background-color: transparent;
   text-decoration: none;
@@ -60,6 +62,8 @@ const ButtonStyled = styled.button`
 `;
 
 const angleStyle = css`
+  display: inline-block;
+  vertical-align: text-top;
   margin-left: 8px;
 `;
 
