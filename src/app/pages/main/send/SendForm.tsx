@@ -16,7 +16,7 @@ import { AmountInput } from '@uikit';
 import { styled } from '@linaria/react';
 import LabeledToggle from '@app/uikit/LabeledToggle';
 import { css } from '@linaria/core';
-import { fromGroths } from '@app/core/utils';
+import { fromGroths, isNil, truncate } from '@app/core/utils';
 import {
   $address,
   $offline,
@@ -105,8 +105,8 @@ const SendForm = () => {
             onChange={setAmount}
           />
           <Title variant="subtitle">Available</Title>
-          {`${groths} ${selected.metadata_pairs.N}`}
-          { selected.asset_id === 0 && <Rate value={groths} /> }
+          {`${groths} ${truncate(selected.metadata_pairs.N)}`}
+          { selected.asset_id === 0 && isNil(amountError) && <Rate value={groths} /> }
           { groths > 0 && (
             <Button
               icon={ArrowUpIcon}

@@ -16,6 +16,7 @@ import {
   fromGroths,
   getInputValue,
   makePrevented,
+  truncate,
 } from '@app/core/utils';
 
 import {
@@ -305,7 +306,7 @@ export const $amountError = combine(
 
     if (total > available) {
       const max = fromGroths(available - fee);
-      return `${AmountError.AMOUNT} ${max} ${metadata_pairs.UN}`;
+      return `${AmountError.AMOUNT} ${max} ${truncate(metadata_pairs.UN)}`;
     }
 
     return null;

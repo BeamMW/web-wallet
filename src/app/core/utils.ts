@@ -45,6 +45,21 @@ export function compact(value: string): string {
   return `${value.substr(0, 5)}…${value.substr(-5, 5)}`;
 }
 
+const LENGTH_MAX = 8;
+
+export function truncate(value: string): string {
+  if (value === '' || isNil(value)) {
+    console.warn('utils: truncate failed', value);
+    return '';
+  }
+
+  if (value.length <= LENGTH_MAX) {
+    return value;
+  }
+
+  return `${value.slice(0, LENGTH_MAX)}…`;
+}
+
 export function toUSD(amount: number, rate: number): string {
   switch (true) {
     case amount === 0 || Number.isNaN(amount):

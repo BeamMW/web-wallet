@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { AssetLabel, Input, Rate } from '@uikit';
 import Select, { Option } from '@uikit/Select';
 
-import { isNil, toGroths } from '@app/core/utils';
+import { isNil, toGroths, truncate } from '@app/core/utils';
 
 import { AMOUNT_MAX } from '@app/model/rates';
 import { $assets } from '@app/model/wallet';
@@ -23,10 +23,6 @@ const LabelStyled = styled.div`
   display: inline-block;
   vertical-align: bottom;
   line-height: 26px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 160px;
-}
 `;
 
 const selectClassName = css`
@@ -102,7 +98,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
           .map(({ asset_id: id, metadata_pairs }) => (
             <Option key={id} value={id}>
               <AssetIcon asset_id={id} />
-              <LabelStyled>{ metadata_pairs.UN }</LabelStyled>
+              <LabelStyled>{ truncate(metadata_pairs.UN) }</LabelStyled>
             </Option>
           ))}
       </Select>

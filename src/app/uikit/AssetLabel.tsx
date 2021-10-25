@@ -5,7 +5,9 @@ import { css } from '@linaria/core';
 
 import { $assets } from '@app/model/wallet';
 
-import { fromGroths, getSign, isNil } from '@app/core/utils';
+import {
+  fromGroths, getSign, isNil, truncate,
+} from '@app/core/utils';
 import { Transaction } from '@app/core/types';
 import AssetIcon from './AssetIcon';
 import Rate from './Rate';
@@ -24,17 +26,7 @@ const ContainerStyled = styled.div`
 `;
 
 const AmountStyled = styled.span`
-  flex-grow: 0;
-`;
-
-const OverflowStyled = styled.span`
   flex-grow: 1;
-  display: inline-block;
-  vertical-align: bottom;
-  overflow: hidden;
-  white-space: nowrap;
-  padding-left: 10px;
-  text-overflow: ellipsis;
 `;
 
 const iconClassName = css`
@@ -68,20 +60,13 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   const amount = fromGroths(fee_only ? fee : value);
   const signed = !isNil(income);
   const sign = signed ? getSign(income) : '';
-  const name = target?.metadata_pairs.UN ?? '';
-  const label = hasMultipleAssets ? 'Multiple Assets' : `${sign}${amount}`;
+  const name = truncate(target?.metadata_pairs.UN) ?? '';
+  const label = hasMultipleAssets ? 'Multiple Assets' : `${sign}${amount} ${name}`;
 
   return (
     <ContainerStyled>
       <AssetIcon asset_id={asset_id} className={iconClassName} />
-      <AmountStyled>
-        { label }
-      </AmountStyled>
-      { name !== '' && (
-      <OverflowStyled>
-        { name }
-      </OverflowStyled>
-      )}
+      <AmountStyled>{ label }</AmountStyled>
       <Rate value={amount} income={income} className={rateStyle} />
     </ContainerStyled>
   );
