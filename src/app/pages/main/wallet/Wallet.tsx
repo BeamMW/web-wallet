@@ -18,6 +18,7 @@ import {
 import { css } from '@linaria/core';
 import { $assets, $transactions } from '@app/model/wallet';
 
+import { Transaction } from '@app/core/types';
 import Assets from './Assets';
 import Transactions from './Transactions';
 
@@ -70,6 +71,17 @@ const menuButtonStyle = css`
   margin: 0;
 `;
 
+function createdCompartor(
+  { create_time: a }: Transaction,
+  { create_time: b }: Transaction,
+): -1 | 0 | 1 {
+  if (a === b) {
+    return 0;
+  }
+
+  return a < b ? 1 : -1;
+}
+
 const Wallet = () => {
   useEffect(() => {
     getRateFx();
@@ -83,8 +95,10 @@ const Wallet = () => {
     setActive(active === asset_id ? null : asset_id);
   };
 
-  const sliced = transactions.slice(0, TXS_MAX);
-  const filtered = isNil(active) ? sliced : sliced.filter(({ asset_id }) => asset_id === active);
+  const filtered = isNil(active)
+    ? transactions : transactions.filter(({ asset_id }) => asset_id === active);
+  const sorted = filtered.sort(createdCompartor);
+  const sliced = sorted.slice(0, TXS_MAX);
 
   return (
     <Window title="Wallet" primary>
@@ -100,7 +114,7 @@ const Wallet = () => {
         <Assets data={assets} />
       </Section>
       <Section title="Transactions">
-        <Transactions data={filtered} />
+        <Transactions data={sliced} />
       </Section>
     </Window>
   );
