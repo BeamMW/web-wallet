@@ -15,7 +15,9 @@ import {
 
 import { useStore } from 'effector-react';
 import { isNil } from '@app/core/utils';
-import { $error, deleteWalletFx, resetError } from './model';
+import {
+  $error, deleteWalletFx, onInput, resetError,
+} from './model';
 
 interface RemovePopupProps {
   visible?: boolean;
@@ -54,7 +56,13 @@ const RemovePopup: React.FC<RemovePopupProps> = ({
       onCancel={onCancel}
     >
       { warned ? (
-        <Input label={isNil(error) ? 'Password' : error} type="password" ref={inputRef} valid={isNil(error)} />
+        <Input
+          label={isNil(error) ? 'Password' : error}
+          type="password"
+          ref={inputRef}
+          valid={isNil(error)}
+          onInput={onInput}
+        />
       ) : (
         <>
           All data will be erased.
