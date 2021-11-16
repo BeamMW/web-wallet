@@ -3,7 +3,6 @@ import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import { Button, Splash, Footer } from 'app/uikit';
-import { setView, View } from '@app/model/view';
 import WasmWallet from '@core/WasmWallet';
 
 import {
@@ -14,6 +13,10 @@ import ProgressBar from './ProgressBar';
 import {
   $syncPercent, $syncProgress, $loading, setLoading,
 } from './model';
+
+
+import {ROUTES} from "@app/shared/constants";
+import {useNavigate} from "react-router-dom";
 
 const TitleStyled = styled.h2`
   margin: 0;
@@ -36,11 +39,13 @@ const Progress = () => {
   const [total] = useStore($syncProgress);
   const syncPercent = useStore($syncPercent);
   const loading = useStore($loading);
+  const navigate = useNavigate();
 
   const handleCancelClick = () => {
     wallet.stop();
     setLoading(false);
-    setView(View.LOGIN);
+    navigate(ROUTES.AUTH.LOGIN)
+
   };
 
   const active = total > 0;

@@ -1,73 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import { useStore } from 'effector-react';
+import React, {useEffect, useState} from 'react';
+import {useStore} from 'effector-react';
 
-import { setView, View } from '@app/model/view';
-import { Popup, Splash, Button } from 'app/uikit';
+import {Popup, Splash, Button} from 'app/uikit';
+import {ROUTES} from "@app/shared/constants";
 
 import {
-  AddIcon,
-  DoneIcon,
+    AddIcon,
+    DoneIcon,
 } from '@app/icons';
 
-import { resetCache, resetErrors } from '@pages/intro/seed/model';
+import {resetCache, resetErrors} from '@pages/intro/seed/model';
 
-import { $phase, LoginPhase, setLoginPhase } from './model';
+import {$phase, LoginPhase} from './model';
+
+import {useNavigate} from "react-router-dom";
 
 const LoginRestore: React.FC = () => {
-  useEffect(() => {
-    resetCache();
-    resetErrors();
-  }, []);
+    const navigate = useNavigate();
+    useEffect(() => {
+        resetCache();
+        resetErrors();
+    }, []);
 
-  const [warningVisible, toggleWarning] = useState(false);
-  const phase = useStore($phase);
-  const active = phase === LoginPhase.RESTORE;
+    const [warningVisible, toggleWarning] = useState(false);
+    //todo fix
+    const phase = useStore($phase);
+    const active = phase === LoginPhase.RESTORE;
 
-  const handleReturn = () => {
-    setLoginPhase(LoginPhase.ACTIVE);
-  };
 
-  return (
-    <>
-      <Splash
-        blur={warningVisible}
-        onReturn={active ? handleReturn : null}
-      >
-        <Button
-          type="button"
-          icon={AddIcon}
-          onClick={() => setView(View.SEED_WARNING)}
-        >
-          create new wallet
-        </Button>
-        <Button
-          variant="link"
-          onClick={() => toggleWarning(true)}
-        >
-          Restore wallet
-        </Button>
-      </Splash>
-      <Popup
-        visible={warningVisible}
-        title="Restore wallet"
-        confirmButton={(
-          <Button
-            icon={DoneIcon}
-            onClick={() => setView(View.RESTORE)}
-          >
-            I agree
-          </Button>
-        )}
-        onCancel={() => toggleWarning(false)}
-      >
-        You are trying to restore an existing Beam Wallet.
-        <br />
-        Please notice that if you use your wallet on another device,
-        your balance will be up to date, but transaction history
-        and addresses will be kept separately on each device.
-      </Popup>
-    </>
-  );
+    const handleReturn = () => {
+        navigate(ROUTES.AUTH.LOGIN)
+    };
+
+    return (
+        <>
+            <Splash
+                blur={warningVisible}
+                onReturn={active ? handleReturn : null}
+            >
+                <Button
+                    type="button"
+                    icon={AddIcon}
+                    onClick={() => navigate(ROUTES.AUTH.SEED_WARNING)}
+                >
+                    create new wallet
+                </Button>
+                <Button
+                    variant="link"
+                    onClick={() => toggleWarning(true)}
+                >
+                    Restore wallet
+                </Button>
+            </Splash>
+            <Popup
+                visible={warningVisible}
+                title="Restore wallet"
+                confirmButton={(
+                    <Button
+                        icon={DoneIcon}
+                        onClick={() => navigate(ROUTES.AUTH.RESTORE)}
+                    >
+                        I agree
+                    </Button>
+                )}
+                onCancel={() => toggleWarning(false)}
+            >
+                You are trying to restore an existing Beam Wallet.
+                <br />
+                Please notice that if you use your wallet on another device,
+                your balance will be up to date, but transaction history
+                and addresses will be kept separately on each device.
+            </Popup>
+        </>
+    );
 };
 
 export default LoginRestore;

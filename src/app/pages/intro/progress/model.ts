@@ -6,9 +6,13 @@ import {
   Environment,
   NotificationType,
 } from '@app/core/types';
-import { $view, setView, View } from '@app/model/view';
+import { $view, View } from '@app/model/view';
 import { remoteEvent, getEnvironment } from '@core/api';
 import NotificationController from '@app/core/NotificationController';
+import {ROUTES} from "@app/shared/constants";
+import {default as store} from "../../../../index";
+import {navigate} from "@app/shared/store/actions";
+
 
 export const setSyncProgress = createEvent<[number, number]>();
 
@@ -25,6 +29,7 @@ export const $syncPercent = $syncProgress.map<number>((state, last) => {
 
 export const setLoading = createEvent<boolean>();
 
+//todo fix
 export const $loading = $view.map((view) => view === View.PROGRESS);
 
 // receive Progress data
@@ -44,13 +49,14 @@ guard(onProgress, {
     if (current_state_hash === tip_state_hash) {
       setLoading(false);
       if (getEnvironment() !== Environment.NOTIFICATION) {
-        setView(View.WALLET);
+        store.dispatch(navigate(ROUTES.WALLET.BASE))
+
       } else {
         const notification = NotificationController.getNotification();
         if (notification.type === NotificationType.CONNECT) {
-          setView(View.CONNECT);
+          store.dispatch(navigate(ROUTES.NOTIFICATIONS.CONNECT))
         } else if (notification.type === NotificationType.APPROVE_INVOKE) {
-          setView(View.APPROVEINVOKE);
+          store.dispatch(navigate(ROUTES.NOTIFICATIONS.APPROVE_INVOKE))
         }
       }
     } else {

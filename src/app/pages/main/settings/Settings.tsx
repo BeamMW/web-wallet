@@ -5,7 +5,8 @@ import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';
 
 import { RemoveIcon, SettingsReportIcon } from '@app/icons';
-import { View, setView } from '@app/model/view';
+
+import {ROUTES} from "@app/shared/constants";
 
 import {
   Button,
@@ -15,6 +16,7 @@ import {
   getVersionFx, loadLogsFx, $version, resetError,
 } from './model';
 import RemovePopup from './RemovePopup';
+import {useNavigate} from "react-router-dom";
 
 const ContainerStyled = styled.div`
   margin: 0 -10px;
@@ -27,6 +29,7 @@ const VersionStyled = styled.div`
 `;
 
 const Settings = () => {
+  const navigate = useNavigate()
   useEffect(() => {
     getVersionFx();
   }, []);
@@ -37,7 +40,7 @@ const Settings = () => {
 
   const ReportClicked = () => {
     loadLogsFx();
-    setView(View.SETTINGS_REPORT);
+    navigate(ROUTES.SETTINGS.SETTINGS_REPORT)
   };
 
   const version = `v ${manifest.version} (${versionData.beam_branch_name})`;

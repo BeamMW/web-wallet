@@ -5,14 +5,18 @@ import { ArrowRightIcon } from '@app/icons';
 
 import { $ids, $words, generateSeedFx } from '@app/model/base';
 import { useStore } from 'effector-react';
-import { setView, View } from '@app/model/view';
 import SeedList from '@pages/intro/seed';
+
+import {history} from "@app/shared/history";
+import {ROUTES} from "@app/shared/constants";
+import {useNavigate} from "react-router-dom";
 
 const SEED_CONFIRM_COUNT = 6;
 
 const SeedConfirm: React.FC = () => {
   const seed = useStore($words);
   const ids = useStore($ids);
+  const navigate = useNavigate();
 
   const [errors, setErrors] = useState(
     new Array(SEED_CONFIRM_COUNT).fill(null),
@@ -20,6 +24,7 @@ const SeedConfirm: React.FC = () => {
   const valid = errors.every((value) => value === true);
 
   const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+
     event.preventDefault();
     const { name, value } = event.target;
     const index = parseInt(name, 10);
@@ -35,12 +40,14 @@ const SeedConfirm: React.FC = () => {
 
   const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
-    setView(View.SET_PASSWORD);
+    navigate(ROUTES.AUTH.SET_PASSWORD)
+
   };
 
   const handlePrevious: React.MouseEventHandler = () => {
     generateSeedFx();
-    setView(View.SEED_WRITE);
+    navigate(ROUTES.AUTH.SEED_WRITE)
+
   };
 
   return (
