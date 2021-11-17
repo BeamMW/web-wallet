@@ -11,6 +11,9 @@ import BackButton from './BackButton';
 import Title from './Title';
 import Button from './Button';
 import Menu from './Menu';
+import {useNavigate} from "react-router-dom";
+import {generateSeedFx} from "@model/base";
+import {ROUTES} from "@app/shared/constants";
 
 interface WindowProps {
   title?: string;
@@ -101,10 +104,16 @@ export const Window: React.FC<WindowProps> = ({
   onPrevious,
 }) => {
   const [menuVisible, setVisible] = useState(false);
+  const navigate = useNavigate();
 
-  const handleBackClick = isNil(onPrevious) ? gotoBack : onPrevious;
+  const handlePrevious: React.MouseEventHandler = () => {
+    navigate(-1)
+  };
+
+  const handleBackClick = isNil(onPrevious) ?  handlePrevious: onPrevious;
   const handleMenuClick = () => setVisible(true);
   const handleCancelClick = () => setVisible(false);
+
 
   return (
     <ContainerStyled pallete={pallete}>

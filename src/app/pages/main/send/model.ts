@@ -5,10 +5,14 @@ import {
 import { debounce } from 'patronum/debounce';
 
 import {
-  gotoWallet, gotoConfirm, gotoSend,
+  gotoWallet, gotoConfirm,
 } from '@app/model/view';
 
 import { FEE_DEFAULT } from '@app/model/rates';
+
+import {ROUTES} from "@app/shared/constants";
+import {default as store} from "../../../../index";
+import {navigate} from "@app/shared/store/actions";
 
 import {
   isNil,
@@ -280,7 +284,8 @@ const STORES = [
   $ready,
 ];
 
-STORES.forEach((store) => store.reset(gotoSend));
+// todo reset state on page change
+//STORES.forEach((s) => s.reset(store.dispatch(navigate(ROUTES.WALLET.SEND))));
 
 enum AmountError {
   FEE = 'Insufficient funds to pay transaction fee.',

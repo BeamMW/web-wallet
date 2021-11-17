@@ -7,7 +7,6 @@ import { $ids, $words, generateSeedFx } from '@app/model/base';
 import { useStore } from 'effector-react';
 import SeedList from '@pages/intro/seed';
 
-import {history} from "@app/shared/history";
 import {ROUTES} from "@app/shared/constants";
 import {useNavigate} from "react-router-dom";
 
