@@ -5,14 +5,14 @@ import { styled } from '@linaria/react';
 
 import {
   Button, Window, Section, Menu,
-} from 'app/uikit';
+} from 'app/shared/components';
 import { compact, isNil } from '@core/utils';
 import { getRateFx, GROTHS_IN_BEAM } from '@app/model/rates';
 
 import {
   ArrowUpIcon,
   ArrowDownIcon,
-} from '@app/icons';
+} from '@app/shared/icons';
 
 import { css } from '@linaria/core';
 import { $assets, $transactions } from '@app/model/wallet';

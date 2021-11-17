@@ -4,8 +4,8 @@ import { styled } from '@linaria/react';
 
 import {
   fromGroths, getSign, isNil, toUSD,
-} from '@app/core/utils';
-import { $rate } from '@app/model/rates';
+} from '@core/utils';
+import { $rate } from '@model/rates';
 
 interface Props {
   value: number;

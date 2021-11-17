@@ -4,13 +4,13 @@ import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
-import { AssetLabel, Input, Rate } from '@uikit';
-import Select, { Option } from '@uikit/Select';
+import { AssetLabel, Input, Rate } from './';
+import Select, { Option } from '@app/shared/components/Select';
 
-import { isNil, toGroths, truncate } from '@app/core/utils';
+import { isNil, toGroths, truncate } from '@core/utils';
 
-import { AMOUNT_MAX } from '@app/model/rates';
-import { $assets } from '@app/model/wallet';
+import { AMOUNT_MAX } from '@model/rates';
+import { $assets } from '@model/wallet';
 import AssetIcon from './AssetIcon';
 
 const ContainerStyled = styled.div`

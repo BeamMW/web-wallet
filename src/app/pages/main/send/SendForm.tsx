@@ -4,17 +4,17 @@ import { useStore } from 'effector-react';
 
 import {
   Window, Section, Input, Button, Title, Rate,
-} from 'app/uikit';
+} from 'app/shared/components';
 
 import {
   ArrowRightIcon,
   ArrowUpIcon,
-} from '@app/icons';
+} from '@app/shared/icons';
 
-import { AmountInput } from '@uikit';
+import { AmountInput } from '@app/shared/components';
 
 import { styled } from '@linaria/react';
-import LabeledToggle from '@app/uikit/LabeledToggle';
+import LabeledToggle from '@app/shared/components/LabeledToggle';
 import { css } from '@linaria/core';
 import { fromGroths, isNil, truncate } from '@app/core/utils';
 import {

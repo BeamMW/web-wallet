@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
-import { gotoBack } from '@app/model/view';
-import { isNil } from '@app/core/utils';
-import { MenuIcon } from '@app/icons';
+import { gotoBack } from '@model/view';
+import { isNil } from '@core/utils';
+import { MenuIcon } from '@app/shared/icons';
 
 import Logo from './Logo';
 import BackButton from './BackButton';

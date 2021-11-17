@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { styled } from '@linaria/react';
 
-import { isNil } from '@app/core/utils';
+import { isNil } from '@core/utils';
 import Title from './Title';
 import Angle from './Angle';
 

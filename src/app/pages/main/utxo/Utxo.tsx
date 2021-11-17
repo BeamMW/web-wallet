@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 
 import {
   Window,
-} from '@app/uikit';
+} from '@app/shared/components';
 
 const Utxo = () => (
   <Window title="UTXO">

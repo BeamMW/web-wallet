@@ -2,13 +2,13 @@ import React from 'react';
 import NotificationController from '@core/NotificationController';
 import { styled } from '@linaria/react';
 import { approveContractInfoRequest, rejectContractInfoRequest } from '@core/api';
-import { Button } from 'app/uikit';
+import { Button } from 'app/shared/components';
 import { useStore } from 'effector-react';
 import { $assets } from '@app/model/wallet';
-import { AssetIcon } from '@app/uikit';
+import { AssetIcon } from '@app/shared/components';
 import {
   CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards
-} from '@app/icons';
+} from '@app/shared/icons';
 
 const ContainerStyled = styled.div`
   position: relative;

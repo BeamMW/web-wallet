@@ -3,14 +3,14 @@ import { styled } from '@linaria/react';
 
 import {
   Window, Button, Footer,
-} from '@uikit';
+} from '@app/shared/components';
 
 import {
   EyeIcon,
   PassIcon,
   CopyIcon,
   DoneIcon,
-} from '@app/icons';
+} from '@app/shared/icons';
 
 import { generateSeedFx } from '@app/model/base';
 

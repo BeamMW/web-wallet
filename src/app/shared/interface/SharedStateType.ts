@@ -1,6 +1,3 @@
-
-
-
 export interface SharedStateType {
-    routerLink: string;
+  routerLink: string;
 }

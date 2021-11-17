@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {useStore} from 'effector-react';
 
-import {Popup, Splash, Button} from 'app/uikit';
+import {Popup, Splash, Button} from 'app/shared/components';
 import {ROUTES} from "@app/shared/constants";
 
 import {
     AddIcon,
     DoneIcon,
-} from '@app/icons';
+} from '@app/shared/icons';
 
 import {resetCache, resetErrors} from '@pages/intro/seed/model';
 

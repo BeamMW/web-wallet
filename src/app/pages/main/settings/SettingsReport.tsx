@@ -1,10 +1,10 @@
 import React from 'react';
 
-import {Button, Window} from 'app/uikit';
+import {Button, Window} from 'app/shared/components';
 import {$logs} from './model';
 import {useStore} from 'effector-react';
 import {styled} from '@linaria/react';
-import {SaveIcon} from '@app/icons';
+import {SaveIcon} from '@app/shared/icons';
 import * as extensionizer from 'extensionizer';
 import JSZip from 'jszip';
 import {saveAs} from 'file-saver';

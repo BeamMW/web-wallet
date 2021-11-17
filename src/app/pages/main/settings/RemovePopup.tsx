@@ -5,13 +5,13 @@ import {
   Button,
   Input,
   Popup,
-} from '@app/uikit';
+} from '@app/shared/components';
 
 import {
   CancelIcon,
   ArrowRightIcon,
   RemoveIcon,
-} from '@app/icons';
+} from '@app/shared/icons';
 
 import { useStore } from 'effector-react';
 import { isNil } from '@app/core/utils';

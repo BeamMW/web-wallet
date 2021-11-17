@@ -18,7 +18,7 @@ import {
   TxPendingOwnIcon,
 
   TxExpiredIcon,
-} from '@app/icons';
+} from '@app/shared/icons';
 
 import {
   Transaction, TxStatus, TxStatusString,

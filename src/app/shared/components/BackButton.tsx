@@ -1,7 +1,7 @@
 import React from 'react';
 import { css, cx } from '@linaria/core';
 
-import { AngleBackIcon } from '@app/icons';
+import { AngleBackIcon } from '@app/shared/icons';
 
 import Button from './Button';
 

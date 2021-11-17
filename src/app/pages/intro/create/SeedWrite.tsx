@@ -4,7 +4,7 @@ import {styled} from '@linaria/react';
 
 import {
     Window, Popup, Button, Footer,
-} from '@uikit';
+} from '@app/shared/components';
 import {$seed} from '@app/model/base';
 
 import {ROUTES} from "@app/shared/constants";
@@ -13,7 +13,7 @@ import {
     DoneIcon,
     LockIcon,
     ArrowRightIcon,
-} from '@app/icons';
+} from '@app/shared/icons';
 
 import {useNavigate} from "react-router-dom";
 

@@ -5,11 +5,11 @@ import { useStore } from 'effector-react';
 
 import {
   Window, Section, Button, Input, Toggle,
-} from '@uikit';
+} from '@app/shared/components';
 
-import { CopySmallIcon } from '@app/icons';
+import { CopySmallIcon } from '@app/shared/icons';
 
-import AmountInput from '@uikit/AmountInput';
+import AmountInput from '@app/shared/components/AmountInput';
 
 import {
   $addressPreview,

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import { Button, Footer, Window } from 'app/uikit';
-import { ArrowRightIcon } from '@app/icons';
+import { Button, Footer, Window } from 'app/shared/components';
+import { ArrowRightIcon } from '@app/shared/icons';
 
 import { $ids, $words, generateSeedFx } from '@app/model/base';
 import { useStore } from 'effector-react';

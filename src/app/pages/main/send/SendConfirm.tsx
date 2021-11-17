@@ -3,11 +3,11 @@ import React from 'react';
 
 import {
   Window, Section, Button, Rate,
-} from 'app/uikit';
+} from 'app/shared/components';
 
 import {
   ArrowRightIcon,
-} from '@app/icons';
+} from '@app/shared/icons';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';

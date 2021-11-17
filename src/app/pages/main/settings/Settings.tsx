@@ -4,14 +4,14 @@ import * as extensionizer from 'extensionizer';
 import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';
 
-import { RemoveIcon, SettingsReportIcon } from '@app/icons';
+import { RemoveIcon, SettingsReportIcon } from '@app/shared/icons';
 
 import {ROUTES} from "@app/shared/constants";
 
 import {
   Button,
   Window,
-} from '@app/uikit';
+} from '@app/shared/components';
 import {
   getVersionFx, loadLogsFx, $version, resetError,
 } from './model';

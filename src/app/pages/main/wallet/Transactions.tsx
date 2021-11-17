@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 
 import { Contract, Transaction } from '@app/core/types';
 
-import { AssetLabel, StatusLabel } from '@app/uikit';
+import { AssetLabel, StatusLabel } from '@app/shared/components';
 import { isNil } from '@app/core/utils';
 
 const ListStyled = styled.ul`

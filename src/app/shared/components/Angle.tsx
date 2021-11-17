@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 
 import {
   AngleSmallUpIcon,
-} from '@app/icons';
+} from '@app/shared/icons';
 
 interface AngleProps {
   value?: number;

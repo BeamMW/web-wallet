@@ -3,10 +3,10 @@ import { styled } from '@linaria/react';
 
 import {
   Window, Button, Input, Footer, Popup,
-} from 'app/uikit';
+} from 'app/shared/components';
 import { makeOnChange } from '@core/utils';
 
-import { ArrowLeftIcon, ArrowRightIcon } from '@app/icons';
+import { ArrowLeftIcon, ArrowRightIcon } from '@app/shared/icons';
 
 import { createWallet } from '@app/core/api';
 import { useStore } from 'effector-react';

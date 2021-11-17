@@ -2,12 +2,12 @@ import React from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
-import { Button, Splash, Footer } from 'app/uikit';
+import { Button, Splash, Footer } from 'app/shared/components';
 import WasmWallet from '@core/WasmWallet';
 
 import {
   CancelIcon,
-} from '@app/icons';
+} from '@app/shared/icons';
 
 import ProgressBar from './ProgressBar';
 import {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Button, Window } from 'app/uikit';
+import { Button, Window } from 'app/shared/components';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 import {history} from "@app/shared/history";

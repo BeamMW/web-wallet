@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 
 import { WalletTotal } from '@app/core/types';
 
-import AssetLabel from '@app/uikit/AssetLabel';
+import AssetLabel from '@app/shared/components/AssetLabel';
 import { AssetTotal, PALLETE_ASSETS } from '@app/model/wallet';
 import { isNil } from '@app/core/utils';
 

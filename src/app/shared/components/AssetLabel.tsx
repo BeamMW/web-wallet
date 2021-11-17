@@ -3,12 +3,12 @@ import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
-import { $assets } from '@app/model/wallet';
+import { $assets } from '@model/wallet';
 
 import {
   fromGroths, getSign, isNil, truncate,
-} from '@app/core/utils';
-import { Transaction } from '@app/core/types';
+} from '@core/utils';
+import { Transaction } from '@core/types';
 import AssetIcon from './AssetIcon';
 import Rate from './Rate';
 

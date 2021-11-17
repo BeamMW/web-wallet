@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 import { isNil } from '@core/utils';
-import { ButtonVariant, Pallete } from '@app/core/types';
+import { ButtonVariant, Pallete } from '@core/types';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.FC;

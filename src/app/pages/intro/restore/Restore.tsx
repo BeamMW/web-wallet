@@ -2,7 +2,7 @@ import React from 'react';
 import { useStore } from 'effector-react';
 
 import { setSeed } from '@app/model/base';
-import { Button, Footer, Window } from '@app/uikit';
+import { Button, Footer, Window } from '@app/shared/components';
 import SeedList from '@pages/intro/seed';
 
 import {

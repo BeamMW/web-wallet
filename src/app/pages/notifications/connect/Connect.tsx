@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import NotificationController from '@core/NotificationController';
 import { approveConnection } from '@core/api';
 
-import { Button } from 'app/uikit';
+import { Button } from 'app/shared/components';
 
 const StyledTitle = styled.div`
   margin: 50px auto;

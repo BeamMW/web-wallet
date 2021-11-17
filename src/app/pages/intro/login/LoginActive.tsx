@@ -3,14 +3,14 @@ import {useStore} from 'effector-react';
 
 import {
     Popup, Button, Input, Splash,
-} from '@uikit';
+} from '@app/shared/components';
 
 import {isNil} from '@app/core/utils';
 
 import {
     WalletSmallIcon,
     DoneIcon,
-} from '@app/icons';
+} from '@app/shared/icons';
 
 import {
     $error, startWalletFx,
