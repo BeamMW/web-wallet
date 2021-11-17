@@ -7,8 +7,8 @@ import { $ids, $words, generateSeedFx } from '@app/model/base';
 import { useStore } from 'effector-react';
 import SeedList from '@pages/intro/seed';
 
-import {ROUTES} from "@app/shared/constants";
-import {useNavigate} from "react-router-dom";
+import { ROUTES } from '@app/shared/constants';
+import { useNavigate } from 'react-router-dom';
 
 const SEED_CONFIRM_COUNT = 6;
 
@@ -17,13 +17,10 @@ const SeedConfirm: React.FC = () => {
   const ids = useStore($ids);
   const navigate = useNavigate();
 
-  const [errors, setErrors] = useState(
-    new Array(SEED_CONFIRM_COUNT).fill(null),
-  );
+  const [errors, setErrors] = useState(new Array(SEED_CONFIRM_COUNT).fill(null));
   const valid = errors.every((value) => value === true);
 
   const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-
     event.preventDefault();
     const { name, value } = event.target;
     const index = parseInt(name, 10);
@@ -39,23 +36,19 @@ const SeedConfirm: React.FC = () => {
 
   const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
-    navigate(ROUTES.AUTH.SET_PASSWORD)
-
+    navigate(ROUTES.AUTH.SET_PASSWORD);
   };
 
   const handlePrevious: React.MouseEventHandler = () => {
     generateSeedFx();
-    navigate(ROUTES.AUTH.SEED_WRITE)
-
+    navigate(ROUTES.AUTH.SEED_WRITE);
   };
 
   return (
     <Window title="Confirm seed phrase" onPrevious={handlePrevious}>
       <p>
-        Your seed phrase is the access key to all the funds in your wallet.
-        Print or write down the phrase to keep it in a safe or in a locked
-        vault. Without the phrase you will not be able to recover your
-        money.
+        Your seed phrase is the access key to all the funds in your wallet. Print or write down the phrase to keep it in
+        a safe or in a locked vault. Without the phrase you will not be able to recover your money.
       </p>
       <form autoComplete="off" onSubmit={handleSubmit}>
         <SeedList indexByValue data={ids} errors={errors} onInput={handleInput} />

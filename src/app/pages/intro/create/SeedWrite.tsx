@@ -1,21 +1,17 @@
-import React, {useState} from 'react';
-import {useStore} from 'effector-react';
-import {styled} from '@linaria/react';
+import React, { useState } from 'react';
+import { useStore } from 'effector-react';
+import { styled } from '@linaria/react';
 
 import {
-    Window, Popup, Button, Footer,
+  Window, Popup, Button, Footer,
 } from '@app/shared/components';
-import {$seed} from '@app/model/base';
+import { $seed } from '@app/model/base';
 
-import {ROUTES} from "@app/shared/constants";
+import { ROUTES } from '@app/shared/constants';
 
-import {
-    DoneIcon,
-    LockIcon,
-    ArrowRightIcon,
-} from '@app/shared/icons';
+import { DoneIcon, LockIcon } from '@app/shared/icons';
 
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const SeedListStyled = styled.ol`
   counter-reset: counter;
@@ -51,68 +47,56 @@ const SeedListStyled = styled.ol`
 `;
 
 const SeedWrite: React.FC = () => {
-    const navigate = useNavigate();
-    const [warningVisible, toggleWarning] = useState(false);
-    const [seed] = useStore($seed);
+  const navigate = useNavigate();
+  const [warningVisible, toggleWarning] = useState(false);
+  const [seed] = useStore($seed);
 
-    const handleSkipClick: React.MouseEventHandler = () => {
-        navigate(ROUTES.AUTH.SET_PASSWORD)
+  // const handleSkipClick: React.MouseEventHandler = () => {
+  //   navigate(ROUTES.AUTH.SET_PASSWORD);
+  // };
 
-    };
+  const handleNextClick: React.MouseEventHandler = () => {
+    navigate(ROUTES.AUTH.SEED_CONFIRM);
+  };
 
-    const handleNextClick: React.MouseEventHandler = () => {
-        navigate(ROUTES.AUTH.SEED_CONFIRM)
-    };
+  const handleCancel: React.MouseEventHandler = () => {
+    toggleWarning(false);
+  };
 
-    const handleCancel: React.MouseEventHandler = () => {
-        toggleWarning(false);
-    };
-
-    return (
-        <>
-            <Window
-                title="Seed phrase"
-            >
-                <p>
-                    Your seed phrase is the access key to all the funds in your
-                    wallet. Print or write down the phrase to keep it in a safe or in
-                    a locked vault. Without the phrase you will not be able to recover
-                    your money.
-                </p>
-                <SeedListStyled>
-                    {seed.split(' ').map((value, index) => (
-                        // eslint-disable-next-line
-                        <li key={index}>{value}</li>
-                    ))}
-                </SeedListStyled>
-                <Footer margin="small">
-                    <Button
-                        icon={LockIcon}
-                        type="button"
-                        onClick={() => toggleWarning(true)}
-                    >
-                        Complete verification
-                    </Button>
-                </Footer>
-            </Window>
-            <Popup
-                visible={warningVisible}
-                title="Save seed phrase"
-                confirmButton={(
-                    <Button
-                        icon={DoneIcon}
-                        onClick={handleNextClick}
-                    >
-                        done
-                    </Button>
-                )}
-                onCancel={handleCancel}
-            >
-                Please write the seed phrase down. Storing it in a file makes it
-                prone to cyber attacks and, therefore, less secure.
-            </Popup>
-        </>
-    );
+  return (
+    <>
+      <Window title="Seed phrase">
+        <p>
+          Your seed phrase is the access key to all the funds in your wallet. Print or write down the phrase to keep it
+          in a safe or in a locked vault. Without the phrase you will not be able to recover your money.
+        </p>
+        <SeedListStyled>
+          {seed.split(' ').map((value, index) => (
+            // eslint-disable-next-line
+            <li key={index}>{value}</li>
+          ))}
+        </SeedListStyled>
+        <Footer margin="small">
+          <Button icon={LockIcon} type="button" onClick={() => toggleWarning(true)}>
+            Complete verification
+          </Button>
+        </Footer>
+      </Window>
+      <Popup
+        visible={warningVisible}
+        title="Save seed phrase"
+        confirmButton={(
+          <Button icon={DoneIcon} onClick={handleNextClick}>
+            done
+          </Button>
+        )}
+        onCancel={handleCancel}
+      >
+        Please write the seed phrase down. Storing it in a file makes it prone to cyber attacks and, therefore, less
+        secure.
+      </Popup>
+    </>
+  );
 };
 
 export default SeedWrite;

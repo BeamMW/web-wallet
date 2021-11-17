@@ -5,24 +5,19 @@ import {
   TxCanceledIcon,
   TxCanceledMPIcon,
   TxCanceledOffIcon,
-
   TxCompletedIcon,
   // TxCompletedMPOwnIcon,
   TxCompletedMPIcon,
   TxCompletedOffIcon,
   TxCompletedOwnIcon,
-
   TxPendingIcon,
   TxPendingMPIcon,
   TxPendingOffIcon,
   TxPendingOwnIcon,
-
   TxExpiredIcon,
 } from '@app/shared/icons';
 
-import {
-  Transaction, TxStatus, TxStatusString,
-} from '@core/types';
+import { Transaction, TxStatus, TxStatusString } from '@core/types';
 
 interface StatusLabelProps {
   data: Transaction;
@@ -99,8 +94,10 @@ const StatusLabel: React.FC<StatusLabelProps> = ({ data }) => {
   const IconComponent = getIconComponent(data);
   return (
     <ContainerStyled color={color}>
-      <IconStyled reverse={!data.income}><IconComponent /></IconStyled>
-      { data.status_string }
+      <IconStyled reverse={!data.income}>
+        <IconComponent />
+      </IconStyled>
+      {data.status_string}
     </ContainerStyled>
   );
 };

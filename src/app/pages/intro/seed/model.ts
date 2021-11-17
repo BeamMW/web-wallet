@@ -1,8 +1,7 @@
 import { isAllowedSeed, isAllowedWord } from '@app/core/api';
 import { getInputValue } from '@app/core/utils';
 import {
-  combine,
-  createEffect, createEvent, restore, sample,
+  combine, createEffect, createEvent, restore, sample,
 } from 'effector';
 import { debounce } from 'patronum';
 import React from 'react';
@@ -25,9 +24,7 @@ export const resetCache = createEvent();
 $errors.reset(resetErrors);
 $cache.reset(resetCache);
 
-export const $valid = $errors.map(
-  (errors) => errors.every((value) => value === true),
-);
+export const $valid = $errors.map((errors) => errors.every((value) => value === true));
 
 interface InputChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
 

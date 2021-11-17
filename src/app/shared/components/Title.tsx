@@ -27,7 +27,7 @@ const HeadingStyled = styled.h2`
 const TitleStyled = styled.h3`
   ${STYLE_BASE}
   margin-bottom: 20px;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -47,9 +47,7 @@ const VARIANTS = {
 
 const Title: React.FC<TitleProps> = ({ variant = 'regular', children }) => {
   const TitleComponent = VARIANTS[variant];
-  return (
-    <TitleComponent>{ children }</TitleComponent>
-  );
+  return <TitleComponent>{children}</TitleComponent>;
 };
 
 export default Title;

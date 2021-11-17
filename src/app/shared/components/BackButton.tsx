@@ -18,12 +18,7 @@ const backStyle = css`
 `;
 
 const BackButton: React.FC<BackButtonProps> = ({ className, onClick }) => (
-  <Button
-    variant="icon"
-    icon={AngleBackIcon}
-    className={cx(backStyle, className)}
-    onClick={onClick}
-  />
+  <Button variant="icon" icon={AngleBackIcon} className={cx(backStyle, className)} onClick={onClick} />
 );
 
 export default BackButton;

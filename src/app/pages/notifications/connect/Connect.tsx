@@ -15,12 +15,12 @@ const StyledTitle = styled.div`
 const StyledMessage = styled.div`
   margin: 0 20px 20px 20px;
   font-size: 16px;
-  text-align:center;
+  text-align: center;
 `;
 
 const StyledApprove = styled.div`
   margin: 0 20px 30px 20px;
-  text-align:center;
+  text-align: center;
   font-size: 16px;
 `;
 
@@ -31,27 +31,32 @@ const Connect = () => {
     <>
       <StyledTitle>DApp Connection Request</StyledTitle>
       <StyledMessage>
-        <b>{notification.params.appname}</b> is trying to connect<br/>to the BEAM Web Wallet.
+        <b>{notification.params.appname}</b>
+        {' '}
+        is trying to connect
+        <br />
+        to the BEAM Web Wallet.
       </StyledMessage>
       <StyledApprove>Approve connection?</StyledApprove>
       <Button
         type="button"
-        onClick={
-          () => {
-            approveConnection(notification.params.apiver, notification.params.apivermin, notification.params.appname, notification.params.appurl);
-            window.close();
-          }
-        }
+        onClick={() => {
+          approveConnection(
+            notification.params.apiver,
+            notification.params.apivermin,
+            notification.params.appname,
+            notification.params.appurl,
+          );
+          window.close();
+        }}
       >
         Approve
       </Button>
       <Button
         type="button"
-        onClick={
-          () => {
-            window.close();
-          }
-        }
+        onClick={() => {
+          window.close();
+        }}
       >
         Reject
       </Button>

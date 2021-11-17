@@ -17,20 +17,15 @@ export default class Entity<T, E extends WalletChangeEvent> {
 
     this.store.on(this.append, (state, payload) => state.concat(payload));
 
-    this.store.on(this.remove, (state, payload) => (
-      // for every item in payload
-      payload.reduce((result, b) => (
-        // remove items in state that are equal
-        result.filter((a) => !equals(a, b))
-      ), state)
-    ));
-
-    this.store.on(this.update, (state, payload) => (
-      // for every item in payload
-      payload.reduce((result, b) => (
-        // replace items in state that are equal
-        result.map((a) => (equals(a, b) ? b : a))
-      ), state)
+    // for every item in payload
+    this.store.on(
+      this.remove,
+      (state, payload) => payload.reduce((result, b) => result.filter((a) => !equals(a, b)), state), // remove items in state that are equal
+    );
+    // for every item in payload
+    this.store.on(this.update, (state, payload) => payload.reduce(
+      (result, b) => result.map((a) => (equals(a, b) ? b : a)), // replace items in state that are equal
+      state,
     ));
   }
 

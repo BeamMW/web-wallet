@@ -6,10 +6,7 @@ import {
   Window, Section, Input, Button, Title, Rate,
 } from 'app/shared/components';
 
-import {
-  ArrowRightIcon,
-  ArrowUpIcon,
-} from '@app/shared/icons';
+import { ArrowRightIcon, ArrowUpIcon } from '@app/shared/icons';
 
 import { AmountInput } from '@app/shared/components';
 
@@ -22,15 +19,12 @@ import {
   $offline,
   $amount,
   $comment,
-
   onAddressChange,
   onCommentChange,
-
   setOffline,
   setAmount,
   setMaxAmount,
   onFormSubmit,
-
   $valid,
   $selected,
   $addressData,
@@ -40,7 +34,7 @@ import {
 
 const WarningStyled = styled.div`
   margin: 30px -20px;
-  font-family: 'SFProDisplay';
+  font-family: "SFProDisplay";
   font-style: italic;
   color: var(--color-gray);
 `;
@@ -57,10 +51,7 @@ const SendForm = () => {
   // const comment = useStore($comment);
   const [amount, asset_id] = useStore($amount);
 
-  const {
-    type: addressType,
-    is_valid: addressValid,
-  } = useStore($addressData);
+  const { type: addressType, is_valid: addressValid } = useStore($addressData);
 
   const amountError = useStore($amountError);
 
@@ -72,10 +63,7 @@ const SendForm = () => {
   const groths = fromGroths(selected.available);
 
   return (
-    <Window
-      title="Send"
-      pallete="purple"
-    >
+    <Window title="Send" pallete="purple">
       <form onSubmit={onFormSubmit}>
         <Section title="Send to" variant="gray">
           <Input
@@ -87,27 +75,17 @@ const SendForm = () => {
             onInput={onAddressChange}
           />
         </Section>
-        { addressType === 'offline' && (
-        <Section title="Transaction Type" variant="gray">
-          <LabeledToggle
-            left="Online"
-            right="Offline"
-            value={offline}
-            onChange={setOffline}
-          />
-        </Section>
-        ) }
+        {addressType === 'offline' && (
+          <Section title="Transaction Type" variant="gray">
+            <LabeledToggle left="Online" right="Offline" value={offline} onChange={setOffline} />
+          </Section>
+        )}
         <Section title="Amount" variant="gray">
-          <AmountInput
-            value={amount}
-            asset_id={asset_id}
-            error={amountError}
-            onChange={setAmount}
-          />
+          <AmountInput value={amount} asset_id={asset_id} error={amountError} onChange={setAmount} />
           <Title variant="subtitle">Available</Title>
           {`${groths} ${truncate(selected.metadata_pairs.N)}`}
-          { selected.asset_id === 0 && isNil(amountError) && <Rate value={groths} /> }
-          { groths > 0 && (
+          {selected.asset_id === 0 && isNil(amountError) && <Rate value={groths} />}
+          {groths > 0 && (
             <Button
               icon={ArrowUpIcon}
               variant="link"
@@ -126,13 +104,8 @@ const SendForm = () => {
             onInput={onCommentChange}
           />
         </Section> */}
-        <WarningStyled>{ warning }</WarningStyled>
-        <Button
-          pallete="purple"
-          icon={ArrowRightIcon}
-          type="submit"
-          disabled={!valid}
-        >
+        <WarningStyled>{warning}</WarningStyled>
+        <Button pallete="purple" icon={ArrowRightIcon} type="submit" disabled={!valid}>
           next
         </Button>
       </form>

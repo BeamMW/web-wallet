@@ -7,7 +7,7 @@ export default class NotificationController {
     NotificationData = data;
   }
 
-  static getNotification():Notification {
+  static getNotification(): Notification {
     return NotificationData;
   }
 }

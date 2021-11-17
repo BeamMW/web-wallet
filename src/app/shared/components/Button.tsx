@@ -13,7 +13,8 @@ const BaseButtonStyled = styled.button<ButtonProps>`
   &[disabled] {
     opacity: 0.5;
 
-    &:hover, &:active {
+    &:hover,
+    &:active {
       box-shadow: none !important;
       cursor: not-allowed !important;
     }

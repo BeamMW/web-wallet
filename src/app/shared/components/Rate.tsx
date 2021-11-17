@@ -20,10 +20,7 @@ const Ratetyled = styled.div`
 `;
 
 const Rate: React.FC<Props> = ({
-  value,
-  income,
-  groths,
-  className,
+  value, income, groths, className,
 }) => {
   const rate = useStore($rate);
   const sign = isNil(income) ? '' : getSign(income);
@@ -31,7 +28,7 @@ const Rate: React.FC<Props> = ({
   return (
     <Ratetyled className={className}>
       {sign}
-      { toUSD(amount, rate) }
+      {toUSD(amount, rate)}
     </Ratetyled>
   );
 };

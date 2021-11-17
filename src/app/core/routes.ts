@@ -1,27 +1,12 @@
 import {
-  Login,
-  Restore,
-  SetPassword,
-  Progress,
-  SeedWarning,
-  SeedWrite,
-  SeedConfirm,
+  Login, Restore, SetPassword, Progress, SeedWarning, SeedWrite, SeedConfirm,
 } from '@pages/intro';
 
 import {
-  Wallet,
-  Receive,
-  SendConfirm,
-  SendForm,
-  Utxo,
-  Settings,
-  SettingsReport,
+  Wallet, Receive, SendConfirm, SendForm, Utxo, Settings, SettingsReport,
 } from '@pages/main';
 
-import {
-  Connect,
-  ApproveInvoke,
-} from '@pages/notifications';
+import { Connect, ApproveInvoke } from '@pages/notifications';
 
 import { View } from '@app/model/view';
 

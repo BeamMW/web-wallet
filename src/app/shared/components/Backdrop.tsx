@@ -15,10 +15,7 @@ const BackdropStyled = styled.div`
   background-color: rgba(3, 36, 68, 0.3);
 `;
 
-const BackDrop: React.FC<BackDropProps> = ({
-  onCancel,
-  children,
-}) => {
+const BackDrop: React.FC<BackDropProps> = ({ onCancel, children }) => {
   const rootRef = useRef();
 
   const handleOutsideClick = (event) => {
@@ -29,7 +26,7 @@ const BackDrop: React.FC<BackDropProps> = ({
 
   return (
     <BackdropStyled ref={rootRef} onClick={handleOutsideClick}>
-      { children }
+      {children}
     </BackdropStyled>
   );
 };

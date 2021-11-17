@@ -40,18 +40,18 @@ const fromInvokeData = (data: Contract, fee: number): Partial<Transaction> => {
   return null;
 };
 
-const Transactions: React.FC<TransactionsProps> = ({
-  data: transactions,
-}) => (
+const Transactions: React.FC<TransactionsProps> = ({ data: transactions }) => (
   <ListStyled>
-    { transactions.map((tx, index) => {
+    {transactions.map((tx, index) => {
       const { invoke_data: contracts } = tx;
       const payload = isNil(contracts) ? null : fromInvokeData(contracts[0], tx.fee);
 
-      const data = isNil(payload) ? tx : {
-        ...tx,
-        ...payload,
-      };
+      const data = isNil(payload)
+        ? tx
+        : {
+          ...tx,
+          ...payload,
+        };
 
       return (
         <ListItemStyled key={index}>

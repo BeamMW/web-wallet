@@ -56,9 +56,7 @@ export const Table: React.FC<TableProps> = ({ keyBy, data, config }) => {
             <Header
               key={index}
               data-index={index}
-              active={
-                index !== Math.abs(filterBy) ? null : isPositive(filterBy)
-              }
+              active={index !== Math.abs(filterBy) ? null : isPositive(filterBy)}
               onClick={handleSortClick}
             >
               {title}

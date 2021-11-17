@@ -12,9 +12,7 @@ import { Transaction } from '@core/types';
 import AssetIcon from './AssetIcon';
 import Rate from './Rate';
 
-interface AssetLabelProps extends Transaction {
-
-}
+interface AssetLabelProps extends Transaction {}
 
 const ContainerStyled = styled.div`
   display: flex;
@@ -43,19 +41,12 @@ const rateStyle = css`
 `;
 
 const AssetLabel: React.FC<AssetLabelProps> = ({
-  value,
-  asset_id,
-  income,
-  fee,
-  fee_only,
-  invoke_data,
+  value, asset_id, income, fee, fee_only, invoke_data,
 }) => {
   const assets = useStore($assets);
   const target = assets.find(({ asset_id: id }) => id === asset_id);
 
-  const hasMultipleAssets = !isNil(invoke_data) && invoke_data.some((cont) => (
-    cont.amounts.length > 1
-  ));
+  const hasMultipleAssets = !isNil(invoke_data) && invoke_data.some((cont) => cont.amounts.length > 1);
 
   const amount = fromGroths(fee_only ? fee : value);
   const signed = !isNil(income);
@@ -66,7 +57,7 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   return (
     <ContainerStyled>
       <AssetIcon asset_id={asset_id} className={iconClassName} />
-      <AmountStyled>{ label }</AmountStyled>
+      <AmountStyled>{label}</AmountStyled>
       <Rate value={amount} income={income} className={rateStyle} />
     </ContainerStyled>
   );

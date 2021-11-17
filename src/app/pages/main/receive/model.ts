@@ -1,16 +1,11 @@
 import React from 'react';
 
 import {
-  sample,
-  restore,
-  createEffect,
-  createEvent,
+  sample, restore, createEffect, createEvent,
 } from 'effector';
 
 import { createAddress } from '@app/core/api';
-import {
-  compact, fromCheckbox, preventEvent,
-} from '@app/core/utils';
+import { compact, fromCheckbox, preventEvent } from '@app/core/utils';
 
 type Amount = [string, number];
 

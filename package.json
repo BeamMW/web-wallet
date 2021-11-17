@@ -6,6 +6,7 @@
   "author": "",
   "license": "UNLICENSED",
   "scripts": {
+    "commit-hook": "git add .",
     "lint": "eslint './src/**/*.ts{,x}' --fix",
     "prettier": "prettier --write \"**/*.+(ts|tsx)\"",
     "watch": "webpack --watch --progress --mode=development",
@@ -47,7 +48,7 @@
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "mini-css-extract-plugin": "^2.2.0",
-    "redux-devtools-extension": "^2.13.9",
+
     "svgo-loader": "^3.0.0",
     "tsconfig-paths-webpack-plugin": "^3.5.1",
     "typescript": "^4.0.3",
@@ -89,6 +90,7 @@
     "setimmediate": "^1.0.5",
     "stream": "^0.0.2",
     "typesafe-actions": "^5.1.0",
-    "util": "^0.12.4"
+    "util": "^0.12.4",
+    "redux-devtools-extension": "^2.13.9"
   }
 }

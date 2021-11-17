@@ -1,17 +1,19 @@
-import { createStore, applyMiddleware, compose, Middleware } from "redux";
+import {
+  createStore, applyMiddleware, compose, Middleware,
+} from 'redux';
 
-import { composeWithDevTools } from "redux-devtools-extension";
-import createSagaMiddleware from "redux-saga";
+import { composeWithDevTools } from 'redux-devtools-extension';
+import createSagaMiddleware from 'redux-saga';
 
-import appSagas from "./saga";
-import rootReducer from "./reducer";
+import appSagas from './saga';
+import rootReducer from './reducer';
 
 const sagaMiddleware = createSagaMiddleware();
 let middleware: Array<Middleware>;
 // eslint-disable-next-line @typescript-eslint/ban-types
 let composer: Function;
 
-if (process.env.NODE_ENV !== "development") {
+if (process.env.NODE_ENV !== 'development') {
   middleware = [sagaMiddleware];
   composer = composeWithDevTools({ trace: true, traceLimit: 25 });
 } else {

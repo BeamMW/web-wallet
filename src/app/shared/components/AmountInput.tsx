@@ -1,17 +1,17 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from 'react';
+import React from 'react';
 import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
-import { AssetLabel, Input, Rate } from './';
 import Select, { Option } from '@app/shared/components/Select';
 
-import { isNil, toGroths, truncate } from '@core/utils';
+import { isNil, truncate } from '@core/utils';
 
 import { AMOUNT_MAX } from '@model/rates';
 import { $assets } from '@model/wallet';
+import Input from './Input';
 import AssetIcon from './AssetIcon';
+import Rate from './Rate';
 
 const ContainerStyled = styled.div`
   position: relative;
@@ -51,11 +51,7 @@ const rateStyle = css`
 `;
 
 const AmountInput: React.FC<AmountInputProps> = ({
-  value,
-  asset_id,
-  error,
-  pallete = 'purple',
-  onChange,
+  value, asset_id, error, pallete = 'purple', onChange,
 }) => {
   const assets = useStore($assets);
 
@@ -66,8 +62,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
       return;
     }
 
-    const next = parseFloat(raw) > AMOUNT_MAX
-      ? AMOUNT_MAX.toString() : raw;
+    const next = parseFloat(raw) > AMOUNT_MAX ? AMOUNT_MAX.toString() : raw;
     onChange([next, asset_id]);
   };
 
@@ -88,19 +83,14 @@ const AmountInput: React.FC<AmountInputProps> = ({
         className={containerStyle}
         onInput={handleInput}
       />
-      { asset_id === 0 && <Rate value={parseFloat(value)} className={rateStyle} /> }
-      <Select
-        value={asset_id}
-        className={selectClassName}
-        onSelect={handleSelect}
-      >
-        { assets
-          .map(({ asset_id: id, metadata_pairs }) => (
-            <Option key={id} value={id}>
-              <AssetIcon asset_id={id} />
-              <LabelStyled>{ truncate(metadata_pairs.UN) }</LabelStyled>
-            </Option>
-          ))}
+      {asset_id === 0 && <Rate value={parseFloat(value)} className={rateStyle} />}
+      <Select value={asset_id} className={selectClassName} onSelect={handleSelect}>
+        {assets.map(({ asset_id: id, metadata_pairs }) => (
+          <Option key={id} value={id}>
+            <AssetIcon asset_id={id} />
+            <LabelStyled>{truncate(metadata_pairs.UN)}</LabelStyled>
+          </Option>
+        ))}
       </Select>
     </ContainerStyled>
   );

@@ -48,11 +48,7 @@ const Popup: React.FC<PopupProps> = ({
   visible,
   onCancel,
   cancelButton = (
-    <Button
-      variant="ghost"
-      icon={CancelIcon}
-      onClick={onCancel}
-    >
+    <Button variant="ghost" icon={CancelIcon} onClick={onCancel}>
       cancel
     </Button>
   ),

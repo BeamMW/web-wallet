@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import { WalletTotal } from '@app/core/types';
+// import { WalletTotal } from '@app/core/types';
 
 import AssetLabel from '@app/shared/components/AssetLabel';
 import { AssetTotal, PALLETE_ASSETS } from '@app/model/wallet';
@@ -16,7 +16,7 @@ interface AssetsProps {
   data: AssetTotal[];
 }
 
-const ListItemStyled = styled.li<{opt_color?: string, asset_id: number }>`
+const ListItemStyled = styled.li<{ opt_color?: string; asset_id: number }>`
   margin-bottom: 10px;
   position: relative;
   padding: 20px;
@@ -24,7 +24,7 @@ const ListItemStyled = styled.li<{opt_color?: string, asset_id: number }>`
 
   &:before {
     opacity: 0.3;
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -35,28 +35,26 @@ const ListItemStyled = styled.li<{opt_color?: string, asset_id: number }>`
     background-image: linear-gradient(
       90deg,
       ${({ asset_id, opt_color }) => {
-        if (!isNil(opt_color)) {
-          return opt_color;
-        }
+    if (!isNil(opt_color)) {
+      return opt_color;
+    }
 
-        return PALLETE_ASSETS[asset_id]
-          ? PALLETE_ASSETS[asset_id]
-          : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length];
-      }} 0%,
+    return PALLETE_ASSETS[asset_id] ? PALLETE_ASSETS[asset_id] : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length];
+  }}
+        0%,
       var(--color-dark-blue) 110%
     );
   }
 `;
 
-const Assets: React.FC<AssetsProps> = ({
-  data,
-}) => (
+const Assets: React.FC<AssetsProps> = ({ data }) => (
   <ListStyled>
-    { data.map(({ asset_id, available, metadata_pairs }) => (
-      <ListItemStyled 
-          opt_color={metadata_pairs.OPT_COLOR ? metadata_pairs.OPT_COLOR : null} 
-          key={asset_id} 
-          asset_id={asset_id}>
+    {data.map(({ asset_id, available, metadata_pairs }) => (
+      <ListItemStyled
+        opt_color={metadata_pairs.OPT_COLOR ? metadata_pairs.OPT_COLOR : null}
+        key={asset_id}
+        asset_id={asset_id}
+      >
         <AssetLabel value={available} asset_id={asset_id} />
       </ListItemStyled>
     ))}

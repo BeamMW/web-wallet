@@ -7,7 +7,7 @@ import { useStore } from 'effector-react';
 import { $assets } from '@app/model/wallet';
 import { AssetIcon } from '@app/shared/components';
 import {
-  CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards
+  CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards,
 } from '@app/shared/icons';
 
 const ContainerStyled = styled.div`
@@ -25,7 +25,7 @@ const TextStyled = styled.div`
   text-align: center;
   margin-top: 30px;
   font-style: italic;
-  color: rgba(255, 255, 255, .7);
+  color: rgba(255, 255, 255, 0.7);
 `;
 
 const Amount = styled.div`
@@ -89,59 +89,59 @@ const ControlsStyled = styled.div`
 `;
 
 const getNotificationTitle = (info, amounts) => {
-    if (info.isSpend && amounts.length > 1) {
-        return 'Confirm withdraw & deposit';
-    }
-    if (info.isSpend && amounts.length === 1) {
-        return 'Confirm deposit from the wallet';
-    }
-    if (!info.isSpend && amounts.length === 1) {
-        return 'Confirm withdraw to the wallet';
-    }
-    return "Confirm application transaction";
-}
+  if (info.isSpend && amounts.length > 1) {
+    return 'Confirm withdraw & deposit';
+  }
+  if (info.isSpend && amounts.length === 1) {
+    return 'Confirm deposit from the wallet';
+  }
+  if (!info.isSpend && amounts.length === 1) {
+    return 'Confirm withdraw to the wallet';
+  }
+  return 'Confirm application transaction';
+};
 
 const getNotificationText = (info, amounts, appName) => {
-  if (!info.isEnough) { 
+  if (!info.isEnough) {
     return 'There is not enough funds to complete the transaction';
   }
 
   if (info.isSpend && amounts.length > 1) {
-      return `${appName} will change the balances of your wallet`;
+    return `${appName} will change the balances of your wallet`;
   }
 
   if (info.isSpend && amounts.length === 1) {
-      return `${appName} will take the funds from your wallet`;
+    return `${appName} will take the funds from your wallet`;
   }
 
   if (!info.isSpend && amounts.length === 1) {
-      return `${appName} will send the funds to your wallet`;
+    return `${appName} will send the funds to your wallet`;
   }
 
   return 'The transaction fee would be deducted from your balance';
-}
+};
 
 const getConfirmIcon = (info, amounts) => {
   if (info.isSpend && amounts.length > 1) {
     return ArrowsTowards;
   }
   if (info.isSpend && amounts.length === 1) {
-      return ArrowUpIcon;
+    return ArrowUpIcon;
   }
   if (!info.isSpend && amounts.length === 1) {
-      return ArrowDownIcon;
+    return ArrowDownIcon;
   }
   return ArrowDownIcon;
-}
+};
 
 const ApproveInvoke = () => {
   const notification = NotificationController.getNotification();
 
   const amounts = JSON.parse(notification.params.amounts);
   const info = JSON.parse(notification.params.info);
+  // eslint-disable-next-line no-console
+  console.log(amounts, info);
 
-  console.log(amounts, info)
-  
   const assets = useStore($assets);
   const text = getNotificationText(info, amounts, notification.params.appname);
   const title = getNotificationTitle(info, amounts);
@@ -150,11 +150,11 @@ const ApproveInvoke = () => {
     rejectContractInfoRequest(notification.params.req);
     window.close();
   };
-  
+
   const handleConfirmClick = () => {
     approveContractInfoRequest(notification.params.req);
     window.close();
-  }
+  };
 
   return (
     <>
@@ -163,36 +163,44 @@ const ApproveInvoke = () => {
         <Amount>
           <AmountSubtitle>Amount: </AmountSubtitle>
           <Amounts>
-            { amounts.length > 0 ? (
-                amounts.map((data) => {
-                  console.log('aaa:', assets)
-                  const assetItem = assets.find((asset) => asset.asset_id === data.assetID);
-                  if (assetItem) {
-                  return (
-                    <AssetItem key={data.assetID}>
-                      <AssetIcon asset_id={data.assetID} />
-                      <LabelStyled is_spend={data.spend}>
-                        { data.spend ? '-' : '+' }  {data.amount} {assetItem.metadata_pairs.UN}
-                      </LabelStyled>
-                    </AssetItem>
-                  )}
-                })
-              ) : '-' }
+            {amounts.length > 0
+              ? amounts.map((data) => {
+                const assetItem = assets.find((asset) => asset.asset_id === data.assetID);
+                return assetItem ? (
+                  <AssetItem key={data.assetID}>
+                    <AssetIcon asset_id={data.assetID} />
+                    <LabelStyled is_spend={data.spend}>
+                      {data.spend ? '-' : '+'}
+                      {' '}
+                      {data.amount}
+                      {' '}
+                      {assetItem.metadata_pairs.UN}
+                    </LabelStyled>
+                  </AssetItem>
+                ) : null;
+              })
+              : '-'}
           </Amounts>
         </Amount>
         <Fee>
           <FeeSubtitle>Fee: </FeeSubtitle>
           <FeeValue>
             <AssetIcon asset_id={0} />
-            <FeeLabelStyled>{info.fee} BEAM </FeeLabelStyled>
+            <FeeLabelStyled>
+              {info.fee}
+              {' '}
+              BEAM
+              {' '}
+            </FeeLabelStyled>
           </FeeValue>
         </Fee>
         <TextStyled>{text}</TextStyled>
         <ControlsStyled>
-          <Button 
-              pallete={info.isSpend ? 'purple' : 'blue'}
-              icon={getConfirmIcon(info, amounts)}
-              onClick={handleConfirmClick}>
+          <Button
+            pallete={info.isSpend ? 'purple' : 'blue'}
+            icon={getConfirmIcon(info, amounts)}
+            onClick={handleConfirmClick}
+          >
             confirm
           </Button>
           <Button variant="ghost" icon={CancelIcon} onClick={handleCancelClick}>

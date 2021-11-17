@@ -4,30 +4,15 @@ import {
 } from 'effector';
 import { debounce } from 'patronum/debounce';
 
-import {
-  gotoWallet, gotoConfirm,
-} from '@app/model/view';
+import { gotoWallet, gotoConfirm } from '@app/model/view';
 
 import { FEE_DEFAULT } from '@app/model/rates';
 
-import {ROUTES} from "@app/shared/constants";
-import {default as store} from "../../../../index";
-import {navigate} from "@app/shared/store/actions";
-
 import {
-  isNil,
-  toGroths,
-  fromGroths,
-  getInputValue,
-  makePrevented,
-  truncate,
+  isNil, toGroths, fromGroths, getInputValue, makePrevented, truncate,
 } from '@app/core/utils';
 
-import {
-  calculateChange,
-  sendTransaction,
-  validateAddress,
-} from '@app/core/api';
+import { calculateChange, sendTransaction, validateAddress } from '@app/core/api';
 
 import { $assets, AssetTotal } from '@app/model/wallet';
 
@@ -98,11 +83,7 @@ export const $form = combine(
   $address,
   $offline,
   $comment,
-  (
-    { type },
-    [fee], [amount, asset_id],
-    address, offline, comment,
-  ) => {
+  ({ type }, [fee], [amount, asset_id], address, offline, comment) => {
     const isMaxPrivacy = type === 'max_privacy';
     const value = amount === '' ? 0 : toGroths(parseFloat(amount));
 
@@ -119,8 +100,11 @@ export const $form = combine(
 
 export const $ready = createStore(false);
 
-export const $selected = combine($assets, $form,
-  (assets, { asset_id }) => assets.find(({ asset_id: id }) => id === asset_id) ?? ASSET_BLANK);
+export const $selected = combine(
+  $assets,
+  $form,
+  (assets, { asset_id }) => assets.find(({ asset_id: id }) => id === asset_id) ?? ASSET_BLANK,
+);
 
 const $beam = $assets.map(([asset]) => asset);
 
@@ -156,11 +140,7 @@ const setAmountDebounced = debounce({
   timeout: 200,
 });
 
-const $changeParams = $form.map(({
-  value: amount,
-  asset_id,
-  offline: is_push_transaction,
-}) => ({
+const $changeParams = $form.map(({ value: amount, asset_id, offline: is_push_transaction }) => ({
   amount,
   asset_id,
   is_push_transaction,
@@ -186,8 +166,7 @@ sample({
   source: combine($selected, $form),
   clock: setMaxAmount,
   fn: ([{ available }, { asset_id, fee }]) => {
-    const total = asset_id === 0
-      ? Math.max(available - fee, 0) : available;
+    const total = asset_id === 0 ? Math.max(available - fee, 0) : available;
     const amount = fromGroths(total).toString();
     return [amount, asset_id] as Amount;
   },
@@ -202,10 +181,7 @@ const onAmountFromToken = validateAddressFx.doneData.filter({
 sample({
   source: $form,
   clock: onAmountFromToken,
-  fn: ({ asset_id: previous }, { amount, asset_id }) => [
-    amount.toString(),
-    isNil(asset_id) ? previous : asset_id,
-  ] as Amount,
+  fn: ({ asset_id: previous }, { amount, asset_id }) => [amount.toString(), isNil(asset_id) ? previous : asset_id] as Amount,
   target: setAmount,
 });
 
@@ -238,14 +214,7 @@ enum AddresssTip {
 export const $description: Store<[string, string]> = combine(
   $form,
   $addressData,
-  ({
-    address,
-    offline,
-  }, {
-    is_valid,
-    payments,
-    type: addressType,
-  }) => {
+  ({ address, offline }, { is_valid, payments, type: addressType }) => {
     if (address === '' || isNil(addressType)) {
       return [null, null];
     }
@@ -274,49 +243,34 @@ export const $description: Store<[string, string]> = combine(
 
 /* Amount Field */
 
-const STORES = [
-  $address,
-  $amount,
-  $offline,
-  $change,
-  $comment,
-  $addressData,
-  $ready,
-];
+// const STORES = [$address, $amount, $offline, $change, $comment, $addressData, $ready];
 
 // todo reset state on page change
-//STORES.forEach((s) => s.reset(store.dispatch(navigate(ROUTES.WALLET.SEND))));
+// STORES.forEach((s) => s.reset(store.dispatch(navigate(ROUTES.WALLET.SEND))));
 
 enum AmountError {
   FEE = 'Insufficient funds to pay transaction fee.',
   AMOUNT = 'Insufficient funds to complete the transaction. Maximum amount is ',
 }
 
-export const $amountError = combine(
-  $beam, $form, $selected,
-  (
-    beam,
-    { fee, value },
-    { available, metadata_pairs },
-  ) => {
-    if (value === 0 || isNil(beam)) {
-      return null;
-    }
-
-    const total = value + fee;
-
-    if (beam.available < fee) {
-      return AmountError.FEE;
-    }
-
-    if (total > available) {
-      const max = fromGroths(available - fee);
-      return `${AmountError.AMOUNT} ${max} ${truncate(metadata_pairs.UN)}`;
-    }
-
+export const $amountError = combine($beam, $form, $selected, (beam, { fee, value }, { available, metadata_pairs }) => {
+  if (value === 0 || isNil(beam)) {
     return null;
-  },
-);
+  }
+
+  const total = value + fee;
+
+  if (beam.available < fee) {
+    return AmountError.FEE;
+  }
+
+  if (total > available) {
+    const max = fromGroths(available - fee);
+    return `${AmountError.AMOUNT} ${max} ${truncate(metadata_pairs.UN)}`;
+  }
+
+  return null;
+});
 
 export const $valid = combine(
   validateAddressFx.pending,

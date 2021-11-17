@@ -94,11 +94,7 @@ function fillFromSeed(seed: string, safe: boolean = false): void {
 }
 
 const SeedList: React.FC<SeedListProps> = ({
-  data,
-  errors,
-  initial,
-  indexByValue,
-  onInput,
+  data, errors, initial, indexByValue, onInput,
 }) => {
   useEffect(() => {
     if (!isNil(initial)) {
@@ -130,26 +126,11 @@ const SeedList: React.FC<SeedListProps> = ({
       {data.map((value, index) => {
         const idx = indexByValue ? value : index;
         const err = isNil(errors) ? value : errors[index];
-        const className = cx(
-          baseClassName,
-          err === false && errorClassName,
-          err === true && validClassName,
-        );
+        const className = cx(baseClassName, err === false && errorClassName, err === true && validClassName);
 
         return (
-          <li
-            key={index}
-            className={className}
-            data-index={idx + 1}
-          >
-            <input
-              required
-              autoFocus={index === 0}
-              type="text"
-              name={idx}
-              ref={handleRef}
-              onInput={onInput}
-            />
+          <li key={index} className={className} data-index={idx + 1}>
+            <input required autoFocus={index === 0} type="text" name={idx} ref={handleRef} onInput={onInput} />
           </li>
         );
       })}

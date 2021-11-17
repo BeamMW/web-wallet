@@ -5,9 +5,7 @@ import {
   Window, Section, Button, Rate,
 } from 'app/shared/components';
 
-import {
-  ArrowRightIcon,
-} from '@app/shared/icons';
+import { ArrowRightIcon } from '@app/shared/icons';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'effector-react';
@@ -35,10 +33,7 @@ const getTxType = (type: AddressType, offline: boolean): string => {
 
 const Send = () => {
   const {
-    value,
-    address,
-    offline,
-    asset_id,
+    value, address, offline, asset_id,
   } = useStore($form);
 
   const { available, metadata_pairs } = useStore($selected);
@@ -51,35 +46,30 @@ const Send = () => {
   const txType = getTxType(addressType, offline);
 
   return (
-    <Window
-      title="Send"
-      pallete="purple"
-    >
+    <Window title="Send" pallete="purple">
       <form onSubmit={onConfirmSubmit}>
-        <Section subtitle="Send to">{ compact(address) }</Section>
-        <Section subtitle="Transaction type">{ txType }</Section>
+        <Section subtitle="Send to">{compact(address)}</Section>
+        <Section subtitle="Transaction type">{txType}</Section>
         <Section subtitle="Amount">
-          { fromGroths(value) }
+          {fromGroths(value)}
           &nbsp;
-          { metadata_pairs.UN }
+          {metadata_pairs.UN}
         </Section>
         <Section subtitle="Transaction Fee">
-          { fromGroths(fee) }
+          {fromGroths(fee)}
           &nbsp;BEAM
           <Rate value={fee} groths />
         </Section>
         <Section subtitle="Change">
-          { fromGroths(change) }
+          {fromGroths(change)}
           &nbsp;BEAM
           <Rate value={change} groths />
         </Section>
         <Section subtitle="Remaining">
-          { fromGroths(remaining) }
-          { asset_id === 0 && (
-            <Rate value={remaining} groths />
-          ) }
+          {fromGroths(remaining)}
+          {asset_id === 0 && <Rate value={remaining} groths />}
         </Section>
-        <WarningSyled>{ warning }</WarningSyled>
+        <WarningSyled>{warning}</WarningSyled>
         <Button type="submit" pallete="purple" icon={ArrowRightIcon}>
           next
         </Button>

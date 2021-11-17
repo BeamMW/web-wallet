@@ -1,18 +1,18 @@
-import React from "react";
+import React from 'react';
 
-import { styled } from "@linaria/react";
-import { css } from "@linaria/core";
+import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 
-import { CancelIcon } from "@app/shared/icons";
+import { CancelIcon } from '@app/shared/icons';
 
-import Button from "./Button";
-import BackDrop from "./Backdrop";
-import { ROUTES } from "@app/shared/constants";
-import { useNavigate, useMatch } from "react-router-dom";
+import { ROUTES } from '@app/shared/constants';
+import { useNavigate, useMatch } from 'react-router-dom';
+import Button from './Button';
+import BackDrop from './Backdrop';
 
 const MENU_ITEMS = [
   {
-    title: "Wallet",
+    title: 'Wallet',
     value: ROUTES.WALLET.BASE,
   },
   // {
@@ -20,7 +20,7 @@ const MENU_ITEMS = [
   //   value: View.UTXO,
   // },
   {
-    title: "Settings",
+    title: 'Settings',
     value: ROUTES.SETTINGS.BASE,
   },
 ];
@@ -43,11 +43,10 @@ const ListItemStyled = styled.li<{ active: boolean }>`
   height: 60px;
   line-height: 60px;
   padding-left: 70px;
-  background-image: ${({ active }) =>
-    !active ? "none" : "linear-gradient(to right, rgba(5, 226, 194, 0.1), rgba(5, 226, 194, 0))"};
+  background-image: ${({ active }) => (!active ? 'none' : 'linear-gradient(to right, rgba(5, 226, 194, 0.1), rgba(5, 226, 194, 0))')};
   text-align: left;
   font-size: 16px;
-  cursor: ${({ active }) => (active ? "default" : "pointer")};
+  cursor: ${({ active }) => (active ? 'default' : 'pointer')};
 `;
 
 const buttonStyle = css`

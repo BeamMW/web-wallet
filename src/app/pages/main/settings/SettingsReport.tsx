@@ -1,16 +1,16 @@
 import React from 'react';
 
-import {Button, Window} from 'app/shared/components';
-import {$logs} from './model';
-import {useStore} from 'effector-react';
-import {styled} from '@linaria/react';
-import {SaveIcon} from '@app/shared/icons';
+import { Button, Window } from 'app/shared/components';
+import { useStore } from 'effector-react';
+import { styled } from '@linaria/react';
+import { SaveIcon } from '@app/shared/icons';
 import * as extensionizer from 'extensionizer';
 import JSZip from 'jszip';
-import {saveAs} from 'file-saver';
+import { saveAs } from 'file-saver';
 
-import {ROUTES} from "@app/shared/constants";
-import {useNavigate} from "react-router-dom";
+import { ROUTES } from '@app/shared/constants';
+import { useNavigate } from 'react-router-dom';
+import { $logs } from './model';
 
 const ReportStyled = styled.div`
   margin-bottom: 30px;
@@ -30,56 +30,55 @@ const LinkStyled = styled.span`
 `;
 
 const SettingsReport = () => {
-    const navigate = useNavigate();
-    const logs = useStore($logs);
+  const navigate = useNavigate();
+  const logs = useStore($logs);
 
-    const handlePrevious: React.MouseEventHandler = () => {
-        navigate(ROUTES.SETTINGS.BASE);
-    };
+  const handlePrevious: React.MouseEventHandler = () => {
+    navigate(ROUTES.SETTINGS.BASE);
+  };
 
-    const mailClicked = () => {
-        const mailText = 'mailto:support@beam.mw';
-        window.location.href = mailText;
-    }
+  const mailClicked = () => {
+    const mailText = 'mailto:support@beam.mw';
+    window.location.href = mailText;
+  };
 
-    const githubClicked = () => {
-        window.open('https://github.com/BeamMW/web-wallet/issues', '_blank');
-    }
+  const githubClicked = () => {
+    window.open('https://github.com/BeamMW/web-wallet/issues', '_blank');
+  };
 
-    const saveLogsclicked = () => {
-        const version = extensionizer.runtime.getManifest().version;
-        const zip = new JSZip();
-        let finalLogs = logs.common.concat(logs.errors).concat(logs.warns);
+  const saveLogsclicked = () => {
+    const { version } = extensionizer.runtime.getManifest();
+    const zip = new JSZip();
+    const finalLogs = logs.common.concat(logs.errors).concat(logs.warns);
 
-        zip.file(`logs.log`, finalLogs.join('\n'));
-        zip.generateAsync({type: "blob"}).then(function (content) {
-            saveAs(content, `beam-web-wallet-${version}-report.zip`);
-        });
+    zip.file('logs.log', finalLogs.join('\n'));
+    zip.generateAsync({ type: 'blob' }).then((content) => {
+      saveAs(content, `beam-web-wallet-${version}-report.zip`);
+    });
 
-        navigate(ROUTES.SETTINGS.BASE);
-    }
+    navigate(ROUTES.SETTINGS.BASE);
+  };
 
-    return (
-        <Window title="Report a problem" onPrevious={handlePrevious}>
-            <ReportStyled>
-                <p>To report a problem:</p>
-                <p>1. Click “Save wallet logs” and choose</p>
-                <p>a destination folder for log archive.</p>
-                <p>2. Send email to
-                    <LinkStyled onClick={() => mailClicked()}>support@beam.mw</LinkStyled>
-                    or open a ticket in
-                    <LinkStyled onClick={() => githubClicked()}>Github</LinkStyled>.</p>
-                <p>3. Don’t forget to attach logs archive.</p>
-            </ReportStyled>
-            <Button
-                type="button"
-                icon={SaveIcon}
-                onClick={() => saveLogsclicked()}
-            >
-                save wallet logs
-            </Button>
-        </Window>
-    );
+  return (
+    <Window title="Report a problem" onPrevious={handlePrevious}>
+      <ReportStyled>
+        <p>To report a problem:</p>
+        <p>1. Click “Save wallet logs” and choose</p>
+        <p>a destination folder for log archive.</p>
+        <p>
+          2. Send email to
+          <LinkStyled onClick={() => mailClicked()}>support@beam.mw</LinkStyled>
+          or open a ticket in
+          <LinkStyled onClick={() => githubClicked()}>Github</LinkStyled>
+          .
+        </p>
+        <p>3. Don’t forget to attach logs archive.</p>
+      </ReportStyled>
+      <Button type="button" icon={SaveIcon} onClick={() => saveLogsclicked()}>
+        save wallet logs
+      </Button>
+    </Window>
+  );
 };
 
 export default SettingsReport;

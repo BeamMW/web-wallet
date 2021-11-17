@@ -2,18 +2,16 @@ import React, { useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
-import { gotoBack } from '@model/view';
 import { isNil } from '@core/utils';
 import { MenuIcon } from '@app/shared/icons';
+
+import { useNavigate } from 'react-router-dom';
 
 import Logo from './Logo';
 import BackButton from './BackButton';
 import Title from './Title';
 import Button from './Button';
 import Menu from './Menu';
-import {useNavigate} from "react-router-dom";
-import {generateSeedFx} from "@model/base";
-import {ROUTES} from "@app/shared/constants";
 
 interface WindowProps {
   title?: string;
@@ -40,16 +38,14 @@ const ContainerStyled = styled.div<WindowProps>`
   text-align: center;
 
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     z-index: -1;
     top: 50px;
     left: 0;
     width: 100%;
     height: 100px;
-    background-image: linear-gradient(
-      to top, rgba(3, 91, 143, 0), ${({ pallete }) => getColor(pallete)} 150%
-    );
+    background-image: linear-gradient(to top, rgba(3, 91, 143, 0), ${({ pallete }) => getColor(pallete)} 150%);
   }
 `;
 
@@ -65,16 +61,14 @@ const HeadingStyled = styled.div<{ pallete: string }>`
   background-color: var(--color-dark-blue);
 
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     z-index: -1;
     top: 50px;
     left: 0;
     width: 100%;
     height: 100px;
-    background-image: linear-gradient(
-      to top, rgba(3, 91, 143, 0), ${({ pallete }) => getColor(pallete)} 150%
-    );
+    background-image: linear-gradient(to top, rgba(3, 91, 143, 0), ${({ pallete }) => getColor(pallete)} 150%);
   }
 `;
 
@@ -107,13 +101,12 @@ export const Window: React.FC<WindowProps> = ({
   const navigate = useNavigate();
 
   const handlePrevious: React.MouseEventHandler = () => {
-    navigate(-1)
+    navigate(-1);
   };
 
-  const handleBackClick = isNil(onPrevious) ?  handlePrevious: onPrevious;
+  const handleBackClick = isNil(onPrevious) ? handlePrevious : onPrevious;
   const handleMenuClick = () => setVisible(true);
   const handleCancelClick = () => setVisible(false);
-
 
   return (
     <ContainerStyled pallete={pallete}>
@@ -123,17 +116,12 @@ export const Window: React.FC<WindowProps> = ({
         </FrameStyled>
         <Title variant="heading">{title}</Title>
       </HeadingStyled>
-      { primary ? (
-        <Button
-          variant="icon"
-          icon={MenuIcon}
-          className={menuButtonStyle}
-          onClick={handleMenuClick}
-        />
+      {primary ? (
+        <Button variant="icon" icon={MenuIcon} className={menuButtonStyle} onClick={handleMenuClick} />
       ) : (
         <BackButton onClick={handleBackClick} />
-      ) }
-      { menuVisible && <Menu onCancel={handleCancelClick} />}
+      )}
+      {menuVisible && <Menu onCancel={handleCancelClick} />}
       {children}
     </ContainerStyled>
   );

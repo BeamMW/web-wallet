@@ -1,17 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useState } from 'react';
 
-import {
-  Button,
-  Input,
-  Popup,
-} from '@app/shared/components';
+import { Button, Input, Popup } from '@app/shared/components';
 
-import {
-  CancelIcon,
-  ArrowRightIcon,
-  RemoveIcon,
-} from '@app/shared/icons';
+import { CancelIcon, ArrowRightIcon, RemoveIcon } from '@app/shared/icons';
 
 import { useStore } from 'effector-react';
 import { isNil } from '@app/core/utils';
@@ -24,10 +16,7 @@ interface RemovePopupProps {
   onCancel?: React.MouseEventHandler;
 }
 
-const RemovePopup: React.FC<RemovePopupProps> = ({
-  visible,
-  onCancel,
-}) => {
+const RemovePopup: React.FC<RemovePopupProps> = ({ visible, onCancel }) => {
   const inputRef = useRef<HTMLInputElement>();
   const [warned, setWarned] = useState(false);
   const error = useStore($error);
@@ -41,21 +30,29 @@ const RemovePopup: React.FC<RemovePopupProps> = ({
     }
   };
 
-  const confirmButton = warned
-    ? <Button pallete="red" icon={RemoveIcon} onClick={handleConfirm}>remove</Button>
-    : <Button pallete="red" icon={ArrowRightIcon} onClick={handleConfirm}>proceed</Button>;
+  const confirmButton = warned ? (
+    <Button pallete="red" icon={RemoveIcon} onClick={handleConfirm}>
+      remove
+    </Button>
+  ) : (
+    <Button pallete="red" icon={ArrowRightIcon} onClick={handleConfirm}>
+      proceed
+    </Button>
+  );
 
   return (
     <Popup
       visible={visible}
       title="Remove current wallet"
-      cancelButton={
-        <Button variant="ghost" icon={CancelIcon} onClick={onCancel}>cancel</Button>
-      }
+      cancelButton={(
+        <Button variant="ghost" icon={CancelIcon} onClick={onCancel}>
+          cancel
+        </Button>
+      )}
       confirmButton={confirmButton}
       onCancel={onCancel}
     >
-      { warned ? (
+      {warned ? (
         <Input
           label={isNil(error) ? 'Password' : error}
           type="password"
@@ -65,12 +62,11 @@ const RemovePopup: React.FC<RemovePopupProps> = ({
         />
       ) : (
         <>
-          All data will be erased.
-          Make sure you’ve saved your seed phrase if you want to restore this wallet later on!
+          All data will be erased. Make sure you’ve saved your seed phrase if you want to restore this wallet later on!
           <br />
           Are you sure you want to remove your wallet?
         </>
-      ) }
+      )}
     </Popup>
   );
 };

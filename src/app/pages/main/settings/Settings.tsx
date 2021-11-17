@@ -6,17 +6,14 @@ import { useStore } from 'effector-react';
 
 import { RemoveIcon, SettingsReportIcon } from '@app/shared/icons';
 
-import {ROUTES} from "@app/shared/constants";
+import { ROUTES } from '@app/shared/constants';
 
-import {
-  Button,
-  Window,
-} from '@app/shared/components';
+import { Button, Window } from '@app/shared/components';
+import { useNavigate } from 'react-router-dom';
 import {
   getVersionFx, loadLogsFx, $version, resetError,
 } from './model';
 import RemovePopup from './RemovePopup';
-import {useNavigate} from "react-router-dom";
 
 const ContainerStyled = styled.div`
   margin: 0 -10px;
@@ -24,12 +21,12 @@ const ContainerStyled = styled.div`
 
 const VersionStyled = styled.div`
   text-align: end;
-  color: rgba(255,255,255, .7);
+  color: rgba(255, 255, 255, 0.7);
   margin-bottom: 20px;
 `;
 
 const Settings = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   useEffect(() => {
     getVersionFx();
   }, []);
@@ -40,7 +37,7 @@ const Settings = () => {
 
   const ReportClicked = () => {
     loadLogsFx();
-    navigate(ROUTES.SETTINGS.SETTINGS_REPORT)
+    navigate(ROUTES.SETTINGS.SETTINGS_REPORT);
   };
 
   const version = `v ${manifest.version} (${versionData.beam_branch_name})`;
@@ -49,17 +46,9 @@ const Settings = () => {
     <>
       <Window title="Settings" primary>
         <ContainerStyled>
-          <VersionStyled>
-            { version }
-          </VersionStyled>
-          <Button
-            variant="block"
-            pallete="white"
-            icon={SettingsReportIcon}
-            onClick={() => ReportClicked()}
-          >
+          <VersionStyled>{version}</VersionStyled>
+          <Button variant="block" pallete="white" icon={SettingsReportIcon} onClick={() => ReportClicked()}>
             Report a problem
-
           </Button>
           <Button
             variant="block"
@@ -71,14 +60,10 @@ const Settings = () => {
             }}
           >
             Remove current wallet
-
           </Button>
         </ContainerStyled>
       </Window>
-      <RemovePopup
-        visible={warningVisible}
-        onCancel={() => toggleWarning(false)}
-      />
+      <RemovePopup visible={warningVisible} onCancel={() => toggleWarning(false)} />
     </>
   );
 };

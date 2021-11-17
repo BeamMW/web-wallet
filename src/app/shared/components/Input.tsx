@@ -65,13 +65,7 @@ const LabelStyled = styled.div<InputProps>`
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({
-    label,
-    valid = true,
-    variant = 'regular',
-    margin = 'none',
-    pallete,
-    className,
-    ...rest
+    label, valid = true, variant = 'regular', margin = 'none', pallete, className, ...rest
   }, ref) => {
     const InputComponent = {
       regular: InputRegularStyled,

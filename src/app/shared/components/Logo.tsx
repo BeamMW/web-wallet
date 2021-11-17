@@ -30,9 +30,7 @@ const DIMENSIONS = {
 const Logo: React.FC<LogoProps> = ({ size = 'large' }) => {
   const viewBox = '0 0 159 139';
   const dimensions = DIMENSIONS[size];
-  return (
-    <LogoIcon {...dimensions} viewBox={viewBox} className={LogoClassName} />
-  );
+  return <LogoIcon {...dimensions} viewBox={viewBox} className={LogoClassName} />;
 };
 
 export default Logo;

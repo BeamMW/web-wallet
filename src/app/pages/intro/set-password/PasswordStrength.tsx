@@ -83,9 +83,7 @@ const StrengthTitleStyled = styled.span`
 const PasswordStrength: React.FC<PasswordStrengthProps> = ({ value }) => {
   const points = ratePassword(value);
   const title = getStrengthTitle(points);
-  const bars = new Array(BARS_MAX)
-    .fill(null)
-    .map((v, index) => (index < points ? points : 0));
+  const bars = new Array(BARS_MAX).fill(null).map((v, index) => (index < points ? points : 0));
 
   return (
     <ContainerStyled>
@@ -95,11 +93,11 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ value }) => {
         ))}
       </ListStyled>
       {!isNil(title) && (
-        <StrengthTitleStyled>
-          {title}
-          {' '}
-          password
-        </StrengthTitleStyled>
+      <StrengthTitleStyled>
+        {title}
+        {' '}
+        password
+      </StrengthTitleStyled>
       )}
     </ContainerStyled>
   );

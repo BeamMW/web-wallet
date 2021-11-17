@@ -41,11 +41,7 @@ const ButtonStyled = styled.button`
 `;
 
 const Section: React.FC<SectionProps> = ({
-  title,
-  collapse = false,
-  variant = 'regular',
-  subtitle,
-  children,
+  title, collapse = false, variant = 'regular', subtitle, children,
 }) => {
   const [hidden, setHidden] = useState(collapse);
 
@@ -60,14 +56,14 @@ const Section: React.FC<SectionProps> = ({
 
   return (
     <SectionComponent>
-      { collapse && (
-      <ButtonStyled type="button" onMouseDown={handleMouseDown}>
-        <Angle value={hidden ? 180 : 0} margin={hidden ? 3 : 3} />
-      </ButtonStyled>
+      {collapse && (
+        <ButtonStyled type="button" onMouseDown={handleMouseDown}>
+          <Angle value={hidden ? 180 : 0} margin={hidden ? 3 : 3} />
+        </ButtonStyled>
       )}
-      { !isNil(title) && (<Title>{title}</Title>) }
-      { !isNil(subtitle) && (<Title variant="subtitle">{subtitle}</Title>) }
-      { !hidden && children }
+      {!isNil(title) && <Title>{title}</Title>}
+      {!isNil(subtitle) && <Title variant="subtitle">{subtitle}</Title>}
+      {!hidden && children}
     </SectionComponent>
   );
 };

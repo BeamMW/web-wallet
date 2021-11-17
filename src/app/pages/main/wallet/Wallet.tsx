@@ -9,19 +9,16 @@ import {
 import { compact, isNil } from '@core/utils';
 import { getRateFx, GROTHS_IN_BEAM } from '@app/model/rates';
 
-import {
-  ArrowUpIcon,
-  ArrowDownIcon,
-} from '@app/shared/icons';
+import { ArrowUpIcon, ArrowDownIcon } from '@app/shared/icons';
 
 import { css } from '@linaria/core';
 import { $assets, $transactions } from '@app/model/wallet';
 
 import { Transaction } from '@app/core/types';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@app/shared/constants';
 import Assets from './Assets';
 import Transactions from './Transactions';
-import {useNavigate} from "react-router-dom";
-import {ROUTES} from "@app/shared/constants";
 
 const TXS_MAX = 4;
 
@@ -72,10 +69,7 @@ const menuButtonStyle = css`
   margin: 0;
 `;
 
-function createdCompartor(
-  { create_time: a }: Transaction,
-  { create_time: b }: Transaction,
-): -1 | 0 | 1 {
+function createdCompartor({ create_time: a }: Transaction, { create_time: b }: Transaction): -1 | 0 | 1 {
   if (a === b) {
     return 0;
   }
@@ -97,18 +91,17 @@ const Wallet = () => {
     setActive(active === asset_id ? null : asset_id);
   };
 
-  const filtered = isNil(active)
-    ? transactions : transactions.filter(({ asset_id }) => asset_id === active);
+  const filtered = isNil(active) ? transactions : transactions.filter(({ asset_id }) => asset_id === active);
   const sorted = filtered.sort(createdCompartor);
   const sliced = sorted.slice(0, TXS_MAX);
 
   return (
     <Window title="Wallet" primary>
       <ActionsStyled>
-        <Button pallete="purple" icon={ArrowUpIcon} onClick={()=>navigate(ROUTES.WALLET.SEND)}>
+        <Button pallete="purple" icon={ArrowUpIcon} onClick={() => navigate(ROUTES.WALLET.SEND)}>
           send
         </Button>
-        <Button pallete="blue" icon={ArrowDownIcon} onClick={()=>navigate(ROUTES.WALLET.RECEIVE)}>
+        <Button pallete="blue" icon={ArrowDownIcon} onClick={() => navigate(ROUTES.WALLET.RECEIVE)}>
           receive
         </Button>
       </ActionsStyled>

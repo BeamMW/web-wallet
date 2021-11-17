@@ -1,6 +1,6 @@
-import { createSelector } from "reselect";
+import { createSelector } from 'reselect';
 
-import { AppState } from "../interface";
+import { AppState } from '../interface';
 
 const selectShared = (state: AppState) => state.shared;
 

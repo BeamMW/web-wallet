@@ -3,14 +3,8 @@ import React, { useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
-import {
-  Window,
-} from '@app/shared/components';
+import { Window } from '@app/shared/components';
 
-const Utxo = () => (
-  <Window title="UTXO">
-    UTXO
-  </Window>
-);
+const Utxo = () => <Window title="UTXO">UTXO</Window>;
 
 export default Utxo;

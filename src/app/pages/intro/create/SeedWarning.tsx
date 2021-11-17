@@ -1,22 +1,17 @@
 import React, { useEffect } from 'react';
 import { styled } from '@linaria/react';
 
-import {
-  Window, Button, Footer,
-} from '@app/shared/components';
+import { Window, Button, Footer } from '@app/shared/components';
 
 import {
-  EyeIcon,
-  PassIcon,
-  CopyIcon,
-  DoneIcon,
+  EyeIcon, PassIcon, CopyIcon, DoneIcon,
 } from '@app/shared/icons';
 
 import { generateSeedFx } from '@app/model/base';
 
-import {ROUTES} from "@app/shared/constants";
+import { ROUTES } from '@app/shared/constants';
 
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const WarningListStyled = styled.ul`
   > li {
@@ -44,22 +39,17 @@ const WarningListStyled = styled.ul`
 `;
 
 const SeedWarning: React.FC = () => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     generateSeedFx();
   }, []);
 
-
-
   return (
     <Window title="Create new wallet">
       <p>
-        If you ever lose your device, you will need this phrase to recover
-        your wallet!
+        If you ever lose your device, you will need this phrase to recover your wallet!
         <br />
-
-        Never type your seed phrase in keychains or password
-        managers.
+        Never type your seed phrase in keychains or password managers.
         <br />
         Never save it in your local or remote folders in any form.
       </p>
@@ -70,9 +60,7 @@ const navigate = useNavigate();
         </li>
         <li>
           <PassIcon width={48} height={34} />
-          <p>
-            Never type your seed phrase into password managers or elsewhere
-          </p>
+          <p>Never type your seed phrase into password managers or elsewhere</p>
         </li>
         <li>
           <CopyIcon width={48} height={34} />

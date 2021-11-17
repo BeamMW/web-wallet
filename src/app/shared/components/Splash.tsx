@@ -17,7 +17,7 @@ const ContainerStyled = styled.div<SplashProps>`
   position: relative;
   height: 600px;
   padding: 120px 30px 0;
-  background-image: url('/assets/background.png');
+  background-image: url("/assets/background.png");
   text-align: center;
 `;
 
@@ -34,10 +34,7 @@ const backButtonStyle = css`
 `;
 
 export const Splash: React.FC<SplashProps> = ({
-  size,
-  blur,
-  onReturn,
-  children,
+  size, blur, onReturn, children,
 }) => (
   <ContainerStyled blur={blur}>
     {!isNil(onReturn) && <BackButton onClick={onReturn} className={backButtonStyle} />}

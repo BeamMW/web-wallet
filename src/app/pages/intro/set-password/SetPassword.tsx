@@ -11,11 +11,10 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@app/shared/icons';
 import { createWallet } from '@app/core/api';
 import { useStore } from 'effector-react';
 import { $seed } from '@app/model/base';
+
+import { ROUTES } from '@app/shared/constants';
+import { useNavigate } from 'react-router-dom';
 import PasswordStrength from './PasswordStrength';
-
-
-import {ROUTES} from "@app/shared/constants";
-import {useNavigate} from "react-router-dom";
 
 const FormStyled = styled.form`
   text-align: left;
@@ -51,32 +50,26 @@ const SetPassword = () => {
       isSeedConfirmed: true,
     });
 
-    navigate(ROUTES.AUTH.PROGRESS)
-
+    navigate(ROUTES.AUTH.PROGRESS);
   };
 
   const handlePrevious: React.MouseEventHandler = () => {
     if (restoring) {
-      navigate(ROUTES.AUTH.RESTORE)
+      navigate(ROUTES.AUTH.RESTORE);
     } else {
       toggleWarning(true);
     }
   };
 
   const handleReturnClick: React.MouseEventHandler = () => {
-    navigate(ROUTES.AUTH.SEED_WRITE)
+    navigate(ROUTES.AUTH.SEED_WRITE);
   };
 
   return (
     <>
       <Window title="Password" onPrevious={handlePrevious}>
         <FormStyled onSubmit={handleSubmit}>
-          <Input
-            autoFocus
-            type="password"
-            placeholder="Password"
-            onChange={onPasswordChange}
-          />
+          <Input autoFocus type="password" placeholder="Password" onChange={onPasswordChange} />
           <PasswordStrength value={pass} />
           <p>Strong password needs to meet the following requirements:</p>
           <ul>
@@ -103,13 +96,10 @@ const SetPassword = () => {
         visible={warningVisible}
         title="Return to seed phrase"
         confirmButton={(
-          <Button
-            icon={ArrowLeftIcon}
-            onClick={handleReturnClick}
-          >
+          <Button icon={ArrowLeftIcon} onClick={handleReturnClick}>
             return
           </Button>
-            )}
+        )}
         onCancel={() => toggleWarning(false)}
       >
         If you return to seed phrase, it would be changed and your local password won’t be saved.

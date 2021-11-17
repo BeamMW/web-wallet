@@ -56,7 +56,8 @@ const ButtonStyled = styled.button`
   color: white;
   white-space: nowrap;
 
-  &:hover, &:active {
+  &:hover,
+  &:active {
     background-color: transparent;
   }
 `;
@@ -71,27 +72,15 @@ interface OptionProps {
   // eslint-disable-next-line
   value: any;
   active?: boolean;
-  onClick?: React.MouseEventHandler,
+  onClick?: React.MouseEventHandler;
 }
 
-export const Option: React.FC<OptionProps> = ({
-  active,
-  children,
-  onClick,
-}) => {
+export const Option: React.FC<OptionProps> = ({ active, children, onClick }) => {
   if (active) {
-    return (
-      <OptionActiveStyled>
-        {children}
-      </OptionActiveStyled>
-    );
+    return <OptionActiveStyled>{children}</OptionActiveStyled>;
   }
 
-  return (
-    <OptionStyled onClick={onClick}>
-      {children}
-    </OptionStyled>
-  );
+  return <OptionStyled onClick={onClick}>{children}</OptionStyled>;
 };
 
 interface SelectProps<T = any> {
@@ -101,10 +90,7 @@ interface SelectProps<T = any> {
 }
 
 export const Select: React.FC<SelectProps> = ({
-  value,
-  className,
-  children,
-  onSelect,
+  value, className, children, onSelect,
 }) => {
   const [opened, setOpened] = useState(false);
   const selectRef = useRef<HTMLDivElement>();
@@ -122,28 +108,26 @@ export const Select: React.FC<SelectProps> = ({
 
   const disabled = array.length === 1;
 
-  const options = array.map(
-    (child) => {
-      const { value: next } = (child as React.ReactElement).props;
-      const active = value === next;
+  const options = array.map((child) => {
+    const { value: next } = (child as React.ReactElement).props;
+    const active = value === next;
 
-      const handleClick: React.MouseEventHandler<HTMLElement> = (event) => {
-        if (active) {
-          event.preventDefault();
-          return;
-        }
+    const handleClick: React.MouseEventHandler<HTMLElement> = (event) => {
+      if (active) {
+        event.preventDefault();
+        return;
+      }
 
-        onSelect(next);
-        setOpened(false);
-      };
+      onSelect(next);
+      setOpened(false);
+    };
 
-      return React.cloneElement(child as React.ReactElement, {
-        active,
-        disabled,
-        onClick: handleClick,
-      });
-    },
-  );
+    return React.cloneElement(child as React.ReactElement, {
+      active,
+      disabled,
+      onClick: handleClick,
+    });
+  });
 
   const selected = array.find((child) => {
     const { value: current } = (child as ReactElement).props;
@@ -161,14 +145,12 @@ export const Select: React.FC<SelectProps> = ({
   return (
     <ContainerStyled className={className}>
       <ButtonStyled type="button" onMouseDown={handleMouseDown} disabled={disabled}>
-        { (selected as ReactElement).props.children }
-        { options.length > 1 && (
-          <Angle className={angleStyle} value={opened ? 0 : 180} margin={opened ? 3 : 1} />
-        )}
+        {(selected as ReactElement).props.children}
+        {options.length > 1 && <Angle className={angleStyle} value={opened ? 0 : 180} margin={opened ? 3 : 1} />}
       </ButtonStyled>
       {opened && (
         <SelectStyled ref={selectRef} tabIndex={-1} onBlur={handleBlur}>
-          { options }
+          {options}
         </SelectStyled>
       )}
     </ContainerStyled>

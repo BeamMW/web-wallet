@@ -1,9 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import {
-  AngleSmallUpIcon,
-} from '@app/shared/icons';
+import { AngleSmallUpIcon } from '@app/shared/icons';
 
 interface AngleProps {
   value?: number;
@@ -17,8 +15,7 @@ const ContainerStyled = styled.div<AngleProps>`
   width: 13px;
   height: 13px;
   transform-origin: center;
-  transform: translateY(${({ margin }) => `${margin}px`})
-    rotate(${({ value }) => `${value}deg`});
+  transform: translateY(${({ margin }) => `${margin}px`}) rotate(${({ value }) => `${value}deg`});
 
   > svg {
     position: absolute;

@@ -6,16 +6,11 @@ import { Button, Footer, Window } from '@app/shared/components';
 import SeedList from '@pages/intro/seed';
 
 import {
-  $cache,
-  $errors,
-  $valid,
-  setCache,
-  onInput,
+  $cache, $errors, $valid, setCache, onInput,
 } from '@pages/intro/seed/model';
 
-import {history} from "@app/shared/history";
-import {ROUTES} from "@app/shared/constants";
-import {useNavigate} from "react-router-dom";
+import { ROUTES } from '@app/shared/constants';
+import { useNavigate } from 'react-router-dom';
 
 const Restore: React.FC = () => {
   const errors = useStore($errors);
@@ -28,9 +23,7 @@ const Restore: React.FC = () => {
     const data = new FormData(event.target);
     const values = data.values() as IterableIterator<string>;
 
-    const seed = Array.from(values).reduce(
-      (result, value, index) => (index === 0 ? value : `${result} ${value}`),
-    );
+    const seed = Array.from(values).reduce((result, value, index) => (index === 0 ? value : `${result} ${value}`));
 
     setSeed([seed, true]);
     setCache(seed);
@@ -41,11 +34,7 @@ const Restore: React.FC = () => {
     <Window title="Restore wallet">
       <p>Type in your seed phrase</p>
       <form autoComplete="off" onSubmit={handleSubmit}>
-        <SeedList
-          data={errors}
-          initial={cache}
-          onInput={onInput}
-        />
+        <SeedList data={errors} initial={cache} onInput={onInput} />
         <Footer>
           <Button type="submit" disabled={!valid}>
             Submit
