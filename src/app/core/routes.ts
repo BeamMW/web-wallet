@@ -1,14 +1,21 @@
 import {
-  Login, Restore, SetPassword, Progress, SeedWarning, SeedWrite, SeedConfirm,
-} from '@pages/intro';
+  Login,
+  Restore,
+  SetPassword,
+  Progress,
+  SeedWarning,
+  SeedWrite,
+  SeedConfirm,
+} from '@app/containers/Auth/containers';
 
-import {
-  Wallet, Receive, SendConfirm, SendForm, Utxo, Settings, SettingsReport,
-} from '@pages/main';
-
-import { Connect, ApproveInvoke } from '@pages/notifications';
+import { Connect, ApproveInvoke } from '@app/containers/Notifications/containers';
 
 import { View } from '@app/model/view';
+import Wallet from '@app/containers/Wallet/containers/wallet';
+import { SendForm, Settings, SettingsReport } from '@app/containers';
+import Receive from '@app/containers/Wallet/containers/receive';
+import SendConfirm from '@app/containers/Wallet/containers/send/SendConfirm';
+import Utxo from '@app/containers/Wallet/containers/utxo';
 
 const ROUTES = {
   [View.LOGIN]: Login,

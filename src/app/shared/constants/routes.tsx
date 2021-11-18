@@ -13,12 +13,12 @@ export const ROUTES = {
     SEND: '/send',
     SEND_CONFIRM: '/send_confirm',
     RECEIVE: '/wallet/receive',
+    UTXO: '/utxo',
   },
   NOTIFICATIONS: {
     CONNECT: '/connect',
     APPROVE_INVOKE: '/approve_invoke',
   },
-  UTXO: '/utxo',
   SETTINGS: {
     BASE: '/settings',
     SETTINGS_REPORT: '/report',

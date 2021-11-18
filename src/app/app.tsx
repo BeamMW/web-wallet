@@ -4,20 +4,30 @@ import { css } from '@linaria/core';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 import './styles';
-import {
-  Restore, SetPassword, Progress, SeedWarning, SeedWrite, SeedConfirm,
-} from '@pages/intro';
 
-import { Connect, ApproveInvoke } from '@pages/notifications';
+import { Connect, ApproveInvoke } from '@app/containers/Notifications/containers';
 
-import {
-  Wallet, Receive, SendConfirm, SendForm, Utxo, Settings, SettingsReport,
-} from '@pages/main';
 import { ROUTES } from '@app/shared/constants';
 import { actions as sharedActions, selectors as sharedSelectors } from '@app/shared/store';
-import LoginActive from '@pages/intro/login/LoginActive';
+
 import { useNavigate, useRoutes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import Wallet from '@app/containers/Wallet/containers/wallet';
+import LoginActive from '@app/containers/Auth/containers/login/LoginActive';
+import {
+  SendConfirm,
+  SendForm,
+  Settings,
+  SettingsReport,
+  Restore,
+  SetPassword,
+  Progress,
+  SeedWarning,
+  SeedWrite,
+  SeedConfirm,
+} from '@app/containers';
+import Receive from '@app/containers/Wallet/containers/receive';
+import Utxo from '@app/containers/Wallet/containers/utxo';
 import ErrorBoundary from './core/ErrorBoundary';
 
 const trackStyle = css`
@@ -93,7 +103,7 @@ const routes = [
     element: <SettingsReport />,
   },
   {
-    path: ROUTES.UTXO,
+    path: ROUTES.WALLET.UTXO,
     element: <Utxo />,
   },
 ];
