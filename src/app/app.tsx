@@ -5,30 +5,16 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 import './styles';
 
-import { Connect, ApproveInvoke } from '@app/containers/Notifications/containers';
-
 import { ROUTES } from '@app/shared/constants';
 import { actions as sharedActions, selectors as sharedSelectors } from '@app/shared/store';
 
 import { useNavigate, useRoutes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import Wallet from '@app/containers/Wallet/containers/wallet';
-import LoginActive from '@app/containers/Auth/containers/login/LoginActive';
-import {
-  SendConfirm,
-  SendForm,
-  Settings,
-  SettingsReport,
-  Restore,
-  SetPassword,
-  Progress,
-  SeedWarning,
-  SeedWrite,
-  SeedConfirm,
-} from '@app/containers';
-import Receive from '@app/containers/Wallet/containers/receive';
-import Utxo from '@app/containers/Wallet/containers/utxo';
-import ErrorBoundary from './core/ErrorBoundary';
+import { ErrorBoundary } from '@app/shared/components';
+import { Wallet, WalletContainer } from './containers/Wallet';
+import { AuthContainer } from './containers/Auth';
+import { SettingsContainer } from './containers/Settings';
+import { NotificationContainer } from './containers/Notifications';
 
 const trackStyle = css`
   z-index: 999;
@@ -42,69 +28,24 @@ const routes = [
     element: <Wallet />,
   },
   {
-    path: ROUTES.AUTH.LOGIN,
-    element: <LoginActive />,
+    path: `${ROUTES.AUTH.BASE}/*`,
+    element: <AuthContainer />,
   },
   {
-    path: ROUTES.AUTH.RESTORE,
-    element: <Restore />,
+    path: `${ROUTES.NOTIFICATIONS.BASE}/*`,
+    element: <NotificationContainer />,
   },
   {
-    path: ROUTES.AUTH.SEED_WARNING,
-    element: <SeedWarning />,
+    path: `${ROUTES.NOTIFICATIONS.BASE}/*`,
+    element: <NotificationContainer />,
   },
   {
-    path: ROUTES.AUTH.SEED_CONFIRM,
-    element: <SeedConfirm />,
+    path: `${ROUTES.SETTINGS.BASE}/*`,
+    element: <SettingsContainer />,
   },
   {
-    path: ROUTES.AUTH.SEED_WRITE,
-    element: <SeedWrite />,
-  },
-  {
-    path: ROUTES.AUTH.PROGRESS,
-    element: <Progress />,
-  },
-  {
-    path: ROUTES.AUTH.SET_PASSWORD,
-    element: <SetPassword />,
-  },
-  {
-    path: ROUTES.NOTIFICATIONS.CONNECT,
-    element: <Connect />,
-  },
-  {
-    path: ROUTES.NOTIFICATIONS.APPROVE_INVOKE,
-    element: <ApproveInvoke />,
-  },
-
-  {
-    path: ROUTES.WALLET.BASE,
-    element: <Wallet />,
-  },
-  {
-    path: ROUTES.WALLET.SEND,
-    element: <SendForm />,
-  },
-  {
-    path: ROUTES.WALLET.SEND_CONFIRM,
-    element: <SendConfirm />,
-  },
-  {
-    path: ROUTES.WALLET.RECEIVE,
-    element: <Receive />,
-  },
-  {
-    path: ROUTES.SETTINGS.BASE,
-    element: <Settings />,
-  },
-  {
-    path: ROUTES.SETTINGS.SETTINGS_REPORT,
-    element: <SettingsReport />,
-  },
-  {
-    path: ROUTES.WALLET.UTXO,
-    element: <Utxo />,
+    path: `${ROUTES.WALLET.BASE}/*`,
+    element: <WalletContainer />,
   },
 ];
 
@@ -128,8 +69,6 @@ const App = () => {
         renderThumbVertical={(props) => <div {...props} className={trackStyle} />}
       >
         {content}
-
-        {/* <ViewComponent /> */}
       </Scrollbars>
     </ErrorBoundary>
   );
