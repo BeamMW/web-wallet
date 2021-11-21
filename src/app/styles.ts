@@ -21,57 +21,57 @@ css`
     }
 
     @font-face {
-      font-family: "ProximaNova";
-      src: url("/assets/fonts/ProximaNova-Regular.ttf");
+      font-family: 'ProximaNova';
+      src: url('/assets/fonts/ProximaNova-Regular.ttf');
       font-weight: 400;
       font-style: normal;
     }
 
     @font-face {
-      font-family: "ProximaNova";
-      src: url("/assets/fonts/ProximaNova-RegularIt.ttf");
+      font-family: 'ProximaNova';
+      src: url('/assets/fonts/ProximaNova-RegularIt.ttf');
       font-weight: 400;
       font-style: italic;
     }
 
     @font-face {
-      font-family: "ProximaNova";
-      src: url("/assets/fonts/ProximaNova-Semibold.ttf");
+      font-family: 'ProximaNova';
+      src: url('/assets/fonts/ProximaNova-Semibold.ttf');
       font-weight: 600;
       font-style: normal;
     }
 
     @font-face {
-      font-family: "ProximaNova";
-      src: url("/assets/fonts/ProximaNova-Bold.ttf");
+      font-family: 'ProximaNova';
+      src: url('/assets/fonts/ProximaNova-Bold.ttf');
       font-weight: 700;
       font-style: normal;
     }
 
     @font-face {
-      font-family: "SFProDisplay";
-      src: url("/assets/fonts/SFProDisplay-Regular.ttf");
+      font-family: 'SFProDisplay';
+      src: url('/assets/fonts/SFProDisplay-Regular.ttf');
       font-weight: 400;
       font-style: normal;
     }
 
     @font-face {
-      font-family: "SFProDisplay";
-      src: url("/assets/fonts/SFProDisplay-RegularItalic.ttf");
+      font-family: 'SFProDisplay';
+      src: url('/assets/fonts/SFProDisplay-RegularItalic.ttf');
       font-weight: 400;
       font-style: italic;
     }
 
     @font-face {
-      font-family: "SFProDisplay";
-      src: url("/assets/fonts/SFUIDisplay-Medium.otf");
+      font-family: 'SFProDisplay';
+      src: url('/assets/fonts/SFUIDisplay-Medium.otf');
       font-weight: 600;
       font-style: normal;
     }
 
     @font-face {
-      font-family: "SFProDisplay";
-      src: url("/assets/fonts/SFProDisplay-Bold.ttf");
+      font-family: 'SFProDisplay';
+      src: url('/assets/fonts/SFProDisplay-Bold.ttf');
       font-weight: 700;
       font-style: normal;
     }
@@ -93,7 +93,7 @@ css`
     }
 
     html * {
-      font-family: "ProximaNova", sans-serif;
+      font-family: 'ProximaNova', sans-serif;
     }
 
     body {

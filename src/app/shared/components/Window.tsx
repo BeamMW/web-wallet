@@ -38,7 +38,7 @@ const ContainerStyled = styled.div<WindowProps>`
   text-align: center;
 
   &:before {
-    content: "";
+    content: '';
     position: absolute;
     z-index: -1;
     top: 50px;
@@ -61,7 +61,7 @@ const HeadingStyled = styled.div<{ pallete: string }>`
   background-color: var(--color-dark-blue);
 
   &:before {
-    content: "";
+    content: '';
     position: absolute;
     z-index: -1;
     top: 50px;

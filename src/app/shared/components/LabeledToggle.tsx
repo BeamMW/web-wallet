@@ -18,7 +18,7 @@ const ContainerStyled = styled.button`
   border-radius: 16px;
   border: none;
   background-color: rgba(255, 255, 255, 0.1);
-  font-family: "SFProDisplay";
+  font-family: 'SFProDisplay';
   color: var(--color-gray);
   cursor: pointer;
 `;

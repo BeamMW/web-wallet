@@ -32,7 +32,7 @@ import {
 
 const WarningStyled = styled.div`
   margin: 30px -20px;
-  font-family: "SFProDisplay";
+  font-family: 'SFProDisplay';
   font-style: italic;
   color: var(--color-gray);
 `;

@@ -24,7 +24,7 @@ const ListItemStyled = styled.li<{ opt_color?: string; asset_id: number }>`
 
   &:before {
     opacity: 0.3;
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;

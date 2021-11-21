@@ -17,7 +17,7 @@ const ContainerStyled = styled.div<SplashProps>`
   position: relative;
   height: 600px;
   padding: 120px 30px 0;
-  background-image: url("/assets/background.png");
+  background-image: url('/assets/background.png');
   text-align: center;
 `;
 

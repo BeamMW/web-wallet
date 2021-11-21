@@ -29,7 +29,7 @@ const TrackStyled = styled.div`
   border-radius: 10px;
   background-color: rgba(141, 161, 173, 0.1);
 
-  input[type="checkbox"]:checked ~ & {
+  input[type='checkbox']:checked ~ & {
     border-color: var(--color-green);
     background-color: rgba(0, 251, 209, 0.1);
   }
@@ -44,7 +44,7 @@ const SliderStyled = styled.div<{ active: boolean }>`
   height: 16px;
   border-radius: 50%;
 
-  input[type="checkbox"]:checked ~ & {
+  input[type='checkbox']:checked ~ & {
     left: 18px;
     background-color: var(--color-green);
   }
