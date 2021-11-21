@@ -9,7 +9,7 @@ import { startWallet } from '@core/api';
 
 import { ROUTES } from '@app/shared/constants';
 import { navigate } from '@app/shared/store/actions';
-import store from '../../../../../index';
+import store from '../../../../index';
 
 export enum LoginPhase {
   LOADING,
@@ -35,7 +35,7 @@ const unwatch = $onboarding.watch((value) => {
   if (!isNil(value)) {
     unwatch();
     // todo check
-    store.dispatch(navigate(value ? ROUTES.AUTH.RESTORE : ROUTES.AUTH.LOGIN));
+    store.dispatch(navigate(value ? ROUTES.AUTH.BASE : ROUTES.AUTH.LOGIN));
 
     //  setLoginPhase(value ? LoginPhase.FIRSTTIME : LoginPhase.ACTIVE);
   }

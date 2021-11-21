@@ -19,3 +19,4 @@ export { default as Toggle } from './Toggle';
 export { default as LabeledToggle } from './LabeledToggle';
 export { default as AssetIcon } from './AssetIcon';
 export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as ProgressBar } from './ProgressBar';

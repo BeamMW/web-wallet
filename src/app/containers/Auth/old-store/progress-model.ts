@@ -8,7 +8,7 @@ import { remoteEvent, getEnvironment } from '@core/api';
 import NotificationController from '@core/NotificationController';
 import { ROUTES } from '@app/shared/constants';
 import { navigate } from '@app/shared/store/actions';
-import store from '../../../../../index';
+import store from '../../../../index';
 
 export const setSyncProgress = createEvent<[number, number]>();
 

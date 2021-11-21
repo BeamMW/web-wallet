@@ -3,9 +3,8 @@ export const ROUTES = {
     BASE: '/auth',
     LOGIN: '/auth/login',
     RESTORE: '/auth/restore',
-    SEED_WARNING: '/auth/seed_warning',
-    SEED_WRITE: '/auth/seed_write',
-    SEED_CONFIRM: '/auth/seed_confirm',
+    REGISTRATION: '/auth/registration',
+    REGISTRATION_CONFIRM: '/auth/registration_confirm',
     SET_PASSWORD: '/auth/set_password',
     PROGRESS: '/auth/progress',
   },
@@ -29,12 +28,12 @@ export const ROUTES = {
 
 export const ROUTES_PATH = {
   AUTH: {
+    BASE: '/',
     AUTH: '/auth',
     LOGIN: '/login',
     RESTORE: '/restore',
-    SEED_WARNING: '/seed_warning',
-    SEED_WRITE: '/seed_write',
-    SEED_CONFIRM: '/seed_confirm',
+    REGISTRATION: '/registration',
+    REGISTRATION_CONFIRM: '/registration_confirm',
     SET_PASSWORD: '/set_password',
     PROGRESS: '/progress',
   },

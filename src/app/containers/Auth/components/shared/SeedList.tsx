@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { css, cx } from '@linaria/core';
 import React, { useEffect } from 'react';
 import { isNil } from '@core/utils';
-import { isAllowedSeedFx, SEED_PHRASE_COUNT } from './model';
+import { isAllowedSeedFx, SEED_PHRASE_COUNT } from '../../old-store/seed-model';
 
 interface SeedListProps {
   data: any[];

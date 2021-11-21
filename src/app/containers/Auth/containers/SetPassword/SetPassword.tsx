@@ -14,7 +14,7 @@ import { $seed } from '@model/base';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
-import PasswordStrength from './PasswordStrength';
+import { PasswordStrength } from '../../components';
 
 const FormStyled = styled.form`
   text-align: left;
@@ -62,7 +62,7 @@ const SetPassword = () => {
   };
 
   const handleReturnClick: React.MouseEventHandler = () => {
-    navigate(ROUTES.AUTH.SEED_WRITE);
+    navigate(ROUTES.AUTH.REGISTRATION);
   };
 
   return (

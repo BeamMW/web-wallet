@@ -6,9 +6,9 @@ import { Splash } from '@app/shared/components';
 // import WasmWallet from "@core/WasmWallet";
 //
 // import { useNavigate } from "react-router-dom";
-import ProgressBar from './ProgressBar';
+import { ProgressBar } from '../../../../shared/components';
 // $loading, setLoading
-import { $syncPercent, $syncProgress } from './model';
+import { $syncPercent, $syncProgress } from '../../old-store/progress-model';
 
 const TitleStyled = styled.h2`
   margin: 0;

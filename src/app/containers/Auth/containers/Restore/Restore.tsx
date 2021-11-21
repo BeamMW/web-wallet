@@ -3,14 +3,13 @@ import { useStore } from 'effector-react';
 
 import { setSeed } from '@model/base';
 import { Button, Footer, Window } from '@app/shared/components';
-import SeedList from '@app/containers/Auth/containers/seed';
-
-import {
-  $cache, $errors, $valid, setCache, onInput,
-} from '@app/containers/Auth/containers/seed/model';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
+import { SeedList } from '@app/containers/Auth/components';
+import {
+  $cache, $errors, $valid, setCache, onInput,
+} from '../../old-store/seed-model';
 
 const Restore: React.FC = () => {
   const errors = useStore($errors);

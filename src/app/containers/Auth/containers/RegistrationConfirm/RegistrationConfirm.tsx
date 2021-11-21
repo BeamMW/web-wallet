@@ -5,14 +5,14 @@ import { ArrowRightIcon } from '@app/shared/icons';
 
 import { $ids, $words, generateSeedFx } from '@model/base';
 import { useStore } from 'effector-react';
-import SeedList from '@app/containers/Auth/containers/seed';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
+import { SeedList } from '@app/containers/Auth/components';
 
 const SEED_CONFIRM_COUNT = 6;
 
-const SeedConfirm: React.FC = () => {
+const RegistrationConfirm: React.FC = () => {
   const seed = useStore($words);
   const ids = useStore($ids);
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const SeedConfirm: React.FC = () => {
 
   const handlePrevious: React.MouseEventHandler = () => {
     generateSeedFx();
-    navigate(ROUTES.AUTH.SEED_WRITE);
+    navigate(ROUTES.AUTH.REGISTRATION);
   };
 
   return (
@@ -62,4 +62,4 @@ const SeedConfirm: React.FC = () => {
   );
 };
 
-export default SeedConfirm;
+export default RegistrationConfirm;

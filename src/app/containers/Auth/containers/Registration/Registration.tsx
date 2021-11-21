@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import {
   Window, Popup, Button, Footer,
 } from '@app/shared/components';
-import { $seed } from '@model/base';
+import { $seed, generateSeedFx } from '@model/base';
 
 import { ROUTES } from '@app/shared/constants';
 
 import { DoneIcon, LockIcon } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
+import { RegistrationWarning } from '../../components';
 
 const SeedListStyled = styled.ol`
   counter-reset: counter;
@@ -46,26 +47,40 @@ const SeedListStyled = styled.ol`
     }
 `;
 
-const SeedWrite: React.FC = () => {
+// todo move registration warning to this step
+
+const Registration: React.FC = () => {
   const navigate = useNavigate();
-  const [warningVisible, toggleWarning] = useState(false);
+
   const [seed] = useStore($seed);
+  const [isRegistrationWarning, setRegistrationWarning] = useState(!!seed);
+  const [warningVisible, toggleWarning] = useState(false);
 
   // const handleSkipClick: React.MouseEventHandler = () => {
   //   navigate(ROUTES.AUTH.SET_PASSWORD);
   // };
 
+  useEffect(() => {
+    if (!seed) {
+      generateSeedFx();
+    }
+  }, [seed]);
+
   const handleNextClick: React.MouseEventHandler = () => {
-    navigate(ROUTES.AUTH.SEED_CONFIRM);
+    navigate(ROUTES.AUTH.REGISTRATION_CONFIRM);
   };
 
   const handleCancel: React.MouseEventHandler = () => {
     toggleWarning(false);
   };
 
-  return (
+  const handlePrevious: React.MouseEventHandler = () => {
+    navigate(ROUTES.AUTH.BASE);
+  };
+
+  return !isRegistrationWarning ? (
     <>
-      <Window title="Seed phrase">
+      <Window title="Seed phrase" onPrevious={handlePrevious}>
         <p>
           Your seed phrase is the access key to all the funds in your wallet. Print or write down the phrase to keep it
           in a safe or in a locked vault. Without the phrase you will not be able to recover your money.
@@ -96,7 +111,9 @@ const SeedWrite: React.FC = () => {
         secure.
       </Popup>
     </>
+  ) : (
+    <RegistrationWarning onClick={() => setRegistrationWarning(false)} />
   );
 };
 
-export default SeedWrite;
+export default Registration;

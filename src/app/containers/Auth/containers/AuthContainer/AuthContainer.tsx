@@ -2,32 +2,38 @@ import React from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import { ROUTES_PATH } from '@app/shared/constants';
-import LoginActive from '@app/containers/Auth/containers/login/LoginActive';
-import Restore from '@app/containers/Auth/containers/restore';
-import Progress from '@app/containers/Auth/containers/progress';
-import SetPassword from '@app/containers/Auth/containers/set-password';
-import { SeedWarning, SeedConfirm, SeedWrite } from '@app/containers/Auth/containers/create/';
+import {
+  Login,
+  AuthBase,
+  Restore,
+  Progress,
+  Registration,
+  RegistrationConfirm,
+  SetPassword,
+} from '@app/containers/Auth/containers';
 
 const routes = [
   {
+    path: '/',
+    element: <AuthBase />,
+    exact: true,
+  },
+  {
     path: ROUTES_PATH.AUTH.LOGIN,
-    element: <LoginActive />,
+    element: <Login />,
   },
   {
     path: ROUTES_PATH.AUTH.RESTORE,
     element: <Restore />,
   },
+
   {
-    path: ROUTES_PATH.AUTH.SEED_WARNING,
-    element: <SeedWarning />,
+    path: ROUTES_PATH.AUTH.REGISTRATION_CONFIRM,
+    element: <RegistrationConfirm />,
   },
   {
-    path: ROUTES_PATH.AUTH.SEED_CONFIRM,
-    element: <SeedConfirm />,
-  },
-  {
-    path: ROUTES_PATH.AUTH.SEED_WRITE,
-    element: <SeedWrite />,
+    path: ROUTES_PATH.AUTH.REGISTRATION,
+    element: <Registration />,
   },
   {
     path: ROUTES_PATH.AUTH.PROGRESS,

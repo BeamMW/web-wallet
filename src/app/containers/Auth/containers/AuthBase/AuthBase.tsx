@@ -6,12 +6,12 @@ import { ROUTES } from '@app/shared/constants';
 
 import { AddIcon, DoneIcon } from '@app/shared/icons';
 
-import { resetCache, resetErrors } from '@app/containers/Auth/containers/seed/model';
-
 import { useNavigate } from 'react-router-dom';
-import { $phase, LoginPhase } from './model';
+import { $phase, LoginPhase } from '../../old-store/login-model';
+import { resetCache, resetErrors } from '../../old-store/seed-model';
 
-const LoginRestore: React.FC = () => {
+// todo fix does not called
+const AuthBase: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
     resetCache();
@@ -30,7 +30,7 @@ const LoginRestore: React.FC = () => {
   return (
     <>
       <Splash blur={warningVisible} onReturn={active ? handleReturn : null}>
-        <Button type="button" icon={AddIcon} onClick={() => navigate(ROUTES.AUTH.SEED_WARNING)}>
+        <Button type="button" icon={AddIcon} onClick={() => navigate(ROUTES.AUTH.REGISTRATION)}>
           create new wallet
         </Button>
         <Button variant="link" onClick={() => toggleWarning(true)}>
@@ -56,4 +56,4 @@ const LoginRestore: React.FC = () => {
   );
 };
 
-export default LoginRestore;
+export default AuthBase;

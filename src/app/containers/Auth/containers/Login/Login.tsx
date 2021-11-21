@@ -11,9 +11,9 @@ import { WalletSmallIcon, DoneIcon } from '@app/shared/icons';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
-import { $error, startWalletFx } from './model';
+import { $error, startWalletFx } from '../../old-store/login-model';
 
-const LoginActive: React.FC = () => {
+const Login: React.FC = () => {
   const navigate = useNavigate();
   const [warningVisible, toggleWarning] = useState(false);
 
@@ -77,4 +77,4 @@ const LoginActive: React.FC = () => {
   );
 };
 
-export default LoginActive;
+export default Login;
