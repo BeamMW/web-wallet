@@ -10,7 +10,7 @@ import { saveAs } from 'file-saver';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
-import { $logs } from './model';
+import { $logs } from '../../old-store/model';
 
 const ReportStyled = styled.div`
   margin-bottom: 30px;

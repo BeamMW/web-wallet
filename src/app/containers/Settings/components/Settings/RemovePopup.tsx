@@ -9,7 +9,7 @@ import { useStore } from 'effector-react';
 import { isNil } from '@core/utils';
 import {
   $error, deleteWalletFx, onInput, resetError,
-} from './model';
+} from '../../old-store/model';
 
 interface RemovePopupProps {
   visible?: boolean;

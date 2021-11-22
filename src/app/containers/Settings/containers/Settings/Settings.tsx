@@ -12,8 +12,8 @@ import { Button, Window } from '@app/shared/components';
 import { useNavigate } from 'react-router-dom';
 import {
   getVersionFx, loadLogsFx, $version, resetError,
-} from './model';
-import RemovePopup from './RemovePopup';
+} from '../../old-store/model';
+import { RemovePopup } from '../../components';
 
 const ContainerStyled = styled.div`
   margin: 0 -10px;

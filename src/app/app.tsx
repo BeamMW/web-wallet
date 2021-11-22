@@ -11,8 +11,8 @@ import { actions as sharedActions, selectors as sharedSelectors } from '@app/sha
 import { useNavigate, useRoutes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@app/shared/components';
-import { Wallet, WalletContainer } from './containers/Wallet';
-import { AuthContainer } from './containers/Auth';
+import { WalletContainer } from './containers/Wallet';
+import { AuthContainer, Progress } from './containers/Auth';
 import { SettingsContainer } from './containers/Settings';
 import { NotificationContainer } from './containers/Notifications';
 
@@ -25,7 +25,7 @@ const trackStyle = css`
 const routes = [
   {
     path: '/',
-    element: <Wallet />,
+    element: <Progress />,
   },
   {
     path: `${ROUTES.AUTH.BASE}/*`,
