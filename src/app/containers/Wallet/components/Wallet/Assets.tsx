@@ -55,7 +55,7 @@ const Assets: React.FC<AssetsProps> = ({ data }) => (
         key={asset_id}
         asset_id={asset_id}
       >
-        <AssetLabel value={available} asset_id={asset_id} />
+        <AssetLabel value={available} asset_id={asset_id} comment="" />
       </ListItemStyled>
     ))}
   </ListStyled>

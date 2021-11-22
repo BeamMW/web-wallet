@@ -1,5 +1,5 @@
-export { default as Receive } from './receive';
-export * from './send';
-export { default as Utxo } from './utxo';
-export { default as Wallet } from './wallet';
+export { default as Receive } from './Receive';
+export * from './Send';
+export { default as Utxo } from './Utxo';
+export { default as Wallet } from './Wallet';
 export { default as WalletContainer } from './WalletContainer';

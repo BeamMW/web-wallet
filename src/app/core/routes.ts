@@ -11,11 +11,11 @@ import {
 import { Connect, ApproveInvoke } from '@app/containers/Notifications/containers';
 
 import { View } from '@app/model/view';
-import Wallet from '@app/containers/Wallet/containers/wallet';
+import Wallet from '@app/containers/Wallet/containers/Wallet';
 import { SendForm, Settings, SettingsReport } from '@app/containers';
-import Receive from '@app/containers/Wallet/containers/receive';
-import SendConfirm from '@app/containers/Wallet/containers/send/SendConfirm';
-import Utxo from '@app/containers/Wallet/containers/utxo';
+import Receive from '@app/containers/Wallet/containers/Receive';
+import SendConfirm from '@app/containers/Wallet/containers/Send/SendConfirm';
+import Utxo from '@app/containers/Wallet/containers/Utxo';
 
 const ROUTES = {
   [View.LOGIN]: Login,

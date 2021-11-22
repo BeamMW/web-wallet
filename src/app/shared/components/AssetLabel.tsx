@@ -12,7 +12,7 @@ import { Transaction } from '@core/types';
 import AssetIcon from './AssetIcon';
 import Rate from './Rate';
 
-interface AssetLabelProps extends Transaction {}
+interface AssetLabelProps extends Partial<Transaction> {}
 
 const ContainerStyled = styled.div`
   display: flex;

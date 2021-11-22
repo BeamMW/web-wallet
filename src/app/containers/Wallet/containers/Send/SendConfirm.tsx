@@ -14,7 +14,7 @@ import { fromGroths, compact } from '@core/utils';
 import { AddressType } from '@core/types';
 import {
   $form, onConfirmSubmit, $selected, $description, $change, $addressData,
-} from './model';
+} from '../../old-store/model-send';
 
 const WarningSyled = styled.p`
   opacity: 0.5;

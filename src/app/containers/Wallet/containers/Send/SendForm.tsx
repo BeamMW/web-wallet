@@ -28,7 +28,7 @@ import {
   $addressData,
   $description,
   $amountError,
-} from './model';
+} from '../../old-store/model-send';
 
 const WarningStyled = styled.div`
   margin: 30px -20px;
@@ -43,6 +43,7 @@ const maxButtonStyle = css`
   top: 138px;
 `;
 
+// todo move send confirm here
 const SendForm = () => {
   const address = useStore($address);
   const offline = useStore($offline);

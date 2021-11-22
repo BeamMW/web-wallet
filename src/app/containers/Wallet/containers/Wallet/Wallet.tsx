@@ -17,8 +17,7 @@ import { $assets, $transactions } from '@model/wallet';
 import { Transaction } from '@core/types';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
-import Assets from './Assets';
-import Transactions from './Transactions';
+import { Assets, Transactions } from '../../components/Wallet';
 
 const TXS_MAX = 4;
 

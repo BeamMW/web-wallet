@@ -22,9 +22,9 @@ import {
   copyAndClose,
   $maxAnonymity,
   onToggleChange,
-} from './model';
+} from '../../old-store/receive-model';
 
-const AddresStyled = styled.div`
+const AddressStyled = styled.div`
   line-height: 24px;
 `;
 
@@ -69,11 +69,11 @@ const Receive = () => {
     <Window title="Receive" pallete="blue">
       <form onSubmit={submitForm}>
         <Section title="Address" variant="gray">
-          <AddresStyled>
+          <AddressStyled>
             {address}
             &nbsp;
             <Button variant="icon" pallete="white" icon={CopySmallIcon} onClick={copyAddress} />
-          </AddresStyled>
+          </AddressStyled>
           <TipStyled>To ensure a better privacy, new address is generated every time.</TipStyled>
         </Section>
         <Section title="Amount" variant="gray">
