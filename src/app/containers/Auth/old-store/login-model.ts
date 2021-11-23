@@ -2,8 +2,6 @@ import {
   createEffect, createEvent, createStore, restore,
 } from 'effector';
 
-import { $onboarding } from '@model/base';
-import { isNil } from '@core/utils';
 import { ErrorMessage } from '@core/WasmWallet';
 import { startWallet } from '@core/api';
 
@@ -30,13 +28,3 @@ $error.on(startWalletFx.failData, (state, payload) => payload);
 $error.reset(startWalletFx.done);
 
 startWalletFx.done.watch(() => store.dispatch(navigate(ROUTES.AUTH.PROGRESS)));
-
-const unwatch = $onboarding.watch((value) => {
-  if (!isNil(value)) {
-    unwatch();
-    // todo check
-    store.dispatch(navigate(value ? ROUTES.AUTH.BASE : ROUTES.AUTH.LOGIN));
-
-    //  setLoginPhase(value ? LoginPhase.FIRSTTIME : LoginPhase.ACTIVE);
-  }
-});

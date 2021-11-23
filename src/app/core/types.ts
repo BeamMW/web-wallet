@@ -47,7 +47,7 @@ export interface RemoteRequest {
   params: any;
 }
 export interface RemoteResponse {
-  id: number | RPCEvent;
+  id: number | RPCEvent | BackgroundEvent;
   method: WalletMethod | RPCMethod;
   result: any;
   error: any;
