@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 
 import { Button, Window } from 'app/uikit';
-import { View, setView } from '@app/model/view';
 import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
-
+import {history} from "@app/shared/history";
+import {ROUTES} from "@app/shared/constants";
+import {useNavigate} from "react-router-dom";
 
 const TransactionInfo = () => {
+  const navigate =useNavigate();
   const handlePrevious: React.MouseEventHandler = () => {
-    setView(View.SETTINGS);
+    navigate(ROUTES.SETTINGS.BASE)
   };
       
   return (

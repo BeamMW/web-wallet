@@ -2,12 +2,14 @@ import {
   createEffect,
   createEvent, restore,
 } from 'effector';
+
 import { generateSeed, handleWalletEvent } from '@core/api';
 import { BackgroundEvent, ConnectedData, NotificationType } from '@app/core/types';
 import { isNil } from '@app/core/utils';
 import NotificationController from '@core/NotificationController';
-
-import { setView, View } from './view';
+import {ROUTES} from "@app/shared/constants";
+import {default as store} from "../../index";
+import {navigate} from "@app/shared/store/actions";
 
 export const setIds = createEvent<number[]>();
 export const setOnboarding = createEvent<boolean>();
@@ -49,16 +51,20 @@ handleWalletEvent<ConnectedData>(
     onboarding,
     notification,
   }) => {
+    console.log("onboarding",onboarding);
     setOnboarding(onboarding);
     if (!isNil(notification)) {
       NotificationController.setNotification(notification);
       if (notification.type === NotificationType.APPROVE_INVOKE) {
-        setView(is_running ? View.APPROVEINVOKE : View.LOGIN);
+
+        store.dispatch(navigate(is_running ? ROUTES.NOTIFICATIONS.APPROVE_INVOKE : ROUTES.AUTH.LOGIN))
+
       } else if (notification.type === NotificationType.CONNECT) {
-        setView(is_running ? View.CONNECT : View.LOGIN);
+
+        store.dispatch(navigate(is_running ? ROUTES.NOTIFICATIONS.CONNECT : ROUTES.AUTH.LOGIN))
       }
     } else {
-      setView(is_running ? View.WALLET : View.LOGIN);
+      store.dispatch(navigate(is_running ? ROUTES.WALLET.BASE : ROUTES.AUTH.LOGIN))
     }
   },
 );

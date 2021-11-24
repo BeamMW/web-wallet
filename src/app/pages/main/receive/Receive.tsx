@@ -21,6 +21,8 @@ import {
   $maxAnonymity,
   onToggleChange,
 } from './model';
+import {useNavigate} from "react-router-dom";
+import {ROUTES} from "@app/shared/constants";
 
 const AddresStyled = styled.div`
   line-height: 24px;
@@ -51,18 +53,24 @@ const LabelStyled = styled.label`
 const Receive = () => {
   const address = useStore($addressPreview);
   const maxAnonimity = useStore($maxAnonymity);
+  const navigate = useNavigate();
   const [amount, asset_id] = useStore($amount);
 
   useEffect(() => {
     createAddressFx({ type: maxAnonimity ? 'max_privacy' : 'offline' });
   }, [maxAnonimity]);
 
+  const submitForm =(e) =>{
+    copyAndClose(e);
+    navigate(ROUTES.WALLET.BASE);
+  }
+
   return (
     <Window
       title="Receive"
       pallete="blue"
     >
-      <form onSubmit={copyAndClose}>
+      <form onSubmit={submitForm}>
         <Section title="Address" variant="gray">
           <AddresStyled>
             { address }

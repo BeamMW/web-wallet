@@ -12,8 +12,11 @@ import {
   DoneIcon,
 } from '@app/icons';
 
-import { View, setView } from '@app/model/view';
 import { generateSeedFx } from '@app/model/base';
+
+import {ROUTES} from "@app/shared/constants";
+
+import {useNavigate} from "react-router-dom";
 
 const WarningListStyled = styled.ul`
   > li {
@@ -41,9 +44,12 @@ const WarningListStyled = styled.ul`
 `;
 
 const SeedWarning: React.FC = () => {
+const navigate = useNavigate();
   useEffect(() => {
     generateSeedFx();
   }, []);
+
+
 
   return (
     <Window title="Create new wallet">
@@ -51,7 +57,7 @@ const SeedWarning: React.FC = () => {
         If you ever lose your device, you will need this phrase to recover
         your wallet!
         <br />
-        {' '}
+
         Never type your seed phrase in keychains or password
         managers.
         <br />
@@ -74,7 +80,7 @@ const SeedWarning: React.FC = () => {
         </li>
       </WarningListStyled>
       <Footer>
-        <Button icon={DoneIcon} type="button" onClick={() => setView(View.SEED_WRITE)}>
+        <Button icon={DoneIcon} type="button" onClick={() => navigate(ROUTES.AUTH.SEED_WRITE)}>
           I understand
         </Button>
       </Footer>

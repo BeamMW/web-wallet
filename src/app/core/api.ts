@@ -24,7 +24,7 @@ export const remoteEvent = createEvent<RemoteResponse>();
 remoteEvent.watch(({
   method = 'event', id, result, error,
 }) => {
-  console.info(`received ${method}:${id} with`, result, error);
+ // console.info(`received ${method}:${id} with`, result, error);
 });
 
 export function getEnvironment(href = window.location.href) {

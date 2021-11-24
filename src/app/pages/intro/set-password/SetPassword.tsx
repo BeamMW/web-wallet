@@ -4,7 +4,6 @@ import { styled } from '@linaria/react';
 import {
   Window, Button, Input, Footer, Popup,
 } from 'app/uikit';
-import { View, setView, gotoProgress } from '@app/model/view';
 import { makeOnChange } from '@core/utils';
 
 import { ArrowLeftIcon, ArrowRightIcon } from '@app/icons';
@@ -13,6 +12,10 @@ import { createWallet } from '@app/core/api';
 import { useStore } from 'effector-react';
 import { $seed } from '@app/model/base';
 import PasswordStrength from './PasswordStrength';
+
+
+import {ROUTES} from "@app/shared/constants";
+import {useNavigate} from "react-router-dom";
 
 const FormStyled = styled.form`
   text-align: left;
@@ -28,6 +31,8 @@ const SetPassword = () => {
   const [confirm, setConfirm] = useState('');
   const [warningVisible, toggleWarning] = useState(false);
   const [seed, restoring] = useStore($seed);
+
+  const navigate = useNavigate();
 
   const matched = pass === confirm;
   const valid = confirm === '' || matched;
@@ -45,19 +50,21 @@ const SetPassword = () => {
       password: pass,
       isSeedConfirmed: true,
     });
-    gotoProgress();
+
+    navigate(ROUTES.AUTH.PROGRESS)
+
   };
 
   const handlePrevious: React.MouseEventHandler = () => {
     if (restoring) {
-      setView(View.RESTORE);
+      navigate(ROUTES.AUTH.RESTORE)
     } else {
       toggleWarning(true);
     }
   };
 
   const handleReturnClick: React.MouseEventHandler = () => {
-    setView(View.SEED_WRITE);
+    navigate(ROUTES.AUTH.SEED_WRITE)
   };
 
   return (

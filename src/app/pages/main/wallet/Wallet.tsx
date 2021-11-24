@@ -7,7 +7,6 @@ import {
   Button, Window, Section, Menu,
 } from 'app/uikit';
 import { compact, isNil } from '@core/utils';
-import { gotoSend, gotoReceive } from '@app/model/view';
 import { getRateFx, GROTHS_IN_BEAM } from '@app/model/rates';
 
 import {
@@ -21,6 +20,8 @@ import { $assets, $transactions } from '@app/model/wallet';
 import { Transaction } from '@app/core/types';
 import Assets from './Assets';
 import Transactions from './Transactions';
+import {useNavigate} from "react-router-dom";
+import {ROUTES} from "@app/shared/constants";
 
 const TXS_MAX = 4;
 
@@ -90,6 +91,7 @@ const Wallet = () => {
   const [active, setActive] = useState(null);
   const assets = useStore($assets);
   const transactions = useStore($transactions);
+  const navigate = useNavigate();
 
   const toggleActive = (asset_id: number) => {
     setActive(active === asset_id ? null : asset_id);
@@ -103,10 +105,10 @@ const Wallet = () => {
   return (
     <Window title="Wallet" primary>
       <ActionsStyled>
-        <Button pallete="purple" icon={ArrowUpIcon} onClick={gotoSend}>
+        <Button pallete="purple" icon={ArrowUpIcon} onClick={()=>navigate(ROUTES.WALLET.SEND)}>
           send
         </Button>
-        <Button pallete="blue" icon={ArrowDownIcon} onClick={gotoReceive}>
+        <Button pallete="blue" icon={ArrowDownIcon} onClick={()=>navigate(ROUTES.WALLET.RECEIVE)}>
           receive
         </Button>
       </ActionsStyled>

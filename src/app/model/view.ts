@@ -27,17 +27,7 @@ export enum View {
 export const setView = createEvent<View>();
 export const $view = restore(setView, View.PROGRESS);
 
-export const gotoSend = makePrevented(
-  curry(setView, View.SEND_FORM),
-);
-
-export const gotoReceive = makePrevented(
-  curry(setView, View.RECEIVE),
-);
-
 export const gotoWallet = curry(setView, View.WALLET);
-
-export const gotoProgress = curry(setView, View.PROGRESS);
 
 export const gotoForm = makePrevented(
   curry(setView, View.SEND_FORM),

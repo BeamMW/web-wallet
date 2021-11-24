@@ -4,9 +4,13 @@ import {
 
 import { ErrorMessage } from '@core/WasmWallet';
 import { deleteWallet, getVersion, loadBackgroundLogs } from '@app/core/api';
-import { setView, View } from '@app/model/view';
-import { LoginPhase, setLoginPhase } from '@app/pages/intro/login/model';
 import React from 'react';
+
+
+
+import {ROUTES} from "@app/shared/constants";
+import {default as store} from "../../../../index";
+import {navigate} from "@app/shared/store/actions";
 
 export const deleteWalletFx = createEffect<string, string, ErrorMessage>(deleteWallet);
 
@@ -32,6 +36,5 @@ $error.on(deleteWalletFx.failData, (state, payload) => payload);
 $error.reset(deleteWalletFx.done, resetError, onInput);
 
 deleteWalletFx.done.watch(() => {
-  setLoginPhase(LoginPhase.FIRSTTIME);
-  setView(View.LOGIN);
+  store.dispatch(navigate(ROUTES.AUTH.RESTORE));
 });

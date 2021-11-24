@@ -33,10 +33,12 @@ const ROUTES = {
   [View.SEED_CONFIRM]: SeedConfirm,
   [View.SET_PASSWORD]: SetPassword,
   [View.PROGRESS]: Progress,
+
   [View.WALLET]: Wallet,
   [View.SEND_FORM]: SendForm,
   [View.SEND_CONFIRM]: SendConfirm,
   [View.RECEIVE]: Receive,
+
   [View.UTXO]: Utxo,
   [View.SETTINGS]: Settings,
   [View.SETTINGS_REPORT]: SettingsReport,

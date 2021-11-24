@@ -1,7 +1,6 @@
 import React from 'react';
 import { useStore } from 'effector-react';
 
-import { View, setView } from '@app/model/view';
 import { setSeed } from '@app/model/base';
 import { Button, Footer, Window } from '@app/uikit';
 import SeedList from '@pages/intro/seed';
@@ -14,10 +13,15 @@ import {
   onInput,
 } from '@pages/intro/seed/model';
 
+import {history} from "@app/shared/history";
+import {ROUTES} from "@app/shared/constants";
+import {useNavigate} from "react-router-dom";
+
 const Restore: React.FC = () => {
   const errors = useStore($errors);
   const cache = useStore($cache);
   const valid = useStore($valid);
+  const navigate = useNavigate();
 
   const handleSubmit: React.ChangeEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
@@ -30,7 +34,7 @@ const Restore: React.FC = () => {
 
     setSeed([seed, true]);
     setCache(seed);
-    setView(View.SET_PASSWORD);
+    navigate(ROUTES.AUTH.SET_PASSWORD);
   };
 
   return (

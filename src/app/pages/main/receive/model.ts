@@ -11,7 +11,6 @@ import { createAddress } from '@app/core/api';
 import {
   compact, fromCheckbox, preventEvent,
 } from '@app/core/utils';
-import { gotoReceive, gotoWallet } from '@app/model/view';
 
 type Amount = [string, number];
 
@@ -37,11 +36,6 @@ export const copyAddress = createEvent<React.SyntheticEvent>();
 
 export const copyAndClose = createEvent<React.SyntheticEvent>().map(preventEvent);
 
-sample({
-  clock: copyAndClose,
-  target: gotoWallet,
-});
-
 // copy address to clipboard on submit
 sample({
   source: $address,
@@ -49,10 +43,12 @@ sample({
   target: copyToClipboardFx,
 });
 
-const STORES = [
-  $address,
-  $amount,
-  $maxAnonymity,
-];
+// todo reset state on page change
 
-STORES.forEach((store) => store.reset(gotoReceive));
+// const STORES = [
+//   $address,
+//   $amount,
+//   $maxAnonymity,
+// ];
+//
+//  STORES.forEach((store) => store.reset(gotoReceive));
