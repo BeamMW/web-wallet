@@ -53,7 +53,7 @@ const App = () => {
   const dispatch = useDispatch();
   const content = useRoutes(routes);
   const navigate = useNavigate();
-  const navigateURL = useSelector(sharedSelectors.getRouterLink());
+  const navigateURL = useSelector(sharedSelectors.selectRouterLink());
 
   useEffect(() => {
     if (navigateURL) {

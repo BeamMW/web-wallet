@@ -1,35 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { useStore } from 'effector-react';
-
 import { Popup, Splash, Button } from '@app/shared/components';
 import { ROUTES } from '@app/shared/constants';
 
 import { AddIcon, DoneIcon } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
-import { $phase, LoginPhase } from '../../old-store/login-model';
 import { resetCache, resetErrors } from '../../old-store/seed-model';
 
-// todo fix does not called
 const AuthBase: React.FC = () => {
   const navigate = useNavigate();
+
   useEffect(() => {
     resetCache();
     resetErrors();
   }, []);
 
   const [warningVisible, toggleWarning] = useState(false);
-  // todo fix
-  const phase = useStore($phase);
-  const active = phase === LoginPhase.RESTORE;
-
-  const handleReturn = () => {
-    navigate(ROUTES.AUTH.LOGIN);
-  };
 
   return (
     <>
-      <Splash blur={warningVisible} onReturn={active ? handleReturn : null}>
+      <Splash blur={warningVisible}>
         <Button type="button" icon={AddIcon} onClick={() => navigate(ROUTES.AUTH.REGISTRATION)}>
           create new wallet
         </Button>

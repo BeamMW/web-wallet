@@ -54,6 +54,8 @@ function* sharedSaga() {
       // An error from socketChannel will cause the saga jump to the catch block
       const payload: RemoteResponse = yield take(remoteChannel);
 
+      console.log(payload.method);
+
       switch (payload.id) {
         case BackgroundEvent.CONNECTED:
           yield call(handleConnect, payload.result);

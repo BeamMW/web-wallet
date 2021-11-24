@@ -8,10 +8,15 @@ type Action = ActionType<typeof actions>;
 
 const initialState: SharedStateType = {
   routerLink: '',
+  errorMessage: null,
 };
 
-const reducer = createReducer<SharedStateType, Action>(initialState).handleAction(actions.navigate, (state, action) => produce(state, (nexState) => {
-  nexState.routerLink = action.payload;
-}));
+const reducer = createReducer<SharedStateType, Action>(initialState)
+  .handleAction(actions.navigate, (state, action) => produce(state, (nexState) => {
+    nexState.routerLink = action.payload;
+  }))
+  .handleAction(actions.setError, (state, action) => produce(state, (nexState) => {
+    nexState.errorMessage = action.payload;
+  }));
 
 export { reducer as SharedReducer };
