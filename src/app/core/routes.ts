@@ -6,24 +6,16 @@ import {
   SeedWarning,
   SeedWrite,
   SeedConfirm,
-} from '@pages/intro';
+} from '@app/containers/Auth/containers';
 
-import {
-  Wallet,
-  Receive,
-  SendConfirm,
-  SendForm,
-  Utxo,
-  Settings,
-  SettingsReport,
-} from '@pages/main';
-
-import {
-  Connect,
-  ApproveInvoke,
-} from '@pages/notifications';
+import { Connect, ApproveInvoke } from '@app/containers/Notifications/containers';
 
 import { View } from '@app/model/view';
+import Wallet from '@app/containers/Wallet/containers/Wallet';
+import { SendForm, Settings, SettingsReport } from '@app/containers';
+import Receive from '@app/containers/Wallet/containers/Receive';
+import SendConfirm from '@app/containers/Wallet/containers/Send/SendConfirm';
+import Utxo from '@app/containers/Wallet/containers/Utxo';
 
 const ROUTES = {
   [View.LOGIN]: Login,

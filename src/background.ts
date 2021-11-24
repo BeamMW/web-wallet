@@ -3,9 +3,7 @@
 import * as extensionizer from 'extensionizer';
 import WasmWallet from '@core/WasmWallet';
 import { isNil } from '@app/core/utils';
-import {
-  Environment, RemoteRequest,
-} from '@app/core/types';
+import { Environment, RemoteRequest } from '@app/core/types';
 
 import NotificationManager from '@core/NotificationManager';
 import { NotificationType } from '@core/types';
@@ -55,13 +53,8 @@ const getActiveTabs = () => new Promise<any[]>((resolve, reject) => {
 
 async function triggerUi() {
   const tabs = await getActiveTabs();
-  const currentlyActiveBeamTab = Boolean(
-    tabs.find((tab) => openBeamTabsIDs[tab.id]),
-  );
-  if (
-    !uiIsTriggering
-    && !currentlyActiveBeamTab
-  ) {
+  const currentlyActiveBeamTab = Boolean(tabs.find((tab) => openBeamTabsIDs[tab.id]));
+  if (!uiIsTriggering && !currentlyActiveBeamTab) {
     uiIsTriggering = true;
     try {
       await notificationManager.showPopup();
@@ -86,7 +79,7 @@ async function openPopup() {
 function handleConnect(remote) {
   port = remote;
   connected = true;
-
+  // eslint-disable-next-line no-console
   console.log(`remote connected to "${port.name}"`);
 
   port.onDisconnect.addListener(() => {
@@ -150,7 +143,10 @@ wallet.initContractInfoHandler((req, info, amounts, cb) => {
   notification = {
     type: NotificationType.APPROVE_INVOKE,
     params: {
-      req, info, amounts, appname,
+      req,
+      info,
+      amounts,
+      appname,
     },
   };
   notificationIsOpen = true;

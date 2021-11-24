@@ -5,12 +5,7 @@ import PortStream from '@core/PortStream';
 import { isNil } from '@core/utils';
 import { GROTHS_IN_BEAM } from '@app/model/rates';
 import {
-  RPCMethod,
-  RPCEvent,
-  BackgroundEvent,
-  WalletMethod,
-  CreateWalletParams,
-  Notification,
+  RPCMethod, RPCEvent, BackgroundEvent, WalletMethod, CreateWalletParams, Notification,
 } from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
@@ -38,24 +33,27 @@ type WalletEventHandler = {
 
 const bgLogs = {
   common: [],
+  // eslint-disable-next-line no-console
   commonDef: console.log.bind(console),
   errors: [],
+  // eslint-disable-next-line no-console
   errorsDef: console.error.bind(console),
   warns: [],
+  // eslint-disable-next-line no-console
   warnsDef: console.warn.bind(console),
 };
 
-console.log = function () {
-  bgLogs.commonDef.apply(console, arguments);
-  bgLogs.common.push(Array.from(arguments));
+console.log = function (...args) {
+  bgLogs.commonDef.apply(console, args);
+  bgLogs.common.push(Array.from(args));
 };
-console.error = function () {
-  bgLogs.errorsDef.apply(console, arguments);
-  bgLogs.errors.push(Array.from(arguments));
+console.error = function (...args) {
+  bgLogs.errorsDef.apply(console, args);
+  bgLogs.errors.push(Array.from(args));
 };
-console.warn = function () {
-  bgLogs.warnsDef.apply(console, arguments);
-  bgLogs.warns.push(Array.from(arguments));
+console.warn = function (...args) {
+  bgLogs.warnsDef.apply(console, args);
+  bgLogs.warns.push(Array.from(args));
 };
 
 export default class WasmWallet {
@@ -126,11 +124,14 @@ export default class WasmWallet {
       }
 
       extensionizer.storage.local.get('wallet', ({ wallet }) => {
-        passworder.decrypt(pass, wallet).then(() => {
-          resolve(pass);
-        }).catch(() => {
-          reject(ErrorMessage.INVALID);
-        });
+        passworder
+          .decrypt(pass, wallet)
+          .then(() => {
+            resolve(pass);
+          })
+          .catch(() => {
+            reject(ErrorMessage.INVALID);
+          });
       });
     });
   }
@@ -143,7 +144,7 @@ export default class WasmWallet {
     return WasmWalletClient.IsAllowedWord(word);
   }
 
-  static isAppSupported(apiver:string, apivermin: string): boolean {
+  static isAppSupported(apiver: string, apivermin: string): boolean {
     return WasmWalletClient.IsAppSupported(apiver, apivermin);
   }
 
@@ -164,16 +165,14 @@ export default class WasmWallet {
       const json = WasmWalletClient.ConvertTokenToJson(token);
       const result = JSON.parse(json);
 
-      const {
-        Amount: amount,
-        AssetID: id,
-      } = result.params;
+      const { Amount: amount, AssetID: id } = result.params;
 
       return {
         amount: isNil(amount) ? null : parseFloat(amount) / GROTHS_IN_BEAM,
         asset_id: isNil(id) ? null : parseInt(id, 10),
       };
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
       return null;
     }
@@ -233,11 +232,8 @@ export default class WasmWallet {
     this.contractInfoHandlerCallback = cb;
   }
 
-  emit(
-    id: number | RPCEvent | BackgroundEvent,
-    result?: any,
-    error?: any,
-  ) {
+  emit(id: number | RPCEvent | BackgroundEvent, result?: any, error?: any) {
+    // eslint-disable-next-line no-console
     console.info(`emitted event "${id}" with`, result);
     this.eventHandler({
       id,
@@ -253,6 +249,7 @@ export default class WasmWallet {
 
     const responseHandler = (response) => {
       const event = JSON.parse(response);
+      // eslint-disable-next-line no-console
       console.info(event);
       this.eventHandler(event);
     };
@@ -280,15 +277,10 @@ export default class WasmWallet {
     return isNil(this.wallet) ? false : this.wallet.isRunning();
   }
 
-  async createAppAPI(
-    apiver: string,
-    apivermin: string,
-    appurl: string,
-    appname:string,
-    handler: any,
-  ) {
+  async createAppAPI(apiver: string, apivermin: string, appurl: string, appname: string, handler: any) {
     return new Promise((resolve, reject) => {
       const appid = WasmWallet.generateAppID(appname, appurl);
+      // eslint-disable-next-line no-console
       console.log(`createAppAPI for ${appname}, ${appid}`);
       // eslint-disable-next-line consistent-return
       this.wallet.createAppAPI(apiver, apivermin, appid, appname, (err, api) => {
@@ -309,11 +301,7 @@ export default class WasmWallet {
     this.wallet.setApproveContractInfoHandler(handler);
   }
 
-  async create({
-    seed,
-    password,
-    isSeedConfirmed,
-  }: CreateWalletParams) {
+  async create({ seed, password, isSeedConfirmed }: CreateWalletParams) {
     try {
       if (WasmWallet.isInitialized()) {
         WasmWallet.removeWallet();
@@ -325,6 +313,7 @@ export default class WasmWallet {
       WasmWalletClient.CreateWallet(seed, PATH_DB, password);
       this.start(password);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   }
@@ -338,7 +327,9 @@ export default class WasmWallet {
 
       this.wallet.stopWallet((data) => {
         const running = this.wallet.isRunning();
+        // eslint-disable-next-line no-console
         console.log(`is running: ${this.wallet.isRunning()}`);
+        // eslint-disable-next-line no-console
         console.log('wallet stopped:', data);
 
         if (running) {
@@ -364,8 +355,7 @@ export default class WasmWallet {
         break;
       }
       case WalletMethod.IsAllowedWord: {
-        const result = params === ''
-          ? null : WasmWallet.isAllowedWord(params);
+        const result = params === '' ? null : WasmWallet.isAllowedWord(params);
         this.emit(id, result);
         break;
       }

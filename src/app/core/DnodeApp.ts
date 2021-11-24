@@ -5,13 +5,7 @@ export default class DnodeApp {
 
   private appApiHandler = null;
 
-  async createAppAPI(
-    wallet: any,
-    apiver: string,
-    apivermin: string,
-    appname: string,
-    origin: string,
-  ) {
+  async createAppAPI(wallet: any, apiver: string, apivermin: string, appname: string, origin: string) {
     this.appApi = await wallet.createAppAPI(apiver, apivermin, origin, appname, (...args) => {
       this.appApiHandler(...args);
     });
@@ -39,7 +33,9 @@ export default class DnodeApp {
     const dnode = setupDnode(connectionStream, api);
 
     dnode.on('remote', (remote) => {
+      // eslint-disable-next-line no-console
       console.log(origin);
+      // eslint-disable-next-line no-console
       console.log(remote);
     });
   }

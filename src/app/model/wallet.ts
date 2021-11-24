@@ -1,15 +1,9 @@
 import {
-  combine,
-  createEvent, restore, Store,
+  combine, createEvent, restore, Store,
 } from 'effector';
 
 import {
-  Asset,
-  AssetsEvent,
-  RPCEvent,
-  Transaction,
-  TxsEvent,
-  WalletTotal,
+  Asset, AssetsEvent, RPCEvent, Transaction, TxsEvent, WalletTotal,
 } from '@core/types';
 
 import Entity from '@core/Entity';
@@ -73,21 +67,15 @@ function getMetadata(assets: Asset[], id: number): Partial<Asset> {
   return assets.find(({ asset_id }) => asset_id === id) ?? META_BLANK;
 }
 
-export const $assets: Store<AssetTotal[]> = combine(
-  $totals, $$assets.getStore(),
-  (totals, assets) => totals.map(
-    (data) => {
-      const target = getMetadata(assets, data.asset_id);
-      return {
-        ...data,
-        ...target,
-      };
-    },
-  ),
-);
+export const $assets: Store<AssetTotal[]> = combine($totals, $$assets.getStore(), (totals, assets) => totals.map((data) => {
+  const target = getMetadata(assets, data.asset_id);
+  return {
+    ...data,
+    ...target,
+  };
+}));
 
-export const $options = $assets
-  .map((arr) => arr.map((item) => item.metadata_pairs.N));
+export const $options = $assets.map((arr) => arr.map((item) => item.metadata_pairs.N));
 
 // receive System State
 handleWalletEvent<any>(
@@ -100,13 +88,7 @@ handleWalletEvent<any>(
 );
 
 // receive Assets
-handleWalletEvent<AssetsEvent>(
-  RPCEvent.ASSETS_CHANGED,
-  (payload) => $$assets.push(payload),
-);
+handleWalletEvent<AssetsEvent>(RPCEvent.ASSETS_CHANGED, (payload) => $$assets.push(payload));
 
 // receive Transactions
-handleWalletEvent<TxsEvent>(
-  RPCEvent.TXS_CHANGED,
-  (payload) => $$transactions.push(payload),
-);
+handleWalletEvent<TxsEvent>(RPCEvent.TXS_CHANGED, (payload) => $$transactions.push(payload));

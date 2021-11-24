@@ -75,8 +75,6 @@ export default class NotificationManager {
   }
 
   private getPopupIn(windows) {
-    return windows
-      ? windows.find((win) => (win && win.type === 'popup' && win.id === this.popupId))
-      : null;
+    return windows ? windows.find((win) => win && win.type === 'popup' && win.id === this.popupId) : null;
   }
 }

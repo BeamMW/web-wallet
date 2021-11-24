@@ -30,9 +30,7 @@ export function preventEvent(event: React.SyntheticEvent) {
   return event;
 }
 
-export function makePrevented(
-  callback: Event<void> | Callback<void>,
-) {
+export function makePrevented(callback: Event<void> | Callback<void>) {
   const clock = createEvent<React.SyntheticEvent>().map(preventEvent);
   clock.watch(() => callback());
   return clock;
@@ -49,6 +47,7 @@ const LENGTH_MAX = 8;
 
 export function truncate(value: string): string {
   if (value === '' || isNil(value)) {
+    // eslint-disable-next-line no-console
     console.warn('utils: truncate failed', value);
     return '';
   }

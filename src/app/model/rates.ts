@@ -22,7 +22,8 @@ export const getRateFx = createEffect(async () => {
 });
 
 export const $rate = restore(
-  getRateFx.doneData.map((data) => data.beam.usd), null,
+  getRateFx.doneData.map((data) => data.beam.usd),
+  null,
 );
 
 getRateFx.doneData.watch(() => setTimeout(getRateFx, FETCH_INTERVAL));
