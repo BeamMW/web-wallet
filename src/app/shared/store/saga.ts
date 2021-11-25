@@ -1,17 +1,12 @@
-import { call, take, put } from 'redux-saga/effects';
+import { call, take } from 'redux-saga/effects';
 
 import { eventChannel, END } from 'redux-saga';
 import { initRemoteWallet } from '@core/api';
-import {
-  BackgroundEvent, ConnectedData, NotificationType, RemoteResponse,
-} from '@core/types';
+import { BackgroundEvent, RemoteResponse, RPCEvent } from '@core/types';
 
-import { navigate } from '@app/shared/store/actions';
-import { ROUTES } from '@app/shared/constants';
-import NotificationController from '@core/NotificationController';
+import { handleConnect, handleProgress } from '@app/containers/Auth/store/saga';
 
 export function remoteEventChannel() {
-  // @ts-ignore
   return eventChannel((emitter) => {
     const port = initRemoteWallet();
 
@@ -30,23 +25,6 @@ export function remoteEventChannel() {
   });
 }
 
-function* handleConnect({ notification, is_running, onboarding }: ConnectedData) {
-  if (onboarding) {
-    yield put(navigate(ROUTES.AUTH.BASE));
-    return;
-  }
-  if (notification) {
-    NotificationController.setNotification(notification);
-    if (notification.type === NotificationType.APPROVE_INVOKE) {
-      yield put(navigate(is_running ? ROUTES.NOTIFICATIONS.APPROVE_INVOKE : ROUTES.AUTH.LOGIN));
-    } else if (notification.type === NotificationType.CONNECT) {
-      yield put(navigate(is_running ? ROUTES.NOTIFICATIONS.CONNECT : ROUTES.AUTH.LOGIN));
-    }
-  } else {
-    yield put(navigate(is_running ? ROUTES.WALLET.BASE : ROUTES.AUTH.LOGIN));
-  }
-}
-
 function* sharedSaga() {
   const remoteChannel = yield call(remoteEventChannel);
   while (true) {
@@ -54,15 +32,18 @@ function* sharedSaga() {
       // An error from socketChannel will cause the saga jump to the catch block
       const payload: RemoteResponse = yield take(remoteChannel);
 
-      console.log(payload.method);
-
       switch (payload.id) {
         case BackgroundEvent.CONNECTED:
           yield call(handleConnect, payload.result);
-          return;
+          break;
+
+        case RPCEvent.SYNC_PROGRESS:
+          yield call(handleProgress, payload.result);
+          break;
 
         default:
-          console.log('remoteChannel', payload);
+          // console.log('remoteChannel', payload);
+          break;
       }
     } catch (err) {
       console.error('remoteChannel error:', err);

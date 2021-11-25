@@ -1,3 +1,6 @@
+import { SyncProgress } from './SyncProgress';
+
 export interface AuthStateType {
-  is_on_boarding: boolean;
+  is_wallet_synced: boolean;
+  sync_progress: SyncProgress;
 }

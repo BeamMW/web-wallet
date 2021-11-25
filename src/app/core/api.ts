@@ -65,7 +65,6 @@ export function postMessage<T = any, P = unknown>(method: WalletMethod | RPCMeth
       })
       .watch(({ result, error }) => {
         if (isNil(error)) {
-          console.log(result);
           resolve(result);
         } else {
           reject(error);

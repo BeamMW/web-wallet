@@ -1,14 +1,11 @@
 import React from 'react';
-import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import { Splash } from '@app/shared/components';
-// import WasmWallet from "@core/WasmWallet";
-//
-// import { useNavigate } from "react-router-dom";
+
+import { useSelector } from 'react-redux';
+import { selectWalletSyncState } from '@app/containers/Auth/store/selectors';
 import { ProgressBar } from '../../../../shared/components';
-// $loading, setLoading
-import { $syncPercent, $syncProgress } from '../../old-store/progress-model';
 
 const TitleStyled = styled.h2`
   margin: 0;
@@ -28,18 +25,11 @@ const SubtitleStyled = styled.h3`
 // const wallet = WasmWallet.getInstance();
 
 const Progress = () => {
-  const [total] = useStore($syncProgress);
-  const syncPercent = useStore($syncPercent);
+  const syncProgress = useSelector(selectWalletSyncState());
 
-  // const navigate = useNavigate();
+  const syncPercent = Math.floor((syncProgress.sync_requests_total / syncProgress.sync_requests_done) * 100);
 
-  // const handleCancelClick = () => {
-  //   wallet.stop();
-  //   setLoading(false);
-  //   navigate(ROUTES.AUTH.LOGIN);
-  // };
-
-  const active = total > 0;
+  const active = syncProgress.sync_requests_total > 0;
   const progress = `Syncing with blockchain ${syncPercent}%`;
 
   return (
