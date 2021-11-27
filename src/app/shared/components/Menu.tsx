@@ -6,7 +6,7 @@ import { css } from '@linaria/core';
 import { CancelIcon } from '@app/shared/icons';
 
 import { ROUTES } from '@app/shared/constants';
-import { useNavigate, useMatch } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Button from './Button';
 import BackDrop from './Backdrop';
 
@@ -62,6 +62,7 @@ interface MenuProps {
 
 const Menu: React.FC<MenuProps> = ({ onCancel }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleClick: React.MouseEventHandler<HTMLLIElement> = ({ currentTarget }) => {
     const index = parseInt(currentTarget.dataset.index, 10);
@@ -74,7 +75,7 @@ const Menu: React.FC<MenuProps> = ({ onCancel }) => {
         <Button variant="icon" icon={CancelIcon} className={buttonStyle} onClick={onCancel} />
         <ListStyled>
           {MENU_ITEMS.map(({ title, value }, index) => (
-            <ListItemStyled key={value} active={!!useMatch(value)} data-index={index} onClick={handleClick}>
+            <ListItemStyled key={value} active={location.pathname === value} data-index={index} onClick={handleClick}>
               {title}
             </ListItemStyled>
           ))}

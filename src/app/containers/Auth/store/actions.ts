@@ -1,6 +1,7 @@
 import { createAsyncAction, createAction } from 'typesafe-actions';
 import { ErrorMessage } from '@core/WasmWallet';
 import { SyncProgress } from '@app/containers/Auth/interfaces';
+import React from 'react';
 import { AuthActionTypes } from './constants';
 
 export const startWallet = createAsyncAction(
@@ -12,3 +13,19 @@ export const startWallet = createAsyncAction(
 export const setSyncedWalletState = createAction(AuthActionTypes.SET_SYNCED_WALLET_STATE)<boolean>();
 
 export const updateWalletSyncProgress = createAction(AuthActionTypes.UPDATE_WALLET_SYNC_PROGRESS)<SyncProgress>();
+
+export const resetRestoreState = createAction(AuthActionTypes.RESET_RESTORE_STATE)();
+
+export const updateSeedList = createAsyncAction(
+  AuthActionTypes.UPDATE_SEED_LIST,
+  AuthActionTypes.UPDATE_SEED_LIST_SUCCESS,
+  AuthActionTypes.UPDATE_SEED_LIST_FAILURE,
+)<React.ChangeEvent<HTMLInputElement>, { index: number; value: string; valid: boolean }, ErrorMessage>();
+
+export const checkIsAllowedSeed = createAsyncAction(
+  AuthActionTypes.CHECK_IS_ALLOWED_SEED,
+  AuthActionTypes.CHECK_IS_ALLOWED_SEED_SUCCESS,
+  AuthActionTypes.CHECK_IS_ALLOWED_SEED_FAILURE,
+)<string[], { values: string[]; valid: boolean[] }, ErrorMessage>();
+
+export const setSeedResult = createAction(AuthActionTypes.SET_SEED_RESULT)<null | string>();

@@ -1,5 +1,5 @@
 {
-  "extends": ["airbnb", "airbnb-typescript"],
+  "extends": ["airbnb", "airbnb-typescript","plugin:react-hooks/recommended"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
   "parserOptions": {
@@ -8,6 +8,7 @@
   "env": {
     "browser": true
   },
+
   "rules": {
     "quotes": ["error", "single"],
     "max-len": [1,120,2],

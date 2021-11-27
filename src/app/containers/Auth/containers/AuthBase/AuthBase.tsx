@@ -5,15 +5,16 @@ import { ROUTES } from '@app/shared/constants';
 import { AddIcon, DoneIcon } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
-import { resetCache, resetErrors } from '../../old-store/seed-model';
+import { useDispatch } from 'react-redux';
+import { resetRestoreState } from '@app/containers/Auth/store/actions';
 
 const AuthBase: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    resetCache();
-    resetErrors();
-  }, []);
+    dispatch(resetRestoreState());
+  }, [dispatch]);
 
   const [warningVisible, toggleWarning] = useState(false);
 

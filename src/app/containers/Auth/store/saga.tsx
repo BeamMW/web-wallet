@@ -1,6 +1,8 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 
-import { getEnvironment, startWallet } from '@core/api';
+import {
+  getEnvironment, startWallet, isAllowedWord, isAllowedSeed,
+} from '@core/api';
 import { navigate, setError } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import {
@@ -63,8 +65,32 @@ function* startWalletSaga(action: ReturnType<typeof actions.startWallet.request>
   }
 }
 
+function* updateSeedList(action: ReturnType<typeof actions.updateSeedList.request>): Generator {
+  try {
+    const { value, name } = action.payload.target;
+    const valid = yield call(isAllowedWord, value);
+
+    yield put(actions.updateSeedList.success({ value, valid: !!valid, index: Number(name) }));
+  } catch (e) {
+    yield put(actions.updateSeedList.failure(e));
+  }
+}
+
+function* checkIsAllowedSeed(action: ReturnType<typeof actions.checkIsAllowedSeed.request>): Generator {
+  try {
+    const data = action.payload;
+    const result: boolean[] = (yield call(isAllowedSeed, data) as unknown) as boolean[];
+
+    yield put(actions.checkIsAllowedSeed.success({ values: data, valid: result }));
+  } catch (e) {
+    yield put(actions.checkIsAllowedSeed.failure(e));
+  }
+}
+
 function* authSaga() {
   yield takeLatest(actions.startWallet.request, startWalletSaga);
+  yield takeLatest(actions.updateSeedList.request, updateSeedList);
+  yield takeLatest(actions.checkIsAllowedSeed.request, checkIsAllowedSeed);
 }
 
 export default authSaga;

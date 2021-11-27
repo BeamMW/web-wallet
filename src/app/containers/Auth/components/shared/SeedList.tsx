@@ -1,15 +1,17 @@
 import { styled } from '@linaria/react';
 import { css, cx } from '@linaria/core';
 import React, { useEffect } from 'react';
-import { isNil } from '@core/utils';
-import { isAllowedSeedFx, SEED_PHRASE_COUNT } from '../../old-store/seed-model';
+
+import { checkIsAllowedSeed } from '@app/containers/Auth/store/actions';
+import { SEED_PHRASE_COUNT } from '@app/containers/Auth/store/reducer';
+import store from '../../../../../index';
 
 interface SeedListProps {
   data: any[];
   errors?: boolean[];
   initial?: string;
   indexByValue?: boolean;
-  onInput?: React.FormEventHandler;
+  onInput?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const ListStyled = styled.ul`
@@ -81,13 +83,13 @@ function fillFromSeed(seed: string, safe: boolean = false): void {
   const array = seed.split(';').slice(0, SEED_PHRASE_COUNT);
 
   if (!safe) {
-    isAllowedSeedFx(array);
+    store.dispatch(checkIsAllowedSeed.request(array));
   }
 
   array.forEach((value, index) => {
     const target = refs[index];
 
-    if (!isNil(target)) {
+    if (target) {
       target.value = value;
     }
   });
@@ -97,13 +99,13 @@ const SeedList: React.FC<SeedListProps> = ({
   data, errors, initial, indexByValue, onInput,
 }) => {
   useEffect(() => {
-    if (!isNil(initial)) {
+    if (initial) {
       fillFromSeed(initial.replace(/\s/g, ';'), true);
     }
   }, []);
 
   const handleRef = (ref: HTMLInputElement) => {
-    if (!isNil(ref)) {
+    if (ref) {
       const { name } = ref;
       const index = parseInt(name, 10);
       refs[index] = ref;
@@ -111,21 +113,21 @@ const SeedList: React.FC<SeedListProps> = ({
   };
 
   const handlePaste: React.ClipboardEventHandler = (event) => {
-    if (!indexByValue) {
-      const seed: string = event.clipboardData.getData('text');
+    //  if (!indexByValue) {
+    const seed: string = event.clipboardData.getData('text');
 
-      if (REGEXP_SEED.test(seed)) {
-        event.preventDefault();
-        fillFromSeed(seed);
-      }
+    if (REGEXP_SEED.test(seed)) {
+      event.preventDefault();
+      fillFromSeed(seed);
     }
+    // }
   };
 
   return (
     <ListStyled onPaste={handlePaste}>
       {data.map((value, index) => {
         const idx = indexByValue ? value : index;
-        const err = isNil(errors) ? value : errors[index];
+        const err = !errors ? value : errors[index];
         const className = cx(baseClassName, err === false && errorClassName, err === true && validClassName);
 
         return (
