@@ -29,3 +29,14 @@ export const checkIsAllowedSeed = createAsyncAction(
 )<string[], { values: string[]; valid: boolean[] }, ErrorMessage>();
 
 export const setSeedResult = createAction(AuthActionTypes.SET_SEED_RESULT)<null | string>();
+
+export const generateRegistrationSeed = createAsyncAction(
+  AuthActionTypes.GENERATE_REGISTRATION_SEED,
+  AuthActionTypes.GENERATE_REGISTRATION_SEED_SUCCESS,
+  AuthActionTypes.GENERATE_REGISTRATION_SEED_FAILURE,
+)<void, { registration_seed: string; seed_ids: number[] }, ErrorMessage>();
+
+export const setRegistrationSeed = createAction(AuthActionTypes.SET_REGISTRATION_SEED)<{
+  registration_seed: string;
+  is_restore: boolean;
+}>();

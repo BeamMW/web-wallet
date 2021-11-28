@@ -19,6 +19,9 @@ const initialState: AuthStateType = {
   seed_errors: [...INITIAL],
   seed_values: [...INITIAL],
   seed_result: null,
+  is_restore: false,
+  registration_seed: '',
+  seed_ids: [],
 };
 
 const reducer = createReducer<AuthStateType, Action>(initialState)
@@ -44,6 +47,14 @@ const reducer = createReducer<AuthStateType, Action>(initialState)
   .handleAction(actions.checkIsAllowedSeed.success, (state, action) => produce(state, (nexState) => {
     nexState.seed_errors = action.payload.valid;
     nexState.seed_values = action.payload.values;
+  }))
+  .handleAction(actions.generateRegistrationSeed.success, (state, action) => produce(state, (nexState) => {
+    nexState.registration_seed = action.payload.registration_seed;
+    nexState.seed_ids = action.payload.seed_ids;
+  }))
+  .handleAction(actions.setRegistrationSeed, (state, action) => produce(state, (nexState) => {
+    nexState.registration_seed = action.payload.registration_seed;
+    nexState.is_restore = action.payload.is_restore;
   }));
 
 export { reducer as AuthReducer };

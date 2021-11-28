@@ -1,7 +1,7 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 
 import {
-  getEnvironment, startWallet, isAllowedWord, isAllowedSeed,
+  getEnvironment, startWallet, isAllowedWord, isAllowedSeed, generateSeed,
 } from '@core/api';
 import { navigate, setError } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
@@ -11,6 +11,19 @@ import {
 import NotificationController from '@core/NotificationController';
 import { actions } from '.';
 import store from '../../../../index';
+
+const SEED_CONFIRM_COUNT = 6;
+
+const getRandomIds = () => {
+  const result: number[] = [];
+  while (result.length < SEED_CONFIRM_COUNT) {
+    const value = Math.floor(Math.random() * 12);
+    if (!result.includes(value)) {
+      result.push(value);
+    }
+  }
+  return result;
+};
 
 export function* handleConnect({ notification, is_running, onboarding }: ConnectedData) {
   if (onboarding) {
@@ -86,11 +99,22 @@ function* checkIsAllowedSeed(action: ReturnType<typeof actions.checkIsAllowedSee
     yield put(actions.checkIsAllowedSeed.failure(e));
   }
 }
+function* generateRegistrationSeed(): Generator {
+  try {
+    const registration_seed: string = (yield call(generateSeed) as unknown) as string;
+
+    const seed_ids = getRandomIds();
+    yield put(actions.generateRegistrationSeed.success({ seed_ids, registration_seed }));
+  } catch (e) {
+    yield put(actions.generateRegistrationSeed.failure(e));
+  }
+}
 
 function* authSaga() {
   yield takeLatest(actions.startWallet.request, startWalletSaga);
   yield takeLatest(actions.updateSeedList.request, updateSeedList);
   yield takeLatest(actions.checkIsAllowedSeed.request, checkIsAllowedSeed);
+  yield takeLatest(actions.generateRegistrationSeed.request, generateRegistrationSeed);
 }
 
 export default authSaga;

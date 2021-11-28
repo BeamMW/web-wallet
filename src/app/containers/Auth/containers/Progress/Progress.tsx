@@ -27,7 +27,7 @@ const SubtitleStyled = styled.h3`
 const Progress = () => {
   const syncProgress = useSelector(selectWalletSyncState());
 
-  const syncPercent = Math.floor((syncProgress.sync_requests_total / syncProgress.sync_requests_done) * 100);
+  const syncPercent = Math.floor(100 / (syncProgress.sync_requests_total / syncProgress.sync_requests_done));
 
   const active = syncProgress.sync_requests_total > 0;
   const progress = `Syncing with blockchain ${syncPercent}%`;

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import { setSeed } from '@model/base';
 import { Button, Footer, Window } from '@app/shared/components';
 
 import { ROUTES } from '@app/shared/constants';
@@ -8,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { SeedList } from '@app/containers/Auth/components';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setSeedResult, updateSeedList } from '@app/containers/Auth/store/actions';
+import { setRegistrationSeed, setSeedResult, updateSeedList } from '@app/containers/Auth/store/actions';
 import { selectSeedCache, selectSeedErrors } from '@app/containers/Auth/store/selectors';
 
 const Restore: React.FC = () => {
@@ -30,8 +29,8 @@ const Restore: React.FC = () => {
 
     const seed = Array.from(values).reduce((result, value, index) => (index === 0 ? value : `${result} ${value}`));
 
-    setSeed([seed, true]);
     dispatch(setSeedResult(seed));
+    dispatch(setRegistrationSeed({ registration_seed: seed, is_restore: true }));
     navigate(ROUTES.AUTH.SET_PASSWORD);
   };
 

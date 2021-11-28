@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { resetRestoreState } from '@app/containers/Auth/store/actions';
 
+// TODO check auth state after delete wallet
 const AuthBase: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();

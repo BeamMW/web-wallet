@@ -3,18 +3,17 @@ import React, { useState } from 'react';
 import { Button, Footer, Window } from '@app/shared/components';
 import { ArrowRightIcon } from '@app/shared/icons';
 
-import { $ids, $words, generateSeedFx } from '@model/base';
-import { useStore } from 'effector-react';
-
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
 import { SeedList } from '@app/containers/Auth/components';
+import { useSelector } from 'react-redux';
+import { selectSeedIds, selectRegistrationSeed } from '@app/containers/Auth/store/selectors';
 
 const SEED_CONFIRM_COUNT = 6;
 
 const RegistrationConfirm: React.FC = () => {
-  const seed = useStore($words);
-  const ids = useStore($ids);
+  const seed = useSelector(selectRegistrationSeed()).split(' ');
+  const ids = useSelector(selectSeedIds());
   const navigate = useNavigate();
 
   const [errors, setErrors] = useState(new Array(SEED_CONFIRM_COUNT).fill(null));
@@ -40,7 +39,7 @@ const RegistrationConfirm: React.FC = () => {
   };
 
   const handlePrevious: React.MouseEventHandler = () => {
-    generateSeedFx();
+    //   generateSeedFx();
     navigate(ROUTES.AUTH.REGISTRATION);
   };
 

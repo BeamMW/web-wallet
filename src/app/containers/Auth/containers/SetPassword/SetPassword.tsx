@@ -9,11 +9,11 @@ import { makeOnChange } from '@core/utils';
 import { ArrowLeftIcon, ArrowRightIcon } from '@app/shared/icons';
 
 import { createWallet } from '@core/api';
-import { useStore } from 'effector-react';
-import { $seed } from '@model/base';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectRegistrationSeed, selectIsRestore } from '@app/containers/Auth/store/selectors';
 import { PasswordStrength } from '../../components';
 
 const FormStyled = styled.form`
@@ -29,7 +29,8 @@ const SetPassword = () => {
   const [pass, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [warningVisible, toggleWarning] = useState(false);
-  const [seed, restoring] = useStore($seed);
+  const seed = useSelector(selectRegistrationSeed());
+  const restoring = useSelector(selectIsRestore());
 
   const navigate = useNavigate();
 

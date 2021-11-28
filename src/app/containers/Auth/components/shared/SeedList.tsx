@@ -113,14 +113,14 @@ const SeedList: React.FC<SeedListProps> = ({
   };
 
   const handlePaste: React.ClipboardEventHandler = (event) => {
-    //  if (!indexByValue) {
-    const seed: string = event.clipboardData.getData('text');
+    if (!indexByValue) {
+      const seed: string = event.clipboardData.getData('text');
 
-    if (REGEXP_SEED.test(seed)) {
-      event.preventDefault();
-      fillFromSeed(seed);
+      if (REGEXP_SEED.test(seed)) {
+        event.preventDefault();
+        fillFromSeed(seed);
+      }
     }
-    // }
   };
 
   return (
