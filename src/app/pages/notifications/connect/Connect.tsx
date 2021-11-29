@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 import NotificationController from '@core/NotificationController';
-import { approveConnection } from '@core/api';
+import { approveConnection, rejectConnection } from '@core/api';
 
 import { Button } from 'app/uikit';
 
@@ -27,6 +27,10 @@ const StyledApprove = styled.div`
 const Connect = () => {
   const notification = NotificationController.getNotification();
 
+  window.addEventListener('beforeunload', () => {
+    rejectConnection();
+  });
+
   return (
     <>
       <StyledTitle>DApp Connection Request</StyledTitle>
@@ -38,7 +42,12 @@ const Connect = () => {
         type="button"
         onClick={
           () => {
-            approveConnection(notification.params.apiver, notification.params.apivermin, notification.params.appname, notification.params.appurl);
+            approveConnection(
+              notification.params.apiver,
+              notification.params.apivermin,
+              notification.params.appname,
+              notification.params.appurl
+            );
             window.close();
           }
         }

@@ -430,6 +430,12 @@ export default class WasmWallet {
               ermsg: err,
             });
           }
+        } else {
+          return notificationPort.postMessage({
+            result: false,
+            errcode: -3,
+            ermsg: 'Connection rejected',
+          });
         }
         break;
       case WalletMethod.NotificationApproveInfo:

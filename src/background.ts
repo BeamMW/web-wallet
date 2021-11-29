@@ -83,6 +83,21 @@ async function openPopup() {
   });
 }
 
+function openConnectNotification(msg, appurl) {
+  notification = {
+    type: NotificationType.CONNECT,
+    params: {
+      appurl,
+      appname: msg.appname,
+      apiver: msg.apiver,
+      apivermin: msg.apivermin,
+    },
+  };
+  appname = msg.appname;
+  notificationIsOpen = true;
+  openPopup();
+}
+
 function handleConnect(remote) {
   port = remote;
   connected = true;
@@ -124,18 +139,9 @@ function handleConnect(remote) {
       contentPort = remote;
       contentPort.onMessage.addListener((msg) => {
         if (msg.type === 'create_beam_api') {
-          notification = {
-            type: NotificationType.CONNECT,
-            params: {
-              appurl: remote.sender.url,
-              appname: msg.appname,
-              apiver: msg.apiver,
-              apivermin: msg.apivermin,
-            },
-          };
-          appname = msg.appname;
-          notificationIsOpen = true;
-          openPopup();
+          openConnectNotification(msg, remote.sender.url);
+        } else if (msg.type === 'retry_beam_api') {
+          appname === msg.appname ? openPopup() : openConnectNotification(msg, remote.sender.url);
         }
       });
       break;
