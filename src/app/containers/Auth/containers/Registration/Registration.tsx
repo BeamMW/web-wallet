@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import {
   Window, Popup, Button, Footer,
 } from '@app/shared/components';
-import { $seed, generateSeedFx } from '@model/base';
 
 import { ROUTES } from '@app/shared/constants';
 
 import { DoneIcon, LockIcon } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { generateRegistrationSeed } from '@app/containers/Auth/store/actions';
+import { selectRegistrationSeed } from '@app/containers/Auth/store/selectors';
 import { RegistrationWarning } from '../../components';
 
 const SeedListStyled = styled.ol`
@@ -47,12 +48,10 @@ const SeedListStyled = styled.ol`
     }
 `;
 
-// todo move registration warning to this step
-
 const Registration: React.FC = () => {
   const navigate = useNavigate();
-
-  const [seed] = useStore($seed);
+  const dispatch = useDispatch();
+  const seed = useSelector(selectRegistrationSeed());
   const [isRegistrationWarning, setRegistrationWarning] = useState(!!seed);
   const [warningVisible, toggleWarning] = useState(false);
 
@@ -62,7 +61,7 @@ const Registration: React.FC = () => {
 
   useEffect(() => {
     if (!seed) {
-      generateSeedFx();
+      dispatch(generateRegistrationSeed.request());
     }
   }, [seed]);
 

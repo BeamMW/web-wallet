@@ -41,9 +41,12 @@ export function getEnvironment(href = window.location.href) {
 }
 
 export function initRemoteWallet() {
+  if (port) return port;
   const name = getEnvironment();
   port = extensionizer.runtime.connect({ name });
   port.onMessage.addListener(remoteEvent);
+
+  return port;
 }
 
 export function handleWalletEvent<E>(event: RPCEvent | BackgroundEvent, handler: (payload: E) => void): Subscription {

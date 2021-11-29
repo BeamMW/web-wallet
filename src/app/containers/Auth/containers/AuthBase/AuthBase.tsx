@@ -1,35 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { useStore } from 'effector-react';
-
 import { Popup, Splash, Button } from '@app/shared/components';
 import { ROUTES } from '@app/shared/constants';
 
 import { AddIcon, DoneIcon } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
-import { $phase, LoginPhase } from '../../old-store/login-model';
-import { resetCache, resetErrors } from '../../old-store/seed-model';
+import { useDispatch } from 'react-redux';
+import { resetRestoreState } from '@app/containers/Auth/store/actions';
 
-// todo fix does not called
+// TODO check auth state after delete wallet
 const AuthBase: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    resetCache();
-    resetErrors();
-  }, []);
+    dispatch(resetRestoreState());
+  }, [dispatch]);
 
   const [warningVisible, toggleWarning] = useState(false);
-  // todo fix
-  const phase = useStore($phase);
-  const active = phase === LoginPhase.RESTORE;
-
-  const handleReturn = () => {
-    navigate(ROUTES.AUTH.LOGIN);
-  };
 
   return (
     <>
-      <Splash blur={warningVisible} onReturn={active ? handleReturn : null}>
+      <Splash blur={warningVisible}>
         <Button type="button" icon={AddIcon} onClick={() => navigate(ROUTES.AUTH.REGISTRATION)}>
           create new wallet
         </Button>

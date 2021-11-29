@@ -1,31 +1,33 @@
 import React, { useState, useRef } from 'react';
-import { useStore } from 'effector-react';
 
 import {
   Popup, Button, Input, Splash,
 } from '@app/shared/components';
 
-import { isNil } from '@core/utils';
-
 import { WalletSmallIcon, DoneIcon } from '@app/shared/icons';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
-import { $error, startWalletFx } from '../../old-store/login-model';
+import { useDispatch, useSelector } from 'react-redux';
+import { startWallet } from '@app/containers/Auth/store/actions';
+import { setError } from '@app/shared/store/actions';
+import { selectErrorMessage } from '@app/shared/store/selectors';
 
 const Login: React.FC = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [warningVisible, toggleWarning] = useState(false);
 
-  const pending = useStore(startWalletFx.pending);
-  const error = useStore($error);
+  const error = useSelector(selectErrorMessage());
 
   const inputRef = useRef<HTMLInputElement>();
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const { value } = inputRef.current;
-    startWalletFx(value);
+
+    dispatch(setError(null));
+    dispatch(startWallet.request(value));
   }
 
   return (
@@ -39,17 +41,15 @@ const Login: React.FC = () => {
             type="password"
             placeholder="Password"
             margin="large"
-            disabled={pending}
-            valid={isNil(error)}
+            valid={!error}
             label={error}
             ref={inputRef}
           />
-          <Button type="submit" disabled={pending} icon={WalletSmallIcon}>
+          <Button type="submit" icon={WalletSmallIcon}>
             open your wallet
           </Button>
           <Button
             variant="link"
-            disabled={pending}
             onClick={(event) => {
               event.preventDefault();
               toggleWarning(true);

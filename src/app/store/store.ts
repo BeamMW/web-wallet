@@ -17,7 +17,12 @@ if (process.env.NODE_ENV === 'development') {
     const beforeChanges = { ...store.getState() };
     console.log('%c beforeChanges:::', 'color:#6b5b95;font-weight:bold;font-size:12px;', beforeChanges);
     console.log();
-    console.log('%c action:::', 'color:#eca1a6;font-weight:bold;font-size:12px;', action.type, action.payload);
+    console.log(
+      `%c action:::${new Date()}`,
+      'color:#eca1a6;font-weight:bold;font-size:12px;',
+      action.type,
+      action.payload,
+    );
     console.log();
     next(action);
     console.log('%c currentState:::', 'color:#feb236;font-weight:bold;font-size:12px;', { ...store.getState() });
