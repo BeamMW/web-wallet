@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Button, Window } from '@app/shared/components';
-import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 import { SaveIcon } from '@app/shared/icons';
 import * as extensionizer from 'extensionizer';
@@ -10,7 +9,8 @@ import { saveAs } from 'file-saver';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
-import { $logs } from '../../old-store/model';
+import { useSelector } from 'react-redux';
+import { selectLogs } from '@app/containers/Settings/store/selectors';
 
 const ReportStyled = styled.div`
   margin-bottom: 30px;
@@ -31,7 +31,7 @@ const LinkStyled = styled.span`
 
 const SettingsReport = () => {
   const navigate = useNavigate();
-  const logs = useStore($logs);
+  const logs: any = useSelector(selectLogs());
 
   const handlePrevious: React.MouseEventHandler = () => {
     navigate(ROUTES.SETTINGS.BASE);

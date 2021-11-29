@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import * as extensionizer from 'extensionizer';
 import { styled } from '@linaria/react';
-import { useStore } from 'effector-react';
 
 import { RemoveIcon, SettingsReportIcon } from '@app/shared/icons';
 
@@ -10,9 +9,10 @@ import { ROUTES } from '@app/shared/constants';
 
 import { Button, Window } from '@app/shared/components';
 import { useNavigate } from 'react-router-dom';
-import {
-  getVersionFx, loadLogsFx, $version, resetError,
-} from '../../old-store/model';
+import { setError } from '@app/shared/store/actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadLogs, loadVersion } from '@app/containers/Settings/store/actions';
+import { selectVersion } from '@app/containers/Settings/store/selectors';
 import { RemovePopup } from '../../components';
 
 const ContainerStyled = styled.div`
@@ -27,16 +27,18 @@ const VersionStyled = styled.div`
 
 const Settings = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   useEffect(() => {
-    getVersionFx();
+    dispatch(loadVersion.request());
   }, []);
 
   const [warningVisible, toggleWarning] = useState(false);
-  const versionData = useStore($version);
+  const versionData = useSelector(selectVersion());
+
   const manifest = extensionizer.runtime.getManifest();
 
   const ReportClicked = () => {
-    loadLogsFx();
+    dispatch(loadLogs.request());
     navigate(ROUTES.SETTINGS.SETTINGS_REPORT);
   };
 
@@ -55,7 +57,7 @@ const Settings = () => {
             pallete="red"
             icon={RemoveIcon}
             onClick={() => {
-              resetError();
+              dispatch(setError(null));
               toggleWarning(true);
             }}
           >

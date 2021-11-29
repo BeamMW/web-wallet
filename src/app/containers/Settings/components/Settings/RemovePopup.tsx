@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Button, Input, Popup } from '@app/shared/components';
 
 import { CancelIcon, ArrowRightIcon, RemoveIcon } from '@app/shared/icons';
 
-import { useStore } from 'effector-react';
-import { isNil } from '@core/utils';
-import {
-  $error, deleteWalletFx, onInput, resetError,
-} from '../../old-store/model';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteWallet } from '@app/containers/Settings/store/actions';
+import { selectErrorMessage } from '@app/shared/store/selectors';
 
 interface RemovePopupProps {
   visible?: boolean;
@@ -19,12 +17,13 @@ interface RemovePopupProps {
 const RemovePopup: React.FC<RemovePopupProps> = ({ visible, onCancel }) => {
   const inputRef = useRef<HTMLInputElement>();
   const [warned, setWarned] = useState(false);
-  const error = useStore($error);
+  const dispatch = useDispatch();
+  const error = useSelector(selectErrorMessage());
 
   const handleConfirm: React.MouseEventHandler = () => {
     if (warned) {
       const { value } = inputRef.current;
-      deleteWalletFx(value);
+      dispatch(deleteWallet.request(value));
     } else {
       setWarned(true);
     }
@@ -53,13 +52,7 @@ const RemovePopup: React.FC<RemovePopupProps> = ({ visible, onCancel }) => {
       onCancel={onCancel}
     >
       {warned ? (
-        <Input
-          label={isNil(error) ? 'Password' : error}
-          type="password"
-          ref={inputRef}
-          valid={isNil(error)}
-          onInput={onInput}
-        />
+        <Input label={!error ? 'Password' : error} type="password" ref={inputRef} valid={!error} />
       ) : (
         <>
           All data will be erased. Make sure you’ve saved your seed phrase if you want to restore this wallet later on!
