@@ -102,7 +102,7 @@ const SeedList: React.FC<SeedListProps> = ({
     if (initial) {
       fillFromSeed(initial.replace(/\s/g, ';'), true);
     }
-  }, []);
+  }, [initial]);
 
   const handleRef = (ref: HTMLInputElement) => {
     if (ref) {

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import {
@@ -12,11 +11,12 @@ import { getRateFx, GROTHS_IN_BEAM } from '@model/rates';
 import { ArrowUpIcon, ArrowDownIcon } from '@app/shared/icons';
 
 import { css } from '@linaria/core';
-import { $assets, $transactions } from '@model/wallet';
 
 import { Transaction } from '@core/types';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
+import { useSelector } from 'react-redux';
+import { selectAssets, selectTransactions } from '@app/containers/Wallet/store/selectors';
 import { Assets, Transactions } from '../../components/Wallet';
 
 const TXS_MAX = 4;
@@ -82,8 +82,9 @@ const Wallet = () => {
   }, []);
 
   const [active, setActive] = useState(null);
-  const assets = useStore($assets);
-  const transactions = useStore($transactions);
+  const assets = useSelector(selectAssets());
+  const transactions = useSelector(selectTransactions());
+
   const navigate = useNavigate();
 
   const toggleActive = (asset_id: number) => {
@@ -91,7 +92,7 @@ const Wallet = () => {
   };
 
   const filtered = isNil(active) ? transactions : transactions.filter(({ asset_id }) => asset_id === active);
-  const sorted = filtered.sort(createdCompartor);
+  const sorted = filtered.slice().sort(createdCompartor);
   const sliced = sorted.slice(0, TXS_MAX);
 
   return (

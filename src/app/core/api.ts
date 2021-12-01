@@ -21,8 +21,8 @@ let counter = 0;
 
 export const remoteEvent = createEvent<RemoteResponse>();
 
-// remoteEvent.watch(({ method = "event", id, result, error }) => {
-// eslint-disable-next-line no-console
+// remoteEvent.watch(({ method = 'event', id, result, error }) => {
+//   //eslint-disable-next-line no-console
 //   console.info(`received ${method}:${id} with`, result, error);
 // });
 
@@ -53,25 +53,39 @@ export function handleWalletEvent<E>(event: RPCEvent | BackgroundEvent, handler:
   return remoteEvent.filterMap(({ id, result }) => (id === event ? (result as E) : undefined)).watch(handler);
 }
 
-export function postMessage<T = any, P = unknown>(method: WalletMethod | RPCMethod, params?: P): Promise<T> {
+export function postMessage<T = any, P = unknown>(method: WalletMethod | RPCMethod | RPCEvent, params?: P): Promise<T> {
   return new Promise((resolve, reject) => {
     const target = counter;
 
     counter += 1;
 
-    const unwatch = remoteEvent
-      .filter({
-        fn: ({ id }) => id === target,
-      })
-      .watch(({ result, error }) => {
-        if (isNil(error)) {
-          resolve(result);
-        } else {
-          reject(error);
+    function handler(data: RemoteResponse) {
+      if (data.id === target) {
+        port.onMessage.removeListener(handler);
+        if (data.error) {
+          return reject(data.error);
         }
+        return resolve(data.result);
+      }
+      return data;
+    }
 
-        unwatch();
-      });
+    port.onMessage.addListener(handler);
+
+    // const unwatch = remoteEvent
+    //   .filter({
+    //     fn: ({ id }) => id === target,
+    //   })
+    //   .watch(({ result, error }) => {
+    //     if (isNil(error)) {
+    //       resolve(result);
+    //     } else {
+    //       reject(error);
+    //     }
+    //
+    //     unwatch();
+    //   });
+
     // eslint-disable-next-line no-console
     console.info(`sending ${method}:${target} with`, params);
     port.postMessage({ id: target, method, params });

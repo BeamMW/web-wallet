@@ -1,5 +1,4 @@
 import React from 'react';
-import { useStore } from 'effector-react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
@@ -8,7 +7,8 @@ import Select, { Option } from '@app/shared/components/Select';
 import { isNil, truncate } from '@core/utils';
 
 import { AMOUNT_MAX } from '@model/rates';
-import { $assets } from '@model/wallet';
+import { useSelector } from 'react-redux';
+import { selectAssets } from '@app/containers/Wallet/store/selectors';
 import Input from './Input';
 import AssetIcon from './AssetIcon';
 import Rate from './Rate';
@@ -53,7 +53,7 @@ const rateStyle = css`
 const AmountInput: React.FC<AmountInputProps> = ({
   value, asset_id, error, pallete = 'purple', onChange,
 }) => {
-  const assets = useStore($assets);
+  const assets = useSelector(selectAssets());
 
   const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     const { value: raw } = event.target;

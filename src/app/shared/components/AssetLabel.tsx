@@ -1,14 +1,13 @@
 import React from 'react';
-import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
-
-import { $assets } from '@model/wallet';
 
 import {
   fromGroths, getSign, isNil, truncate,
 } from '@core/utils';
 import { Transaction } from '@core/types';
+import { useSelector } from 'react-redux';
+import { selectAssets } from '@app/containers/Wallet/store/selectors';
 import AssetIcon from './AssetIcon';
 import Rate from './Rate';
 
@@ -43,7 +42,7 @@ const rateStyle = css`
 const AssetLabel: React.FC<AssetLabelProps> = ({
   value, asset_id, income, fee, fee_only, invoke_data,
 }) => {
-  const assets = useStore($assets);
+  const assets = useSelector(selectAssets());
   const target = assets.find(({ asset_id: id }) => id === asset_id);
 
   const hasMultipleAssets = !isNil(invoke_data) && invoke_data.some((cont) => cont.amounts.length > 1);

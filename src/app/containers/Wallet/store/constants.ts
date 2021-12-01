@@ -1,0 +1,7 @@
+export enum WalletActionTypes {
+  SET_TOTALS = '@@WALLET/SET_TOTALS',
+
+  SET_ASSETS = '@@WALLET/SET_ASSETS',
+
+  SET_TRANSACTIONS = '@@WALLET/SET_TRANSACTIONS',
+}

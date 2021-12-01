@@ -4,8 +4,9 @@ import { styled } from '@linaria/react';
 // import { WalletTotal } from '@app/core/types';
 
 import AssetLabel from '@app/shared/components/AssetLabel';
-import { AssetTotal, PALLETE_ASSETS } from '@model/wallet';
+import { AssetTotal } from '@model/wallet';
 import { isNil } from '@core/utils';
+import { PALLETE_ASSETS } from '@app/shared/constants';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;

@@ -1,16 +1,17 @@
-import { call, take } from 'redux-saga/effects';
+import { call, take, fork } from 'redux-saga/effects';
 
 import { eventChannel, END } from 'redux-saga';
 import { initRemoteWallet } from '@core/api';
 import { BackgroundEvent, RemoteResponse, RPCEvent } from '@core/types';
 
 import { handleConnect, handleProgress } from '@app/containers/Auth/store/saga';
+import { handleTotals, handleAssets, handleTransactions } from '@app/containers/Wallet/store/saga';
 
 export function remoteEventChannel() {
   return eventChannel((emitter) => {
     const port = initRemoteWallet();
 
-    const handler = (data: any) => {
+    const handler = (data: RemoteResponse) => {
       emitter(data);
     };
 
@@ -34,15 +35,27 @@ function* sharedSaga() {
 
       switch (payload.id) {
         case BackgroundEvent.CONNECTED:
-          yield call(handleConnect, payload.result);
+          yield fork(handleConnect, payload.result);
           break;
 
         case RPCEvent.SYNC_PROGRESS:
-          yield call(handleProgress, payload.result);
+          yield fork(handleProgress, payload.result);
+          break;
+
+        case RPCEvent.ASSETS_CHANGED:
+          yield fork(handleAssets, payload.result);
+          break;
+
+        case RPCEvent.SYSTEM_STATE:
+          yield fork(handleTotals);
+          break;
+
+        case RPCEvent.TXS_CHANGED:
+          yield fork(handleTransactions, payload.result);
           break;
 
         default:
-          // console.log('remoteChannel', payload);
+          //  console.log('remoteChannel', payload);
           break;
       }
     } catch (err) {
