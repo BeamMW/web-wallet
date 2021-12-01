@@ -1,4 +1,4 @@
-import { curry, makePrevented } from '@core/utils';
+import { curry } from '@core/utils';
 import { createEvent, restore, sample } from 'effector';
 
 export enum View {
@@ -28,8 +28,6 @@ export const setView = createEvent<View>();
 export const $view = restore(setView, View.PROGRESS);
 
 export const gotoWallet = curry(setView, View.WALLET);
-
-export const gotoForm = makePrevented(curry(setView, View.SEND_FORM));
 
 export const gotoConfirm = curry(setView, View.SEND_CONFIRM);
 
