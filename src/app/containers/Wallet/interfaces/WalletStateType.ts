@@ -7,4 +7,5 @@ export interface WalletStateType {
   assets: Asset[];
   assets_total: AssetTotal[];
   transactions: Transaction[];
+  rate: number;
 }

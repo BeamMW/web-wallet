@@ -6,7 +6,6 @@ import {
   Button, Window, Section, Menu,
 } from '@app/shared/components';
 import { compact, isNil } from '@core/utils';
-import { getRateFx, GROTHS_IN_BEAM } from '@model/rates';
 
 import { ArrowUpIcon, ArrowDownIcon } from '@app/shared/icons';
 
@@ -15,8 +14,10 @@ import { css } from '@linaria/core';
 import { Transaction } from '@core/types';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
-import { useSelector } from 'react-redux';
-import { selectAssets, selectTransactions } from '@app/containers/Wallet/store/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAssets, selectRate, selectTransactions } from '@app/containers/Wallet/store/selectors';
+import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
+import { loadRate } from '@app/containers/Wallet/store/actions';
 import { Assets, Transactions } from '../../components/Wallet';
 
 const TXS_MAX = 4;
@@ -77,13 +78,17 @@ function createdCompartor({ create_time: a }: Transaction, { create_time: b }: T
 }
 
 const Wallet = () => {
-  useEffect(() => {
-    getRateFx();
-  }, []);
-
+  const dispatch = useDispatch();
   const [active, setActive] = useState(null);
   const assets = useSelector(selectAssets());
   const transactions = useSelector(selectTransactions());
+  const rate = useSelector(selectRate());
+
+  useEffect(() => {
+    if (!rate) {
+      dispatch(loadRate.request());
+    }
+  }, [dispatch, rate]);
 
   const navigate = useNavigate();
 

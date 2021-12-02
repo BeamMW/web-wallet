@@ -6,9 +6,9 @@ import Select, { Option } from '@app/shared/components/Select';
 
 import { isNil, truncate } from '@core/utils';
 
-import { AMOUNT_MAX } from '@model/rates';
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
+import { AMOUNT_MAX } from '@app/containers/Wallet/constants';
 import Input from './Input';
 import AssetIcon from './AssetIcon';
 import Rate from './Rate';
