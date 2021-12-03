@@ -37,6 +37,11 @@ const initialState: WalletStateType = {
   assets_total: [],
   transactions: [],
   rate: 0,
+  receive_amount: {
+    amount: '',
+    asset_id: 0,
+  },
+  address: '',
 };
 
 const handleAssets = (state: WalletStateType) => {
@@ -65,6 +70,19 @@ const reducer = createReducer<WalletStateType, Action>(initialState)
   }))
   .handleAction(actions.loadRate.success, (state, action) => produce(state, (nexState) => {
     nexState.rate = action.payload;
+  }))
+  .handleAction(actions.setReceiveAmount, (state, action) => produce(state, (nexState) => {
+    nexState.receive_amount = action.payload;
+  }))
+  .handleAction(actions.generateAddress.success, (state, action) => produce(state, (nexState) => {
+    nexState.address = action.payload;
+  }))
+  .handleAction(actions.resetReceive, (state) => produce(state, (nexState) => {
+    nexState.receive_amount = {
+      amount: '',
+      asset_id: 0,
+    };
+    nexState.address = '';
   }));
 
 export { reducer as WalletReducer };

@@ -2,6 +2,8 @@ import { createEvent, Event } from 'effector';
 import React from 'react';
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 
+export const copyToClipboard = (value: string) => navigator.clipboard.writeText(value);
+
 export const isNil = (value: any) => value == null;
 
 export function getInputValue({ target }: React.ChangeEvent<HTMLInputElement>): string {
