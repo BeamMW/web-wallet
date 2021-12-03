@@ -62,13 +62,14 @@ function shouldInjectProvider() {
   return doctypeCheck() && suffixCheck() && documentElementCheck();
 }
 
+const extensionPort = extensionizer.runtime.connect({ name: Environment.CONTENT_REQ });
+
 window.addEventListener('message', (event) => {
   if (event.source !== window) {
     return;
   }
 
   if (event.data.type === 'create_beam_api') {
-    const extensionPort = extensionizer.runtime.connect({ name: Environment.CONTENT_REQ });
     const reqData: ConnectRequest = {
       type: event.data.type,
       apiver: event.data.apiver,
@@ -82,7 +83,18 @@ window.addEventListener('message', (event) => {
     extensionPort.onMessage.addListener((msg) => {
       if (msg.result && shouldInjectProvider()) {
         injectScript();
+      } else if (!msg.result) {
+        window.postMessage('rejected', window.origin);
       }
     });
+  } else if (event.data.type === 'retry_beam_api') {
+    const reqData: ConnectRequest = {
+      type: event.data.type,
+      apiver: event.data.apiver,
+      apivermin: event.data.apivermin,
+      appname: event.data.appname,
+    };
+
+    extensionPort.postMessage(reqData);
   }
 });

@@ -50,9 +50,12 @@ const Receive = () => {
 
   const address = compact(addressFull);
 
-  useEffect(() => () => {
-    dispatch(resetReceive());
-  }, [dispatch]);
+  useEffect(
+    () => () => {
+      dispatch(resetReceive());
+    },
+    [dispatch],
+  );
 
   const { amount, asset_id } = receiveAmount;
 
