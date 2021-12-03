@@ -1,6 +1,6 @@
-import { GROTHS_IN_BEAM } from '@app/model/rates';
 import { createEvent, Event } from 'effector';
 import React from 'react';
+import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 
 export const isNil = (value: any) => value == null;
 

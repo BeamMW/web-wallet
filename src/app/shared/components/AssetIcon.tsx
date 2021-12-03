@@ -5,7 +5,7 @@ import { WalletTotal } from '@core/types';
 import { BeamIcon as BeamIconSvg, AssetIcon as AssetIconSvg } from '@app/shared/icons';
 
 import { styled } from '@linaria/react';
-import { PALLETE_ASSETS } from '@model/wallet';
+import { PALLETE_ASSETS } from '@app/shared/constants';
 
 interface AssetIconProps extends Partial<WalletTotal> {
   asset_id?: number;

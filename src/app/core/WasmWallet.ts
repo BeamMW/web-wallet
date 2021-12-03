@@ -3,7 +3,8 @@ import * as passworder from 'browser-passworder';
 import PortStream from '@core/PortStream';
 
 import { isNil } from '@core/utils';
-import { GROTHS_IN_BEAM } from '@app/model/rates';
+
+import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 import {
   RPCMethod, RPCEvent, BackgroundEvent, WalletMethod, CreateWalletParams, Notification,
 } from './types';

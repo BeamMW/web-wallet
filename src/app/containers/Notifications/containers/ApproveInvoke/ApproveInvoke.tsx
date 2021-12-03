@@ -3,11 +3,11 @@ import NotificationController from '@core/NotificationController';
 import { styled } from '@linaria/react';
 import { approveContractInfoRequest, rejectContractInfoRequest } from '@core/api';
 import { Button, AssetIcon } from '@app/shared/components';
-import { useStore } from 'effector-react';
-import { $assets } from '@model/wallet';
 import {
   CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards,
 } from '@app/shared/icons';
+import { useSelector } from 'react-redux';
+import { selectAssets } from '@app/containers/Wallet/store/selectors';
 
 const ContainerStyled = styled.div`
   position: relative;
@@ -141,7 +141,7 @@ const ApproveInvoke = () => {
   // eslint-disable-next-line no-console
   console.log(amounts, info);
 
-  const assets = useStore($assets);
+  const assets = useSelector(selectAssets());
   const text = getNotificationText(info, amounts, notification.params.appname);
   const title = getNotificationTitle(info, amounts);
 

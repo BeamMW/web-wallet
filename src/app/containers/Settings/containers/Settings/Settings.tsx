@@ -28,9 +28,10 @@ const VersionStyled = styled.div`
 const Settings = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(loadVersion.request());
-  }, []);
+  }, [dispatch]);
 
   const [warningVisible, toggleWarning] = useState(false);
   const versionData = useSelector(selectVersion());

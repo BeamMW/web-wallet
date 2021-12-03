@@ -10,29 +10,6 @@ import Entity from '@core/Entity';
 import { handleWalletEvent } from '@core/api';
 import { getWalletStatus } from '@app/core/api';
 
-export const PALLETE_ASSETS = [
-  '#72fdff',
-  '#2acf1d',
-  '#ffbb54',
-  '#d885ff',
-  '#008eff',
-  '#ff746b',
-  '#91e300',
-  '#ffe75a',
-  '#9643ff',
-  '#395bff',
-  '#ff3b3b',
-  '#73ff7c',
-  '#ffa86c',
-  '#ff3abe',
-  '#0aaee1',
-  '#ff5200',
-  '#6464ff',
-  '#ff7a21',
-  '#63afff',
-  '#c81f68',
-];
-
 const META_BLANK: Partial<Asset> = {
   metadata_pairs: {
     N: '',
@@ -77,7 +54,6 @@ export const $assets: Store<AssetTotal[]> = combine($totals, $$assets.getStore()
 
 export const $options = $assets.map((arr) => arr.map((item) => item.metadata_pairs.N));
 
-// receive System State
 handleWalletEvent<any>(
   RPCEvent.SYSTEM_STATE,
   // receive Wallet Status
@@ -88,7 +64,9 @@ handleWalletEvent<any>(
 );
 
 // receive Assets
-handleWalletEvent<AssetsEvent>(RPCEvent.ASSETS_CHANGED, (payload) => $$assets.push(payload));
+handleWalletEvent<AssetsEvent>(RPCEvent.ASSETS_CHANGED, (payload) => {
+  $$assets.push(payload);
+});
 
 // receive Transactions
 handleWalletEvent<TxsEvent>(RPCEvent.TXS_CHANGED, (payload) => $$transactions.push(payload));

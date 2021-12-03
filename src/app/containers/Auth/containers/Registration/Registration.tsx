@@ -63,7 +63,7 @@ const Registration: React.FC = () => {
     if (!seed) {
       dispatch(generateRegistrationSeed.request());
     }
-  }, [seed]);
+  }, [seed, dispatch]);
 
   const handleNextClick: React.MouseEventHandler = () => {
     navigate(ROUTES.AUTH.REGISTRATION_CONFIRM);

@@ -1,22 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { useStore } from 'effector-react';
 import { styled } from '@linaria/react';
 
 import {
   Button, Window, Section, Menu,
 } from '@app/shared/components';
 import { compact, isNil } from '@core/utils';
-import { getRateFx, GROTHS_IN_BEAM } from '@model/rates';
 
 import { ArrowUpIcon, ArrowDownIcon } from '@app/shared/icons';
 
 import { css } from '@linaria/core';
-import { $assets, $transactions } from '@model/wallet';
 
 import { Transaction } from '@core/types';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAssets, selectRate, selectTransactions } from '@app/containers/Wallet/store/selectors';
+import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
+import { loadRate } from '@app/containers/Wallet/store/actions';
 import { Assets, Transactions } from '../../components/Wallet';
 
 const TXS_MAX = 4;
@@ -77,13 +78,18 @@ function createdCompartor({ create_time: a }: Transaction, { create_time: b }: T
 }
 
 const Wallet = () => {
-  useEffect(() => {
-    getRateFx();
-  }, []);
-
+  const dispatch = useDispatch();
   const [active, setActive] = useState(null);
-  const assets = useStore($assets);
-  const transactions = useStore($transactions);
+  const assets = useSelector(selectAssets());
+  const transactions = useSelector(selectTransactions());
+  const rate = useSelector(selectRate());
+
+  useEffect(() => {
+    if (!rate) {
+      dispatch(loadRate.request());
+    }
+  }, [dispatch, rate]);
+
   const navigate = useNavigate();
 
   const toggleActive = (asset_id: number) => {
@@ -91,7 +97,7 @@ const Wallet = () => {
   };
 
   const filtered = isNil(active) ? transactions : transactions.filter(({ asset_id }) => asset_id === active);
-  const sorted = filtered.sort(createdCompartor);
+  const sorted = filtered.slice().sort(createdCompartor);
   const sliced = sorted.slice(0, TXS_MAX);
 
   return (

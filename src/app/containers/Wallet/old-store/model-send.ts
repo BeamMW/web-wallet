@@ -6,8 +6,6 @@ import { debounce } from 'patronum/debounce';
 
 import { gotoWallet, gotoConfirm } from '@model/view';
 
-import { FEE_DEFAULT } from '@model/rates';
-
 import {
   isNil, toGroths, fromGroths, getInputValue, makePrevented, truncate,
 } from '@core/utils';
@@ -15,6 +13,7 @@ import {
 import { calculateChange, sendTransaction, validateAddress } from '@core/api';
 
 import { $assets, AssetTotal } from '@model/wallet';
+import { FEE_DEFAULT } from '@app/containers/Wallet/constants';
 
 /* Constants */
 
