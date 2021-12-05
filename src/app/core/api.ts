@@ -160,6 +160,12 @@ export function approveConnection(apiver: string, apivermin: string, appname: st
   });
 }
 
+export function rejectConnection() {
+  return postMessage(WalletMethod.NotificationConnect, {
+    result: false,
+  });
+}
+
 export function approveContractInfoRequest(req) {
   return postMessage(WalletMethod.NotificationApproveInfo, { req });
 }

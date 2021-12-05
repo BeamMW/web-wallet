@@ -1,5 +1,5 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { getWalletStatus } from '@core/api';
+import { getWalletStatus, createAddress } from '@core/api';
 import { AssetsEvent, TxsEvent } from '@core/types';
 import { RateResponse } from '@app/containers/Wallet/interfaces';
 import { actions } from '.';
@@ -41,8 +41,19 @@ export function* loadRate() {
   }
 }
 
+export function* generateAddress(action: ReturnType<typeof actions.generateAddress.request>): Generator {
+  try {
+    const result: string = (yield call(createAddress, action.payload) as unknown) as string;
+
+    yield put(actions.generateAddress.success(result));
+  } catch (e) {
+    yield put(actions.generateAddress.failure(e));
+  }
+}
+
 function* walletSaga() {
   yield takeLatest(actions.loadRate.request, loadRate);
+  yield takeLatest(actions.generateAddress.request, generateAddress);
 }
 
 export default walletSaga;

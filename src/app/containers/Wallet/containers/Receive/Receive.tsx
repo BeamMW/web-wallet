@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@linaria/react';
-import { useStore } from 'effector-react';
 
 import {
   Window, Section, Button, Input, Toggle,
@@ -13,16 +12,10 @@ import AmountInput from '@app/shared/components/AmountInput';
 
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
-import {
-  $addressPreview,
-  $amount,
-  createAddressFx,
-  setAmount,
-  copyAddress,
-  copyAndClose,
-  $maxAnonymity,
-  onToggleChange,
-} from '../../old-store/receive-model';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAddress, selectReceiveAmount } from '@app/containers/Wallet/store/selectors';
+import { generateAddress, resetReceive, setReceiveAmount } from '@app/containers/Wallet/store/actions';
+import { compact, copyToClipboard } from '@core/utils';
 
 const AddressStyled = styled.div`
   line-height: 24px;
@@ -51,17 +44,34 @@ const LabelStyled = styled.label`
 `;
 
 const Receive = () => {
-  const address = useStore($addressPreview);
-  const maxAnonimity = useStore($maxAnonymity);
+  const dispatch = useDispatch();
+  const receiveAmount = useSelector(selectReceiveAmount());
+  const addressFull = useSelector(selectAddress());
+
+  const address = compact(addressFull);
+
+  useEffect(
+    () => () => {
+      dispatch(resetReceive());
+    },
+    [dispatch],
+  );
+
+  const { amount, asset_id } = receiveAmount;
+
+  const [maxAnonymity, setMaxAnonymity] = useState(false);
   const navigate = useNavigate();
-  const [amount, asset_id] = useStore($amount);
 
   useEffect(() => {
-    createAddressFx({ type: maxAnonimity ? 'max_privacy' : 'offline' });
-  }, [maxAnonimity]);
+    dispatch(generateAddress.request({ type: maxAnonymity ? 'max_privacy' : 'offline' }));
+  }, [dispatch, maxAnonymity]);
 
-  const submitForm = (e) => {
-    copyAndClose(e);
+  const copyAddress = async () => {
+    await copyToClipboard(addressFull);
+  };
+
+  const submitForm = async (e) => {
+    await copyAddress();
     navigate(ROUTES.WALLET.BASE);
   };
 
@@ -77,15 +87,20 @@ const Receive = () => {
           <TipStyled>To ensure a better privacy, new address is generated every time.</TipStyled>
         </Section>
         <Section title="Amount" variant="gray">
-          <AmountInput value={amount} asset_id={asset_id} pallete="blue" onChange={setAmount} />
+          <AmountInput
+            value={amount}
+            asset_id={asset_id}
+            pallete="blue"
+            onChange={(e) => dispatch(setReceiveAmount(e))}
+          />
         </Section>
         <Section title="Advanced" variant="gray" collapse>
           <RowStyled>
             <LabelStyled htmlFor="ma">Maximum anonymity set </LabelStyled>
-            <Toggle id="ma" value={maxAnonimity} onChange={onToggleChange} />
+            <Toggle id="ma" value={maxAnonymity} onChange={() => setMaxAnonymity((v) => !v)} />
           </RowStyled>
         </Section>
-        {maxAnonimity ? (
+        {maxAnonymity ? (
           <WarningStyled>
             Transaction can last indefinitely.
             <br />
