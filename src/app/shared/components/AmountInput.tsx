@@ -9,7 +9,7 @@ import { isNil, truncate } from '@core/utils';
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
 import { AMOUNT_MAX } from '@app/containers/Wallet/constants';
-import { ReceiveAmount } from '@app/containers/Wallet/interfaces';
+import { TransactionAmount } from '@app/containers/Wallet/interfaces';
 import Input from './Input';
 import AssetIcon from './AssetIcon';
 import Rate from './Rate';
@@ -40,7 +40,7 @@ interface AmountInputProps {
   asset_id: number;
   error?: string;
   pallete?: 'purple' | 'blue';
-  onChange?: (value: ReceiveAmount) => void;
+  onChange?: (value: TransactionAmount) => void;
 }
 
 const REG_AMOUNT = /^(?!0\d)(\d+)(\.)?(\d+)?$/;

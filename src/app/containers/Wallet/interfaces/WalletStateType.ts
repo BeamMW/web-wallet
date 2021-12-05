@@ -1,5 +1,7 @@
-import { Asset, Transaction, WalletTotal } from '@core/types';
-import { ReceiveAmount } from './ReceiveAmount';
+import {
+  Asset, Transaction, WalletTotal, AddressData,
+} from '@core/types';
+import { TransactionAmount } from './TransactionAmount';
 
 export type AssetTotal = WalletTotal & Partial<Asset>;
 
@@ -10,5 +12,7 @@ export interface WalletStateType {
   transactions: Transaction[];
   rate: number;
   address: string;
-  receive_amount: ReceiveAmount;
+  receive_amount: TransactionAmount;
+  send_address_data: AddressData;
+  send_fee: number;
 }

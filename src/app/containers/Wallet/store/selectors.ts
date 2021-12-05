@@ -12,3 +12,7 @@ export const selectRate = () => createSelector(selectWallet, (state) => state.ra
 export const selectReceiveAmount = () => createSelector(selectWallet, (state) => state.receive_amount);
 
 export const selectAddress = () => createSelector(selectWallet, (state) => state.address);
+
+export const selectSendAddressData = () => createSelector(selectWallet, (state) => state.send_address_data);
+
+export const selectSendFee = () => createSelector(selectWallet, (state) => state.send_fee);

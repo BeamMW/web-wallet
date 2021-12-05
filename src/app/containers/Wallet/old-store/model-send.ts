@@ -12,30 +12,15 @@ import {
 
 import { calculateChange, sendTransaction, validateAddress } from '@core/api';
 
-import { $assets, AssetTotal } from '@model/wallet';
-import { FEE_DEFAULT } from '@app/containers/Wallet/constants';
+import { $assets } from '@model/wallet';
+import {
+  AddressLabel, AddresssTip, ASSET_BLANK, FEE_DEFAULT,
+} from '@app/containers/Wallet/constants';
 
 /* Constants */
 
 type Amount = [string, number];
 type Change = [number, number];
-
-const ASSET_BLANK: AssetTotal = {
-  asset_id: 0,
-  available: 0,
-  available_str: '0',
-  maturing: 0,
-  maturing_str: '0',
-  receiving: 0,
-  receiving_str: '0',
-  sending: 0,
-  sending_str: '0',
-  metadata_pairs: {
-    N: '',
-    SN: '',
-    UN: '',
-  },
-};
 
 /* Effects */
 
@@ -197,19 +182,6 @@ type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
 
 /* Send Address */
 
-enum AddressLabel {
-  ERROR = 'Invalid wallet address',
-  MAX_PRIVACY = 'Guarantees maximum anonymity set of up to 64K.',
-  OFFLINE = 'Offline address.',
-  REGULAR = 'Regular address',
-}
-
-enum AddresssTip {
-  MAX_PRIVACY = 'Transaction can last at most 72 hours.',
-  OFFLINE = 'Make sure the address is correct as offline transactions cannot be canceled.',
-  REGULAR = 'The recipient must get online within the next 12 hours and you should get online within 2 hours afterwards.',
-}
-
 export const $description: Store<[string, string]> = combine(
   $form,
   $addressData,
@@ -270,18 +242,3 @@ export const $amountError = combine($beam, $form, $selected, (beam, { fee, value
 
   return null;
 });
-
-export const $valid = combine(
-  validateAddressFx.pending,
-  $ready,
-  $form,
-  $addressData,
-  $amountError,
-  (pending, ready, { value, offline }, { is_valid, payments }, amountError) => {
-    if (offline && payments === 0) {
-      return false;
-    }
-
-    return !pending && ready && is_valid && value > 0 && isNil(amountError);
-  },
-);

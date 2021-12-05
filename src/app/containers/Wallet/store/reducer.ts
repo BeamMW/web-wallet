@@ -2,6 +2,7 @@ import produce from 'immer';
 import { ActionType, createReducer } from 'typesafe-actions';
 
 import { Asset } from '@core/types';
+import { FEE_DEFAULT } from '@app/containers/Wallet/constants';
 import { WalletStateType } from '../interfaces';
 import * as actions from './actions';
 
@@ -42,6 +43,15 @@ const initialState: WalletStateType = {
     asset_id: 0,
   },
   address: '',
+  send_address_data: {
+    type: null,
+    amount: null,
+    is_mine: null,
+    is_valid: null,
+    asset_id: null,
+    payments: null,
+  },
+  send_fee: FEE_DEFAULT,
 };
 
 const handleAssets = (state: WalletStateType) => {
@@ -83,6 +93,9 @@ const reducer = createReducer<WalletStateType, Action>(initialState)
       asset_id: 0,
     };
     nexState.address = '';
+  }))
+  .handleAction(actions.validateSendAddress.success, (state, action) => produce(state, (nexState) => {
+    nexState.send_address_data = action.payload;
   }));
 
 export { reducer as WalletReducer };
