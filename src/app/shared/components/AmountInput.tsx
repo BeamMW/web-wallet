@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 
 import Select, { Option } from '@app/shared/components/Select';
 
-import { isNil, truncate } from '@core/utils';
+import { truncate } from '@core/utils';
 
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
@@ -75,7 +75,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
     <ContainerStyled>
       <Input
         variant="amount"
-        valid={isNil(error)}
+        valid={!error}
         label={error}
         value={value}
         pallete={pallete}

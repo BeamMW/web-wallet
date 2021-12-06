@@ -1,8 +1,9 @@
 import { createAction, createAsyncAction } from 'typesafe-actions';
 import {
-  WalletTotal, Asset, Transaction, CreateAddressParams, AddressData,
+  WalletTotal, Asset, Transaction, CreateAddressParams, AddressData, ChangeData,
 } from '@core/types';
 import { ErrorMessage } from '@core/WasmWallet';
+import { CalculateChangeParams } from '@core/api';
 import { WalletActionTypes } from './constants';
 import { TransactionAmount } from '../interfaces';
 
@@ -31,3 +32,9 @@ export const validateSendAddress = createAsyncAction(
   WalletActionTypes.VALIDATE_SEND_ADDRESS_SUCCESS,
   WalletActionTypes.VALIDATE_SEND_ADDRESS_FAILURE,
 )<string, AddressData, ErrorMessage>();
+
+export const validateAmount = createAsyncAction(
+  WalletActionTypes.VALIDATE_AMOUNT,
+  WalletActionTypes.VALIDATE_AMOUNT_SUCCESS,
+  WalletActionTypes.VALIDATE_AMOUNT_FAILURE,
+)<CalculateChangeParams, ChangeData, ErrorMessage>();

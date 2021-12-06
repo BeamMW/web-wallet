@@ -1,6 +1,10 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { getWalletStatus, createAddress, validateAddress } from '@core/api';
-import { AddressData, AssetsEvent, TxsEvent } from '@core/types';
+import {
+  getWalletStatus, createAddress, validateAddress, calculateChange,
+} from '@core/api';
+import {
+  AddressData, ChangeData, AssetsEvent, TxsEvent,
+} from '@core/types';
 import { RateResponse } from '@app/containers/Wallet/interfaces';
 import { actions } from '.';
 import store from '../../../../index';
@@ -50,6 +54,7 @@ export function* generateAddress(action: ReturnType<typeof actions.generateAddre
     yield put(actions.generateAddress.failure(e));
   }
 }
+
 export function* validateSendAddress(action: ReturnType<typeof actions.validateSendAddress.request>): Generator {
   try {
     const result: AddressData = (yield call(validateAddress, action.payload) as unknown) as AddressData;
@@ -60,10 +65,21 @@ export function* validateSendAddress(action: ReturnType<typeof actions.validateS
   }
 }
 
+export function* validateAmount(action: ReturnType<typeof actions.validateAmount.request>): Generator {
+  try {
+    const result: ChangeData = (yield call(calculateChange, action.payload) as unknown) as ChangeData;
+
+    yield put(actions.validateAmount.success(result));
+  } catch (e) {
+    yield put(actions.validateAmount.failure(e));
+  }
+}
+
 function* walletSaga() {
   yield takeLatest(actions.loadRate.request, loadRate);
   yield takeLatest(actions.generateAddress.request, generateAddress);
   yield takeLatest(actions.validateSendAddress.request, validateSendAddress);
+  yield takeLatest(actions.validateAmount.request, validateAmount);
 }
 
 export default walletSaga;

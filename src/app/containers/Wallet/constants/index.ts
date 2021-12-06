@@ -11,10 +11,15 @@ export enum AddressLabel {
   REGULAR = 'Regular address',
 }
 
-export enum AddresssTip {
+export enum AddressTip {
   MAX_PRIVACY = 'Transaction can last at most 72 hours.',
   OFFLINE = 'Make sure the address is correct as offline transactions cannot be canceled.',
   REGULAR = 'The recipient must get online within the next 12 hours and you should get online within 2 hours afterwards.',
+}
+
+export enum AmountError {
+  FEE = 'Insufficient funds to pay transaction fee.',
+  AMOUNT = 'Insufficient funds to complete the transaction. Maximum amount is ',
 }
 
 export const ASSET_BLANK: AssetTotal = {

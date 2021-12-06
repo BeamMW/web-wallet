@@ -14,7 +14,7 @@ import { calculateChange, sendTransaction, validateAddress } from '@core/api';
 
 import { $assets } from '@model/wallet';
 import {
-  AddressLabel, AddresssTip, ASSET_BLANK, FEE_DEFAULT,
+  AddressLabel, AddressTip, AmountError, ASSET_BLANK, FEE_DEFAULT,
 } from '@app/containers/Wallet/constants';
 
 /* Constants */
@@ -195,7 +195,7 @@ export const $description: Store<[string, string]> = combine(
     }
 
     if (addressType === 'max_privacy') {
-      return [AddressLabel.MAX_PRIVACY, AddresssTip.MAX_PRIVACY];
+      return [AddressLabel.MAX_PRIVACY, AddressTip.MAX_PRIVACY];
     }
 
     if (offline) {
@@ -205,10 +205,10 @@ export const $description: Store<[string, string]> = combine(
 
       const label = `${AddressLabel.OFFLINE} ${payments} ${warning}`;
 
-      return [label, AddresssTip.OFFLINE];
+      return [label, AddressTip.OFFLINE];
     }
 
-    return [AddressLabel.REGULAR, AddresssTip.REGULAR];
+    return [AddressLabel.REGULAR, AddressTip.REGULAR];
   },
 );
 
@@ -218,11 +218,6 @@ export const $description: Store<[string, string]> = combine(
 
 // todo reset state on page change
 // STORES.forEach((s) => s.reset(store.dispatch(navigate(ROUTES.WALLET.SEND))));
-
-enum AmountError {
-  FEE = 'Insufficient funds to pay transaction fee.',
-  AMOUNT = 'Insufficient funds to complete the transaction. Maximum amount is ',
-}
 
 export const $amountError = combine($beam, $form, $selected, (beam, { fee, value }, { available, metadata_pairs }) => {
   if (value === 0 || isNil(beam)) {

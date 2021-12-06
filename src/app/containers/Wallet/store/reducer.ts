@@ -96,6 +96,9 @@ const reducer = createReducer<WalletStateType, Action>(initialState)
   }))
   .handleAction(actions.validateSendAddress.success, (state, action) => produce(state, (nexState) => {
     nexState.send_address_data = action.payload;
+  }))
+  .handleAction(actions.validateAmount.success, (state, action) => produce(state, (nexState) => {
+    nexState.send_fee = action.payload.explicit_fee;
   }));
 
 export { reducer as WalletReducer };
