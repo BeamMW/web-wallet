@@ -1,13 +1,16 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
-  getWalletStatus, createAddress, validateAddress, calculateChange,
+  getWalletStatus, createAddress, validateAddress, calculateChange, sendTransaction,
 } from '@core/api';
 import {
   AddressData, ChangeData, AssetsEvent, TxsEvent,
 } from '@core/types';
 import { RateResponse } from '@app/containers/Wallet/interfaces';
-import { actions } from '.';
+import { resetSendData } from '@app/containers/Wallet/store/actions';
+import { navigate } from '@app/shared/store/actions';
+import { ROUTES } from '@app/shared/constants';
 import store from '../../../../index';
+import { actions } from '.';
 
 const FETCH_INTERVAL = 310000;
 
@@ -74,12 +77,24 @@ export function* validateAmount(action: ReturnType<typeof actions.validateAmount
     yield put(actions.validateAmount.failure(e));
   }
 }
+export function* sendTransactionSaga(action: ReturnType<typeof actions.sendTransaction.request>): Generator {
+  try {
+    yield call(sendTransaction, action.payload);
+
+    yield put(actions.sendTransaction.success());
+    yield put(resetSendData());
+    yield put(navigate(ROUTES.WALLET.BASE));
+  } catch (e) {
+    yield put(actions.sendTransaction.failure(e));
+  }
+}
 
 function* walletSaga() {
   yield takeLatest(actions.loadRate.request, loadRate);
   yield takeLatest(actions.generateAddress.request, generateAddress);
   yield takeLatest(actions.validateSendAddress.request, validateSendAddress);
   yield takeLatest(actions.validateAmount.request, validateAmount);
+  yield takeLatest(actions.sendTransaction.request, sendTransactionSaga);
 }
 
 export default walletSaga;

@@ -13,6 +13,7 @@ import {
   CreateWalletParams,
   BackgroundEvent,
   CreateAddressParams,
+  SendTransactionParams,
 } from './types';
 import { isNil } from './utils';
 
@@ -182,16 +183,6 @@ export interface CalculateChangeParams {
 
 export function calculateChange(params: CalculateChangeParams) {
   return postMessage<ChangeData>(RPCMethod.CalculateChange, params);
-}
-
-export interface SendTransactionParams {
-  value: number;
-  fee?: number;
-  from?: string;
-  address: string;
-  comment?: string;
-  asset_id?: number;
-  offline?: boolean;
 }
 
 export function sendTransaction(params: SendTransactionParams) {

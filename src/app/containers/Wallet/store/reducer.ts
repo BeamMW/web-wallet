@@ -52,6 +52,7 @@ const initialState: WalletStateType = {
     payments: null,
   },
   send_fee: FEE_DEFAULT,
+  change: 0,
 };
 
 const handleAssets = (state: WalletStateType) => {
@@ -99,6 +100,20 @@ const reducer = createReducer<WalletStateType, Action>(initialState)
   }))
   .handleAction(actions.validateAmount.success, (state, action) => produce(state, (nexState) => {
     nexState.send_fee = action.payload.explicit_fee;
+    nexState.change = action.payload.change;
+  }))
+  .handleAction(actions.resetSendData, (state) => produce(state, (nexState) => {
+    nexState.address = '';
+    nexState.send_address_data = {
+      type: null,
+      amount: null,
+      is_mine: null,
+      is_valid: null,
+      asset_id: null,
+      payments: null,
+    };
+    nexState.send_fee = FEE_DEFAULT;
+    nexState.change = 0;
   }));
 
 export { reducer as WalletReducer };

@@ -15,4 +15,5 @@ export interface WalletStateType {
   receive_amount: TransactionAmount;
   send_address_data: AddressData;
   send_fee: number;
+  change: number;
 }

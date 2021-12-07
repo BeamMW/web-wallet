@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 
 import {
   AmountInput, Button, Input, Rate, Section, Title, Window,
@@ -10,20 +12,28 @@ import { ArrowRightIcon, ArrowUpIcon } from '@app/shared/icons';
 import { styled } from '@linaria/react';
 import LabeledToggle from '@app/shared/components/LabeledToggle';
 import { css } from '@linaria/core';
-import {
-  fromGroths, isNil, toGroths, truncate,
-} from '@core/utils';
+import { fromGroths, toGroths, truncate } from '@core/utils';
 import { useFormik } from 'formik';
 
 import {
   AddressLabel, AddressTip, AmountError, ASSET_BLANK,
 } from '@app/containers/Wallet/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { validateAmount, validateSendAddress } from '@app/containers/Wallet/store/actions';
-import { selectAssets, selectSendAddressData, selectSendFee } from '@app/containers/Wallet/store/selectors';
+import {
+  resetSendData,
+  sendTransaction,
+  validateAmount,
+  validateSendAddress,
+} from '@app/containers/Wallet/store/actions';
+import {
+  selectAssets,
+  selectChange,
+  selectSendAddressData,
+  selectSendFee,
+} from '@app/containers/Wallet/store/selectors';
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 import { AddressData } from '@core/types';
-import { onFormSubmit } from '../../old-store/model-send';
+import { SendConfirm } from '@app/containers';
 
 const WarningStyled = styled.div`
   margin: 30px -20px;
@@ -38,18 +48,10 @@ const maxButtonStyle = css`
   top: 138px;
 `;
 
-interface Hints {
-  label: string;
-  warning: string;
-}
-
 interface SendFormData {
   address: string;
   offline: boolean;
-  send_amount: {
-    amount: '';
-    asset_id: 0;
-  };
+  send_amount: TransactionAmount;
 
   misc: {
     beam: AssetTotal;
@@ -117,9 +119,9 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
   return errors;
 };
 
-// todo move send confirm here
 const SendForm = () => {
   const dispatch = useDispatch();
+  const [showConfirm, setShowConfirm] = useState(false);
   const [validateInterval, setValidateInterval] = useState<null | NodeJS.Timer>(null);
   const [validateAmountInterval, setValidateAmountInterval] = useState<null | NodeJS.Timer>(null);
   const [warning, setWarning] = useState('');
@@ -129,6 +131,7 @@ const SendForm = () => {
   const assets = useSelector(selectAssets());
   const addressData = useSelector(selectSendAddressData());
   const fee = useSelector(selectSendFee());
+  const change = useSelector(selectChange());
 
   const beam = useMemo(() => assets.find((a) => a.asset_id === 0), [assets]);
 
@@ -150,15 +153,22 @@ const SendForm = () => {
     isInitialValid: false,
     validate: (e) => validate(e, setHint),
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      setShowConfirm(true);
     },
   });
 
   const {
-    values, setFieldValue, setFieldError, errors,
+    values, setFieldValue, errors, submitForm,
   } = formik;
 
   const { type: addressType } = addressData;
+
+  useEffect(
+    () => () => {
+      dispatch(resetSendData());
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     const currentSelected = JSON.stringify(selected);
@@ -183,24 +193,28 @@ const SendForm = () => {
 
       if (values.offline) {
         setWarning(AddressTip.OFFLINE);
+        return;
+      }
+      if (addressData.is_valid) {
+        setWarning(AddressTip.REGULAR);
       }
     }
   }, [addressData, values, setFieldValue]);
 
   const groths = fromGroths(selected.available);
 
-  const validateAmountHandler = () => {
-    const { send_amount, offline } = values;
+  const validateAmountHandler = (total: TransactionAmount, offline: boolean) => {
+    const { amount, asset_id } = total;
 
-    if (validateInterval) {
-      clearTimeout(validateInterval);
+    if (validateAmountInterval) {
+      clearTimeout(validateAmountInterval);
       setValidateAmountInterval(null);
     }
     const i = setTimeout(() => {
       dispatch(
         validateAmount.request({
-          amount: Number(send_amount.amount),
-          asset_id: send_amount.asset_id,
+          amount: toGroths(+amount),
+          asset_id,
           is_push_transaction: offline,
         }),
       );
@@ -209,8 +223,8 @@ const SendForm = () => {
   };
 
   const validateAddressHandler = (address: string) => {
-    if (validateAmountInterval) {
-      clearTimeout(validateAmountInterval);
+    if (validateInterval) {
+      clearTimeout(validateInterval);
       setValidateInterval(null);
     }
     const i = setTimeout(() => {
@@ -230,7 +244,7 @@ const SendForm = () => {
     const asset = assets.find(({ asset_id: id }) => id === e.asset_id) ?? ASSET_BLANK;
     setSelected(asset);
     setFieldValue('misc.selected', asset, true);
-    validateAmountHandler();
+    validateAmountHandler(e, values.offline);
   };
 
   const handleMaxAmount = () => {
@@ -240,69 +254,115 @@ const SendForm = () => {
     const total = send_amount.asset_id === 0 ? Math.max(available - fee, 0) : available;
     const new_amount = fromGroths(total).toString();
 
-    setFieldValue('send_amount', { amount: new_amount, asset_id: send_amount.asset_id }, true);
-    validateAmountHandler();
+    const amount = {
+      asset_id: send_amount.asset_id,
+      amount: new_amount,
+    };
+
+    setFieldValue('send_amount', amount, true);
+
+    validateAmountHandler(amount, values.offline);
   };
 
   const handleOffline = (e: boolean) => {
     setFieldValue('offline', e, true);
-    validateAmountHandler();
+    validateAmountHandler(values.send_amount, e);
   };
 
-  console.log(errors);
+  const getAddressHint = () => {
+    if (errors.address) return errors.address;
+    if (hint) return hint;
+    if (values.address.length) return 'Regular address';
+    return '';
+  };
+
+  const submitSend = useCallback(() => {
+    const { send_amount, address, offline } = values;
+    const isMaxPrivacy = addressData.type === 'max_privacy';
+    const value = send_amount.amount === '' ? 0 : toGroths(parseFloat(send_amount.amount));
+
+    const transactionPayload = {
+      fee,
+      value,
+      address,
+      comment: '',
+      asset_id: send_amount.asset_id,
+      offline: offline || isMaxPrivacy,
+    };
+
+    dispatch(sendTransaction.request(transactionPayload));
+  }, [values, fee, addressData, dispatch]);
+
+  const handlePrevious: React.MouseEventHandler = () => {
+    setShowConfirm(false);
+  };
 
   return (
-    <Window title="Send" pallete="purple">
-      <form onSubmit={onFormSubmit}>
-        <Section title="Send to" variant="gray">
-          <Input
-            variant="gray"
-            label={errors.address ? errors.address : hint || (values.address.length > 0 ? 'Regular address' : '')}
-            valid={values.address.length ? !errors.address : true}
-            placeholder="Paste recipient address here"
-            value={values.address}
-            onInput={handleAddressChange}
-          />
-        </Section>
-        {addressType === 'offline' && (
-          <Section title="Transaction Type" variant="gray">
-            <LabeledToggle left="Online" right="Offline" value={values.offline} onChange={(e) => handleOffline(e)} />
+    <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
+      {!showConfirm ? (
+        <form onSubmit={submitForm}>
+          <Section title="Send to" variant="gray">
+            <Input
+              variant="gray"
+              label={getAddressHint()}
+              valid={values.address.length ? !errors.address : true}
+              placeholder="Paste recipient address here"
+              value={values.address}
+              onInput={handleAddressChange}
+            />
           </Section>
-        )}
-        <Section title="Amount" variant="gray">
-          <AmountInput
-            value={values.send_amount.amount}
-            asset_id={values.send_amount.asset_id}
-            error={errors.send_amount?.toString()}
-            onChange={(e) => handleAssetChange(e)}
-          />
-          <Title variant="subtitle">Available</Title>
-          {`${groths} ${truncate(selected.metadata_pairs.N)}`}
-          {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
-          {groths > 0 && (
-            <Button
-              icon={ArrowUpIcon}
-              variant="link"
-              pallete="purple"
-              className={maxButtonStyle}
-              onClick={handleMaxAmount}
-            >
-              max
-            </Button>
+          {addressType === 'offline' && (
+            <Section title="Transaction Type" variant="gray">
+              <LabeledToggle left="Online" right="Offline" value={values.offline} onChange={(e) => handleOffline(e)} />
+            </Section>
           )}
-        </Section>
-        {/* <Section title="Comment" variant="gray" collapse>
+          <Section title="Amount" variant="gray">
+            <AmountInput
+              value={values.send_amount.amount}
+              asset_id={values.send_amount.asset_id}
+              error={errors.send_amount?.toString()}
+              onChange={(e) => handleAssetChange(e)}
+            />
+            <Title variant="subtitle">Available</Title>
+            {`${groths} ${truncate(selected.metadata_pairs.N)}`}
+            {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
+            {groths > 0 && (
+              <Button
+                icon={ArrowUpIcon}
+                variant="link"
+                pallete="purple"
+                className={maxButtonStyle}
+                onClick={handleMaxAmount}
+              >
+                max
+              </Button>
+            )}
+          </Section>
+          {/* <Section title="Comment" variant="gray" collapse>
           <Input
             variant="gray"
             value={comment}
             onInput={onCommentChange}
           />
         </Section> */}
-        <WarningStyled>{warning}</WarningStyled>
-        <Button pallete="purple" icon={ArrowRightIcon} type="submit" disabled={!formik.isValid}>
-          next
-        </Button>
-      </form>
+          <WarningStyled>{warning}</WarningStyled>
+          <Button pallete="purple" icon={ArrowRightIcon} type="submit" disabled={!formik.isValid}>
+            next
+          </Button>
+        </form>
+      ) : (
+        <SendConfirm
+          warning={warning}
+          address={values.address}
+          addressData={addressData}
+          offline={values.offline}
+          send_amount={values.send_amount}
+          selected={selected}
+          fee={fee}
+          change={change}
+          submitSend={submitSend}
+        />
+      )}
     </Window>
   );
 };
