@@ -3,7 +3,7 @@ import { useRoutes } from 'react-router-dom';
 
 import { ROUTES_PATH } from '@app/shared/constants';
 import {
-  Wallet, SendForm, SendConfirm, Receive, Utxo,
+  Wallet, SendForm, Receive, Utxo,
 } from '..';
 
 const routes = [
@@ -15,10 +15,6 @@ const routes = [
   {
     path: ROUTES_PATH.WALLET.SEND,
     element: <SendForm />,
-  },
-  {
-    path: ROUTES_PATH.WALLET.SEND_CONFIRM,
-    element: <SendConfirm />,
   },
   {
     path: ROUTES_PATH.WALLET.RECEIVE,

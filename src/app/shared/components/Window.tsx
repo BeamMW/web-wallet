@@ -17,7 +17,7 @@ interface WindowProps {
   title?: string;
   primary?: boolean;
   pallete?: 'default' | 'blue' | 'purple';
-  onPrevious?: React.MouseEventHandler;
+  onPrevious?: React.MouseEventHandler | undefined;
 }
 
 function getColor(pallete: string): string {

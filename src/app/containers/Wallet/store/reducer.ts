@@ -2,6 +2,7 @@ import produce from 'immer';
 import { ActionType, createReducer } from 'typesafe-actions';
 
 import { Asset } from '@core/types';
+import { FEE_DEFAULT } from '@app/containers/Wallet/constants';
 import { WalletStateType } from '../interfaces';
 import * as actions from './actions';
 
@@ -42,6 +43,16 @@ const initialState: WalletStateType = {
     asset_id: 0,
   },
   address: '',
+  send_address_data: {
+    type: null,
+    amount: null,
+    is_mine: null,
+    is_valid: null,
+    asset_id: null,
+    payments: null,
+  },
+  send_fee: FEE_DEFAULT,
+  change: 0,
 };
 
 const handleAssets = (state: WalletStateType) => {
@@ -83,6 +94,26 @@ const reducer = createReducer<WalletStateType, Action>(initialState)
       asset_id: 0,
     };
     nexState.address = '';
+  }))
+  .handleAction(actions.validateSendAddress.success, (state, action) => produce(state, (nexState) => {
+    nexState.send_address_data = action.payload;
+  }))
+  .handleAction(actions.validateAmount.success, (state, action) => produce(state, (nexState) => {
+    nexState.send_fee = action.payload.explicit_fee;
+    nexState.change = action.payload.change;
+  }))
+  .handleAction(actions.resetSendData, (state) => produce(state, (nexState) => {
+    nexState.address = '';
+    nexState.send_address_data = {
+      type: null,
+      amount: null,
+      is_mine: null,
+      is_valid: null,
+      asset_id: null,
+      payments: null,
+    };
+    nexState.send_fee = FEE_DEFAULT;
+    nexState.change = 0;
   }));
 
 export { reducer as WalletReducer };

@@ -72,6 +72,7 @@
     "effector-react": "^21.3.3",
     "extensionizer": "^1.0.1",
     "file-saver": "^2.0.5",
+    "formik": "^2.2.9",
     "immer": "^9.0.6",
     "jszip": "^3.7.1",
     "patronum": "^1.1.0",

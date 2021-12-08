@@ -40,7 +40,6 @@ export const ROUTES_PATH = {
   WALLET: {
     BASE: '/',
     SEND: '/send',
-    SEND_CONFIRM: '/send_confirm',
     RECEIVE: '/receive',
     UTXO: '/utxo',
   },

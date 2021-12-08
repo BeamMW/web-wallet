@@ -290,3 +290,13 @@ export interface ConnectRequest {
   apivermin: string;
   appname: string;
 }
+
+export interface SendTransactionParams {
+  value: number;
+  fee?: number;
+  from?: string;
+  address: string;
+  comment?: string;
+  asset_id?: number;
+  offline?: boolean;
+}
