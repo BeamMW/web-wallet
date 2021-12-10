@@ -59,8 +59,6 @@ function* sharedSaga() {
           break;
       }
     } catch (err) {
-      console.error('remoteChannel error:', err);
-
       remoteChannel.close();
     }
   }

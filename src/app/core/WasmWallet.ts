@@ -42,14 +42,17 @@ const bgLogs = {
   warnsDef: console.warn.bind(console),
 };
 
+// eslint-disable-next-line no-console
 console.log = function (...args) {
   bgLogs.commonDef.apply(console, args);
   bgLogs.common.push(Array.from(args));
 };
+// eslint-disable-next-line no-console
 console.error = function (...args) {
   bgLogs.errorsDef.apply(console, args);
   bgLogs.errors.push(Array.from(args));
 };
+// eslint-disable-next-line no-console
 console.warn = function (...args) {
   bgLogs.warnsDef.apply(console, args);
   bgLogs.warns.push(Array.from(args));
