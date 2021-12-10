@@ -79,7 +79,7 @@ function createdCompartor({ create_time: a }: Transaction, { create_time: b }: T
 
 const Wallet = () => {
   const dispatch = useDispatch();
-  const [active, setActive] = useState(null);
+
   const assets = useSelector(selectAssets());
   const transactions = useSelector(selectTransactions());
   const rate = useSelector(selectRate());
@@ -92,12 +92,7 @@ const Wallet = () => {
 
   const navigate = useNavigate();
 
-  const toggleActive = (asset_id: number) => {
-    setActive(active === asset_id ? null : asset_id);
-  };
-
-  const filtered = !active ? transactions : transactions.filter(({ asset_id }) => asset_id === active);
-  const sorted = filtered.slice().sort(createdCompartor);
+  const sorted = transactions.slice().sort(createdCompartor);
   const sliced = sorted.slice(0, TXS_MAX);
 
   return (
