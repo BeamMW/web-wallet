@@ -194,7 +194,7 @@ export default class WasmWallet {
       this.emit(BackgroundEvent.CONNECTED, {
         onboarding: false,
         is_running: true,
-        notification: notification || null,
+        notification,
       });
 
       this.toggleEvents(false);
@@ -212,7 +212,7 @@ export default class WasmWallet {
       this.emit(BackgroundEvent.CONNECTED, {
         is_running: false,
         onboarding: !WasmWalletClient.IsInitialized(PATH_DB),
-        notification: notification || null,
+        notification,
       });
     } catch {
       this.emit(BackgroundEvent.CONNECTED, {
