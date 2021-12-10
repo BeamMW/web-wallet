@@ -1,9 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import {
-  fromGroths, getSign, isNil, toUSD,
-} from '@core/utils';
+import { fromGroths, getSign, toUSD } from '@core/utils';
 import { useSelector } from 'react-redux';
 import { selectRate } from '@app/containers/Wallet/store/selectors';
 
@@ -23,7 +21,7 @@ const Rate: React.FC<Props> = ({
   value, income, groths, className,
 }) => {
   const rate = useSelector(selectRate());
-  const sign = isNil(income) ? '' : getSign(income);
+  const sign = income ? getSign(income) : '';
   const amount = groths ? fromGroths(value) : value;
   return (
     <Ratetyled className={className}>

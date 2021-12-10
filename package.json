@@ -68,8 +68,6 @@
     "browser-passworder": "^2.0.3",
     "buffer": "^6.0.3",
     "dnode": "^1.2.2",
-    "effector": "^21.8.12",
-    "effector-react": "^21.3.3",
     "extensionizer": "^1.0.1",
     "file-saver": "^2.0.5",
     "formik": "^2.2.9",

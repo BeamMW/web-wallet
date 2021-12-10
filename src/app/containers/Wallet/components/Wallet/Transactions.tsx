@@ -4,7 +4,6 @@ import { styled } from '@linaria/react';
 import { Contract, Transaction } from '@core/types';
 
 import { AssetLabel, StatusLabel } from '@app/shared/components';
-import { isNil } from '@core/utils';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;
@@ -44,9 +43,9 @@ const Transactions: React.FC<TransactionsProps> = ({ data: transactions }) => (
   <ListStyled>
     {transactions.map((tx, index) => {
       const { invoke_data: contracts } = tx;
-      const payload = isNil(contracts) ? null : fromInvokeData(contracts[0], tx.fee);
+      const payload = contracts ? fromInvokeData(contracts[0], tx.fee) : null;
 
-      const data = isNil(payload)
+      const data = !payload
         ? tx
         : {
           ...tx,

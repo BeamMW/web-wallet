@@ -1,6 +1,5 @@
 import React from 'react';
 import { styled } from '@linaria/react';
-import { isNil } from '@core/utils';
 
 import { css } from '@linaria/core';
 import Logo from './Logo';
@@ -37,7 +36,7 @@ export const Splash: React.FC<SplashProps> = ({
   size, blur, onReturn, children,
 }) => (
   <ContainerStyled blur={blur}>
-    {!isNil(onReturn) && <BackButton onClick={onReturn} className={backButtonStyle} />}
+    {onReturn && <BackButton onClick={onReturn} className={backButtonStyle} />}
     <Logo size={size} />
     <TitleStyled size={size}>Scalable confidential cryptocurrency</TitleStyled>
     {children}

@@ -15,17 +15,23 @@ let composer: Function;
 if (process.env.NODE_ENV === 'development') {
   const debuggerMiddleware: Middleware = (store: MiddlewareAPI) => (next: Dispatch) => (action) => {
     const beforeChanges = { ...store.getState() };
+    // eslint-disable-next-line no-console
     console.log('%c beforeChanges:::', 'color:#6b5b95;font-weight:bold;font-size:12px;', beforeChanges);
+    // eslint-disable-next-line no-console
     console.log();
+    // eslint-disable-next-line no-console
     console.log(
       `%c action:::${new Date()}`,
       'color:#eca1a6;font-weight:bold;font-size:12px;',
       action.type,
       action.payload,
     );
+    // eslint-disable-next-line no-console
     console.log();
     next(action);
+    // eslint-disable-next-line no-console
     console.log('%c currentState:::', 'color:#feb236;font-weight:bold;font-size:12px;', { ...store.getState() });
+    // eslint-disable-next-line no-console
     console.log('________________');
   };
   middleware = [sagaMiddleware, debuggerMiddleware];

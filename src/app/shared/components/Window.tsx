@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
-
-import { isNil } from '@core/utils';
 import { MenuIcon } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
@@ -104,7 +102,7 @@ export const Window: React.FC<WindowProps> = ({
     navigate(-1);
   };
 
-  const handleBackClick = isNil(onPrevious) ? handlePrevious : onPrevious;
+  const handleBackClick = !onPrevious ? handlePrevious : onPrevious;
   const handleMenuClick = () => setVisible(true);
   const handleCancelClick = () => setVisible(false);
 

@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from 'react';
-import { useStore } from 'effector-react';
-import { styled } from '@linaria/react';
+import React from 'react';
 
 import { Window } from '@app/shared/components';
 

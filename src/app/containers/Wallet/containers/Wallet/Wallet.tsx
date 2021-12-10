@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import {
   Button, Window, Section, Menu,
 } from '@app/shared/components';
-import { compact, isNil } from '@core/utils';
+import { compact } from '@core/utils';
 
 import { ArrowUpIcon, ArrowDownIcon } from '@app/shared/icons';
 
@@ -96,7 +96,7 @@ const Wallet = () => {
     setActive(active === asset_id ? null : asset_id);
   };
 
-  const filtered = isNil(active) ? transactions : transactions.filter(({ asset_id }) => asset_id === active);
+  const filtered = !active ? transactions : transactions.filter(({ asset_id }) => asset_id === active);
   const sorted = filtered.slice().sort(createdCompartor);
   const sliced = sorted.slice(0, TXS_MAX);
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import { styled } from '@linaria/react';
-import { isNil } from '@core/utils';
 
 const STRENGTH_CRITERIA = [
   /^.{10,63}$/, // at least 10 chars
@@ -92,7 +91,7 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ value }) => {
           <ListItemStyled key={index} points={p} />
         ))}
       </ListStyled>
-      {!isNil(title) && (
+      {title && (
       <StrengthTitleStyled>
         {title}
         {' '}
