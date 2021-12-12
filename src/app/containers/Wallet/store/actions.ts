@@ -17,6 +17,7 @@ export const setTotals = createAction(WalletActionTypes.SET_TOTALS)<WalletTotal[
 export const setAssets = createAction(WalletActionTypes.SET_ASSETS)<Asset[]>();
 export const setTransactions = createAction(WalletActionTypes.SET_TRANSACTIONS)<Transaction[]>();
 export const resetSendData = createAction(WalletActionTypes.RESET_SEND_DATA)();
+export const setSendTransactionState = createAction(WalletActionTypes.SET_SEND_TRANSACTION_STATE)<boolean>();
 
 export const loadRate = createAsyncAction(
   WalletActionTypes.GET_RATE,

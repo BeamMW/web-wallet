@@ -16,4 +16,5 @@ export interface WalletStateType {
   send_address_data: AddressData;
   send_fee: number;
   change: number;
+  is_send_ready: boolean;
 }
