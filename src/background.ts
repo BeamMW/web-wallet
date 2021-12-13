@@ -2,10 +2,7 @@
 
 import * as extensionizer from 'extensionizer';
 import WasmWallet from '@core/WasmWallet';
-import { isNil } from '@app/core/utils';
-import {
-  Environment, RemoteRequest,
-} from '@app/core/types';
+import { Environment, RemoteRequest } from '@app/core/types';
 
 import NotificationManager from '@core/NotificationManager';
 import { NotificationType } from '@core/types';
@@ -27,7 +24,7 @@ let notification = null;
 let notificationIsOpen = false;
 
 function postMessage(data) {
-  if (!isNil(port) && connected) {
+  if (port && connected) {
     port.postMessage(data);
   }
 }
@@ -55,13 +52,8 @@ const getActiveTabs = () => new Promise<any[]>((resolve, reject) => {
 
 async function triggerUi() {
   const tabs = await getActiveTabs();
-  const currentlyActiveBeamTab = Boolean(
-    tabs.find((tab) => openBeamTabsIDs[tab.id]),
-  );
-  if (
-    !uiIsTriggering
-    && !currentlyActiveBeamTab
-  ) {
+  const currentlyActiveBeamTab = Boolean(tabs.find((tab) => openBeamTabsIDs[tab.id]));
+  if (!uiIsTriggering && !currentlyActiveBeamTab) {
     uiIsTriggering = true;
     try {
       await notificationManager.showPopup();
@@ -101,12 +93,12 @@ function openConnectNotification(msg, appurl) {
 function handleConnect(remote) {
   port = remote;
   connected = true;
-
+  // eslint-disable-next-line no-console
   console.log(`remote connected to "${port.name}"`);
 
   port.onDisconnect.addListener(() => {
     connected = false;
-    if (!isNil(activeTab)) {
+    if (activeTab) {
       notificationManager.closeTab(activeTab);
     }
   });
@@ -141,6 +133,7 @@ function handleConnect(remote) {
         if (msg.type === 'create_beam_api') {
           openConnectNotification(msg, remote.sender.url);
         } else if (msg.type === 'retry_beam_api') {
+          /* eslint-disable-next-line @typescript-eslint/no-unused-expressions */
           appname === msg.appname ? openPopup() : openConnectNotification(msg, remote.sender.url);
         }
       });
@@ -156,7 +149,10 @@ wallet.initContractInfoHandler((req, info, amounts, cb) => {
   notification = {
     type: NotificationType.APPROVE_INVOKE,
     params: {
-      req, info, amounts, appname,
+      req,
+      info,
+      amounts,
+      appname,
     },
   };
   notificationIsOpen = true;

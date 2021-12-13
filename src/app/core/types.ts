@@ -2,8 +2,7 @@ export type Pallete = 'green' | 'ghost' | 'purple' | 'blue' | 'red' | 'white';
 
 export type ButtonVariant = 'regular' | 'ghost' | 'block' | 'link' | 'icon';
 
-export type AddressType =
-  'regular' | 'regular_new' | 'max_privacy' | 'offline' | 'public_offline' | 'unknown';
+export type AddressType = 'regular' | 'regular_new' | 'max_privacy' | 'offline' | 'public_offline' | 'unknown';
 export interface CreateWalletParams {
   seed: string;
   password: string;
@@ -11,7 +10,7 @@ export interface CreateWalletParams {
 }
 
 export interface CreateAddressParams {
-  type: AddressType,
+  type: AddressType;
 }
 
 export enum RPCMethod {
@@ -44,12 +43,12 @@ export enum WalletMethod {
 
 export interface RemoteRequest {
   id: number;
-  method: WalletMethod | RPCMethod,
+  method: WalletMethod | RPCMethod;
   params: any;
 }
 export interface RemoteResponse {
-  id: number | RPCEvent;
-  method: WalletMethod | RPCMethod,
+  id: number | RPCEvent | BackgroundEvent;
+  method: WalletMethod | RPCMethod;
   result: any;
   error: any;
 }
@@ -78,7 +77,7 @@ export interface ToggleSubscribeToParams {
 export interface ConnectedData {
   is_running: boolean;
   onboarding: boolean;
-  notification: Notification
+  notification: Notification;
 }
 
 export interface SyncHash {
@@ -262,18 +261,18 @@ export enum NotificationType {
 }
 
 export interface NotificationParams {
-  appname?: string,
-  info?: string,
-  amounts?: string,
-  req?: string,
-  apiver?: string,
-  apivermin?: string,
-  appurl?:string
+  appname?: string;
+  info?: string;
+  amounts?: string;
+  req?: string;
+  apiver?: string;
+  apivermin?: string;
+  appurl?: string;
 }
 
 export interface Notification {
   type: NotificationType.APPROVE_INVOKE | NotificationType.CONNECT;
-  params: NotificationParams
+  params: NotificationParams;
 }
 
 export enum Environment {
@@ -290,4 +289,14 @@ export interface ConnectRequest {
   apiver: string;
   apivermin: string;
   appname: string;
+}
+
+export interface SendTransactionParams {
+  value: number;
+  fee?: number;
+  from?: string;
+  address: string;
+  comment?: string;
+  asset_id?: number;
+  offline?: boolean;
 }

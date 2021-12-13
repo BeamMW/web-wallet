@@ -26,6 +26,7 @@ function injectScript() {
     container.insertBefore(scriptTag, container.children[0]);
     container.removeChild(scriptTag);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Beam web wallet injection failed.', error);
   }
 }
@@ -58,11 +59,7 @@ function documentElementCheck() {
 }
 
 function shouldInjectProvider() {
-  return (
-    doctypeCheck()
-     && suffixCheck()
-     && documentElementCheck()
-  );
+  return doctypeCheck() && suffixCheck() && documentElementCheck();
 }
 
 const extensionPort = extensionizer.runtime.connect({ name: Environment.CONTENT_REQ });

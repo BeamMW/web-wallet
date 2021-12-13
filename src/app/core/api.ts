@@ -1,4 +1,3 @@
-import { createEvent, Subscription } from 'effector';
 import * as extensionizer from 'extensionizer';
 
 import {
@@ -11,21 +10,17 @@ import {
   WalletStatus,
   Environment,
   CreateWalletParams,
-  BackgroundEvent,
   CreateAddressParams,
+  SendTransactionParams,
 } from './types';
-import { isNil } from './utils';
 
 let port;
 let counter = 0;
 
-export const remoteEvent = createEvent<RemoteResponse>();
-
-remoteEvent.watch(({
-  method = 'event', id, result, error,
-}) => {
-  console.info(`received ${method}:${id} with`, result, error);
-});
+// remoteEvent.watch(({ method = 'event', id, result, error }) => {
+//   //eslint-disable-next-line no-console
+//   console.info(`received ${method}:${id} with`, result, error);
+// });
 
 export function getEnvironment(href = window.location.href) {
   const url = new URL(href);
@@ -42,44 +37,33 @@ export function getEnvironment(href = window.location.href) {
 }
 
 export function initRemoteWallet() {
+  if (port) return port;
   const name = getEnvironment();
   port = extensionizer.runtime.connect({ name });
-  port.onMessage.addListener(remoteEvent);
+
+  return port;
 }
 
-export function handleWalletEvent<E>(
-  event: RPCEvent | BackgroundEvent,
-  handler: (payload: E) => void,
-): Subscription {
-  return remoteEvent.filterMap(({ id, result }) => (
-    id === event ? result as E : undefined
-  ))
-    .watch(handler);
-}
-
-export function postMessage<T = any, P = unknown>(
-  method: WalletMethod | RPCMethod,
-  params?: P,
-): Promise<T> {
+export function postMessage<T = any, P = unknown>(method: WalletMethod | RPCMethod | RPCEvent, params?: P): Promise<T> {
   return new Promise((resolve, reject) => {
     const target = counter;
 
     counter += 1;
 
-    const unwatch = remoteEvent
-      .filter({
-        fn: ({ id }) => id === target,
-      })
-      .watch(({ result, error }) => {
-        if (isNil(error)) {
-          resolve(result);
-        } else {
-          reject(error);
+    function handler(data: RemoteResponse) {
+      if (data.id === target) {
+        port.onMessage.removeListener(handler);
+        if (data.error) {
+          return reject(data.error);
         }
+        return resolve(data.result);
+      }
+      return data;
+    }
 
-        unwatch();
-      });
+    port.onMessage.addListener(handler);
 
+    // eslint-disable-next-line no-console
     console.info(`sending ${method}:${target} with`, params);
     port.postMessage({ id: target, method, params });
   });
@@ -133,7 +117,7 @@ export async function validateAddress(address: string): Promise<AddressData> {
   const result = await postMessage<AddressData>(RPCMethod.ValidateAddress, { address });
   const json = await postMessage(WalletMethod.ConvertTokenToJson, address);
 
-  if (isNil(json)) {
+  if (!json) {
     return result;
   }
 
@@ -143,12 +127,7 @@ export async function validateAddress(address: string): Promise<AddressData> {
   };
 }
 
-export function approveConnection(
-  apiver: string,
-  apivermin: string,
-  appname: string,
-  appurl: string,
-) {
+export function approveConnection(apiver: string, apivermin: string, appname: string, appurl: string) {
   return postMessage(WalletMethod.NotificationConnect, {
     result: true,
     apiver,
@@ -180,16 +159,6 @@ export interface CalculateChangeParams {
 
 export function calculateChange(params: CalculateChangeParams) {
   return postMessage<ChangeData>(RPCMethod.CalculateChange, params);
-}
-
-export interface SendTransactionParams {
-  value: number;
-  fee?: number;
-  from?: string;
-  address: string;
-  comment?: string;
-  asset_id?: number;
-  offline?: boolean;
 }
 
 export function sendTransaction(params: SendTransactionParams) {
