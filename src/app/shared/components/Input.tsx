@@ -1,6 +1,5 @@
 import React from 'react';
 import { styled } from '@linaria/react';
-import { isNil } from '@core/utils';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -76,7 +75,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <ContainerStyled className={className} margin={margin}>
         <InputComponent ref={ref} valid={valid} pallete={pallete} {...rest} />
-        {!isNil(label) && <LabelStyled valid={valid}>{label}</LabelStyled>}
+        {!!label && <LabelStyled valid={valid}>{label}</LabelStyled>}
       </ContainerStyled>
     );
   },

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { styled } from '@linaria/react';
 
-import { isNil } from '@core/utils';
 import Title from './Title';
 import Angle from './Angle';
 
@@ -61,8 +60,8 @@ const Section: React.FC<SectionProps> = ({
           <Angle value={hidden ? 180 : 0} margin={hidden ? 3 : 3} />
         </ButtonStyled>
       )}
-      {!isNil(title) && <Title>{title}</Title>}
-      {!isNil(subtitle) && <Title variant="subtitle">{subtitle}</Title>}
+      {!!title && <Title>{title}</Title>}
+      {!!subtitle && <Title variant="subtitle">{subtitle}</Title>}
       {!hidden && children}
     </SectionComponent>
   );

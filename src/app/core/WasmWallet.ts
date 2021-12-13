@@ -2,8 +2,6 @@ import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
 import PortStream from '@core/PortStream';
 
-import { isNil } from '@core/utils';
-
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 import {
   RPCMethod, RPCEvent, BackgroundEvent, WalletMethod, CreateWalletParams, Notification,
@@ -44,14 +42,17 @@ const bgLogs = {
   warnsDef: console.warn.bind(console),
 };
 
+// eslint-disable-next-line no-console
 console.log = function (...args) {
   bgLogs.commonDef.apply(console, args);
   bgLogs.common.push(Array.from(args));
 };
+// eslint-disable-next-line no-console
 console.error = function (...args) {
   bgLogs.errorsDef.apply(console, args);
   bgLogs.errors.push(Array.from(args));
 };
+// eslint-disable-next-line no-console
 console.warn = function (...args) {
   bgLogs.warnsDef.apply(console, args);
   bgLogs.warns.push(Array.from(args));
@@ -169,8 +170,8 @@ export default class WasmWallet {
       const { Amount: amount, AssetID: id } = result.params;
 
       return {
-        amount: isNil(amount) ? null : parseFloat(amount) / GROTHS_IN_BEAM,
-        asset_id: isNil(id) ? null : parseInt(id, 10),
+        amount: !amount ? null : parseFloat(amount) / GROTHS_IN_BEAM,
+        asset_id: !id ? null : parseInt(id, 10),
       };
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -196,7 +197,7 @@ export default class WasmWallet {
       this.emit(BackgroundEvent.CONNECTED, {
         onboarding: false,
         is_running: true,
-        notification: !isNil(notification) ? notification : null,
+        notification,
       });
 
       this.toggleEvents(false);
@@ -214,7 +215,7 @@ export default class WasmWallet {
       this.emit(BackgroundEvent.CONNECTED, {
         is_running: false,
         onboarding: !WasmWalletClient.IsInitialized(PATH_DB),
-        notification: !isNil(notification) ? notification : null,
+        notification,
       });
     } catch {
       this.emit(BackgroundEvent.CONNECTED, {
@@ -244,7 +245,7 @@ export default class WasmWallet {
   }
 
   start(pass: string) {
-    if (isNil(this.wallet)) {
+    if (!this.wallet) {
       this.wallet = new WasmWalletClient(PATH_DB, pass, PATH_NODE);
     }
 
@@ -275,7 +276,7 @@ export default class WasmWallet {
   }
 
   isRunning(): boolean {
-    return isNil(this.wallet) ? false : this.wallet.isRunning();
+    return !this.wallet ? false : this.wallet.isRunning();
   }
 
   async createAppAPI(apiver: string, apivermin: string, appurl: string, appname: string, handler: any) {
@@ -321,7 +322,7 @@ export default class WasmWallet {
 
   stop() {
     return new Promise((resolve, reject) => {
-      if (isNil(this.wallet)) {
+      if (!this.wallet) {
         resolve(true);
         return;
       }

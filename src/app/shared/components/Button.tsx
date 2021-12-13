@@ -1,6 +1,5 @@
 import React from 'react';
 import { styled } from '@linaria/react';
-import { isNil } from '@core/utils';
 import { ButtonVariant, Pallete } from '@core/types';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -121,7 +120,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <ButtonComponent type={type} pallete={pallete} {...rest}>
-      {!isNil(IconComponent) && <IconComponent />}
+      {!!IconComponent && <IconComponent />}
       {children}
     </ButtonComponent>
   );

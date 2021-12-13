@@ -2,7 +2,6 @@ import React, {
   ReactElement, useEffect, useRef, useState,
 } from 'react';
 import { styled } from '@linaria/react';
-import { isNil } from '@core/utils';
 
 import { css } from '@linaria/core';
 import Angle from './Angle';
@@ -98,7 +97,7 @@ export const Select: React.FC<SelectProps> = ({
   useEffect(() => {
     if (opened) {
       const { current } = selectRef;
-      if (!isNil(current)) {
+      if (current) {
         current.focus();
       }
     }

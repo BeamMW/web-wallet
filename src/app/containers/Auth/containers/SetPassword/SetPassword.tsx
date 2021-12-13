@@ -4,7 +4,6 @@ import { styled } from '@linaria/react';
 import {
   Window, Button, Input, Footer, Popup,
 } from '@app/shared/components';
-import { makeOnChange } from '@core/utils';
 
 import { ArrowLeftIcon, ArrowRightIcon } from '@app/shared/icons';
 
@@ -40,9 +39,6 @@ const SetPassword = () => {
 
   const error = valid ? null : 'Passwords do not match';
 
-  const onPasswordChange = makeOnChange(setPassword);
-  const onConfirmChange = makeOnChange(setConfirm);
-
   const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
     createWallet({
@@ -70,7 +66,7 @@ const SetPassword = () => {
     <>
       <Window title="Password" onPrevious={handlePrevious}>
         <FormStyled onSubmit={handleSubmit}>
-          <Input autoFocus type="password" placeholder="Password" onChange={onPasswordChange} />
+          <Input autoFocus type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
           <PasswordStrength value={pass} />
           <p>Strong password needs to meet the following requirements:</p>
           <ul>
@@ -84,7 +80,7 @@ const SetPassword = () => {
             valid={valid}
             label={error}
             placeholder="Confirm password"
-            onChange={onConfirmChange}
+            onChange={(e) => setConfirm(e.target.value)}
           />
           <Footer>
             <Button type="submit" icon={ArrowRightIcon} disabled={!ready}>

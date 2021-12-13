@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { styled } from '@linaria/react';
 
-import { isNil } from '@core/utils';
-
 interface CellConfig {
   name: string;
   title: string;
@@ -20,7 +18,7 @@ const isPositive = (value: number) => 1 / value > 0;
 const Header = styled.th<{ active: boolean }>`
   text-align: left;
   color: ${({ active }) => {
-    if (isNil(active)) {
+    if (active === null) {
       return 'black';
     }
     return active ? 'red' : 'blue';
@@ -69,7 +67,7 @@ export const Table: React.FC<TableProps> = ({ keyBy, data, config }) => {
           <tr key={item[keyBy]}>
             {config.map(({ name, fn }, index) => {
               const value = item[name];
-              return <td key={index}>{isNil(fn) ? value : fn(value, item)}</td>;
+              return <td key={index}>{!fn ? value : fn(value, item)}</td>;
             })}
           </tr>
         ))}

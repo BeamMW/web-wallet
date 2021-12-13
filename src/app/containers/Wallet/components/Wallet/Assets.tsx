@@ -1,12 +1,9 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-// import { WalletTotal } from '@app/core/types';
-
 import AssetLabel from '@app/shared/components/AssetLabel';
-import { AssetTotal } from '@model/wallet';
-import { isNil } from '@core/utils';
 import { PALLETE_ASSETS } from '@app/shared/constants';
+import { AssetTotal } from '@app/containers/Wallet/interfaces';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;
@@ -36,7 +33,7 @@ const ListItemStyled = styled.li<{ opt_color?: string; asset_id: number }>`
     background-image: linear-gradient(
       90deg,
       ${({ asset_id, opt_color }) => {
-    if (!isNil(opt_color)) {
+    if (opt_color) {
       return opt_color;
     }
 

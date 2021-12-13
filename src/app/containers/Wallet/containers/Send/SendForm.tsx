@@ -28,6 +28,7 @@ import {
 import {
   selectAssets,
   selectChange,
+  selectIsSendReady,
   selectSendAddressData,
   selectSendFee,
 } from '@app/containers/Wallet/store/selectors';
@@ -132,6 +133,7 @@ const SendForm = () => {
   const addressData = useSelector(selectSendAddressData());
   const fee = useSelector(selectSendFee());
   const change = useSelector(selectChange());
+  const is_send_ready = useSelector(selectIsSendReady());
 
   const beam = useMemo(() => assets.find((a) => a.asset_id === 0), [assets]);
 
@@ -206,6 +208,8 @@ const SendForm = () => {
   const validateAmountHandler = (total: TransactionAmount, offline: boolean) => {
     const { amount, asset_id } = total;
 
+    if (amount === '0') return;
+
     if (validateAmountInterval) {
       clearTimeout(validateAmountInterval);
       setValidateAmountInterval(null);
@@ -270,6 +274,7 @@ const SendForm = () => {
   };
 
   const getAddressHint = () => {
+    if (!is_send_ready && values.address.length && errors.address) return '';
     if (errors.address) return errors.address;
     if (hint) return hint;
     if (values.address.length) return 'Regular address';
@@ -297,6 +302,14 @@ const SendForm = () => {
     setShowConfirm(false);
   };
 
+  const isFormDisabled = () => {
+    if (!is_send_ready) return !is_send_ready;
+    if (!formik.isValid) return !formik.isValid;
+    return false;
+  };
+
+  console.log(isFormDisabled());
+
   return (
     <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
       {!showConfirm ? (
@@ -305,7 +318,7 @@ const SendForm = () => {
             <Input
               variant="gray"
               label={getAddressHint()}
-              valid={values.address.length ? !errors.address : true}
+              valid={values.address.length ? !errors.address && is_send_ready : true}
               placeholder="Paste recipient address here"
               value={values.address}
               onInput={handleAddressChange}
@@ -346,7 +359,7 @@ const SendForm = () => {
           />
         </Section> */}
           <WarningStyled>{warning}</WarningStyled>
-          <Button pallete="purple" icon={ArrowRightIcon} type="submit" disabled={!formik.isValid}>
+          <Button pallete="purple" icon={ArrowRightIcon} type="submit" disabled={isFormDisabled()}>
             next
           </Button>
         </form>

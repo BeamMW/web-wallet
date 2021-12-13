@@ -60,9 +60,11 @@ export function* generateAddress(action: ReturnType<typeof actions.generateAddre
 
 export function* validateSendAddress(action: ReturnType<typeof actions.validateSendAddress.request>): Generator {
   try {
+    yield put(actions.setSendTransactionState(false));
     const result: AddressData = (yield call(validateAddress, action.payload) as unknown) as AddressData;
 
     yield put(actions.validateSendAddress.success(result));
+    yield put(actions.setSendTransactionState(true));
   } catch (e) {
     yield put(actions.validateSendAddress.failure(e));
   }
@@ -70,9 +72,11 @@ export function* validateSendAddress(action: ReturnType<typeof actions.validateS
 
 export function* validateAmount(action: ReturnType<typeof actions.validateAmount.request>): Generator {
   try {
+    yield put(actions.setSendTransactionState(false));
     const result: ChangeData = (yield call(calculateChange, action.payload) as unknown) as ChangeData;
 
     yield put(actions.validateAmount.success(result));
+    yield put(actions.setSendTransactionState(true));
   } catch (e) {
     yield put(actions.validateAmount.failure(e));
   }

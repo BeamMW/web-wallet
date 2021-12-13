@@ -1,42 +1,6 @@
-import { createEvent, Event } from 'effector';
-import React from 'react';
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 
 export const copyToClipboard = (value: string) => navigator.clipboard.writeText(value);
-
-export const isNil = (value: any) => value == null;
-
-export function getInputValue({ target }: React.ChangeEvent<HTMLInputElement>): string {
-  return target.value;
-}
-
-export function fromCheckbox({ target }: React.ChangeEvent<HTMLInputElement>): boolean {
-  return target.checked;
-}
-
-export const curry = <T>(event: Event<T>, payload: T) => event.prepend(() => payload);
-
-type ReactChangeEvent = React.ChangeEvent<HTMLInputElement>;
-
-type Callback<T = unknown> = (value: T) => void;
-
-export function makeOnChange(event: Event<string> | Callback<string>) {
-  const onChange = createEvent<ReactChangeEvent>();
-  onChange.map<string>(getInputValue).watch(event);
-  return onChange;
-}
-
-export function preventEvent(event: React.SyntheticEvent) {
-  event.preventDefault();
-  event.stopPropagation();
-  return event;
-}
-
-export function makePrevented(callback: Event<void> | Callback<void>) {
-  const clock = createEvent<React.SyntheticEvent>().map(preventEvent);
-  clock.watch(() => callback());
-  return clock;
-}
 
 export function compact(value: string): string {
   if (value.length <= 11) {
@@ -48,9 +12,7 @@ export function compact(value: string): string {
 const LENGTH_MAX = 8;
 
 export function truncate(value: string): string {
-  if (value === '' || isNil(value)) {
-    // eslint-disable-next-line no-console
-    console.warn('utils: truncate failed', value);
+  if (!value) {
     return '';
   }
 

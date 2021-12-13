@@ -2,7 +2,6 @@
 
 import * as extensionizer from 'extensionizer';
 import WasmWallet from '@core/WasmWallet';
-import { isNil } from '@app/core/utils';
 import { Environment, RemoteRequest } from '@app/core/types';
 
 import NotificationManager from '@core/NotificationManager';
@@ -25,7 +24,7 @@ let notification = null;
 let notificationIsOpen = false;
 
 function postMessage(data) {
-  if (!isNil(port) && connected) {
+  if (port && connected) {
     port.postMessage(data);
   }
 }
@@ -99,7 +98,7 @@ function handleConnect(remote) {
 
   port.onDisconnect.addListener(() => {
     connected = false;
-    if (!isNil(activeTab)) {
+    if (activeTab) {
       notificationManager.closeTab(activeTab);
     }
   });
