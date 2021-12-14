@@ -9,6 +9,7 @@ interface SectionProps {
   subtitle?: string;
   collapse?: boolean;
   variant?: 'regular' | 'gray';
+  showAllAction?: () => void;
 }
 
 const SectionStyled = styled.div`
@@ -39,8 +40,31 @@ const ButtonStyled = styled.button`
   white-space: nowrap;
 `;
 
+const ShowAll = styled.div`
+  font-size: 14px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  color: #00f6d2;
+  cursor: pointer;
+`;
+
+const TitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`;
+
 const Section: React.FC<SectionProps> = ({
-  title, collapse = false, variant = 'regular', subtitle, children,
+  title,
+  collapse = false,
+  variant = 'regular',
+  subtitle,
+  children,
+  showAllAction,
 }) => {
   const [hidden, setHidden] = useState(collapse);
 
@@ -60,7 +84,13 @@ const Section: React.FC<SectionProps> = ({
           <Angle value={hidden ? 180 : 0} margin={hidden ? 3 : 3} />
         </ButtonStyled>
       )}
-      {!!title && <Title>{title}</Title>}
+      {!!title && (
+        <TitleWrapper>
+          <Title>{title}</Title>
+          {' '}
+          {showAllAction && <ShowAll onClick={showAllAction}>Show All</ShowAll>}
+        </TitleWrapper>
+      )}
       {!!subtitle && <Title variant="subtitle">{subtitle}</Title>}
       {!hidden && children}
     </SectionComponent>
