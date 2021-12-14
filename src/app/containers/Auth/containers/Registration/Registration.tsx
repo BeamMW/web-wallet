@@ -9,7 +9,7 @@ import { ROUTES } from '@app/shared/constants';
 
 import { DoneIcon, LockIcon } from '@app/shared/icons';
 
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateRegistrationSeed } from '@app/containers/Auth/store/actions';
 import { selectRegistrationSeed } from '@app/containers/Auth/store/selectors';
@@ -49,10 +49,12 @@ const SeedListStyled = styled.ol`
 `;
 
 const Registration: React.FC = () => {
+  const location = useLocation();
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const seed = useSelector(selectRegistrationSeed());
-  const [isRegistrationWarning, setRegistrationWarning] = useState(!!seed);
+  const [isRegistrationWarning, setRegistrationWarning] = useState(!location.search);
   const [warningVisible, toggleWarning] = useState(false);
 
   // const handleSkipClick: React.MouseEventHandler = () => {

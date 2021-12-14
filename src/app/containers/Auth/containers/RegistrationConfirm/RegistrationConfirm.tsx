@@ -6,12 +6,14 @@ import { ArrowRightIcon } from '@app/shared/icons';
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
 import { SeedList } from '@app/containers/Auth/components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectSeedIds, selectRegistrationSeed } from '@app/containers/Auth/store/selectors';
+import { generateRegistrationSeed } from '@app/containers/Auth/store/actions';
 
 const SEED_CONFIRM_COUNT = 6;
 
 const RegistrationConfirm: React.FC = () => {
+  const dispatch = useDispatch();
   const seed = useSelector(selectRegistrationSeed()).split(' ');
   const ids = useSelector(selectSeedIds());
   const navigate = useNavigate();
@@ -26,6 +28,13 @@ const RegistrationConfirm: React.FC = () => {
     const result = seed[index] === value;
     const target = ids.indexOf(index);
 
+    if (!value) {
+      const next = errors.slice();
+      next[target] = null;
+      setErrors(next);
+      return;
+    }
+
     if (errors[target] !== result) {
       const next = errors.slice();
       next[target] = result;
@@ -39,8 +48,8 @@ const RegistrationConfirm: React.FC = () => {
   };
 
   const handlePrevious: React.MouseEventHandler = () => {
-    //   generateSeedFx();
-    navigate(ROUTES.AUTH.REGISTRATION);
+    dispatch(generateRegistrationSeed.request());
+    navigate(`${ROUTES.AUTH.REGISTRATION}?do_not_show_warn=true`);
   };
 
   return (
