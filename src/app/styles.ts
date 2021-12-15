@@ -13,6 +13,7 @@ css`
       --color-white: #ffffff;
       --color-gray: #8196a4;
       --color-white: white;
+      --color-violet: #c061e0;
 
       --color-popup: #003f6f;
       --color-select: #184469;

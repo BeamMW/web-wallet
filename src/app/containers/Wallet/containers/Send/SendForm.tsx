@@ -70,10 +70,9 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
 
   if (!values.address.length) {
     errors.address = '';
-    return errors;
   }
 
-  if (!addressData.is_valid || addressData.type === 'unknown') {
+  if ((values.address.length && !addressData.is_valid) || addressData.type === 'unknown') {
     errors.address = AddressLabel.ERROR;
     return errors;
   }
@@ -97,7 +96,6 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
 
   if (!values.send_amount.amount.length) {
     errors.send_amount = '';
-    return errors;
   }
 
   const { send_amount } = values;
@@ -108,13 +106,11 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
 
   if (beam.available < fee) {
     errors.send_amount = AmountError.FEE;
-    return errors;
   }
 
   if (total > available) {
     const max = fromGroths(available - fee);
     errors.send_amount = `${AmountError.AMOUNT} ${max} ${truncate(selected.metadata_pairs.UN)}`;
-    return errors;
   }
 
   return errors;
@@ -160,7 +156,7 @@ const SendForm = () => {
   });
 
   const {
-    values, setFieldValue, errors, submitForm,
+    values, setFieldValue, errors, submitForm, setFieldError,
   } = formik;
 
   const { type: addressType } = addressData;
@@ -208,7 +204,18 @@ const SendForm = () => {
   const validateAmountHandler = (total: TransactionAmount, offline: boolean) => {
     const { amount, asset_id } = total;
 
-    if (amount === '0') return;
+    if (amount === '0' || !amount) {
+      setFieldValue('send_amount', total, true);
+      return;
+    }
+
+    const value = toGroths(parseFloat(amount));
+
+    const ttl = value + fee;
+
+    if (ttl > selected.available) {
+      setFieldValue('send_amount', total, true);
+    }
 
     if (validateAmountInterval) {
       clearTimeout(validateAmountInterval);
@@ -308,6 +315,12 @@ const SendForm = () => {
     return false;
   };
 
+  const isAddressValid = () => {
+    if (!values.address.length) return true;
+
+    return !(is_send_ready && errors.address);
+  };
+
   return (
     <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
       {!showConfirm ? (
@@ -316,7 +329,7 @@ const SendForm = () => {
             <Input
               variant="gray"
               label={getAddressHint()}
-              valid={values.address.length ? !errors.address && is_send_ready : true}
+              valid={isAddressValid()}
               placeholder="Paste recipient address here"
               value={values.address}
               onInput={handleAddressChange}
