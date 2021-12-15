@@ -87,7 +87,6 @@ const Section: React.FC<SectionProps> = ({
       {!!title && (
         <TitleWrapper>
           <Title>{title}</Title>
-          {' '}
           {showAllAction && <ShowAll onClick={showAllAction}>Show All</ShowAll>}
         </TitleWrapper>
       )}

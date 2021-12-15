@@ -84,7 +84,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
         className={containerStyle}
         onInput={handleInput}
       />
-      {asset_id === 0 && <Rate value={parseFloat(value)} className={rateStyle} />}
+      {asset_id === 0 && !error && <Rate value={parseFloat(value)} className={rateStyle} />}
       <Select value={asset_id} className={selectClassName} onSelect={handleSelect}>
         {assets.map(({ asset_id: id, metadata_pairs }) => (
           <Option key={id} value={id}>

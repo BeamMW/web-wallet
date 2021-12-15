@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 
-import {
-  Window, Section, Button, Rate,
-} from '@app/shared/components';
+import { Section, Button, Rate } from '@app/shared/components';
 
 import { ArrowRightIcon } from '@app/shared/icons';
 
@@ -18,6 +16,12 @@ const WarningSyled = styled.p`
   margin: 30px 0;
   text-align: center;
   font-style: italic;
+`;
+
+const BeamAmount = styled.p`
+  font-weight: bold;
+  color: var(--color-violet);
+  margin: 0;
 `;
 
 const getTxType = (type: AddressType, offline: boolean): string => {
@@ -67,9 +71,11 @@ const SendConfirm = (props: SendConfirmProps) => {
       <Section subtitle="Send to">{compact(address)}</Section>
       <Section subtitle="Transaction type">{txType}</Section>
       <Section subtitle="Amount">
-        {fromGroths(value)}
-        &nbsp;
-        {metadata_pairs.UN}
+        <BeamAmount>
+          {fromGroths(value)}
+          &nbsp;
+          {metadata_pairs.UN}
+        </BeamAmount>
       </Section>
       <Section subtitle="Transaction Fee">
         {fromGroths(fee)}
