@@ -61,7 +61,7 @@ const GhostButtonStyled = styled(ButtonStyled)`
 const BlockButtonStyled = styled(GhostButtonStyled)`
   width: 100%;
   max-width: none;
-  padding: 20px;
+  padding: 18px;
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.03);
   font-size: 14px;
