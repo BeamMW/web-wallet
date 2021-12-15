@@ -4,6 +4,7 @@ import { styled } from '@linaria/react';
 import { Contract, Transaction } from '@core/types';
 
 import { AssetLabel, StatusLabel } from '@app/shared/components';
+import EmptyTransaction from '@app/containers/Wallet/components/Wallet/EmptyTransaction';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;
@@ -39,7 +40,7 @@ const fromInvokeData = (data: Contract, fee: number): Partial<Transaction> => {
   return null;
 };
 
-const Transactions: React.FC<TransactionsProps> = ({ data: transactions }) => (
+const Transactions: React.FC<TransactionsProps> = ({ data: transactions }) => (transactions.length ? (
   <ListStyled>
     {transactions.map((tx, index) => {
       const { invoke_data: contracts } = tx;
@@ -60,6 +61,8 @@ const Transactions: React.FC<TransactionsProps> = ({ data: transactions }) => (
       );
     })}
   </ListStyled>
-);
+) : (
+  <EmptyTransaction />
+));
 
 export default Transactions;
