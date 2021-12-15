@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { styled } from '@linaria/react';
 
 import {
   Button, Window, Section, Menu,
 } from '@app/shared/components';
-import { compact } from '@core/utils';
 
 import { ArrowUpIcon, ArrowDownIcon } from '@app/shared/icons';
 
@@ -22,35 +21,6 @@ import { Assets, Transactions } from '../../components/Wallet';
 
 const TXS_MAX = 4;
 
-const TABLE_CONFIG = [
-  {
-    name: 'create_time',
-    title: 'Created',
-  },
-  {
-    name: 'sender',
-    title: 'From',
-    fn: compact,
-  },
-  {
-    name: 'receiver',
-    title: 'To',
-    fn: compact,
-  },
-  {
-    name: 'value',
-    title: 'Amount',
-    fn: (value: number) => {
-      const result = value / GROTHS_IN_BEAM;
-      return result.toString();
-    },
-  },
-  {
-    name: 'status_string',
-    title: 'Status',
-  },
-];
-
 const ActionsStyled = styled.div`
   display: flex;
   justify-content: space-between;
@@ -61,15 +31,7 @@ const ActionsStyled = styled.div`
   }
 `;
 
-const menuButtonStyle = css`
-  position: fixed;
-  z-index: 3;
-  top: 74px;
-  left: 24px;
-  margin: 0;
-`;
-
-function createdCompartor({ create_time: a }: Transaction, { create_time: b }: Transaction): -1 | 0 | 1 {
+function createdComparator({ create_time: a }: Transaction, { create_time: b }: Transaction): -1 | 0 | 1 {
   if (a === b) {
     return 0;
   }
@@ -92,7 +54,7 @@ const Wallet = () => {
 
   const navigate = useNavigate();
 
-  const sorted = transactions.slice().sort(createdCompartor);
+  const sorted = transactions.slice().sort(createdComparator);
   const sliced = sorted.slice(0, TXS_MAX);
 
   return (
@@ -108,9 +70,12 @@ const Wallet = () => {
       <Section title="Assets">
         <Assets data={assets} />
       </Section>
-      <Section title="Transactions">
-        <Transactions data={sliced} />
-      </Section>
+
+      {sliced.length > 0 && (
+        <Section title="Transactions" showAllAction={sliced.length > TXS_MAX ? () => {} : undefined}>
+          <Transactions data={sliced} />
+        </Section>
+      )}
     </Window>
   );
 };

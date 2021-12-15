@@ -62,10 +62,8 @@ const Registration: React.FC = () => {
   // };
 
   useEffect(() => {
-    if (!seed) {
-      dispatch(generateRegistrationSeed.request());
-    }
-  }, [seed, dispatch]);
+    dispatch(generateRegistrationSeed.request());
+  }, [dispatch]);
 
   const handleNextClick: React.MouseEventHandler = () => {
     navigate(ROUTES.AUTH.REGISTRATION_CONFIRM);
