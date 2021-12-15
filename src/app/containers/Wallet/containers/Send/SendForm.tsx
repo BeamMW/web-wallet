@@ -154,7 +154,7 @@ const SendForm = () => {
   });
 
   const {
-    values, setFieldValue, errors, submitForm, setFieldError,
+    values, setFieldValue, errors, submitForm,
   } = formik;
 
   const { type: addressType } = addressData;
