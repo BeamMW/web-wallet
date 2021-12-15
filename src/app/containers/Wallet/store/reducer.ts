@@ -59,13 +59,15 @@ const initialState: WalletStateType = {
 const handleAssets = (state: WalletStateType) => {
   const { totals, assets } = state;
 
-  return totals.map((data) => {
-    const target = getMetadata(assets, data.asset_id);
-    return {
-      ...data,
-      ...target,
-    };
-  });
+  return totals && totals.length
+    ? totals?.map((data) => {
+      const target = getMetadata(assets, data.asset_id);
+      return {
+        ...data,
+        ...target,
+      };
+    })
+    : [];
 };
 
 const reducer = createReducer<WalletStateType, Action>(initialState)
