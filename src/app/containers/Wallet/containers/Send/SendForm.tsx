@@ -277,7 +277,7 @@ const SendForm = () => {
     if (!is_send_ready && values.address.length && errors.address) return '';
     if (errors.address) return errors.address;
     if (hint) return hint;
-    if (values.address.length) return 'Regular address';
+    if (values.address.length) return AddressLabel.REGULAR;
     return '';
   };
 
@@ -307,8 +307,6 @@ const SendForm = () => {
     if (!formik.isValid) return !formik.isValid;
     return false;
   };
-
-  console.log(isFormDisabled());
 
   return (
     <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>

@@ -12,7 +12,7 @@ import DnodeApp from './DnodeApp';
 declare const BeamModule: any;
 
 const PATH_DB = '/beam_wallet/wallet.db';
-const PATH_NODE = 'localhost:8200';
+const PATH_NODE = process.env.NODE_ENV === 'development' ? 'localhost:8200' : 'eu-node01.masternet.beam.mw:8200';
 
 let WasmWalletClient;
 export interface WalletEvent<T = any> {
