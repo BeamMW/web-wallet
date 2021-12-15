@@ -74,12 +74,10 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
 
   if ((values.address.length && !addressData.is_valid) || addressData.type === 'unknown') {
     errors.address = AddressLabel.ERROR;
-    return errors;
   }
 
   if (addressData.type === 'max_privacy') {
     errors.address = AddressLabel.MAX_PRIVACY;
-    return errors;
   }
 
   if (values.offline) {
