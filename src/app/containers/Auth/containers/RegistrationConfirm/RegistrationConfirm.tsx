@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 
-import { Button, Footer, Window } from '@app/shared/components';
+import {
+  Button, Footer, Popup, Window,
+} from '@app/shared/components';
 import { ArrowRightIcon } from '@app/shared/icons';
 
 import { ROUTES } from '@app/shared/constants';
@@ -17,7 +19,7 @@ const RegistrationConfirm: React.FC = () => {
   const seed = useSelector(selectRegistrationSeed()).split(' ');
   const ids = useSelector(selectSeedIds());
   const navigate = useNavigate();
-
+  const [warningVisible, toggleWarning] = useState(false);
   const [errors, setErrors] = useState(new Array(SEED_CONFIRM_COUNT).fill(null));
   const valid = errors.every((value) => value === true);
 
@@ -53,7 +55,7 @@ const RegistrationConfirm: React.FC = () => {
   };
 
   return (
-    <Window title="Confirm seed phrase" onPrevious={handlePrevious}>
+    <Window title="Confirm seed phrase" onPrevious={() => toggleWarning(true)}>
       <p>
         Your seed phrase is the access key to all the funds in your wallet. Print or write down the phrase to keep it in
         a safe or in a locked vault. Without the phrase you will not be able to recover your money.
@@ -66,6 +68,20 @@ const RegistrationConfirm: React.FC = () => {
           </Button>
         </Footer>
       </form>
+
+      <Popup
+        visible={warningVisible}
+        title="Back to seed phrase"
+        footerClass="justify-right"
+        confirmButton={(
+          <Button type="button" onClick={handlePrevious}>
+            generate
+          </Button>
+        )}
+        onCancel={() => toggleWarning(false)}
+      >
+        Your current seed will become obsolete and the new seed will be generated
+      </Popup>
     </Window>
   );
 };
