@@ -21,7 +21,7 @@ const EmptyListTitle = styled.div`
   text-align: center;
   color: #fff;
   opacity: 0.5;
-  margin-top: 20px;
+  margin: 20px 0;
 `;
 
 const EmptyTransaction = () => (
