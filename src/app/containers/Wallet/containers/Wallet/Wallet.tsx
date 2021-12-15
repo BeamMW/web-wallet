@@ -71,11 +71,9 @@ const Wallet = () => {
         <Assets data={assets} />
       </Section>
 
-      {sliced.length > 0 && (
-        <Section title="Transactions" showAllAction={sliced.length > TXS_MAX ? () => {} : undefined}>
-          <Transactions data={sliced} />
-        </Section>
-      )}
+      <Section title="Transactions" showAllAction={sliced.length > TXS_MAX ? () => {} : undefined}>
+        <Transactions data={sliced} />
+      </Section>
     </Window>
   );
 };
