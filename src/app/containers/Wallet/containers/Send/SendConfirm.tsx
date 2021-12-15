@@ -89,6 +89,8 @@ const SendConfirm = (props: SendConfirmProps) => {
       </Section>
       <Section subtitle="Remaining">
         {fromGroths(remaining)}
+        {' '}
+&nbsp;BEAM
         {asset_id === 0 && <Rate value={remaining} groths />}
       </Section>
       <WarningSyled>{warning}</WarningSyled>
