@@ -76,10 +76,6 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
     errors.address = AddressLabel.ERROR;
   }
 
-  if (addressData.type === 'max_privacy') {
-    errors.address = AddressLabel.MAX_PRIVACY;
-  }
-
   if (values.offline) {
     const warning = addressData.payments === 1
       ? 'transactions left.'
@@ -184,6 +180,7 @@ const SendForm = () => {
 
       if (addressData.type === 'max_privacy') {
         setWarning(AddressTip.MAX_PRIVACY);
+        setHint(AddressLabel.MAX_PRIVACY);
         return;
       }
 
