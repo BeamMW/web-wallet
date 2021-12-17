@@ -59,7 +59,7 @@ const SetPassword = () => {
   };
 
   const handleReturnClick: React.MouseEventHandler = () => {
-    navigate(ROUTES.AUTH.REGISTRATION);
+    navigate(`${ROUTES.AUTH.REGISTRATION}?do_not_show_warn=true`);
   };
 
   return (
