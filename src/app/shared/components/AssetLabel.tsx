@@ -38,18 +38,16 @@ const rateStyle = css`
 `;
 
 const AssetLabel: React.FC<AssetLabelProps> = ({
-  value, asset_id, income, fee, fee_only, invoke_data,
+  value, asset_id, income, fee, fee_only,
 }) => {
   const assets = useSelector(selectAssets());
   const target = assets.find(({ asset_id: id }) => id === asset_id);
-
-  const hasMultipleAssets = invoke_data && invoke_data.some((cont) => cont.amounts.length > 1);
 
   const amount = fromGroths(fee_only ? fee : value);
   const signed = !!income;
   const sign = signed ? getSign(income) : '';
   const name = truncate(target?.metadata_pairs.UN) ?? '';
-  const label = hasMultipleAssets ? 'Multiple Assets' : `${sign}${amount} ${name}`;
+  const label = `${sign}${amount} ${name}`;
 
   return (
     <ContainerStyled>
