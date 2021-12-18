@@ -3,8 +3,10 @@ import { styled } from '@linaria/react';
 
 import { Contract, Transaction } from '@core/types';
 
-import { AssetLabel, StatusLabel } from '@app/shared/components';
 import EmptyTransaction from '@app/containers/Wallet/components/Wallet/EmptyTransaction';
+import TransactionItem from '@app/containers/Wallet/components/Wallet/TransactionItem';
+import { useSelector } from 'react-redux';
+import { selectAssets } from '@app/containers/Wallet/store/selectors';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;
@@ -40,29 +42,31 @@ const fromInvokeData = (data: Contract, fee: number): Partial<Transaction> => {
   return null;
 };
 
-const Transactions: React.FC<TransactionsProps> = ({ data: transactions }) => (transactions.length ? (
-  <ListStyled>
-    {transactions.map((tx, index) => {
-      const { invoke_data: contracts } = tx;
-      const payload = contracts ? fromInvokeData(contracts[0], tx.fee) : null;
+const Transactions: React.FC<TransactionsProps> = ({ data: transactions }) => {
+  const assets = useSelector(selectAssets());
+  return transactions.length ? (
+    <ListStyled>
+      {transactions.map((tx) => {
+        const { invoke_data: contracts } = tx;
+        const payload = contracts ? fromInvokeData(contracts[0], tx.fee) : null;
 
-      const data = !payload
-        ? tx
-        : {
-          ...tx,
-          ...payload,
-        };
+        const data = !payload
+          ? tx
+          : {
+            ...tx,
+            ...payload,
+          };
 
-      return (
-        <ListItemStyled key={index}>
-          <AssetLabel {...data} />
-          <StatusLabel data={data} />
-        </ListItemStyled>
-      );
-    })}
-  </ListStyled>
-) : (
-  <EmptyTransaction />
-));
+        return (
+          <ListItemStyled key={tx.txId}>
+            <TransactionItem data={data} assets={assets} />
+          </ListItemStyled>
+        );
+      })}
+    </ListStyled>
+  ) : (
+    <EmptyTransaction />
+  );
+};
 
 export default Transactions;
