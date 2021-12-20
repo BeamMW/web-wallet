@@ -15,6 +15,7 @@ const ContainerStyled = styled.div`
   font-size: 16px;
   font-weight: 600;
   color: white;
+  flex-direction: row;
 `;
 
 const AmountStyled = styled.span`
@@ -44,6 +45,32 @@ const MultipleAssets = styled.div`
     position: absolute;
     &:first-child {
       margin-left: 6px;
+    }
+  }
+`;
+
+const TransactionDate = styled.div`
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #fff;
+  text-align: right;
+  width: 100%;
+  opacity: 0.5;
+  > span {
+    &::after {
+      content: '|';
+      padding: 0 12px;
+    }
+
+    &:last-child {
+      &::after {
+        display: none;
+      }
     }
   }
 `;
@@ -85,6 +112,19 @@ const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTot
     return res;
   };
 
+  const getTransactionDate = () => {
+    const txDate = new Date(data.create_time * 1000);
+    const time = txDate.toLocaleTimeString(undefined, { timeStyle: 'short' });
+    const date = txDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+
+    return (
+      <>
+        <span>{date}</span>
+        <span>{time}</span>
+      </>
+    );
+  };
+
   return (
     <>
       {!hasMultipleAssets ? (
@@ -103,6 +143,7 @@ const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTot
         </ContainerStyled>
       )}
       <StatusLabel data={data} />
+      <TransactionDate>{getTransactionDate()}</TransactionDate>
     </>
   );
 };
