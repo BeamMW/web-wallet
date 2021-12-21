@@ -96,7 +96,7 @@ const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTot
       const tg = assets.find(({ asset_id: id }) => id === a.asset_id);
       const n = truncate(tg?.metadata_pairs.UN) ?? '';
       const am = fromGroths(fee_only ? fee : a.amount);
-      title += `${sign}${am} ${n} `;
+      title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
     }));
     return title;
   };
@@ -136,7 +136,10 @@ const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTot
       ) : (
         <ContainerStyled>
           <MultipleAssets>
-            {invoke_data.map((i) => i.amounts.map((a) => <AssetIcon key={a.asset_id} asset_id={a.asset_id} />))}
+            {invoke_data.map((i) => i.amounts
+              .slice()
+              .reverse()
+              .map((a) => <AssetIcon key={a.asset_id} asset_id={a.asset_id} />))}
           </MultipleAssets>
           <AmountStyled>{multipleAssetsTitle()}</AmountStyled>
           <Rate value={multipleAssetsAmount()} income={income} className={rateStyle} />

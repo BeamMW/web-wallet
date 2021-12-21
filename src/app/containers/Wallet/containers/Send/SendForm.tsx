@@ -208,9 +208,7 @@ const SendForm = () => {
 
     const ttl = value + fee;
 
-    if (ttl > selected.available) {
-      setFieldValue('send_amount', total, true);
-    }
+    setFieldValue('send_amount', total, true);
 
     if (validateAmountInterval) {
       clearTimeout(validateAmountInterval);

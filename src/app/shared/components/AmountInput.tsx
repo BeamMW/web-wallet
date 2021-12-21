@@ -59,12 +59,11 @@ const AmountInput: React.FC<AmountInputProps> = ({
   const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     const { value: raw } = event.target;
 
-    if (raw !== '' && !REG_AMOUNT.test(raw)) {
+    if ((raw !== '' && !REG_AMOUNT.test(raw)) || parseFloat(raw) > AMOUNT_MAX) {
       return;
     }
 
-    const next = parseFloat(raw) > AMOUNT_MAX ? AMOUNT_MAX.toString() : raw;
-    onChange({ amount: next, asset_id });
+    onChange({ amount: raw, asset_id });
   };
 
   const handleSelect = (next: number) => {
