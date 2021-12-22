@@ -241,6 +241,7 @@ export interface Transaction {
   tx_type_string: string;
   value: number;
   invoke_data: Contract[];
+  appname: string;
 }
 
 export interface WalletChangeEvent {

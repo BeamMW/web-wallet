@@ -2018,10 +2018,10 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-beam-wasm-client-masternet@^6.2.11905:
-  version "6.2.12113"
-  resolved "https://registry.yarnpkg.com/beam-wasm-client-masternet/-/beam-wasm-client-masternet-6.2.12113.tgz#1775cd71fc1b9e151f3cfc8bd564875276ab389b"
-  integrity sha512-wm2NHLv8jPXvWOYAGZZB59Wu1+1HRzqNROlKRINvStZakZTG/tAquxrVCKY5lXUOnIkgNcncNGXI7Oka2ByBXg==
+beam-wasm-client-masternet@^6.3.12385:
+  version "6.3.12385"
+  resolved "https://registry.yarnpkg.com/beam-wasm-client-masternet/-/beam-wasm-client-masternet-6.3.12385.tgz#7a4cc4ff0a2b66b2849f68f98605b6d016b2a89f"
+  integrity sha512-espNgnALqD4OWmXPlCysEop3/gJ1tq36hk53qALuAml/R/5CnC5hNRE+Tqq8/ebk7M2hDN3B7dHq0icjtnZ4Gw==
 
 big.js@^5.2.2:
   version "5.2.2"
@@ -2665,16 +2665,6 @@ domutils@^2.6.0:
     dom-serializer "^1.0.1"
     domelementtype "^2.2.0"
     domhandler "^4.2.0"
-
-effector-react@^21.3.3:
-  version "21.3.3"
-  resolved "https://registry.yarnpkg.com/effector-react/-/effector-react-21.3.3.tgz#e17c095ca7b6d63af3528b1b5ebf94c3de0149db"
-  integrity sha512-pk+eZQcoI0q8sMtxAvm/lWsZutHW5t0aQBt0edy1XTvjKIhgimFhpxUqJtdtr0asz+9OCN0iG6FYa+Iqo6qpkw==
-
-effector@^21.8.12:
-  version "21.8.12"
-  resolved "https://registry.yarnpkg.com/effector/-/effector-21.8.12.tgz#075ba0e17e41386bef271567a259585f407067ae"
-  integrity sha512-Xlw+qvPlfiF0qOHwRQ3RzS5/TtbfpCZ88ucLqG6o8algEV0nxI+Rd8fyJObDljfqQH0+2ByInawu731IXz5RCA==
 
 electron-to-chromium@^1.3.896:
   version "1.3.901"

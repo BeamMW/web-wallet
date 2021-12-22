@@ -15,6 +15,9 @@ export const ROUTES = {
     RECEIVE: '/wallet/receive',
     UTXO: '/wallet/utxo',
   },
+  TRANSACTIONS: {
+    BASE: '/transactions',
+  },
   NOTIFICATIONS: {
     BASE: '/notifications',
     CONNECT: '/notifications/connect',
@@ -42,6 +45,9 @@ export const ROUTES_PATH = {
     SEND: '/send',
     RECEIVE: '/receive',
     UTXO: '/utxo',
+  },
+  TRANSACTIONS: {
+    BASE: '/',
   },
   NOTIFICATIONS: {
     CONNECT: '/connect',
