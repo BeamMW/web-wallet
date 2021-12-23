@@ -27,6 +27,7 @@ const ContainerStyled = styled.div<{ color: string }>`
   margin-top: 8px;
   font-style: italic;
   color: ${({ color }) => color};
+  text-align: left;
 `;
 
 const IconStyled = styled.div<{ reverse: boolean }>`

@@ -15,6 +15,7 @@ import { WalletContainer } from './containers/Wallet';
 import { AuthContainer, Progress } from './containers/Auth';
 import { SettingsContainer } from './containers/Settings';
 import { NotificationContainer } from './containers/Notifications';
+import { TransactionContainer } from './containers/Transactions';
 
 const trackStyle = css`
   z-index: 999;
@@ -34,6 +35,10 @@ const routes = [
   {
     path: `${ROUTES.NOTIFICATIONS.BASE}/*`,
     element: <NotificationContainer />,
+  },
+  {
+    path: `${ROUTES.TRANSACTIONS.BASE}/*`,
+    element: <TransactionContainer />,
   },
   {
     path: `${ROUTES.NOTIFICATIONS.BASE}/*`,

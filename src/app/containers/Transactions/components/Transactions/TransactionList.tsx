@@ -3,10 +3,10 @@ import { styled } from '@linaria/react';
 
 import { Contract, Transaction } from '@core/types';
 
-import EmptyTransaction from '@app/containers/Wallet/components/Wallet/EmptyTransaction';
-import TransactionItem from '@app/containers/Wallet/components/Wallet/TransactionItem';
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
+import TransactionItem from './TransactionItem';
+import EmptyTransaction from './EmptyTransaction';
 
 const ListStyled = styled.ul`
   margin: 0 -20px;
@@ -42,7 +42,7 @@ const fromInvokeData = (data: Contract, fee: number): Partial<Transaction> => {
   return null;
 };
 
-const Transactions: React.FC<TransactionsProps> = ({ data: transactions }) => {
+const TransactionList: React.FC<TransactionsProps> = ({ data: transactions }) => {
   const assets = useSelector(selectAssets());
   return transactions.length ? (
     <ListStyled>
@@ -69,4 +69,4 @@ const Transactions: React.FC<TransactionsProps> = ({ data: transactions }) => {
   );
 };
 
-export default Transactions;
+export default TransactionList;

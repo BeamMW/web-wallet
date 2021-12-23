@@ -1,23 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { styled } from '@linaria/react';
 
-import {
-  Button, Window, Section, Menu,
-} from '@app/shared/components';
+import { Button, Window, Section } from '@app/shared/components';
 
 import { ArrowUpIcon, ArrowDownIcon } from '@app/shared/icons';
 
-import { css } from '@linaria/core';
-
-import { Transaction } from '@core/types';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectAssets, selectRate, selectTransactions } from '@app/containers/Wallet/store/selectors';
-import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
+
 import { loadRate } from '@app/containers/Wallet/store/actions';
-import { Assets, Transactions } from '../../components/Wallet';
+import { TransactionList } from '@app/containers/Transactions';
+import { createdComparator } from '@core/utils';
+import { Assets } from '../../components/Wallet';
 
 const TXS_MAX = 4;
 
@@ -31,17 +28,9 @@ const ActionsStyled = styled.div`
   }
 `;
 
-function createdComparator({ create_time: a }: Transaction, { create_time: b }: Transaction): -1 | 0 | 1 {
-  if (a === b) {
-    return 0;
-  }
-
-  return a < b ? 1 : -1;
-}
-
 const Wallet = () => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const assets = useSelector(selectAssets());
   const transactions = useSelector(selectTransactions());
   const rate = useSelector(selectRate());
@@ -52,10 +41,12 @@ const Wallet = () => {
     }
   }, [dispatch, rate]);
 
-  const navigate = useNavigate();
-
   const sorted = transactions.slice().sort(createdComparator);
   const sliced = sorted.slice(0, TXS_MAX);
+
+  const navigateToTransactions = useCallback(() => {
+    navigate(ROUTES.TRANSACTIONS.BASE);
+  }, [navigate]);
 
   return (
     <Window title="Wallet" primary>
@@ -71,8 +62,8 @@ const Wallet = () => {
         <Assets data={assets} />
       </Section>
 
-      <Section title="Transactions" showAllAction={sliced.length > TXS_MAX ? () => {} : undefined}>
-        <Transactions data={sliced} />
+      <Section title="Transactions" showAllAction={sorted.length > TXS_MAX ? navigateToTransactions : undefined}>
+        <TransactionList data={sliced} />
       </Section>
     </Window>
   );

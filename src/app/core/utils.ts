@@ -1,4 +1,5 @@
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
+import { Transaction } from '@core/types';
 
 export const copyToClipboard = (value: string) => navigator.clipboard.writeText(value);
 
@@ -46,4 +47,12 @@ export function toGroths(value: number): number {
 
 export function getSign(positive: boolean): string {
   return positive ? '+ ' : '- ';
+}
+
+export function createdComparator({ create_time: a }: Transaction, { create_time: b }: Transaction): -1 | 0 | 1 {
+  if (a === b) {
+    return 0;
+  }
+
+  return a < b ? 1 : -1;
 }

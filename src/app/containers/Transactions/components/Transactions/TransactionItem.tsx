@@ -75,6 +75,25 @@ const TransactionDate = styled.div`
   }
 `;
 
+const TransactionBottom = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const TransactionSource = styled.div`
+  margin-top: 8px;
+  font-size: 14px;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #fff;
+  text-align: left;
+  width: 100%;
+  opacity: 0.7;
+  font-weight: bold;
+`;
+
 const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTotal[] }) => {
   const {
     asset_id, invoke_data, income, fee, fee_only, value,
@@ -146,7 +165,10 @@ const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTot
         </ContainerStyled>
       )}
       <StatusLabel data={data} />
-      <TransactionDate>{getTransactionDate()}</TransactionDate>
+      <TransactionBottom>
+        <TransactionSource>{data.appname ?? 'Wallet'}</TransactionSource>
+        <TransactionDate>{getTransactionDate()}</TransactionDate>
+      </TransactionBottom>
     </>
   );
 };
