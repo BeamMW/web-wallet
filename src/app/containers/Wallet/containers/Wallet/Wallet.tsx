@@ -9,11 +9,12 @@ import { ArrowUpIcon, ArrowDownIcon } from '@app/shared/icons';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAssets, selectRate, selectTransactions } from '@app/containers/Wallet/store/selectors';
+import { selectAssets, selectRate } from '@app/containers/Wallet/store/selectors';
 
 import { loadRate } from '@app/containers/Wallet/store/actions';
 import { TransactionList } from '@app/containers/Transactions';
 import { createdComparator } from '@core/utils';
+import { selectTransactions } from '@app/containers/Transactions/store/selectors';
 import { Assets } from '../../components/Wallet';
 
 const TXS_MAX = 4;

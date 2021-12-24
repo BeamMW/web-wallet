@@ -25,6 +25,9 @@ export enum RPCMethod {
   GetTXList = 'tx_list',
   SendTransaction = 'tx_send',
   GetVersion = 'get_version',
+  TxStatus = 'tx_status',
+  ExportPaymentProof = 'export_payment_proof',
+  VerifyPaymentProof = 'verify_payment_proof',
 }
 
 export enum WalletMethod {
@@ -242,6 +245,13 @@ export interface Transaction {
   value: number;
   invoke_data: Contract[];
   appname: string;
+}
+
+export interface TransactionDetail extends Transaction {
+  failure_reason: string;
+  sender_identity: string;
+  receiver_identity: string;
+  token: string;
 }
 
 export interface WalletChangeEvent {

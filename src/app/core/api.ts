@@ -12,15 +12,11 @@ import {
   CreateWalletParams,
   CreateAddressParams,
   SendTransactionParams,
+  TransactionDetail,
 } from './types';
 
 let port;
 let counter = 0;
-
-// remoteEvent.watch(({ method = 'event', id, result, error }) => {
-//   //eslint-disable-next-line no-console
-//   console.info(`received ${method}:${id} with`, result, error);
-// });
 
 export function getEnvironment(href = window.location.href) {
   const url = new URL(href);
@@ -163,4 +159,16 @@ export function calculateChange(params: CalculateChangeParams) {
 
 export function sendTransaction(params: SendTransactionParams) {
   return postMessage(RPCMethod.SendTransaction, params);
+}
+
+export function getTransactionStatus(txId: string) {
+  return postMessage<TransactionDetail>(RPCMethod.TxStatus, { txId });
+}
+
+export function exportPaymentProof(txId: string) {
+  return postMessage(RPCMethod.ExportPaymentProof, { txId });
+}
+
+export function verifyPaymentProof(payment_proof: string) {
+  return postMessage(RPCMethod.VerifyPaymentProof, { payment_proof });
 }
