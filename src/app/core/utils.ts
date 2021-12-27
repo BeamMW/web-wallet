@@ -3,11 +3,11 @@ import { Transaction } from '@core/types';
 
 export const copyToClipboard = (value: string) => navigator.clipboard.writeText(value);
 
-export function compact(value: string): string {
+export function compact(value: string, stringLength: number = 5): string {
   if (value.length <= 11) {
     return value;
   }
-  return `${value.substr(0, 5)}…${value.substr(-5, 5)}`;
+  return `${value.substr(0, stringLength)}…${value.substr(-stringLength, stringLength)}`;
 }
 
 const LENGTH_MAX = 8;

@@ -311,3 +311,12 @@ export interface SendTransactionParams {
   asset_id?: number;
   offline?: boolean;
 }
+
+export interface PaymentProof {
+  amount: number;
+  asset_id: number;
+  is_valid: boolean;
+  kernel: string;
+  receiver: string;
+  sender: string;
+}
