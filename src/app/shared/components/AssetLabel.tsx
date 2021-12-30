@@ -9,7 +9,11 @@ import { selectAssets } from '@app/containers/Wallet/store/selectors';
 import AssetIcon from './AssetIcon';
 import Rate from './Rate';
 
-interface AssetLabelProps extends Partial<Transaction> {}
+interface AssetLabelProps extends Partial<Transaction> {
+  className?: string;
+  iconClass?: string;
+  showRate: boolean;
+}
 
 const ContainerStyled = styled.div`
   display: flex;
@@ -38,7 +42,14 @@ const rateStyle = css`
 `;
 
 const AssetLabel: React.FC<AssetLabelProps> = ({
-  value, asset_id, income, fee, fee_only,
+  value,
+  asset_id,
+  income,
+  fee,
+  fee_only,
+  className,
+  iconClass,
+  showRate = true,
 }) => {
   const assets = useSelector(selectAssets());
   const target = assets.find(({ asset_id: id }) => id === asset_id);
@@ -50,10 +61,10 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   const label = `${sign}${amount} ${name}`;
 
   return (
-    <ContainerStyled>
-      <AssetIcon asset_id={asset_id} className={iconClassName} />
-      <AmountStyled>{label}</AmountStyled>
-      <Rate value={amount} income={income} className={rateStyle} />
+    <ContainerStyled className={className}>
+      <AssetIcon asset_id={asset_id} className={iconClass || iconClassName} />
+      <AmountStyled className="asset-name">{label}</AmountStyled>
+      {showRate ? <Rate value={amount} income={income} className={rateStyle} /> : null}
     </ContainerStyled>
   );
 };

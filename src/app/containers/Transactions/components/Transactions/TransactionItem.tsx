@@ -35,7 +35,7 @@ const rateStyle = css`
   white-space: nowrap;
 `;
 
-const MultipleAssets = styled.div`
+export const MultipleAssets = styled.div`
   position: relative;
   margin-left: -30px;
   margin-right: 38px;
