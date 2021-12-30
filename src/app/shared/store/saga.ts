@@ -5,7 +5,8 @@ import { initRemoteWallet } from '@core/api';
 import { BackgroundEvent, RemoteResponse, RPCEvent } from '@core/types';
 
 import { handleConnect, handleProgress } from '@app/containers/Auth/store/saga';
-import { handleTotals, handleAssets, handleTransactions } from '@app/containers/Wallet/store/saga';
+import { handleTotals, handleAssets } from '@app/containers/Wallet/store/saga';
+import { handleTransactions } from '@app/containers/Transactions/store/saga';
 
 export function remoteEventChannel() {
   return eventChannel((emitter) => {

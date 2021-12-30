@@ -2,9 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import {
   getWalletStatus, createAddress, validateAddress, calculateChange, sendTransaction,
 } from '@core/api';
-import {
-  AddressData, ChangeData, AssetsEvent, TxsEvent,
-} from '@core/types';
+import { AddressData, ChangeData, AssetsEvent } from '@core/types';
 import { RateResponse } from '@app/containers/Wallet/interfaces';
 import { resetSendData } from '@app/containers/Wallet/store/actions';
 import { navigate } from '@app/shared/store/actions';
@@ -25,10 +23,6 @@ export function* handleTotals() {
 
 export function* handleAssets(payload: AssetsEvent) {
   yield put(actions.setAssets(payload.assets));
-}
-
-export function* handleTransactions(payload: TxsEvent) {
-  yield put(actions.setTransactions(payload.txs));
 }
 
 async function loadRatesApiCall() {

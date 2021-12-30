@@ -5,6 +5,8 @@ import { Contract, Transaction } from '@core/types';
 
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@app/shared/constants';
 import TransactionItem from './TransactionItem';
 import EmptyTransaction from './EmptyTransaction';
 
@@ -44,6 +46,12 @@ const fromInvokeData = (data: Contract, fee: number): Partial<Transaction> => {
 
 const TransactionList: React.FC<TransactionsProps> = ({ data: transactions }) => {
   const assets = useSelector(selectAssets());
+  const navigate = useNavigate();
+
+  const navigateTransactionDetail = (id: string) => {
+    navigate(`${ROUTES.TRANSACTIONS.DETAIL.replace(':id', '')}${id}`);
+  };
+
   return transactions.length ? (
     <ListStyled>
       {transactions.map((tx) => {
@@ -58,7 +66,7 @@ const TransactionList: React.FC<TransactionsProps> = ({ data: transactions }) =>
           };
 
         return (
-          <ListItemStyled key={tx.txId}>
+          <ListItemStyled key={tx.txId} onClick={() => navigateTransactionDetail(tx.txId)}>
             <TransactionItem data={data} assets={assets} />
           </ListItemStyled>
         );

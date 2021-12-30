@@ -2,10 +2,11 @@ import React, { useCallback } from 'react';
 import { Window } from '@app/shared/components';
 import { TransactionList } from '@app/containers/Transactions';
 import { useSelector } from 'react-redux';
-import { selectTransactions } from '@app/containers/Wallet/store/selectors';
+
 import { createdComparator } from '@core/utils';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
+import { selectTransactions } from '@app/containers/Transactions/store/selectors';
 
 const Transactions = () => {
   const navigate = useNavigate();

@@ -17,6 +17,7 @@ export const ROUTES = {
   },
   TRANSACTIONS: {
     BASE: '/transactions',
+    DETAIL: '/transactions/:id',
   },
   NOTIFICATIONS: {
     BASE: '/notifications',
@@ -48,6 +49,7 @@ export const ROUTES_PATH = {
   },
   TRANSACTIONS: {
     BASE: '/',
+    DETAIL: '/:id',
   },
   NOTIFICATIONS: {
     CONNECT: '/connect',

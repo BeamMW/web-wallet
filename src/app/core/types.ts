@@ -25,6 +25,9 @@ export enum RPCMethod {
   GetTXList = 'tx_list',
   SendTransaction = 'tx_send',
   GetVersion = 'get_version',
+  TxStatus = 'tx_status',
+  ExportPaymentProof = 'export_payment_proof',
+  VerifyPaymentProof = 'verify_payment_proof',
 }
 
 export enum WalletMethod {
@@ -244,6 +247,13 @@ export interface Transaction {
   appname: string;
 }
 
+export interface TransactionDetail extends Transaction {
+  failure_reason: string;
+  sender_identity: string;
+  receiver_identity: string;
+  token: string;
+}
+
 export interface WalletChangeEvent {
   change: number;
   change_str: string;
@@ -300,4 +310,13 @@ export interface SendTransactionParams {
   comment?: string;
   asset_id?: number;
   offline?: boolean;
+}
+
+export interface PaymentProof {
+  amount: number;
+  asset_id: number;
+  is_valid: boolean;
+  kernel: string;
+  receiver: string;
+  sender: string;
 }

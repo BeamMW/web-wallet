@@ -1,12 +1,6 @@
 import { createAction, createAsyncAction } from 'typesafe-actions';
 import {
-  WalletTotal,
-  Asset,
-  Transaction,
-  CreateAddressParams,
-  AddressData,
-  ChangeData,
-  SendTransactionParams,
+  WalletTotal, Asset, CreateAddressParams, AddressData, ChangeData, SendTransactionParams,
 } from '@core/types';
 import { ErrorMessage } from '@core/WasmWallet';
 import { CalculateChangeParams } from '@core/api';
@@ -15,7 +9,7 @@ import { TransactionAmount } from '../interfaces';
 
 export const setTotals = createAction(WalletActionTypes.SET_TOTALS)<WalletTotal[]>();
 export const setAssets = createAction(WalletActionTypes.SET_ASSETS)<Asset[]>();
-export const setTransactions = createAction(WalletActionTypes.SET_TRANSACTIONS)<Transaction[]>();
+
 export const resetSendData = createAction(WalletActionTypes.RESET_SEND_DATA)();
 export const setSendTransactionState = createAction(WalletActionTypes.SET_SEND_TRANSACTION_STATE)<boolean>();
 

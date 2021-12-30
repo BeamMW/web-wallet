@@ -7,7 +7,7 @@ import { BeamIcon as BeamIconSvg, AssetIcon as AssetIconSvg } from '@app/shared/
 import { styled } from '@linaria/react';
 import { PALLETE_ASSETS } from '@app/shared/constants';
 
-interface AssetIconProps extends Partial<WalletTotal> {
+export interface AssetIconProps extends Partial<WalletTotal> {
   asset_id?: number;
   className?: string;
 }

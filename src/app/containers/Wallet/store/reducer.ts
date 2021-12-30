@@ -36,7 +36,6 @@ const initialState: WalletStateType = {
   totals: [],
   assets: [],
   assets_total: [],
-  transactions: [],
   rate: 0,
   receive_amount: {
     amount: '',
@@ -74,9 +73,6 @@ const reducer = createReducer<WalletStateType, Action>(initialState)
   .handleAction(actions.setTotals, (state, action) => produce(state, (nexState) => {
     nexState.totals = action.payload;
     nexState.assets_total = handleAssets(nexState);
-  }))
-  .handleAction(actions.setTransactions, (state, action) => produce(state, (nexState) => {
-    nexState.transactions = action.payload;
   }))
   .handleAction(actions.setAssets, (state, action) => produce(state, (nexState) => {
     nexState.assets = action.payload;
