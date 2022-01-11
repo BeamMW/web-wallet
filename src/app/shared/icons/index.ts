@@ -45,6 +45,7 @@ import TxPendingMPIcon from './icon-tx-pending-mp.svg';
 import TxPendingOffIcon from './icon-tx-pending-off.svg';
 import TxPendingOwnIcon from './icon-tx-pending-own.svg';
 import TxEmptyState from './icon-tx-empty.svg';
+import LogoSmall from './logo-small.svg';
 
 export {
   AddIcon,
@@ -86,4 +87,5 @@ export {
   TxPendingOwnIcon,
   TxExpiredIcon,
   TxEmptyState,
+  LogoSmall,
 };
