@@ -73,10 +73,10 @@ const HeadingStyled = styled.div<{ pallete: string }>`
 const FrameStyled = styled.div`
   overflow: hidden;
   position: absolute;
-  top: 10px;
+  top: 0;
   left: 50%;
   width: 42px;
-  height: 30px;
+  height: 42px;
   transform: translateX(-50%);
 `;
 

@@ -1,0 +1,107 @@
+<svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient x1="50%" y1="8.953%" x2="50%" y2="88.548%" id="a">
+      <stop stop-color="#0073FF" offset="0%" />
+      <stop stop-color="#0073FF" stop-opacity=".15" offset="32.564%" />
+      <stop stop-color="#0073FF" stop-opacity=".15" offset="100%" />
+    </linearGradient>
+    <linearGradient x1="0%" y1="98.33%" x2="100%" y2="98.33%" id="b">
+      <stop stop-color="#0073FF" offset="0%" />
+      <stop stop-color="#0073FF" stop-opacity="0" offset="18.628%" />
+      <stop stop-color="#0073FF" stop-opacity="0" offset="85.157%" />
+      <stop stop-color="#0073FF" offset="100%" />
+    </linearGradient>
+    <linearGradient x1="50%" y1="9.599%" x2="50%" y2="101.952%" id="c">
+      <stop stop-color="#00E8C1" stop-opacity=".5" offset="0%" />
+      <stop stop-color="#00E8C1" stop-opacity=".15" offset="26.829%" />
+      <stop stop-color="#00E8C1" stop-opacity=".15" offset="80.309%" />
+      <stop stop-color="#00E8C1" stop-opacity=".3" offset="100%" />
+    </linearGradient>
+    <linearGradient x1="1.411%" y1="97.648%" x2="96.841%" y2="97.648%" id="d">
+      <stop stop-color="#00E8C1" stop-opacity=".7" offset="0%" />
+      <stop stop-color="#00E8C1" stop-opacity="0" offset="19.89%" />
+      <stop stop-color="#00E8C1" stop-opacity="0" offset="80.309%" />
+      <stop stop-color="#00E8C1" stop-opacity=".7" offset="100%" />
+    </linearGradient>
+    <linearGradient x1="79.748%" y1="32.409%" x2="33.773%" y2="98.354%" id="e">
+      <stop stop-color="#00C2FF" offset="0%" />
+      <stop stop-color="#00C2FF" stop-opacity=".15" offset="12.827%" />
+      <stop stop-color="#00C2FF" stop-opacity=".15" offset="82.31%" />
+      <stop stop-color="#00C2FF" stop-opacity=".4" offset="100%" />
+    </linearGradient>
+    <linearGradient x1="94.89%" y1="85.659%" x2="85.303%" y2="80.527%" id="f">
+      <stop stop-color="#00C2FF" stop-opacity=".7" offset="0%" />
+      <stop stop-color="#00C2FF" stop-opacity="0" offset="100%" />
+    </linearGradient>
+    <linearGradient x1="64.669%" y1="28.526%" x2="25.107%" y2="89.299%" id="g">
+      <stop stop-color="#FF39FF" stop-opacity=".7" offset="0%" />
+      <stop stop-color="#F0F" stop-opacity=".15" offset="30.893%" />
+      <stop stop-color="#F0F" stop-opacity=".15" offset="76.954%" />
+      <stop stop-color="#FF31FF" offset="100%" />
+    </linearGradient>
+    <linearGradient x1="76.29%" y1="75.79%" x2="86.389%" y2="80.835%" id="h">
+      <stop stop-color="#F0F" stop-opacity="0" offset="0%" />
+      <stop stop-color="#FF2CFF" stop-opacity=".7" offset="100%" />
+    </linearGradient>
+    <linearGradient x1=".027%" y1="50.232%" x2="54.787%" y2="50.232%" id="i">
+      <stop stop-color="#FFF" stop-opacity="0" offset="0%" />
+      <stop stop-color="#FFF" offset="100%" />
+    </linearGradient>
+    <linearGradient x1="99.383%" y1="49.833%" x2="35.802%" y2="49.833%" id="j">
+      <stop stop-color="#FD76FD" stop-opacity="0" offset="0%" />
+      <stop stop-color="#FF51FF" offset="100%" />
+    </linearGradient>
+    <linearGradient x1="100.434%" y1="50.114%" x2="48.938%" y2="50.114%" id="k">
+      <stop stop-color="#9D6EFF" stop-opacity="0" offset="0%" />
+      <stop stop-color="#A18CFF" offset="100%" />
+    </linearGradient>
+    <linearGradient x1="99.909%" y1="50.24%" x2="41.056%" y2="50.24%" id="l">
+      <stop stop-color="#AE60D6" stop-opacity="0" offset="0%" />
+      <stop stop-color="#AB38E6" offset="100%" />
+    </linearGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <g opacity=".45">
+      <path stroke="url(#a)" d="m24.153 5.779 16.768 28.868H7.378z" transform="translate(1)" />
+      <path stroke="url(#b)" d="m24.153 5.779 16.768 28.868H7.378z" transform="translate(1)" />
+      <path
+        stroke="url(#c)"
+        style="mix-blend-mode:lighten"
+        transform="rotate(-180 24.65 29.795)"
+        d="m24.153 15.36 16.769 28.87H7.379z"
+      />
+      <path
+        stroke="url(#d)"
+        style="mix-blend-mode:lighten"
+        transform="rotate(-180 24.65 29.795)"
+        d="m24.153 15.36 16.769 28.87H7.379z"
+      />
+      <path stroke="url(#e)" transform="rotate(-30 22.207 18.993)" d="m21.718 6.437 16.728 28.836-33.477.009z" />
+      <path stroke="url(#f)" transform="rotate(-30 22.207 18.993)" d="m21.718 6.437 16.728 28.836-33.477.009z" />
+      <g>
+        <path
+          stroke="url(#g)"
+          style="mix-blend-mode:lighten"
+          transform="rotate(150 23.492 25.775)"
+          d="m21.718 6.437 16.728 28.836-33.477.009z"
+        />
+        <path
+          stroke="url(#h)"
+          style="mix-blend-mode:lighten"
+          transform="rotate(150 23.492 25.775)"
+          d="m21.718 6.437 16.728 28.836-33.477.009z"
+        />
+      </g>
+    </g>
+    <g fill-rule="nonzero">
+      <path fill="#0B76FF" d="M25.009 28.13h5.586l-5.585-9.686v-5.868l10.948 18.67h-10.95z" />
+      <path fill="#24C1FF" d="M25.008 28.13h-5.587l5.585-9.686v-5.868l-10.948 18.67h10.95z" />
+      <path fill="#39FFF2" d="M25.008 20.652v6.261l-3.422.006z" />
+      <path fill="#00E2C2" d="M25.008 20.652v6.261l3.422.006z" />
+      <path fill="url(#i)" d="m0 5.84 13.413 6.172v.646L0 9.735z" transform="translate(11.595 12.576)" />
+      <path fill="url(#j)" d="m26.853 4.048-13.44 7.964v.215l13.44-5.608z" transform="translate(11.595 12.576)" />
+      <path fill="url(#k)" d="m26.853 11.76-13.44.898v-.216l13.44-3.252z" transform="translate(11.595 12.576)" />
+      <path fill="url(#l)" d="m26.853 6.619-13.44 5.608v.215l13.44-3.252z" transform="translate(11.595 12.576)" />
+    </g>
+  </g>
+</svg>
