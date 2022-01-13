@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
-import { MenuIcon } from '@app/shared/icons';
+import { IconLockWallet, MenuIcon } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
 
+import useOutsideClick from '@app/shared/hooks/OutsideClickHook';
 import Logo from './Logo';
 import BackButton from './BackButton';
 import Title from './Title';
@@ -71,13 +72,12 @@ const HeadingStyled = styled.div<{ pallete: string }>`
 `;
 
 const FrameStyled = styled.div`
-  overflow: hidden;
   position: absolute;
   top: 0;
-  left: 50%;
-  width: 42px;
+  left: 0;
+  width: 375px;
   height: 42px;
-  transform: translateX(-50%);
+  text-align: left;
 `;
 
 const menuButtonStyle = css`
@@ -88,6 +88,82 @@ const menuButtonStyle = css`
   margin: 0;
 `;
 
+const OnlineWrapper = styled.div`
+  position: absolute;
+  top: 17px;
+  width: 250px;
+  display: inline-block;
+  > svg {
+    margin: 0 30px;
+  }
+  > .online-ico {
+    width: 10px;
+    height: 10px;
+    margin: 0 10px 0 0;
+    box-shadow: 0 0 5px 0 rgba(0, 246, 210, 0.7);
+    background-color: #00f6d2;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  > .online-text {
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #8da1ad;
+  }
+`;
+
+const BurgerWrapper = styled.div`
+  position: absolute;
+  top: 17px;
+  right: 20px;
+  > .kebab {
+    cursor: pointer;
+    div {
+      background-color: #92abba;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      :nth-child(2) {
+        margin: 3px 0;
+      }
+    }
+  }
+  > .burger-content {
+    padding: 20px 0;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.14);
+    background-color: #003f6f;
+    width: 205px;
+    position: absolute;
+    right: 0;
+    .burger-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      color: #fff;
+      cursor: pointer;
+      opacity: 0.8;
+      &:hover {
+        opacity: 1;
+        background: #114b77;
+      }
+      span {
+        margin-left: 14px;
+      }
+    }
+  }
+`;
+
 export const Window: React.FC<WindowProps> = ({
   title,
   primary = false,
@@ -95,8 +171,17 @@ export const Window: React.FC<WindowProps> = ({
   children,
   onPrevious,
 }) => {
+  const wrapperRef = useRef(null);
+  const [isOpened, setIsOpened] = useState(false);
   const [menuVisible, setVisible] = useState(false);
+  const { isOutside } = useOutsideClick(wrapperRef);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isOutside) {
+      setIsOpened(false);
+    }
+  }, [isOutside]);
 
   const handlePrevious: React.MouseEventHandler = () => {
     navigate(-1);
@@ -111,6 +196,25 @@ export const Window: React.FC<WindowProps> = ({
       <HeadingStyled pallete={pallete}>
         <FrameStyled>
           <Logo size="icon" />
+          <OnlineWrapper>
+            <span className="online-ico" />
+            <span className="online-text">online</span>
+          </OnlineWrapper>
+          <BurgerWrapper>
+            <div className="kebab" onClick={() => setIsOpened((v) => !v)} aria-hidden="true">
+              <div />
+              <div />
+              <div />
+            </div>
+            {isOpened && (
+              <div className="burger-content" ref={wrapperRef}>
+                <div className="burger-item">
+                  <IconLockWallet />
+                  <span>Lock Wallet</span>
+                </div>
+              </div>
+            )}
+          </BurgerWrapper>
         </FrameStyled>
         <Title variant="heading">{title}</Title>
       </HeadingStyled>

@@ -84,6 +84,8 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
     const label = `${AddressLabel.OFFLINE} ${addressData.payments} ${warning}`;
 
     setHint(label);
+  } else if (addressData.type === 'max_privacy' && values.address.length) {
+    setHint(AddressLabel.MAX_PRIVACY);
   } else {
     setHint('');
   }
@@ -115,12 +117,13 @@ const SendForm = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [validateInterval, setValidateInterval] = useState<null | NodeJS.Timer>(null);
   const [validateAmountInterval, setValidateAmountInterval] = useState<null | NodeJS.Timer>(null);
+  const addressData = useSelector(selectSendAddressData());
   const [warning, setWarning] = useState('');
   const [hint, setHint] = useState('');
   const [selected, setSelected] = useState(ASSET_BLANK);
 
   const assets = useSelector(selectAssets());
-  const addressData = useSelector(selectSendAddressData());
+
   const fee = useSelector(selectSendFee());
   const change = useSelector(selectChange());
   const is_send_ready = useSelector(selectIsSendReady());
@@ -171,31 +174,6 @@ const SendForm = () => {
     }
   }, [selected, beam, setFieldValue]);
 
-  useEffect(() => {
-    if (values.address.length) {
-      setFieldValue('misc.addressData', addressData, true);
-      if (addressData.amount && addressData.asset_id) {
-        setFieldValue('send_amount', { amount: addressData.amount, asset_id: addressData.asset_id }, true);
-      }
-
-      if (addressData.type === 'max_privacy') {
-        setWarning(AddressTip.MAX_PRIVACY);
-        setHint(AddressLabel.MAX_PRIVACY);
-        return;
-      }
-
-      if (values.offline) {
-        setWarning(AddressTip.OFFLINE);
-        return;
-      }
-      if (addressData.is_valid) {
-        setWarning(AddressTip.REGULAR);
-      }
-    }
-  }, [addressData, values, setFieldValue]);
-
-  const groths = fromGroths(selected.available);
-
   const validateAmountHandler = (total: TransactionAmount, offline: boolean) => {
     const { amount, asset_id } = total;
 
@@ -226,6 +204,34 @@ const SendForm = () => {
     setValidateAmountInterval(i);
   };
 
+  useEffect(() => {
+    if (values.address.length) {
+      setFieldValue('misc.addressData', addressData, true);
+      if (addressData.amount && addressData.asset_id) {
+        setFieldValue('send_amount', { amount: addressData.amount, asset_id: addressData.asset_id }, true);
+      }
+
+      if (addressData.type === 'max_privacy') {
+        setWarning(AddressTip.MAX_PRIVACY);
+        setHint(AddressLabel.MAX_PRIVACY);
+
+        validateAmountHandler(values.send_amount, true);
+        return;
+      }
+      validateAmountHandler(values.send_amount, values.offline);
+
+      if (values.offline) {
+        setWarning(AddressTip.OFFLINE);
+        return;
+      }
+      if (addressData.is_valid) {
+        setWarning(AddressTip.REGULAR);
+      }
+    }
+  }, [addressData, values, fee, setFieldValue]);
+
+  const groths = fromGroths(selected.available);
+
   const validateAddressHandler = (address: string) => {
     if (validateInterval) {
       clearTimeout(validateInterval);
@@ -244,17 +250,18 @@ const SendForm = () => {
   };
 
   const handleAssetChange = (e: TransactionAmount) => {
+    const isMaxPrivacy = addressData.type === 'max_privacy';
     setFieldValue('send_amount', e, true);
     const asset = assets.find(({ asset_id: id }) => id === e.asset_id) ?? ASSET_BLANK;
     setSelected(asset);
     setFieldValue('misc.selected', asset, true);
-    validateAmountHandler(e, values.offline);
+    validateAmountHandler(e, values.offline || isMaxPrivacy);
   };
 
   const handleMaxAmount = () => {
     const { available } = selected;
     const { send_amount } = values;
-
+    const isMaxPrivacy = addressData.type === 'max_privacy';
     const total = send_amount.asset_id === 0 ? Math.max(available - fee, 0) : available;
     const new_amount = fromGroths(total).toString();
 
@@ -265,7 +272,7 @@ const SendForm = () => {
 
     setFieldValue('send_amount', amount, true);
 
-    validateAmountHandler(amount, values.offline);
+    validateAmountHandler(amount, values.offline || isMaxPrivacy);
   };
 
   const handleOffline = (e: boolean) => {
@@ -314,6 +321,7 @@ const SendForm = () => {
     return !(is_send_ready && errors.address);
   };
 
+  console.log(hint);
   return (
     <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
       {!showConfirm ? (

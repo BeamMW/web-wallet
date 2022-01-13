@@ -11,6 +11,7 @@ window.global = globalThis;
 
 const notificationManager = new NotificationManager();
 const wallet = WasmWallet.getInstance();
+
 const openBeamTabsIDs = {};
 
 let port = null;
