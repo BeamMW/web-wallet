@@ -26,7 +26,7 @@ const BeamAmount = styled.p`
 
 const getTxType = (type: AddressType, offline: boolean): string => {
   if (type === 'max_privacy') {
-    return 'Max Privacy';
+    return 'Maximum anonymity';
   }
 
   return offline ? 'Offline' : 'Regular';
