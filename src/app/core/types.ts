@@ -34,6 +34,7 @@ export enum WalletMethod {
   StartWallet = 'wasm_start_wallet',
   CreateWallet = 'wasm_create_wallet',
   DeleteWallet = 'wasm_delete_wallet',
+  StopWallet = 'wasm_stop_wallet',
   IsAllowedWord = 'wasm_is_allowed_word',
   IsAllowedSeed = 'wasm_is_allowed_seed',
   GenerateSeed = 'wasm_generate_seed',

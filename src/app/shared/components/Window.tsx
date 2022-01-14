@@ -6,6 +6,8 @@ import { IconLockWallet, MenuIcon } from '@app/shared/icons';
 import { useNavigate } from 'react-router-dom';
 
 import useOutsideClick from '@app/shared/hooks/OutsideClickHook';
+import { useDispatch } from 'react-redux';
+import { actions } from '@app/shared/store';
 import Logo from './Logo';
 import BackButton from './BackButton';
 import Title from './Title';
@@ -171,6 +173,7 @@ export const Window: React.FC<WindowProps> = ({
   children,
   onPrevious,
 }) => {
+  const dispatch = useDispatch();
   const wrapperRef = useRef(null);
   const [isOpened, setIsOpened] = useState(false);
   const [menuVisible, setVisible] = useState(false);
@@ -191,6 +194,10 @@ export const Window: React.FC<WindowProps> = ({
   const handleMenuClick = () => setVisible(true);
   const handleCancelClick = () => setVisible(false);
 
+  const stopWallet = () => {
+    dispatch(actions.stopWallet());
+  };
+
   return (
     <ContainerStyled pallete={pallete}>
       <HeadingStyled pallete={pallete}>
@@ -208,7 +215,7 @@ export const Window: React.FC<WindowProps> = ({
             </div>
             {isOpened && (
               <div className="burger-content" ref={wrapperRef}>
-                <div className="burger-item">
+                <div className="burger-item" onClick={stopWallet} aria-hidden="true">
                   <IconLockWallet />
                   <span>Lock Wallet</span>
                 </div>

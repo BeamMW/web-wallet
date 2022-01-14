@@ -49,7 +49,10 @@ export function* handleProgress({
   tip_state_hash,
 }: SyncProgress) {
   const { is_wallet_synced } = store.getState().auth;
-  if (is_wallet_synced) return;
+  if (is_wallet_synced) {
+    yield put(navigate(ROUTES.WALLET.BASE));
+    return;
+  }
   if (current_state_hash === tip_state_hash) {
     yield put(actions.setSyncedWalletState(true));
     if (getEnvironment() !== Environment.NOTIFICATION) {
@@ -69,12 +72,12 @@ export function* handleProgress({
 
 function* startWalletSaga(action: ReturnType<typeof actions.startWallet.request>): Generator {
   try {
-    yield call(startWallet, action.payload);
-
     yield put(navigate(ROUTES.AUTH.PROGRESS));
+    yield call(startWallet, action.payload);
   } catch (e) {
     yield put(setError(e));
     yield put(actions.startWallet.failure(e));
+    yield put(navigate(ROUTES.AUTH.LOGIN));
   }
 }
 
