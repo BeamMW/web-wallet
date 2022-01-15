@@ -28,6 +28,9 @@ const getTxType = (type: AddressType, offline: boolean): string => {
   if (type === 'max_privacy') {
     return 'Maximum anonymity';
   }
+  if (type === 'public_offline') {
+    return 'Public offline';
+  }
 
   return offline ? 'Offline' : 'Regular';
 };

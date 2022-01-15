@@ -86,6 +86,8 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
     setHint(label);
   } else if (addressData.type === 'max_privacy' && values.address.length) {
     setHint(AddressLabel.MAX_PRIVACY);
+  } else if (addressData.type === 'public_offline' && values.address.length) {
+    setHint(AddressLabel.OFFLINE);
   } else {
     setHint('');
   }
@@ -218,6 +220,13 @@ const SendForm = () => {
         validateAmountHandler(values.send_amount, true);
         return;
       }
+      if (addressData.type === 'public_offline') {
+        setWarning(AddressTip.OFFLINE);
+        setHint(AddressLabel.OFFLINE);
+
+        validateAmountHandler(values.send_amount, true);
+        return;
+      }
       validateAmountHandler(values.send_amount, values.offline);
 
       if (values.offline) {
@@ -321,7 +330,6 @@ const SendForm = () => {
     return !(is_send_ready && errors.address);
   };
 
-  console.log(hint);
   return (
     <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
       {!showConfirm ? (
