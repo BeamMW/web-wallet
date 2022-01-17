@@ -121,9 +121,14 @@ const OnlineWrapper = styled.div`
 const BurgerWrapper = styled.div`
   position: absolute;
   top: 17px;
-  right: 20px;
+  right: 10px;
   > .kebab {
     cursor: pointer;
+    width: 24px;
+    height: 24px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
     div {
       background-color: #92abba;
       width: 3px;
@@ -141,7 +146,8 @@ const BurgerWrapper = styled.div`
     background-color: #003f6f;
     width: 205px;
     position: absolute;
-    right: 0;
+    right: 8px;
+    top: 16px;
     .burger-item {
       display: flex;
       align-items: center;
