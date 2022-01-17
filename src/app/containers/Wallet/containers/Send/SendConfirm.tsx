@@ -91,7 +91,6 @@ const SendConfirm = (props: SendConfirmProps) => {
       <Section subtitle="Change">
         {fromGroths(change)}
         &nbsp;
-        {' '}
         {metadata_pairs.UN}
         <Rate value={change} groths />
       </Section>

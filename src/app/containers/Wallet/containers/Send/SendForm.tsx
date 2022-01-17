@@ -87,7 +87,7 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
   } else if (addressData.type === 'max_privacy' && values.address.length) {
     setHint(AddressLabel.MAX_PRIVACY);
   } else if (addressData.type === 'public_offline' && values.address.length) {
-    setHint(AddressLabel.OFFLINE);
+    setHint(AddressLabel.PUBLIC_OFFLINE);
   } else {
     setHint('');
   }
