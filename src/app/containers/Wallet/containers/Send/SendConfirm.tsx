@@ -41,6 +41,7 @@ interface SendConfirmProps {
   offline: boolean;
   send_amount: TransactionAmount;
   selected: AssetTotal;
+  beam: AssetTotal;
   addressData: AddressData;
   fee: number;
   change: number;
@@ -49,7 +50,7 @@ interface SendConfirmProps {
 
 const SendConfirm = (props: SendConfirmProps) => {
   const {
-    warning, address, offline, send_amount, selected, addressData, fee, change, submitSend,
+    warning, address, offline, send_amount, selected, addressData, fee, change, submitSend, beam,
   } = props;
 
   const { asset_id, amount } = send_amount;
@@ -63,6 +64,8 @@ const SendConfirm = (props: SendConfirmProps) => {
   const remaining = asset_id === 0 ? available - fee - value : available - value;
 
   const txType = getTxType(addressType, offline);
+
+  const beamRemaining = beam.available - fee;
 
   return (
     <form
@@ -87,14 +90,24 @@ const SendConfirm = (props: SendConfirmProps) => {
       </Section>
       <Section subtitle="Change">
         {fromGroths(change)}
-        &nbsp;BEAM
+        &nbsp;
+        {' '}
+        {metadata_pairs.UN}
         <Rate value={change} groths />
       </Section>
       <Section subtitle="Remaining">
         {fromGroths(remaining)}
-        &nbsp;BEAM
-        {asset_id === 0 && <Rate value={remaining} groths />}
+        &nbsp;
+        {metadata_pairs.UN}
+        <Rate value={remaining} groths />
       </Section>
+      {selected.asset_id !== 0 && (
+        <Section subtitle="Beam Remaining">
+          {fromGroths(beamRemaining)}
+          &nbsp;BEAM
+          <Rate value={beamRemaining} groths />
+        </Section>
+      )}
       <WarningSyled>{warning}</WarningSyled>
       <Button type="submit" pallete="purple" icon={ArrowRightIcon}>
         next
