@@ -8,7 +8,8 @@ export enum AddressLabel {
   ERROR = 'Invalid wallet address',
   MAX_PRIVACY = 'Guarantees maximum anonymity set of up to 64K.',
   OFFLINE = 'Offline address.',
-  REGULAR = 'Regular address',
+  REGULAR = 'Online address',
+  PUBLIC_OFFLINE = 'Public offline address',
 }
 
 export enum AddressTip {
