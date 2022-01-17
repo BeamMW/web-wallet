@@ -385,6 +385,7 @@ const SendForm = () => {
         </form>
       ) : (
         <SendConfirm
+          beam={beam}
           warning={warning}
           address={values.address}
           addressData={addressData}
