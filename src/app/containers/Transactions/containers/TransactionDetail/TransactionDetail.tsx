@@ -7,7 +7,7 @@ import { PaymentProofInformation, GeneralTransactionInformation } from '@app/con
 import { useDispatch, useSelector } from 'react-redux';
 import { loadTransactionStatus, setPaymentProof } from '@app/containers/Transactions/store/actions';
 import { selectPaymentProof, selectTransactionDetail } from '@app/containers/Transactions/store/selectors';
-import { selectAssets, selectRate } from '@app/containers/Wallet/store/selectors';
+import { selectAssets } from '@app/containers/Wallet/store/selectors';
 
 const TransactionTabs = styled.div`
   display: flex;
@@ -42,7 +42,7 @@ const TransactionDetail = () => {
   const [activeTab, setActiveTab] = useState('general');
   const transactionDetail = useSelector(selectTransactionDetail());
   const paymentProof = useSelector(selectPaymentProof());
-  const rate = useSelector(selectRate());
+  //  const rate = useSelector(selectRate());
   const assets = useSelector(selectAssets());
 
   useEffect(() => {
@@ -89,9 +89,9 @@ const TransactionDetail = () => {
       </TransactionTabs>
       <TransactionDetailWrapper>
         {activeTab === 'general' && transactionDetail && (
-          <GeneralTransactionInformation transactionDetail={transactionDetail} rate={rate} assets={assets} />
+          <GeneralTransactionInformation transactionDetail={transactionDetail} assets={assets} />
         )}
-        {activeTab === 'payment-proof' && <PaymentProofInformation paymentProof={paymentProof} rate={rate} />}
+        {activeTab === 'payment-proof' && <PaymentProofInformation paymentProof={paymentProof} />}
       </TransactionDetailWrapper>
     </Window>
   );

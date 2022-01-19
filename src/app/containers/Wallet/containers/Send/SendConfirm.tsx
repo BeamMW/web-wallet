@@ -3,7 +3,7 @@ import React from 'react';
 
 import { Section, Button, Rate } from '@app/shared/components';
 
-import { ArrowRightIcon } from '@app/shared/icons';
+import { ArrowUpIcon } from '@app/shared/icons';
 
 import { styled } from '@linaria/react';
 
@@ -32,7 +32,7 @@ const getTxType = (type: AddressType, offline: boolean): string => {
     return 'Public offline';
   }
 
-  return offline ? 'Offline' : 'Regular';
+  return offline ? 'Offline' : 'Online';
 };
 
 interface SendConfirmProps {
@@ -109,8 +109,8 @@ const SendConfirm = (props: SendConfirmProps) => {
         </Section>
       )}
       <WarningSyled>{warning}</WarningSyled>
-      <Button type="submit" pallete="purple" icon={ArrowRightIcon}>
-        next
+      <Button type="submit" pallete="purple" icon={ArrowUpIcon}>
+        send
       </Button>
     </form>
   );
