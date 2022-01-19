@@ -5,11 +5,12 @@ import {
   compact, copyToClipboard, fromGroths, truncate,
 } from '@core/utils';
 import { Button } from '@app/shared/components';
-import { CopySmallIcon } from '@app/shared/icons';
+import { CopySmallIcon, ExternalLink } from '@app/shared/icons';
 import { PALLETE_ASSETS } from '@app/shared/constants';
 import AssetLabel from '@app/shared/components/AssetLabel';
 import { MultipleAssets } from '@app/containers/Transactions/components/Transactions/TransactionItem';
 import { AssetTotal } from '@app/containers/Wallet/interfaces';
+import config from '@app/config';
 import AssetIcon from '../../../../shared/components/AssetIcon';
 
 interface AssetIconProps extends Partial<WalletTotal> {
@@ -256,13 +257,33 @@ const GeneralTransactionInformation = ({ transactionDetail, assets }: GeneralTra
 
       <InformationItem>
         <div className="title">Transaction Id:</div>
-        <div className="value">{transactionDetail.txId}</div>
+        <div className="value">
+          <p>
+            {' '}
+            {transactionDetail.txId}
+            {' '}
+          </p>
+          <Button
+            variant="icon"
+            pallete="white"
+            icon={CopySmallIcon}
+            onClick={() => copyAddress(transactionDetail.txId)}
+          />
+        </div>
       </InformationItem>
 
       {transactionDetail.kernel && (
         <InformationItem>
           <div className="title">kernel Id:</div>
-          <div className="value">{transactionDetail.kernel}</div>
+          <div className="value">
+            <p>{transactionDetail.kernel}</p>
+            <Button
+              variant="icon"
+              pallete="white"
+              icon={ExternalLink}
+              onClick={() => window.open(config.explorer_url + transactionDetail.kernel)}
+            />
+          </div>
         </InformationItem>
       )}
     </GeneralTransactionWrapper>

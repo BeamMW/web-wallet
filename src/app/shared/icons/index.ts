@@ -48,6 +48,7 @@ import TxEmptyState from './icon-tx-empty.svg';
 import LogoSmall from './logo-small.svg';
 import IconLockWallet from './icon-lock-wallet.svg';
 import IconCancel from './icon-cancel-small-copy-9.svg';
+import ExternalLink from './external_link.svg';
 
 export {
   AddIcon,
@@ -92,4 +93,5 @@ export {
   LogoSmall,
   IconLockWallet,
   IconCancel,
+  ExternalLink,
 };
