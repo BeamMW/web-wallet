@@ -17,6 +17,13 @@ const SectionStyled = styled.div`
   margin: 0 -10px;
   padding-top: 20px;
   text-align: left;
+
+  > .cancel-button {
+    position: absolute;
+    top: 72px;
+    right: 20px;
+    cursor: pointer;
+  }
 `;
 
 const SectionGrayStyled = styled.div`
@@ -26,6 +33,13 @@ const SectionGrayStyled = styled.div`
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.05);
   text-align: left;
+
+  > .cancel-button {
+    position: absolute;
+    top: 72px;
+    right: 20px;
+    cursor: pointer;
+  }
 `;
 
 const ButtonStyled = styled.button`

@@ -7,7 +7,7 @@ import {
   AmountInput, Button, Input, Rate, Section, Title, Window,
 } from '@app/shared/components';
 
-import { ArrowRightIcon, ArrowUpIcon } from '@app/shared/icons';
+import { ArrowRightIcon, ArrowUpIcon, IconCancel } from '@app/shared/icons';
 
 import { styled } from '@linaria/react';
 import LabeledToggle from '@app/shared/components/LabeledToggle';
@@ -80,7 +80,7 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
   if (values.offline) {
     const warning = addressData.payments > 1
       ? 'transactions left.'
-      : 'transaction left. Ask receiver to come online to support more offline transaction.';
+      : 'transaction left. Ask receiver to come online to support more offline transactions.';
 
     const label = `${AddressLabel.OFFLINE} ${addressData.payments} ${warning}`;
 
@@ -292,6 +292,7 @@ const SendForm = () => {
   };
 
   const getAddressHint = () => {
+    if (!values.address.length) return '';
     if (!is_send_ready && values.address.length && errors.address) return '';
     if (errors.address) return errors.address;
     if (hint) return hint;
@@ -345,6 +346,7 @@ const SendForm = () => {
               value={values.address}
               onInput={handleAddressChange}
             />
+            {values.address && <IconCancel className="cancel-button" onClick={() => setFieldValue('address', '')} />}
           </Section>
           {addressType === 'offline' && (
             <Section title="Transaction Type" variant="gray">
