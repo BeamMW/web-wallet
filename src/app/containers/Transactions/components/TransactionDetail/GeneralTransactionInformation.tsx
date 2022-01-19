@@ -2,7 +2,7 @@ import React from 'react';
 import { styled } from '@linaria/react';
 import { TransactionDetail, WalletTotal } from '@core/types';
 import {
-  compact, copyToClipboard, fromGroths, toUSD, truncate,
+  compact, copyToClipboard, fromGroths, truncate,
 } from '@core/utils';
 import { Button } from '@app/shared/components';
 import { CopySmallIcon } from '@app/shared/icons';
@@ -105,11 +105,11 @@ export const InformationItem = styled.div<AssetIconProps>`
 
 interface GeneralTransactionInformationProps {
   transactionDetail: TransactionDetail;
-  rate: number;
+  // rate: number;
   assets: AssetTotal[];
 }
 
-const GeneralTransactionInformation = ({ transactionDetail, rate, assets }: GeneralTransactionInformationProps) => {
+const GeneralTransactionInformation = ({ transactionDetail, assets }: GeneralTransactionInformationProps) => {
   const copyAddress = async (value: string) => {
     await copyToClipboard(value);
   };
@@ -142,16 +142,16 @@ const GeneralTransactionInformation = ({ transactionDetail, rate, assets }: Gene
     );
   };
 
-  const multipleAssetsAmount = () => {
-    let res = 0;
-
-    transactionDetail.invoke_data?.forEach((i) => i.amounts?.forEach((a) => {
-      const am = fromGroths(transactionDetail.fee_only ? transactionDetail.fee : a.amount);
-
-      if (am > res) res = am;
-    }));
-    return res;
-  };
+  // const multipleAssetsAmount = () => {
+  //   let res = 0;
+  //
+  //   transactionDetail.invoke_data?.forEach((i) => i.amounts?.forEach((a) => {
+  //     const am = fromGroths(transactionDetail.fee_only ? transactionDetail.fee : a.amount);
+  //
+  //     if (am > res) res = am;
+  //   }));
+  //   return res;
+  // };
 
   return (
     <GeneralTransactionWrapper>
@@ -198,11 +198,10 @@ const GeneralTransactionInformation = ({ transactionDetail, rate, assets }: Gene
                 .map((a) => <AssetIcon key={a.asset_id} asset_id={a.asset_id} />))}
             </MultipleAssets>
             <span className="multi-asset-title">{multipleAssetsTitle()}</span>
-            <div className="amount-comment">
+            {/* <div className="amount-comment">
               {toUSD(fromGroths(multipleAssetsAmount()), rate)}
-              {' '}
               (сalculated with the exchange rate at the current time)
-            </div>
+            </div> */}
           </div>
         </InformationItem>
       )}
@@ -219,11 +218,9 @@ const GeneralTransactionInformation = ({ transactionDetail, rate, assets }: Gene
               iconClass="iconClass"
               showRate={false}
             />
-            <div className="amount-comment">
-              {toUSD(fromGroths(transactionDetail.value), rate)}
-              {' '}
-              (сalculated with the exchange rate at the current time)
-            </div>
+            {/*   <div className="amount-comment">
+              {toUSD(fromGroths(transactionDetail.value), rate)} (сalculated with the exchange rate at the current time)
+            </div> */}
           </div>
         </InformationItem>
       )}
@@ -240,15 +237,15 @@ const GeneralTransactionInformation = ({ transactionDetail, rate, assets }: Gene
               iconClass="iconClass"
               showRate={false}
             />
-            <div className="amount-comment">{toUSD(fromGroths(transactionDetail.fee), rate)}</div>
+            {/*   <div className="amount-comment">{toUSD(fromGroths(transactionDetail.fee), rate)}</div> */}
           </div>
         </InformationItem>
       )}
 
-      <InformationItem>
+      {/*  <InformationItem>
         <div className="title">Source:</div>
         <div className="value">{transactionDetail.appname ?? 'Wallet'}</div>
-      </InformationItem>
+      </InformationItem> */}
 
       {transactionDetail.comment && (
         <InformationItem>

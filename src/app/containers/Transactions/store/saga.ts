@@ -18,7 +18,7 @@ export function* loadTransactionStatusSaga(
       action.payload,
     ) as unknown) as TransactionDetail;
 
-    if (!txDetail.income && txDetail.status_string !== 'failed') {
+    if (!txDetail.income && !txDetail.status_string.includes('failed')) {
       const payment_proof: { payment_proof: string } = (yield call(exportPaymentProof, action.payload) as unknown) as {
         payment_proof: string;
       };

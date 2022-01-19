@@ -2,20 +2,20 @@ import React from 'react';
 import { PaymentProof } from '@core/types';
 import { styled } from '@linaria/react';
 
-import { compact, fromGroths, toUSD } from '@core/utils';
+import { compact } from '@core/utils';
 import AssetLabel from '../../../../shared/components/AssetLabel';
 import { InformationItem } from './GeneralTransactionInformation';
 
 interface PaymentProofInformationInterface {
   paymentProof: PaymentProof;
-  rate: number;
+  // rate: number;
 }
 
 const PaymentProofWrapper = styled.div`
   text-align: left;
 `;
 
-const PaymentProofInformation = ({ paymentProof, rate }: PaymentProofInformationInterface) => (
+const PaymentProofInformation = ({ paymentProof }: PaymentProofInformationInterface) => (
   <PaymentProofWrapper>
     <InformationItem>
       <div className="title">Sending Address:</div>
@@ -37,11 +37,10 @@ const PaymentProofInformation = ({ paymentProof, rate }: PaymentProofInformation
           iconClass="iconClass"
           showRate={false}
         />
-        <div className="amount-comment">
+        {/* <div className="amount-comment">
           {toUSD(fromGroths(paymentProof.amount), rate)}
-          {' '}
           (сalculated with the exchange rate at the current time)
-        </div>
+        </div> */}
       </div>
     </InformationItem>
     <InformationItem>
