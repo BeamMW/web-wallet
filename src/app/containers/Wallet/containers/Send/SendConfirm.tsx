@@ -45,12 +45,13 @@ interface SendConfirmProps {
   addressData: AddressData;
   fee: number;
   change: number;
+  asset_change: number;
   submitSend: () => void;
 }
 
 const SendConfirm = (props: SendConfirmProps) => {
   const {
-    warning, address, offline, send_amount, selected, addressData, fee, change, submitSend, beam,
+    warning, address, offline, send_amount, selected, addressData, fee, change, submitSend, beam, asset_change,
   } = props;
 
   const { asset_id, amount } = send_amount;
@@ -89,10 +90,10 @@ const SendConfirm = (props: SendConfirmProps) => {
         <Rate value={fee} groths />
       </Section>
       <Section subtitle="Change">
-        {fromGroths(change)}
+        {fromGroths(selected.asset_id === 0 ? change : asset_change)}
         &nbsp;
         {metadata_pairs.UN}
-        <Rate value={change} groths />
+        <Rate value={selected.asset_id === 0 ? change : asset_change} groths />
       </Section>
       <Section subtitle="Remaining">
         {fromGroths(remaining)}

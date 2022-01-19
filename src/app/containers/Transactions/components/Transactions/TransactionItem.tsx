@@ -6,7 +6,6 @@ import { css } from '@linaria/core';
 import { fromGroths, getSign, truncate } from '@core/utils';
 import { AssetTotal } from '@app/containers/Wallet/interfaces';
 import AssetIcon from '../../../../shared/components/AssetIcon';
-import Rate from '../../../../shared/components/Rate';
 
 const ContainerStyled = styled.div`
   display: flex;
@@ -28,12 +27,12 @@ const iconClassName = css`
   margin-top: -4px;
 `;
 
-const rateStyle = css`
-  opacity: 0.8;
-  margin: 0;
-  color: white;
-  white-space: nowrap;
-`;
+// const rateStyle = css`
+//   opacity: 0.8;
+//   margin: 0;
+//   color: white;
+//   white-space: nowrap;
+// `;
 
 export const MultipleAssets = styled.div`
   position: relative;
@@ -80,19 +79,19 @@ const TransactionBottom = styled.div`
   justify-content: space-between;
 `;
 
-const TransactionSource = styled.div`
-  margin-top: 8px;
-  font-size: 14px;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  color: #fff;
-  text-align: left;
-  width: 100%;
-  opacity: 0.7;
-  font-weight: bold;
-`;
+// const TransactionSource = styled.div`
+//   margin-top: 8px;
+//   font-size: 14px;
+//   font-stretch: normal;
+//   font-style: normal;
+//   line-height: normal;
+//   letter-spacing: normal;
+//   color: #fff;
+//   text-align: left;
+//   width: 100%;
+//   opacity: 0.7;
+//   font-weight: bold;
+// `;
 
 const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTotal[] }) => {
   const {
@@ -104,8 +103,7 @@ const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTot
   const hasMultipleAssets = invoke_data && invoke_data.some((cont) => cont.amounts.length > 1);
 
   const amount = fromGroths(fee_only ? fee : value);
-  const signed = !!income;
-  const sign = signed ? getSign(income) : '';
+  const sign = getSign(income) ?? '';
   const name = truncate(target?.metadata_pairs.UN) ?? '';
   const label = `${sign}${amount} ${name}`;
 
@@ -120,16 +118,16 @@ const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTot
     return title;
   };
 
-  const multipleAssetsAmount = () => {
-    let res = 0;
-
-    invoke_data.forEach((i) => i.amounts.forEach((a) => {
-      const am = fromGroths(fee_only ? fee : a.amount);
-
-      if (am > res) res = am;
-    }));
-    return res;
-  };
+  // const multipleAssetsAmount = () => {
+  //   let res = 0;
+  //
+  //   invoke_data.forEach((i) => i.amounts.forEach((a) => {
+  //     const am = fromGroths(fee_only ? fee : a.amount);
+  //
+  //     if (am > res) res = am;
+  //   }));
+  //   return res;
+  // };
 
   const getTransactionDate = () => {
     const txDate = new Date(data.create_time * 1000);
@@ -150,7 +148,7 @@ const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTot
         <ContainerStyled>
           <AssetIcon asset_id={data.asset_id} className={iconClassName} />
           <AmountStyled>{label}</AmountStyled>
-          <Rate value={amount} income={income} className={rateStyle} />
+          {/*  <Rate value={amount} income={income} className={rateStyle} /> */}
         </ContainerStyled>
       ) : (
         <ContainerStyled>
@@ -161,12 +159,12 @@ const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTot
               .map((a) => <AssetIcon key={a.asset_id} asset_id={a.asset_id} />))}
           </MultipleAssets>
           <AmountStyled>{multipleAssetsTitle()}</AmountStyled>
-          <Rate value={multipleAssetsAmount()} income={income} className={rateStyle} />
+          {/*  <Rate value={multipleAssetsAmount()} income={income} className={rateStyle} /> */}
         </ContainerStyled>
       )}
       <StatusLabel data={data} />
       <TransactionBottom>
-        <TransactionSource>{data.appname ?? 'Wallet'}</TransactionSource>
+        {/*  <TransactionSource>{data.appname ?? 'Wallet'}</TransactionSource> */}
         <TransactionDate>{getTransactionDate()}</TransactionDate>
       </TransactionBottom>
     </>

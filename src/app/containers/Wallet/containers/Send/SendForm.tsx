@@ -26,6 +26,7 @@ import {
   validateSendAddress,
 } from '@app/containers/Wallet/store/actions';
 import {
+  selectAssetChange,
   selectAssets,
   selectChange,
   selectIsSendReady,
@@ -128,6 +129,7 @@ const SendForm = () => {
 
   const fee = useSelector(selectSendFee());
   const change = useSelector(selectChange());
+  const asset_change = useSelector(selectAssetChange());
   const is_send_ready = useSelector(selectIsSendReady());
 
   const beam = useMemo(() => assets.find((a) => a.asset_id === 0), [assets]);
@@ -394,6 +396,7 @@ const SendForm = () => {
           selected={selected}
           fee={fee}
           change={change}
+          asset_change={asset_change}
           submitSend={submitSend}
         />
       )}
