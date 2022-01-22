@@ -26,6 +26,12 @@ const ContainerStyled = styled.div`
   background-color: var(--color-popup);
   text-align: center;
   color: white;
+
+  > .cancel-header {
+    right: 4px;
+    top: 10px;
+    position: absolute;
+  }
 `;
 
 const TitleStyled = styled.h2`
@@ -46,6 +52,15 @@ const FooterStyled = styled.div`
     justify-content: right;
     margin-top: 40px;
   }
+  &.qr-code-popup {
+    > button {
+      margin: 0 auto !important;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 `;
 
 const Popup: React.FC<PopupProps> = ({
@@ -64,6 +79,7 @@ const Popup: React.FC<PopupProps> = ({
   <Backdrop onCancel={onCancel}>
     <ContainerStyled>
       <TitleStyled>{title}</TitleStyled>
+      <Button className="cancel-header" variant="icon" pallete="white" icon={CancelIcon} onClick={onCancel} />
       {children}
       <FooterStyled className={footerClass}>
         {cancelButton}

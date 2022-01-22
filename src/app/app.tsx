@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 import { css } from '@linaria/core';
 import { Scrollbars } from 'react-custom-scrollbars';
-
+import 'react-toastify/dist/ReactToastify.css';
 import './styles';
 
 import { ROUTES } from '@app/shared/constants';
@@ -11,6 +11,7 @@ import { actions as sharedActions, selectors as sharedSelectors } from '@app/sha
 import { useNavigate, useRoutes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@app/shared/components';
+import { ToastContainer } from 'react-toastify';
 import { WalletContainer } from './containers/Wallet';
 import { AuthContainer, Progress } from './containers/Auth';
 import { SettingsContainer } from './containers/Settings';
@@ -74,6 +75,18 @@ const App = () => {
         renderThumbVertical={(props) => <div {...props} className={trackStyle} />}
       >
         {content}
+        <ToastContainer
+          position="bottom-center"
+          autoClose={3000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss={false}
+          draggable={false}
+          pauseOnHover={false}
+          icon={false}
+        />
       </Scrollbars>
     </ErrorBoundary>
   );

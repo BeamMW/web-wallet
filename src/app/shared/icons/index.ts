@@ -51,6 +51,7 @@ import IconCancel from './icon-cancel-small-copy-9.svg';
 import ExternalLink from './external_link.svg';
 import IconEye from './icn-eye.svg';
 import IconEyeCrossed from './icn-eye-crossed.svg';
+import IconQrCode from './ic-qr-copy-9.svg';
 
 export {
   AddIcon,
@@ -98,4 +99,5 @@ export {
   ExternalLink,
   IconEye,
   IconEyeCrossed,
+  IconQrCode,
 };
