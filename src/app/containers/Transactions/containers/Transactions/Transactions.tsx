@@ -7,10 +7,12 @@ import { createdComparator } from '@core/utils';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
 import { selectTransactions } from '@app/containers/Transactions/store/selectors';
+import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 
 const Transactions = () => {
   const navigate = useNavigate();
   const transactions = useSelector(selectTransactions());
+  const isBalanceHidden = useSelector(selectIsBalanceHidden());
   const sorted = transactions.slice().sort(createdComparator);
 
   const navigateToWallet = useCallback(() => {
@@ -19,7 +21,7 @@ const Transactions = () => {
 
   return (
     <Window title="Transactions" onPrevious={navigateToWallet}>
-      <TransactionList data={sorted} />
+      <TransactionList data={sorted} isBalanceHidden={isBalanceHidden} />
     </Window>
   );
 };

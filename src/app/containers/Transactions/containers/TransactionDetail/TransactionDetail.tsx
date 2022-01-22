@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadTransactionStatus, setPaymentProof } from '@app/containers/Transactions/store/actions';
 import { selectPaymentProof, selectTransactionDetail } from '@app/containers/Transactions/store/selectors';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
+import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 
 const TransactionTabs = styled.div`
   display: flex;
@@ -42,6 +43,7 @@ const TransactionDetail = () => {
   const [activeTab, setActiveTab] = useState('general');
   const transactionDetail = useSelector(selectTransactionDetail());
   const paymentProof = useSelector(selectPaymentProof());
+  const isBalanceHidden = useSelector(selectIsBalanceHidden());
   //  const rate = useSelector(selectRate());
   const assets = useSelector(selectAssets());
 
@@ -89,9 +91,15 @@ const TransactionDetail = () => {
       </TransactionTabs>
       <TransactionDetailWrapper>
         {activeTab === 'general' && transactionDetail && (
-          <GeneralTransactionInformation transactionDetail={transactionDetail} assets={assets} />
+          <GeneralTransactionInformation
+            transactionDetail={transactionDetail}
+            assets={assets}
+            isBalanceHidden={isBalanceHidden}
+          />
         )}
-        {activeTab === 'payment-proof' && <PaymentProofInformation paymentProof={paymentProof} />}
+        {activeTab === 'payment-proof' && (
+          <PaymentProofInformation paymentProof={paymentProof} isBalanceHidden={isBalanceHidden} />
+        )}
       </TransactionDetailWrapper>
     </Window>
   );

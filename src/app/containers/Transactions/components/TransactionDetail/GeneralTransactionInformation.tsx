@@ -108,9 +108,14 @@ interface GeneralTransactionInformationProps {
   transactionDetail: TransactionDetail;
   // rate: number;
   assets: AssetTotal[];
+  isBalanceHidden: boolean;
 }
 
-const GeneralTransactionInformation = ({ transactionDetail, assets }: GeneralTransactionInformationProps) => {
+const GeneralTransactionInformation = ({
+  transactionDetail,
+  assets,
+  isBalanceHidden,
+}: GeneralTransactionInformationProps) => {
   const copyAddress = async (value: string) => {
     await copyToClipboard(value);
   };
@@ -121,7 +126,11 @@ const GeneralTransactionInformation = ({ transactionDetail, assets }: GeneralTra
       const tg = assets.find(({ asset_id: id }) => id === a.asset_id);
       const n = truncate(tg?.metadata_pairs.UN) ?? '';
       const am = fromGroths(transactionDetail.fee_only ? transactionDetail.fee : a.amount);
-      title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
+      if (!isBalanceHidden) {
+        title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
+      } else {
+        title += `${n} `;
+      }
     }));
     return title;
   };
@@ -218,6 +227,7 @@ const GeneralTransactionInformation = ({ transactionDetail, assets }: GeneralTra
               className="asset-label"
               iconClass="iconClass"
               showRate={false}
+              isBalanceHidden={isBalanceHidden}
             />
             {/*   <div className="amount-comment">
               {toUSD(fromGroths(transactionDetail.value), rate)} (сalculated with the exchange rate at the current time)
@@ -237,6 +247,7 @@ const GeneralTransactionInformation = ({ transactionDetail, assets }: GeneralTra
               className="asset-label"
               iconClass="iconClass"
               showRate={false}
+              isBalanceHidden={isBalanceHidden}
             />
             {/*   <div className="amount-comment">{toUSD(fromGroths(transactionDetail.fee), rate)}</div> */}
           </div>

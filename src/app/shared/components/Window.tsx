@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
-import { IconLockWallet, MenuIcon } from '@app/shared/icons';
+import {
+  IconEye, IconLockWallet, MenuIcon, IconEyeCrossed,
+} from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
 
 import useOutsideClick from '@app/shared/hooks/OutsideClickHook';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '@app/shared/store';
+import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 import Logo from './Logo';
 import BackButton from './BackButton';
 import Title from './Title';
@@ -86,7 +89,15 @@ const menuButtonStyle = css`
   position: fixed;
   z-index: 3;
   top: 74px;
-  left: 24px;
+  left: 12px;
+  margin: 0;
+`;
+
+const menuEyeStyle = css`
+  position: fixed;
+  z-index: 3;
+  top: 74px;
+  right: 12px;
   margin: 0;
 `;
 
@@ -180,6 +191,7 @@ export const Window: React.FC<WindowProps> = ({
   onPrevious,
 }) => {
   const dispatch = useDispatch();
+  const isBalanceHidden = useSelector(selectIsBalanceHidden());
   const wrapperRef = useRef(null);
   const [isOpened, setIsOpened] = useState(false);
   const [menuVisible, setVisible] = useState(false);
@@ -202,6 +214,10 @@ export const Window: React.FC<WindowProps> = ({
 
   const stopWallet = () => {
     dispatch(actions.stopWallet());
+  };
+
+  const hideBalance = () => {
+    dispatch(actions.hideBalances());
   };
 
   return (
@@ -230,6 +246,14 @@ export const Window: React.FC<WindowProps> = ({
           </BurgerWrapper>
         </FrameStyled>
         <Title variant="heading">{title}</Title>
+        {primary && (
+          <Button
+            variant="icon"
+            icon={!isBalanceHidden ? IconEye : IconEyeCrossed}
+            className={menuEyeStyle}
+            onClick={hideBalance}
+          />
+        )}
       </HeadingStyled>
       {primary ? (
         <Button variant="icon" icon={MenuIcon} className={menuButtonStyle} onClick={handleMenuClick} />

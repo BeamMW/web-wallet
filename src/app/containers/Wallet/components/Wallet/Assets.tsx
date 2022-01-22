@@ -12,6 +12,7 @@ const ListStyled = styled.ul`
 
 interface AssetsProps {
   data: AssetTotal[];
+  isBalanceHidden?: boolean;
 }
 
 const ListItemStyled = styled.li<{ opt_color?: string; asset_id: number }>`
@@ -45,7 +46,7 @@ const ListItemStyled = styled.li<{ opt_color?: string; asset_id: number }>`
   }
 `;
 
-const Assets: React.FC<AssetsProps> = ({ data }) => (
+const Assets: React.FC<AssetsProps> = ({ data, isBalanceHidden }) => (
   <ListStyled>
     {data.map(({ asset_id, available, metadata_pairs }) => (
       <ListItemStyled
@@ -53,7 +54,7 @@ const Assets: React.FC<AssetsProps> = ({ data }) => (
         key={asset_id}
         asset_id={asset_id}
       >
-        <AssetLabel value={available} asset_id={asset_id} comment="" />
+        <AssetLabel value={available} asset_id={asset_id} isBalanceHidden={isBalanceHidden} />
       </ListItemStyled>
     ))}
   </ListStyled>

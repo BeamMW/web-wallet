@@ -16,6 +16,7 @@ const ListStyled = styled.ul`
 
 interface TransactionsProps {
   data: Transaction[];
+  isBalanceHidden?: boolean;
 }
 
 const ListItemStyled = styled.li`
@@ -44,7 +45,7 @@ const fromInvokeData = (data: Contract, fee: number): Partial<Transaction> => {
   return null;
 };
 
-const TransactionList: React.FC<TransactionsProps> = ({ data: transactions }) => {
+const TransactionList: React.FC<TransactionsProps> = ({ data: transactions, isBalanceHidden }) => {
   const assets = useSelector(selectAssets());
   const navigate = useNavigate();
 
@@ -67,7 +68,7 @@ const TransactionList: React.FC<TransactionsProps> = ({ data: transactions }) =>
 
         return (
           <ListItemStyled key={tx.txId} onClick={() => navigateTransactionDetail(tx.txId)}>
-            <TransactionItem data={data} assets={assets} />
+            <TransactionItem data={data} assets={assets} isBalanceHidden={isBalanceHidden} />
           </ListItemStyled>
         );
       })}
