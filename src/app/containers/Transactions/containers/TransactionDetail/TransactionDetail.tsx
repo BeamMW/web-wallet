@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from '@linaria/react';
 import { useParams } from 'react-router-dom';
 import { Window } from '@app/shared/components';
@@ -9,6 +9,8 @@ import { loadTransactionStatus, setPaymentProof } from '@app/containers/Transact
 import { selectPaymentProof, selectTransactionDetail } from '@app/containers/Transactions/store/selectors';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
 import { selectIsBalanceHidden } from '@app/shared/store/selectors';
+import { toast } from 'react-toastify';
+import { copyToClipboard } from '@core/utils';
 
 const TransactionTabs = styled.div`
   display: flex;
@@ -65,6 +67,11 @@ const TransactionDetail = () => {
     }
   };
 
+  const copy = useCallback((value, tM) => {
+    toast(tM);
+    copyToClipboard(value);
+  }, []);
+
   return (
     <Window title="Transaction Info">
       <TransactionTabs>
@@ -95,10 +102,11 @@ const TransactionDetail = () => {
             transactionDetail={transactionDetail}
             assets={assets}
             isBalanceHidden={isBalanceHidden}
+            copy={copy}
           />
         )}
         {activeTab === 'payment-proof' && (
-          <PaymentProofInformation paymentProof={paymentProof} isBalanceHidden={isBalanceHidden} />
+          <PaymentProofInformation paymentProof={paymentProof} isBalanceHidden={isBalanceHidden} copy={copy} />
         )}
       </TransactionDetailWrapper>
     </Window>

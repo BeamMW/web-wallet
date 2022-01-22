@@ -1,9 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 import { TransactionDetail, WalletTotal } from '@core/types';
-import {
-  compact, copyToClipboard, fromGroths, truncate,
-} from '@core/utils';
+import { compact, fromGroths, truncate } from '@core/utils';
 import { Button } from '@app/shared/components';
 import { CopySmallIcon, ExternalLink } from '@app/shared/icons';
 import { PALLETE_ASSETS } from '@app/shared/constants';
@@ -11,6 +9,7 @@ import AssetLabel from '@app/shared/components/AssetLabel';
 import { MultipleAssets } from '@app/containers/Transactions/components/Transactions/TransactionItem';
 import { AssetTotal } from '@app/containers/Wallet/interfaces';
 import config from '@app/config';
+
 import AssetIcon from '../../../../shared/components/AssetIcon';
 
 interface AssetIconProps extends Partial<WalletTotal> {
@@ -109,17 +108,15 @@ interface GeneralTransactionInformationProps {
   // rate: number;
   assets: AssetTotal[];
   isBalanceHidden: boolean;
+  copy: (value: string, tM: string) => void;
 }
 
 const GeneralTransactionInformation = ({
   transactionDetail,
   assets,
   isBalanceHidden,
+  copy,
 }: GeneralTransactionInformationProps) => {
-  const copyAddress = async (value: string) => {
-    await copyToClipboard(value);
-  };
-
   const multipleAssetsTitle = () => {
     let title = '';
     transactionDetail.invoke_data?.forEach((i) => i.amounts.forEach((a) => {
@@ -178,7 +175,7 @@ const GeneralTransactionInformation = ({
               variant="icon"
               pallete="white"
               icon={CopySmallIcon}
-              onClick={() => copyAddress(transactionDetail.sender)}
+              onClick={() => copy(transactionDetail.sender, 'Sender copied to clipboard')}
             />
           </div>
         </InformationItem>
@@ -192,7 +189,7 @@ const GeneralTransactionInformation = ({
               variant="icon"
               pallete="white"
               icon={CopySmallIcon}
-              onClick={() => copyAddress(transactionDetail.receiver)}
+              onClick={() => copy(transactionDetail.receiver, 'Receiver copied to clipboard')}
             />
           </div>
         </InformationItem>
@@ -277,7 +274,7 @@ const GeneralTransactionInformation = ({
             variant="icon"
             pallete="white"
             icon={CopySmallIcon}
-            onClick={() => copyAddress(transactionDetail.txId)}
+            onClick={() => copy(transactionDetail.txId, 'TxId copied to clipboard')}
           />
         </div>
       </InformationItem>
