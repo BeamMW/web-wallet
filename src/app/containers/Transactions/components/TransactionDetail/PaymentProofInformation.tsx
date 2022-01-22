@@ -72,10 +72,7 @@ const PaymentProofInformation = ({ paymentProof }: PaymentProofInformationInterf
       <InformationItem>
         <div className="title">Kernel id:</div>
         <div className="value">
-          <p>
-            {' '}
-            {paymentProof.kernel}
-          </p>
+          <p>{paymentProof.kernel}</p>
           <Button
             variant="icon"
             pallete="white"

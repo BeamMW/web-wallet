@@ -345,6 +345,7 @@ const SendForm = () => {
               placeholder="Paste recipient address here"
               value={values.address}
               onInput={handleAddressChange}
+              className="send-input"
             />
             {values.address && <IconCancel className="cancel-button" onClick={() => setFieldValue('address', '')} />}
           </Section>
@@ -390,7 +391,6 @@ const SendForm = () => {
       ) : (
         <SendConfirm
           beam={beam}
-          warning={warning}
           address={values.address}
           addressData={addressData}
           offline={values.offline}

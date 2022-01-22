@@ -261,7 +261,6 @@ const GeneralTransactionInformation = ({ transactionDetail, assets }: GeneralTra
           <p>
             {' '}
             {transactionDetail.txId}
-            {' '}
           </p>
           <Button
             variant="icon"

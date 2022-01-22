@@ -20,9 +20,13 @@ const SectionStyled = styled.div`
 
   > .cancel-button {
     position: absolute;
-    top: 72px;
+    top: 68px;
     right: 20px;
     cursor: pointer;
+  }
+
+  > .send-input {
+    width: 95%;
   }
 `;
 
@@ -36,9 +40,12 @@ const SectionGrayStyled = styled.div`
 
   > .cancel-button {
     position: absolute;
-    top: 72px;
+    top: 68px;
     right: 20px;
     cursor: pointer;
+  }
+  > .send-input {
+    width: 95%;
   }
 `;
 
