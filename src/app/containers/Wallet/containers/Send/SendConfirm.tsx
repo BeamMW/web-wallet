@@ -11,13 +11,6 @@ import { fromGroths, compact, toGroths } from '@core/utils';
 import { AddressData, AddressType } from '@core/types';
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 
-const WarningSyled = styled.p`
-  opacity: 0.5;
-  margin: 30px 0;
-  text-align: center;
-  font-style: italic;
-`;
-
 const BeamAmount = styled.p`
   font-weight: bold;
   color: var(--color-violet);
@@ -32,11 +25,10 @@ const getTxType = (type: AddressType, offline: boolean): string => {
     return 'Public offline';
   }
 
-  return offline ? 'Offline' : 'Online';
+  return offline ? 'Offline' : 'Regular';
 };
 
 interface SendConfirmProps {
-  warning: string;
   address: string;
   offline: boolean;
   send_amount: TransactionAmount;
@@ -51,7 +43,7 @@ interface SendConfirmProps {
 
 const SendConfirm = (props: SendConfirmProps) => {
   const {
-    warning, address, offline, send_amount, selected, addressData, fee, change, submitSend, beam, asset_change,
+    address, offline, send_amount, selected, addressData, fee, change, submitSend, beam, asset_change,
   } = props;
 
   const { asset_id, amount } = send_amount;
@@ -108,8 +100,7 @@ const SendConfirm = (props: SendConfirmProps) => {
           <Rate value={beamRemaining} groths />
         </Section>
       )}
-      <WarningSyled>{warning}</WarningSyled>
-      <Button type="submit" pallete="purple" icon={ArrowUpIcon}>
+      <Button type="submit" pallete="purple" icon={ArrowUpIcon} style={{ marginTop: '30px' }}>
         send
       </Button>
     </form>
