@@ -216,7 +216,7 @@ const GeneralTransactionInformation = ({
         </InformationItem>
       )}
 
-      {transactionDetail.value && !isBalanceHidden && (
+      {transactionDetail.value && (
         <InformationItem asset_id={transactionDetail.asset_id}>
           <div className="title">Amount:</div>
           <div className="value asset">
@@ -227,6 +227,7 @@ const GeneralTransactionInformation = ({
               className="asset-label"
               iconClass="iconClass"
               showRate={false}
+              isBalanceHidden={isBalanceHidden}
             />
             {/*   <div className="amount-comment">
               {toUSD(fromGroths(transactionDetail.value), rate)} (сalculated with the exchange rate at the current time)
@@ -235,7 +236,7 @@ const GeneralTransactionInformation = ({
         </InformationItem>
       )}
 
-      {transactionDetail.fee && !isBalanceHidden && (
+      {transactionDetail.fee && (
         <InformationItem asset_id={0}>
           <div className="title">Fee:</div>
           <div className="value asset">
@@ -246,6 +247,7 @@ const GeneralTransactionInformation = ({
               className="asset-label"
               iconClass="iconClass"
               showRate={false}
+              isBalanceHidden={isBalanceHidden}
             />
             {/*   <div className="amount-comment">{toUSD(fromGroths(transactionDetail.fee), rate)}</div> */}
           </div>
