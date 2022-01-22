@@ -12,7 +12,8 @@ import Rate from './Rate';
 interface AssetLabelProps extends Partial<Transaction> {
   className?: string;
   iconClass?: string;
-  showRate: boolean;
+  showRate?: boolean;
+  isBalanceHidden?: boolean;
 }
 
 const ContainerStyled = styled.div`
@@ -50,6 +51,7 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   className,
   iconClass,
   showRate = true,
+  isBalanceHidden,
 }) => {
   const assets = useSelector(selectAssets());
   const target = assets.find(({ asset_id: id }) => id === asset_id);
@@ -63,8 +65,8 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   return (
     <ContainerStyled className={className}>
       <AssetIcon asset_id={asset_id} className={iconClass || iconClassName} />
-      <AmountStyled className="asset-name">{label}</AmountStyled>
-      {showRate ? <Rate value={amount} income={income} className={rateStyle} /> : null}
+      <AmountStyled className="asset-name">{isBalanceHidden ? name : label}</AmountStyled>
+      {showRate && !isBalanceHidden ? <Rate value={amount} income={income} className={rateStyle} /> : null}
     </ContainerStyled>
   );
 };

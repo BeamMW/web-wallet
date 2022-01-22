@@ -49,6 +49,8 @@ import LogoSmall from './logo-small.svg';
 import IconLockWallet from './icon-lock-wallet.svg';
 import IconCancel from './icon-cancel-small-copy-9.svg';
 import ExternalLink from './external_link.svg';
+import IconEye from './icn-eye.svg';
+import IconEyeCrossed from './icn-eye-crossed.svg';
 
 export {
   AddIcon,
@@ -94,4 +96,6 @@ export {
   IconLockWallet,
   IconCancel,
   ExternalLink,
+  IconEye,
+  IconEyeCrossed,
 };

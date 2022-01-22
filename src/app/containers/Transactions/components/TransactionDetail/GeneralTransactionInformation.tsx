@@ -108,9 +108,14 @@ interface GeneralTransactionInformationProps {
   transactionDetail: TransactionDetail;
   // rate: number;
   assets: AssetTotal[];
+  isBalanceHidden: boolean;
 }
 
-const GeneralTransactionInformation = ({ transactionDetail, assets }: GeneralTransactionInformationProps) => {
+const GeneralTransactionInformation = ({
+  transactionDetail,
+  assets,
+  isBalanceHidden,
+}: GeneralTransactionInformationProps) => {
   const copyAddress = async (value: string) => {
     await copyToClipboard(value);
   };
@@ -121,7 +126,11 @@ const GeneralTransactionInformation = ({ transactionDetail, assets }: GeneralTra
       const tg = assets.find(({ asset_id: id }) => id === a.asset_id);
       const n = truncate(tg?.metadata_pairs.UN) ?? '';
       const am = fromGroths(transactionDetail.fee_only ? transactionDetail.fee : a.amount);
-      title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
+      if (!isBalanceHidden) {
+        title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
+      } else {
+        title += `${n} `;
+      }
     }));
     return title;
   };
@@ -207,7 +216,7 @@ const GeneralTransactionInformation = ({ transactionDetail, assets }: GeneralTra
         </InformationItem>
       )}
 
-      {transactionDetail.value && (
+      {transactionDetail.value && !isBalanceHidden && (
         <InformationItem asset_id={transactionDetail.asset_id}>
           <div className="title">Amount:</div>
           <div className="value asset">
@@ -226,7 +235,7 @@ const GeneralTransactionInformation = ({ transactionDetail, assets }: GeneralTra
         </InformationItem>
       )}
 
-      {transactionDetail.fee && (
+      {transactionDetail.fee && !isBalanceHidden && (
         <InformationItem asset_id={0}>
           <div className="title">Fee:</div>
           <div className="value asset">

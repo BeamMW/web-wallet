@@ -15,6 +15,7 @@ import { loadRate } from '@app/containers/Wallet/store/actions';
 import { TransactionList } from '@app/containers/Transactions';
 import { createdComparator } from '@core/utils';
 import { selectTransactions } from '@app/containers/Transactions/store/selectors';
+import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 import { Assets } from '../../components/Wallet';
 
 const TXS_MAX = 4;
@@ -34,6 +35,7 @@ const Wallet = () => {
   const navigate = useNavigate();
   const assets = useSelector(selectAssets());
   const transactions = useSelector(selectTransactions());
+  const isBalanceHidden = useSelector(selectIsBalanceHidden());
   const rate = useSelector(selectRate());
 
   useEffect(() => {
@@ -60,11 +62,11 @@ const Wallet = () => {
         </Button>
       </ActionsStyled>
       <Section title="Assets">
-        <Assets data={assets} />
+        <Assets data={assets} isBalanceHidden={isBalanceHidden} />
       </Section>
 
       <Section title="Transactions" showAllAction={sorted.length > TXS_MAX ? navigateToTransactions : undefined}>
-        <TransactionList data={sliced} />
+        <TransactionList data={sliced} isBalanceHidden={isBalanceHidden} />
       </Section>
     </Window>
   );

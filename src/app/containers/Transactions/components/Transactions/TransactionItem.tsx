@@ -93,7 +93,15 @@ const TransactionBottom = styled.div`
 //   font-weight: bold;
 // `;
 
-const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTotal[] }) => {
+const TransactionItem = ({
+  data,
+  assets,
+  isBalanceHidden,
+}: {
+  data: Transaction;
+  assets: AssetTotal[];
+  isBalanceHidden?: boolean;
+}) => {
   const {
     asset_id, invoke_data, income, fee, fee_only, value,
   } = data;
@@ -113,7 +121,11 @@ const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTot
       const tg = assets.find(({ asset_id: id }) => id === a.asset_id);
       const n = truncate(tg?.metadata_pairs.UN) ?? '';
       const am = fromGroths(fee_only ? fee : a.amount);
-      title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
+      if (!isBalanceHidden) {
+        title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
+      } else {
+        title += `${n} `;
+      }
     }));
     return title;
   };
@@ -147,7 +159,7 @@ const TransactionItem = ({ data, assets }: { data: Transaction; assets: AssetTot
       {!hasMultipleAssets ? (
         <ContainerStyled>
           <AssetIcon asset_id={data.asset_id} className={iconClassName} />
-          <AmountStyled>{label}</AmountStyled>
+          <AmountStyled>{isBalanceHidden ? name : label}</AmountStyled>
           {/*  <Rate value={amount} income={income} className={rateStyle} /> */}
         </ContainerStyled>
       ) : (

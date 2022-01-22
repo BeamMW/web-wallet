@@ -9,6 +9,7 @@ type Action = ActionType<typeof actions>;
 const initialState: SharedStateType = {
   routerLink: '',
   errorMessage: null,
+  isBalanceHidden: false,
 };
 
 const reducer = createReducer<SharedStateType, Action>(initialState)
@@ -17,6 +18,9 @@ const reducer = createReducer<SharedStateType, Action>(initialState)
   }))
   .handleAction(actions.setError, (state, action) => produce(state, (nexState) => {
     nexState.errorMessage = action.payload;
+  }))
+  .handleAction(actions.hideBalances, (state) => produce(state, (nexState) => {
+    nexState.isBalanceHidden = !state.isBalanceHidden;
   }));
 
 export { reducer as SharedReducer };

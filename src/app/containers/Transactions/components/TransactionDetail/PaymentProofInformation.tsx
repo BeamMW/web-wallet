@@ -11,6 +11,7 @@ import AssetLabel from '../../../../shared/components/AssetLabel';
 
 interface PaymentProofInformationInterface {
   paymentProof: PaymentProof;
+  isBalanceHidden: boolean;
   // rate: number;
 }
 
@@ -18,7 +19,7 @@ const PaymentProofWrapper = styled.div`
   text-align: left;
 `;
 
-const PaymentProofInformation = ({ paymentProof }: PaymentProofInformationInterface) => {
+const PaymentProofInformation = ({ paymentProof, isBalanceHidden }: PaymentProofInformationInterface) => {
   const copyAddress = async (value: string) => {
     await copyToClipboard(value);
   };
@@ -62,6 +63,7 @@ const PaymentProofInformation = ({ paymentProof }: PaymentProofInformationInterf
             className="asset-label"
             iconClass="iconClass"
             showRate={false}
+            isBalanceHidden={isBalanceHidden}
           />
           {/* <div className="amount-comment">
           {toUSD(fromGroths(paymentProof.amount), rate)}
@@ -69,6 +71,7 @@ const PaymentProofInformation = ({ paymentProof }: PaymentProofInformationInterf
         </div> */}
         </div>
       </InformationItem>
+
       <InformationItem>
         <div className="title">Kernel id:</div>
         <div className="value">
