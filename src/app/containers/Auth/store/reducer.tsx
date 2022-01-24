@@ -16,6 +16,10 @@ const initialState: AuthStateType = {
     sync_requests_done: 0,
     sync_requests_total: 0,
   },
+  database_sync_progress: {
+    done: 0,
+    total: 0,
+  },
   seed_errors: [...INITIAL],
   seed_values: [...INITIAL],
   seed_result: null,

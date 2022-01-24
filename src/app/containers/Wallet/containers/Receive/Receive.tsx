@@ -117,7 +117,7 @@ const Receive = () => {
         cancelButton={null}
       >
         <QrCodeWrapper>
-          <QRCode value={`beam:${addressFull}`} renderAs="svg" bgColor="#003f6f" fgColor="white" />
+          <QRCode value={`beam://${addressFull}`} renderAs="svg" bgColor="#003f6f" fgColor="white" />
           <div className="text">Sender will be given a choice between regular and offline payment.</div>
           <br />
           <div className="text">

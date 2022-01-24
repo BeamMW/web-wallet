@@ -3,6 +3,7 @@ import * as passworder from 'browser-passworder';
 import PortStream from '@core/PortStream';
 
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
+import config from '@app/config';
 import {
   RPCMethod, RPCEvent, BackgroundEvent, WalletMethod, CreateWalletParams, Notification,
 } from './types';
@@ -303,6 +304,42 @@ export default class WasmWallet {
     this.wallet.setApproveContractInfoHandler(handler);
   }
 
+  async fastSync() {
+    const response = await fetch(config.restore_url);
+    const reader = response.body.getReader();
+
+    const contentLength = +response.headers.get('Content-Length');
+
+    let receivedLength = 0;
+    const chunks = [];
+    while (true) {
+      /* eslint-disable no-await-in-loop */
+      const { done, value } = await reader.read();
+      /* eslint-enable no-await-in-loop */
+      if (done) {
+        break;
+      }
+
+      chunks.push(value);
+      receivedLength += value.length;
+
+      console.log(`Получено ${receivedLength} из ${contentLength}`);
+    }
+    const blob = new Blob(chunks);
+    const data = await blob.arrayBuffer();
+    const payload = new Uint8Array(data);
+
+    this.wallet.importRecovery(payload, (error, done, total) => {
+      if (error == null) {
+        console.log(`Restoring ${done}/${total}`);
+      } else {
+        console.log(`Failed to recover: ${error}`);
+      }
+    });
+
+    return null;
+  }
+
   async create({ seed, password, isSeedConfirmed }: CreateWalletParams) {
     try {
       if (WasmWallet.isInitialized()) {
@@ -313,6 +350,10 @@ export default class WasmWallet {
       WasmWallet.initSettings(isSeedConfirmed);
 
       WasmWalletClient.CreateWallet(seed, PATH_DB, password);
+      if (!this.wallet) {
+        this.wallet = new WasmWalletClient(PATH_DB, password, PATH_NODE);
+      }
+      this.fastSync();
       this.start(password);
     } catch (error) {
       // eslint-disable-next-line no-console
