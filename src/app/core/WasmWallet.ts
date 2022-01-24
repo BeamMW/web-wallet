@@ -8,11 +8,14 @@ import {
 } from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
+import { ExternalAppConnection } from '@core/types';
 
 declare const BeamModule: any;
 
 const PATH_DB = '/beam_wallet/wallet.db';
 const PATH_NODE = process.env.NODE_ENV === 'development' ? 'localhost:8200' : 'eu-node01.masternet.beam.mw:8200';
+
+const notificationManager = NotificationManager.getInstance();
 
 let WasmWalletClient;
 export interface WalletEvent<T = any> {
@@ -67,6 +70,7 @@ export default class WasmWallet {
 
   // TODO:BRO map [url->app]
   private apps = {};
+  private connectedApps = [];
 
   static getInstance() {
     if (this.instance != null) {
@@ -104,6 +108,12 @@ export default class WasmWallet {
         },
         passwordCheck: true,
       },
+    });
+  }
+
+  static initConnectedSites() {
+    extensionizer.storage.local.set({
+      sites: []
     });
   }
 
@@ -244,7 +254,7 @@ export default class WasmWallet {
     });
   }
 
-  start(pass: string) {
+  async start(pass: string) {
     if (!this.wallet) {
       this.wallet = new WasmWalletClient(PATH_DB, pass, PATH_NODE);
     }
@@ -259,6 +269,8 @@ export default class WasmWallet {
     this.wallet.startWallet();
     this.wallet.subscribe(responseHandler);
     this.wallet.setApproveContractInfoHandler(this.contractInfoHandler);
+
+    await this.loadConnectedApps();
 
     this.toggleEvents(true);
   }
@@ -295,6 +307,41 @@ export default class WasmWallet {
     });
   }
 
+  private loadConnectedApps() {
+    return new Promise((resolve, reject) => {
+      extensionizer.storage.local.get('sites', ({ sites }) => {
+        this.connectedApps = sites ? sites : [];
+        resolve(true);
+      }); 
+    })
+  }
+
+  isConnectedSite(site: ExternalAppConnection): boolean {
+    const isConnected = !!this.connectedApps.find((item) => item.appUrl === site.appUrl);
+    return isConnected;
+  }
+
+  removeConnectedSite(site: ExternalAppConnection) {
+    const filteredSites = this.connectedApps.filter(function(el){ 
+      return el.appUrl !== site.appUrl && el.appName !== site.appName;
+    });
+
+    this.connectedApps = filteredSites;
+    extensionizer.storage.local.set({
+      sites: filteredSites
+    });
+  }
+
+  addConnectedSite(site: ExternalAppConnection) {
+    const isExist = this.connectedApps.find((item: ExternalAppConnection) => item.appUrl === site.appUrl)
+    if (!isExist) {
+      this.connectedApps.push(site);
+      extensionizer.storage.local.set({
+        sites: this.connectedApps
+      });
+    }
+  }
+
   setApproveSendHandler(handler) {
     this.wallet.setApproveSendHandler(handler);
   }
@@ -311,6 +358,7 @@ export default class WasmWallet {
 
       WasmWallet.saveWallet(password);
       WasmWallet.initSettings(isSeedConfirmed);
+      WasmWallet.initConnectedSites();
 
       WasmWalletClient.CreateWallet(seed, PATH_DB, password);
       this.start(password);
@@ -342,6 +390,41 @@ export default class WasmWallet {
         }
       });
     });
+  }
+
+  async connectExternal(params) {
+    if (!WasmWallet.isAppSupported(params.apiver, params.apivermin)) {
+      return notificationManager.postMessage({
+        result: false,
+        errcode: -1,
+        ermsg: 'Unsupported API version required',
+      });
+      // TODO:BRO handle error in Utils.js
+    }
+    try {
+      this.apps[params.appurl] = new DnodeApp();
+      await this.apps[params.appurl].createAppAPI(
+        WasmWallet.getInstance(),
+        params.apiver,
+        params.apivermin,
+        params.appname,
+        params.appurl,
+      );
+      const port = NotificationManager.getPort();
+
+      const portStream = new PortStream(port);
+      this.apps[params.appurl].connectPage(portStream, params.appurl);
+      notificationManager.postMessage({
+        result: true,
+      });
+    } catch (err) {
+      // TODO:BRO handle error in Utils.js
+      notificationManager.postMessage({
+        result: false,
+        errcode: -2,
+        ermsg: err,
+      });
+    }
   }
 
   async callInternal(id: number, method: WalletMethod, params: any) {
@@ -391,47 +474,32 @@ export default class WasmWallet {
           this.emit(id, null, error);
         }
         break;
+      case WalletMethod.NotificationAuthenticaticated:
+        if (params.result) {
+          if (this.isConnectedSite({appName: params.appname, appUrl: params.appurl})) {
+            this.connectExternal(params);
+          }
+        }
+        break;
       case WalletMethod.NotificationConnect:
         // eslint-disable-next-line no-case-declarations
-        const notificationPort = NotificationManager.getReqPort();
         if (params.result) {
-          if (!WasmWallet.isAppSupported(params.apiver, params.apivermin)) {
-            return notificationPort.postMessage({
-              result: false,
-              errcode: -1,
-              ermsg: 'Unsupported API version required',
-            });
-            // TODO:BRO handle error in Utils.js
-          }
-          try {
-            this.apps[params.appurl] = new DnodeApp();
-            await this.apps[params.appurl].createAppAPI(
-              WasmWallet.getInstance(),
-              params.apiver,
-              params.apivermin,
-              params.appname,
-              params.appurl,
-            );
-            const portStream = new PortStream(NotificationManager.getPort());
-            this.apps[params.appurl].connectPage(portStream, params.appurl);
-            notificationPort.postMessage({
-              result: true,
-            });
-          } catch (err) {
-            // TODO:BRO handle error in Utils.js
-            notificationPort.postMessage({
-              result: false,
-              errcode: -2,
-              ermsg: err,
-            });
-          }
+          this.addConnectedSite({appName: params.appname, appUrl: params.appurl})
+          this.connectExternal(params);
         } else {
-          return notificationPort.postMessage({
+          return notificationManager.postMessage({
             result: false,
             errcode: -3,
             ermsg: 'Connection rejected',
           });
         }
+        break;
+      case WalletMethod.LoadConnectedSites:
+        this.emit(id, this.connectedApps);
+        break;
+      case WalletMethod.DisconnectSite:
+        this.removeConnectedSite(params);
+        this.emit(id, true);
         break;
       case WalletMethod.NotificationApproveInfo:
         if (params.req) {

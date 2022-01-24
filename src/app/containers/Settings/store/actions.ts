@@ -1,7 +1,8 @@
 import { createAsyncAction } from 'typesafe-actions';
 import { ErrorMessage } from '@core/WasmWallet';
-import { VersionInterface } from '@app/containers/Settings/interfaces';
+import { VersionInterface, connectedSiteInterface } from '@app/containers/Settings/interfaces';
 import { SettingsActionTypes } from './constants';
+import { ExternalAppConnection } from '@core/types';
 
 export const deleteWallet = createAsyncAction(
   SettingsActionTypes.DELETE_WALLET,
@@ -20,3 +21,15 @@ export const loadVersion = createAsyncAction(
   SettingsActionTypes.GET_VERSION_SUCCESS,
   SettingsActionTypes.GET_VERSION_FAILURE,
 )<void, VersionInterface, ErrorMessage>();
+
+export const loadConnectedSites = createAsyncAction(
+  SettingsActionTypes.LOAD_CONNECTED_SITES,
+  SettingsActionTypes.LOAD_CONNECTED_SITES_SUCCESS,
+  SettingsActionTypes.LOAD_CONNECTED_SITES_FAILURE,
+)<void, connectedSiteInterface[], ErrorMessage>();
+
+export const disconnectAllowedSite = createAsyncAction(
+  SettingsActionTypes.DISCONNECT_SITE,
+  SettingsActionTypes.DISCONNECT_SITE_SUCCESS,
+  SettingsActionTypes.DISCONNECT_SITE_FAILURE,
+)<ExternalAppConnection, void, ErrorMessage>();

@@ -13,6 +13,7 @@ import {
   CreateAddressParams,
   SendTransactionParams,
   TransactionDetail,
+  ExternalAppConnection
 } from './types';
 
 let port;
@@ -112,6 +113,14 @@ export function loadBackgroundLogs() {
   return postMessage(WalletMethod.LoadBackgroundLogs);
 }
 
+export function loadConnectedSites() {
+  return postMessage(WalletMethod.LoadConnectedSites);
+}
+
+export function disconnectAllowedSite(params: ExternalAppConnection) {
+  return postMessage(WalletMethod.DisconnectSite, params);
+}
+
 export async function validateAddress(address: string): Promise<AddressData> {
   const result = await postMessage<AddressData>(RPCMethod.ValidateAddress, { address });
   const json = await postMessage(WalletMethod.ConvertTokenToJson, address);
@@ -124,6 +133,16 @@ export async function validateAddress(address: string): Promise<AddressData> {
     ...result,
     ...json,
   };
+}
+
+export function finishNotificationAuth(apiver: string, apivermin: string, appname: string, appurl: string) {
+  return postMessage(WalletMethod.NotificationAuthenticaticated, {
+    result: true,
+    apiver,
+    apivermin,
+    appname,
+    appurl,
+  });
 }
 
 export function approveConnection(apiver: string, apivermin: string, appname: string, appurl: string) {

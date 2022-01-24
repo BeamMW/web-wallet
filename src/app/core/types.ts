@@ -9,6 +9,11 @@ export interface CreateWalletParams {
   isSeedConfirmed: boolean;
 }
 
+export interface ExternalAppConnection {
+  appUrl: string;
+  appName: string;
+}
+
 export interface CreateAddressParams {
   type: AddressType;
 }
@@ -40,9 +45,17 @@ export enum WalletMethod {
   GenerateSeed = 'wasm_generate_seed',
   ConvertTokenToJson = 'wasm_convert_token_to_json',
   NotificationConnect = 'notification_connect',
+  NotificationAuthenticaticated = 'notification_authenticaticated',
   NotificationApproveInfo = 'notification_approve_info',
   NotificationRejectInfo = 'notification_reject_info',
   LoadBackgroundLogs = 'load_background_logs',
+  LoadConnectedSites = 'load_connected_sites',
+  DisconnectSite = 'disconnect_site',
+}
+
+export enum ExternalAppMethod {
+  CreateBeamApi = 'create_beam_api',
+  CreateBeamApiRetry = 'retry_beam_api',
 }
 
 export interface RemoteRequest {
@@ -270,6 +283,8 @@ export interface TxsEvent extends WalletChangeEvent {
 export enum NotificationType {
   CONNECT = 'connect',
   APPROVE_INVOKE = 'approve_invoke',
+  APPROVE_TX = 'approve_tx',
+  AUTH = 'auth',
 }
 
 export interface NotificationParams {
@@ -283,7 +298,7 @@ export interface NotificationParams {
 }
 
 export interface Notification {
-  type: NotificationType.APPROVE_INVOKE | NotificationType.CONNECT;
+  type: NotificationType.APPROVE_INVOKE | NotificationType.CONNECT | NotificationType.AUTH;
   params: NotificationParams;
 }
 

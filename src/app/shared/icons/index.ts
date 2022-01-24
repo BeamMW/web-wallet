@@ -28,6 +28,7 @@ import MenuIcon from './icon-menu.svg';
 import RemoveIcon from './icon-remove.svg';
 import WalletSmallIcon from './icon-wallet-small.svg';
 import SettingsReportIcon from './icon-settings-report.svg';
+import SettingsConnectedSites from './icon-connected-sites.svg';
 import SaveIcon from './icon-save.svg';
 
 import TxCanceledIcon from './icon-tx-canceled.svg';
@@ -78,6 +79,7 @@ export {
   RemoveIcon,
   WalletSmallIcon,
   SettingsReportIcon,
+  SettingsConnectedSites,
   SaveIcon,
   TxCanceledIcon,
   TxCanceledMPIcon,

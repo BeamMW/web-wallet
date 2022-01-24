@@ -2,7 +2,7 @@ import React from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import { ROUTES_PATH } from '@app/shared/constants';
-import { Settings, SettingsReport } from '..';
+import { Settings, SettingsReport, SettingsConnected } from '..';
 
 const routes = [
   {
@@ -13,6 +13,10 @@ const routes = [
   {
     path: ROUTES_PATH.SETTINGS.SETTINGS_REPORT,
     element: <SettingsReport />,
+  },
+  {
+    path: ROUTES_PATH.SETTINGS.SETTINGS_CONNECTED,
+    element: <SettingsConnected />,
   },
 ];
 
