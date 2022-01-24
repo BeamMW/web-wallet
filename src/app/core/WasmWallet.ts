@@ -4,8 +4,10 @@ import PortStream from '@core/PortStream';
 
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 import config from '@app/config';
+
+import { SyncStep } from '@app/containers/Auth/interfaces';
 import {
-  RPCMethod, RPCEvent, BackgroundEvent, WalletMethod, CreateWalletParams, Notification,
+  BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
 } from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
@@ -310,6 +312,8 @@ export default class WasmWallet {
 
     const contentLength = +response.headers.get('Content-Length');
 
+    this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.DOWNLOAD);
+
     let receivedLength = 0;
     const chunks = [];
     while (true) {
@@ -322,16 +326,21 @@ export default class WasmWallet {
 
       chunks.push(value);
       receivedLength += value.length;
-
-      console.log(`Получено ${receivedLength} из ${contentLength}`);
+      this.emit(BackgroundEvent.DOWNLOAD_DB_PROGRESS, { done: receivedLength, total: contentLength });
     }
     const blob = new Blob(chunks);
     const data = await blob.arrayBuffer();
     const payload = new Uint8Array(data);
 
+    this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.RESTORE);
+
     this.wallet.importRecovery(payload, (error, done, total) => {
+      if (done === total) {
+        this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.SYNC);
+        console.log('------------DONE----------');
+      }
       if (error == null) {
-        console.log(`Restoring ${done}/${total}`);
+        this.emit(BackgroundEvent.RESTORE_DB_PROGRESS, { done, total });
       } else {
         console.log(`Failed to recover: ${error}`);
       }

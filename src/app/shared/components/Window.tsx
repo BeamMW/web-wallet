@@ -159,6 +159,7 @@ const BurgerWrapper = styled.div`
     position: absolute;
     right: 8px;
     top: 16px;
+    z-index: 100;
     .burger-item {
       display: flex;
       align-items: center;
@@ -209,7 +210,17 @@ export const Window: React.FC<WindowProps> = ({
   };
 
   const handleBackClick = !onPrevious ? handlePrevious : onPrevious;
-  const handleMenuClick = () => setVisible(true);
+
+  const handleMenuClick = () => {
+    setVisible(true);
+    setIsOpened(false);
+  };
+
+  const handleBurger = () => {
+    setVisible(false);
+    setIsOpened((v) => !v);
+  };
+
   const handleCancelClick = () => setVisible(false);
 
   const stopWallet = () => {
@@ -230,7 +241,7 @@ export const Window: React.FC<WindowProps> = ({
             <span className="online-text">online</span>
           </OnlineWrapper>
           <BurgerWrapper>
-            <div className="kebab" onClick={() => setIsOpened((v) => !v)} aria-hidden="true">
+            <div className="kebab" onClick={() => handleBurger()} aria-hidden="true">
               <div />
               <div />
               <div />
@@ -246,7 +257,7 @@ export const Window: React.FC<WindowProps> = ({
           </BurgerWrapper>
         </FrameStyled>
         <Title variant="heading">{title}</Title>
-        {primary && (
+        {title === 'Wallet' && (
           <Button
             variant="icon"
             icon={!isBalanceHidden ? IconEye : IconEyeCrossed}
