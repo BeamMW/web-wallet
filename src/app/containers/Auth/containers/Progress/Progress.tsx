@@ -4,7 +4,13 @@ import { styled } from '@linaria/react';
 import { Splash } from '@app/shared/components';
 
 import { useSelector } from 'react-redux';
-import { selectWalletSyncState } from '@app/containers/Auth/store/selectors';
+import {
+  selectWalletSyncState,
+  selectSyncStep,
+  selectDatabaseSyncProgress,
+  selectDownloadDbProgress,
+} from '@app/containers/Auth/store/selectors';
+import { SyncStep } from '@app/containers/Auth/interfaces';
 import { ProgressBar } from '../../../../shared/components';
 
 const TitleStyled = styled.h2`
@@ -26,11 +32,40 @@ const SubtitleStyled = styled.h3`
 
 const Progress = () => {
   const syncProgress = useSelector(selectWalletSyncState());
+  const syncStep = useSelector(selectSyncStep());
+  const databaseSyncProgress = useSelector(selectDatabaseSyncProgress());
+  const downloadDbProgress = useSelector(selectDownloadDbProgress());
 
-  const syncPercent = Math.floor(100 / (syncProgress.sync_requests_total / syncProgress.sync_requests_done));
+  const getSyncPercent = () => {
+    switch (syncStep) {
+      case SyncStep.DOWNLOAD: {
+        const percent = downloadDbProgress.total / downloadDbProgress.done;
+        const title = 'Downloading blockchain info';
+        return { percent, title };
+      }
+      case SyncStep.RESTORE: {
+        const percent = databaseSyncProgress.total / databaseSyncProgress.done;
+        const title = 'Unpack blockchain info';
+        return { percent, title };
+      }
+      case SyncStep.SYNC: {
+        const percent = syncProgress.sync_requests_total / syncProgress.sync_requests_done;
+        const title = 'Syncing with blockchain';
+        return { percent, title };
+      }
+      default: {
+        const percent = syncProgress.sync_requests_total / syncProgress.sync_requests_done;
+        const title = 'Syncing with blockchain';
+        return { percent, title };
+      }
+    }
+  };
 
-  const active = syncProgress.sync_requests_total > 0;
-  const progress = `Syncing with blockchain ${syncPercent}%`;
+  const { percent, title } = getSyncPercent();
+  const syncPercent = Math.floor(100 / percent);
+
+  const active = percent > 0;
+  const progress = `${title} ${syncPercent}%`;
 
   return (
     <Splash size="small">

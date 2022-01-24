@@ -1,6 +1,6 @@
 import { createAsyncAction, createAction } from 'typesafe-actions';
 import { ErrorMessage } from '@core/WasmWallet';
-import { SyncProgress } from '@app/containers/Auth/interfaces';
+import { SyncProgress, DatabaseSyncProgress, SyncStep } from '@app/containers/Auth/interfaces';
 import React from 'react';
 import { AuthActionTypes } from './constants';
 
@@ -13,6 +13,12 @@ export const startWallet = createAsyncAction(
 export const setSyncedWalletState = createAction(AuthActionTypes.SET_SYNCED_WALLET_STATE)<boolean>();
 
 export const updateWalletSyncProgress = createAction(AuthActionTypes.UPDATE_WALLET_SYNC_PROGRESS)<SyncProgress>();
+
+export const downloadDatabaseFile = createAction(AuthActionTypes.DOWNLOAD_DATABASE_FILE)<DatabaseSyncProgress>();
+
+export const restoreWallet = createAction(AuthActionTypes.RESTORE_WALLET)<DatabaseSyncProgress>();
+
+export const setSyncStep = createAction(AuthActionTypes.SET_SYNC_STEP)<SyncStep>();
 
 export const resetRestoreState = createAction(AuthActionTypes.RESET_RESTORE_STATE)();
 

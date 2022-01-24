@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { ActionType, createReducer } from 'typesafe-actions';
 
-import { AuthStateType } from '../interfaces';
+import { AuthStateType, SyncStep } from '../interfaces';
 import * as actions from './actions';
 
 type Action = ActionType<typeof actions>;
@@ -12,9 +12,18 @@ const INITIAL: null[] = new Array(SEED_PHRASE_COUNT).fill(null);
 
 const initialState: AuthStateType = {
   is_wallet_synced: false,
+  sync_step: SyncStep.SYNC,
   sync_progress: {
     sync_requests_done: 0,
     sync_requests_total: 0,
+  },
+  download_db_progress: {
+    done: 0,
+    total: 0,
+  },
+  database_sync_progress: {
+    done: 0,
+    total: 0,
   },
   seed_errors: [...INITIAL],
   seed_values: [...INITIAL],
@@ -30,6 +39,15 @@ const reducer = createReducer<AuthStateType, Action>(initialState)
   }))
   .handleAction(actions.updateWalletSyncProgress, (state, action) => produce(state, (nexState) => {
     nexState.sync_progress = action.payload;
+  }))
+  .handleAction(actions.setSyncStep, (state, action) => produce(state, (nexState) => {
+    nexState.sync_step = action.payload;
+  }))
+  .handleAction(actions.downloadDatabaseFile, (state, action) => produce(state, (nexState) => {
+    nexState.download_db_progress = action.payload;
+  }))
+  .handleAction(actions.restoreWallet, (state, action) => produce(state, (nexState) => {
+    nexState.database_sync_progress = action.payload;
   }))
   .handleAction(actions.updateSeedList.success, (state, action) => produce(state, (nexState) => {
     const { seed_errors, seed_values } = state;

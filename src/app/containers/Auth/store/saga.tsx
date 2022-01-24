@@ -9,6 +9,8 @@ import {
   ConnectedData, Environment, NotificationType, SyncProgress,
 } from '@core/types';
 import NotificationController from '@core/NotificationController';
+import { DatabaseSyncProgress, SyncStep } from '@app/containers/Auth/interfaces';
+
 import { actions } from '.';
 import store from '../../../../index';
 
@@ -73,6 +75,16 @@ export function* handleProgress({
   } else {
     yield put(actions.updateWalletSyncProgress({ sync_requests_done, sync_requests_total }));
   }
+}
+
+export function* handleSyncStep(payload: SyncStep) {
+  yield put(actions.setSyncStep(payload));
+}
+export function* handleDatabaseSyncProgress(payload: DatabaseSyncProgress) {
+  yield put(actions.downloadDatabaseFile(payload));
+}
+export function* handleDatabaseRestore(payload: DatabaseSyncProgress) {
+  yield put(actions.restoreWallet(payload));
 }
 
 function* startWalletSaga(action: ReturnType<typeof actions.startWallet.request>): Generator {

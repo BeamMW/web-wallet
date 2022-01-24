@@ -3,8 +3,11 @@ import * as passworder from 'browser-passworder';
 import PortStream from '@core/PortStream';
 
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
+import config from '@app/config';
+
+import { SyncStep } from '@app/containers/Auth/interfaces';
 import {
-  RPCMethod, RPCEvent, BackgroundEvent, WalletMethod, CreateWalletParams, Notification,
+  BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
 } from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
@@ -350,6 +353,49 @@ export default class WasmWallet {
     this.wallet.setApproveContractInfoHandler(handler);
   }
 
+  async fastSync() {
+    const response = await fetch(config.restore_url);
+    const reader = response.body.getReader();
+
+    const contentLength = +response.headers.get('Content-Length');
+
+    this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.DOWNLOAD);
+
+    let receivedLength = 0;
+    const chunks = [];
+    while (true) {
+      /* eslint-disable no-await-in-loop */
+      const { done, value } = await reader.read();
+      /* eslint-enable no-await-in-loop */
+      if (done) {
+        break;
+      }
+
+      chunks.push(value);
+      receivedLength += value.length;
+      this.emit(BackgroundEvent.DOWNLOAD_DB_PROGRESS, { done: receivedLength, total: contentLength });
+    }
+    const blob = new Blob(chunks);
+    const data = await blob.arrayBuffer();
+    const payload = new Uint8Array(data);
+
+    this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.RESTORE);
+
+    this.wallet.importRecovery(payload, (error, done, total) => {
+      if (done === total) {
+        this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.SYNC);
+        console.log('------------DONE----------');
+      }
+      if (error == null) {
+        this.emit(BackgroundEvent.RESTORE_DB_PROGRESS, { done, total });
+      } else {
+        console.log(`Failed to recover: ${error}`);
+      }
+    });
+
+    return null;
+  }
+
   async create({ seed, password, isSeedConfirmed }: CreateWalletParams) {
     try {
       if (WasmWallet.isInitialized()) {
@@ -361,6 +407,10 @@ export default class WasmWallet {
       WasmWallet.initConnectedSites();
 
       WasmWalletClient.CreateWallet(seed, PATH_DB, password);
+      if (!this.wallet) {
+        this.wallet = new WasmWalletClient(PATH_DB, password, PATH_NODE);
+      }
+      this.fastSync();
       this.start(password);
     } catch (error) {
       // eslint-disable-next-line no-console

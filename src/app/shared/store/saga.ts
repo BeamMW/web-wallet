@@ -6,7 +6,13 @@ import { eventChannel, END } from 'redux-saga';
 import { initRemoteWallet, stopWallet } from '@core/api';
 import { BackgroundEvent, RemoteResponse, RPCEvent } from '@core/types';
 
-import { handleConnect, handleProgress } from '@app/containers/Auth/store/saga';
+import {
+  handleConnect,
+  handleDatabaseRestore,
+  handleDatabaseSyncProgress,
+  handleProgress,
+  handleSyncStep,
+} from '@app/containers/Auth/store/saga';
 import { handleTotals, handleAssets } from '@app/containers/Wallet/store/saga';
 import { handleTransactions } from '@app/containers/Transactions/store/saga';
 import { actions } from '@app/shared/store/index';
@@ -51,6 +57,18 @@ function* sharedSaga() {
       switch (payload.id) {
         case BackgroundEvent.CONNECTED:
           yield fork(handleConnect, payload.result);
+          break;
+
+        case BackgroundEvent.CHANGE_SYNC_STEP:
+          yield fork(handleSyncStep, payload.result);
+
+          break;
+        case BackgroundEvent.DOWNLOAD_DB_PROGRESS:
+          yield fork(handleDatabaseSyncProgress, payload.result);
+
+          break;
+        case BackgroundEvent.RESTORE_DB_PROGRESS:
+          yield fork(handleDatabaseRestore, payload.result);
           break;
 
         case RPCEvent.SYNC_PROGRESS:

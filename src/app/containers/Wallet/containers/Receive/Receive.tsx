@@ -117,12 +117,22 @@ const Receive = () => {
         cancelButton={null}
       >
         <QrCodeWrapper>
-          <QRCode value={`beam:${addressFull}`} renderAs="svg" bgColor="#003f6f" fgColor="white" />
-          <div className="text">Sender will be given a choice between regular and offline payment.</div>
-          <br />
-          <div className="text">
-            For online payment to complete, you should get online during the 12 hours after coins are sent.
-          </div>
+          <QRCode value={`beam://${addressFull}`} renderAs="svg" bgColor="#003f6f" fgColor="white" />
+          {maxAnonymity ? (
+            <>
+              <div className="text"> Transaction can last at most 72 hours.</div>
+              <br />
+              <div className="text">Min transaction fee is 0.01 BEAM.</div>
+            </>
+          ) : (
+            <>
+              <div className="text">Sender will be given a choice between regular and offline payment.</div>
+              <br />
+              <div className="text">
+                For online payment to complete, you should get online during the 12 hours after coins are sent.
+              </div>
+            </>
+          )}
         </QrCodeWrapper>
       </Popup>
 
