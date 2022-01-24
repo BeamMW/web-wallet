@@ -27,6 +27,7 @@ export const ROUTES = {
   SETTINGS: {
     BASE: '/settings',
     SETTINGS_REPORT: '/settings/report',
+    SETTINGS_CONNECTED: '/settings/connected',
   },
 };
 
@@ -58,5 +59,6 @@ export const ROUTES_PATH = {
   SETTINGS: {
     BASE: '/settings',
     SETTINGS_REPORT: '/report',
+    SETTINGS_CONNECTED: '/connected',
   },
 };

@@ -5,90 +5,22 @@ import WasmWallet from '@core/WasmWallet';
 import { Environment, RemoteRequest } from '@app/core/types';
 
 import NotificationManager from '@core/NotificationManager';
-import { NotificationType } from '@core/types';
+import { NotificationType, ExternalAppMethod } from '@core/types';
 
 window.global = globalThis;
 
-const notificationManager = new NotificationManager();
+const notificationManager = NotificationManager.getInstance();
 const wallet = WasmWallet.getInstance();
-
-const openBeamTabsIDs = {};
 
 let port = null;
 let contentPort = null;
 let connected = false;
 let activeTab = null;
-let appname = '';
-
-let uiIsTriggering = false;
-let notification = null;
-let notificationIsOpen = false;
 
 function postMessage(data) {
   if (port && connected) {
     port.postMessage(data);
   }
-}
-
-const checkForError = () => {
-  const { lastError } = extensionizer.runtime;
-  if (!lastError) {
-    return undefined;
-  }
-  if (lastError.stack && lastError.message) {
-    return lastError;
-  }
-  return new Error(lastError.message);
-};
-
-const getActiveTabs = () => new Promise<any[]>((resolve, reject) => {
-  extensionizer.tabs.query({ active: true }, (tabs) => {
-    const error = checkForError();
-    if (error) {
-      return reject(error);
-    }
-    return resolve(tabs);
-  });
-});
-
-async function triggerUi() {
-  const tabs = await getActiveTabs();
-  const currentlyActiveBeamTab = Boolean(tabs.find((tab) => openBeamTabsIDs[tab.id]));
-  if (!uiIsTriggering && !currentlyActiveBeamTab) {
-    uiIsTriggering = true;
-    try {
-      await notificationManager.showPopup();
-    } finally {
-      uiIsTriggering = false;
-    }
-  }
-}
-
-async function openPopup() {
-  await triggerUi();
-  await new Promise((resolve) => {
-    const interval = setInterval(() => {
-      if (!notificationIsOpen) {
-        clearInterval(interval);
-        resolve(true);
-      }
-    }, 1000);
-  });
-}
-
-function openConnectNotification(msg, appurl) {
-  notification = {
-    type: NotificationType.CONNECT,
-    params: {
-      appurl,
-      appname: msg.appname,
-      apiver: msg.apiver,
-      apivermin: msg.apivermin,
-    },
-  };
-  appname = msg.appname;
-  notificationIsOpen = true;
-  openPopup();
 }
 
 function handleConnect(remote) {
@@ -99,8 +31,10 @@ function handleConnect(remote) {
 
   port.onDisconnect.addListener(() => {
     connected = false;
-    if (activeTab) {
-      notificationManager.closeTab(activeTab);
+    if (activeTab && port.name === Environment.NOTIFICATION) {
+      //notificationManager.closeTab(activeTab);
+      activeTab = null;
+      notificationManager.appname = ''; //TODO: check with reconnect
     }
   });
 
@@ -117,9 +51,9 @@ function handleConnect(remote) {
     }
     case Environment.NOTIFICATION: {
       const tabId = remote.sender.tab.id;
-      openBeamTabsIDs[tabId] = true;
+      notificationManager.openBeamTabsIDs[tabId] = true;
       activeTab = remote.sender.tab.id;
-      wallet.init(postMessage, notification);
+      wallet.init(postMessage, notificationManager.notification);
       break;
     }
 
@@ -128,14 +62,25 @@ function handleConnect(remote) {
       break;
 
     case Environment.CONTENT_REQ: {
-      NotificationManager.setReqPort(remote);
+      notificationManager.setReqPort(remote);
       contentPort = remote;
       contentPort.onMessage.addListener((msg) => {
-        if (msg.type === 'create_beam_api') {
-          openConnectNotification(msg, remote.sender.url);
-        } else if (msg.type === 'retry_beam_api') {
-          /* eslint-disable-next-line @typescript-eslint/no-unused-expressions */
-          appname === msg.appname ? openPopup() : openConnectNotification(msg, remote.sender.url);
+        if (wallet.isRunning()) {
+          if (wallet.isConnectedSite({appName: msg.appname, appUrl: remote.sender.url})) {
+            msg['appurl'] = remote.sender.url;
+            wallet.connectExternal(msg);
+          } else {
+            if (msg.type === ExternalAppMethod.CreateBeamApi) {
+              notificationManager.openConnectNotification(msg, remote.sender.url);
+            } else if (msg.type === ExternalAppMethod.CreateBeamApiRetry) {
+              /* eslint-disable-next-line @typescript-eslint/no-unused-expressions */
+              notificationManager.appname === msg.appname 
+                ? notificationManager.openPopup() 
+                : notificationManager.openConnectNotification(msg, remote.sender.url);
+            }
+          }
+        } else {
+          notificationManager.openAuthNotification(msg, remote.sender.url);
         }
       });
       break;
@@ -147,17 +92,7 @@ function handleConnect(remote) {
 
 wallet.initContractInfoHandler((req, info, amounts, cb) => {
   wallet.initcontractInfoHandlerCallback(cb);
-  notification = {
-    type: NotificationType.APPROVE_INVOKE,
-    params: {
-      req,
-      info,
-      amounts,
-      appname,
-    },
-  };
-  notificationIsOpen = true;
-  openPopup();
+  notificationManager.openContractNotification(req, info, amounts);
 });
 
 extensionizer.runtime.onConnect.addListener(handleConnect);

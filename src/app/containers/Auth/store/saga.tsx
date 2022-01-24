@@ -1,7 +1,7 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 
 import {
-  getEnvironment, startWallet, isAllowedWord, isAllowedSeed, generateSeed,
+  getEnvironment, startWallet, isAllowedWord, isAllowedSeed, generateSeed, finishNotificationAuth
 } from '@core/api';
 import { navigate, setError } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
@@ -32,7 +32,9 @@ export function* handleConnect({ notification, is_running, onboarding }: Connect
   }
   if (notification) {
     NotificationController.setNotification(notification);
-    if (notification.type === NotificationType.APPROVE_INVOKE) {
+    if (notification.type === NotificationType.AUTH) {
+      yield put(navigate(ROUTES.AUTH.LOGIN));
+    } else if (notification.type === NotificationType.APPROVE_INVOKE) {
       yield put(navigate(is_running ? ROUTES.NOTIFICATIONS.APPROVE_INVOKE : ROUTES.AUTH.LOGIN));
     } else if (notification.type === NotificationType.CONNECT) {
       yield put(navigate(is_running ? ROUTES.NOTIFICATIONS.CONNECT : ROUTES.AUTH.LOGIN));
@@ -56,7 +58,13 @@ export function* handleProgress({
       yield put(navigate(ROUTES.WALLET.BASE));
     } else {
       const notification = NotificationController.getNotification();
-      if (notification.type === NotificationType.CONNECT) {
+      if (notification.type === NotificationType.AUTH) {
+        finishNotificationAuth(notification.params.apiver,
+          notification.params.apivermin,
+          notification.params.appname,
+          notification.params.appurl);
+        window.close();
+      } else if (notification.type === NotificationType.CONNECT) {
         yield put(navigate(ROUTES.NOTIFICATIONS.CONNECT));
       } else if (notification.type === NotificationType.APPROVE_INVOKE) {
         yield put(navigate(ROUTES.NOTIFICATIONS.APPROVE_INVOKE));
