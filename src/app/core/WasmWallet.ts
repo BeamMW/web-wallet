@@ -310,9 +310,6 @@ export default class WasmWallet {
     const response = await fetch(config.restore_url);
     const reader = response.body.getReader();
 
-    console.log('RESPONSE-----', response);
-    console.log('RESPONSE-----CONTENT', response.headers.get('Content-Length'));
-
     const contentLength = +response.headers.get('Content-Length');
 
     this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.DOWNLOAD);
