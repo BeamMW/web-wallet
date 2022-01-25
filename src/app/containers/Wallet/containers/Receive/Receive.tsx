@@ -117,7 +117,7 @@ const Receive = () => {
         cancelButton={null}
       >
         <QrCodeWrapper>
-          <QRCode value={`beam://${addressFull}`} renderAs="svg" bgColor="#003f6f" fgColor="white" />
+          <QRCode value={`${addressFull}`} renderAs="svg" bgColor="#003f6f" fgColor="white" />
           {maxAnonymity ? (
             <>
               <div className="text"> Transaction can last at most 72 hours.</div>

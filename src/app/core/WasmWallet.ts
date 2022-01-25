@@ -362,18 +362,28 @@ export default class WasmWallet {
     this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.DOWNLOAD);
 
     let receivedLength = 0;
+    let download_percent = 0;
+    let restore_percent = 0;
     const chunks = [];
     while (true) {
       /* eslint-disable no-await-in-loop */
       const { done, value } = await reader.read();
       /* eslint-enable no-await-in-loop */
+      if (value) {
+        chunks.push(value);
+        receivedLength += value.length;
+        const percent = Number(Math.floor(100 / (contentLength / receivedLength)).toFixed());
+        if (percent > download_percent) {
+          download_percent = percent;
+          this.emit(BackgroundEvent.DOWNLOAD_DB_PROGRESS, {
+            done: receivedLength,
+            total: contentLength,
+          });
+        }
+      }
       if (done) {
         break;
       }
-
-      chunks.push(value);
-      receivedLength += value.length;
-      this.emit(BackgroundEvent.DOWNLOAD_DB_PROGRESS, { done: receivedLength, total: contentLength });
     }
     const blob = new Blob(chunks);
     const data = await blob.arrayBuffer();
@@ -384,10 +394,16 @@ export default class WasmWallet {
     this.wallet.importRecovery(payload, (error, done, total) => {
       if (done === total) {
         this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.SYNC);
-        console.log('------------DONE----------');
       }
       if (error == null) {
-        this.emit(BackgroundEvent.RESTORE_DB_PROGRESS, { done, total });
+        const percent = Number(Math.floor(100 / (total / done)).toFixed());
+        if (percent > restore_percent) {
+          restore_percent = percent;
+          this.emit(BackgroundEvent.RESTORE_DB_PROGRESS, {
+            done,
+            total,
+          });
+        }
       } else {
         console.log(`Failed to recover: ${error}`);
       }
