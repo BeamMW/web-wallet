@@ -6,6 +6,7 @@ export interface Configuration {
 
 export interface ConfigurationObject {
   development: Configuration;
+  production: Configuration;
   master_net: Configuration;
   test_net: Configuration;
   main_net: Configuration;
