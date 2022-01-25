@@ -86,6 +86,14 @@ const App = () => {
           draggable={false}
           pauseOnHover={false}
           icon={false}
+          toastStyle={{
+            textAlign: 'center',
+            background: '#25557B',
+            color: 'white',
+            width: '90%',
+            margin: '0 auto 16px',
+            borderRadius: '10px',
+          }}
         />
       </Scrollbars>
     </ErrorBoundary>

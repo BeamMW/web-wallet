@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import QRCode from 'qrcode.react';
+import QRCode from 'react-qr-code';
 import { styled } from '@linaria/react';
 
 import {
@@ -46,8 +46,12 @@ const LabelStyled = styled.label`
 `;
 
 const QrCodeWrapper = styled.div`
-  > svg {
-    margin-bottom: 30px;
+  > .qr-cd {
+    background: white;
+    border-radius: 10px;
+    padding: 5px;
+    width: 230px;
+    margin: 0 auto 30px;
   }
   > .text {
     opacity: 0.5;
@@ -117,7 +121,9 @@ const Receive = () => {
         cancelButton={null}
       >
         <QrCodeWrapper>
-          <QRCode value={`${addressFull}`} renderAs="svg" bgColor="#003f6f" fgColor="white" />
+          <div className="qr-cd">
+            <QRCode value={`${addressFull}`} size={220} bgColor="white" />
+          </div>
           {maxAnonymity ? (
             <>
               <div className="text"> Transaction can last at most 72 hours.</div>

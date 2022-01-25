@@ -30,7 +30,7 @@ const PaymentProofInformation = ({ paymentProof, isBalanceHidden, copy }: Paymen
           variant="icon"
           pallete="white"
           icon={CopySmallIcon}
-          onClick={() => copy(paymentProof.sender, 'Sender copied to clipboard')}
+          onClick={() => copy(paymentProof.sender, 'Address copied to clipboard')}
         />
       </div>
     </InformationItem>
@@ -42,7 +42,7 @@ const PaymentProofInformation = ({ paymentProof, isBalanceHidden, copy }: Paymen
           variant="icon"
           pallete="white"
           icon={CopySmallIcon}
-          onClick={() => copy(paymentProof.receiver, 'Receiver copied to clipboard')}
+          onClick={() => copy(paymentProof.receiver, 'Address copied to clipboard')}
         />
       </div>
     </InformationItem>
