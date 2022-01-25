@@ -61,11 +61,8 @@ export function postMessage<T = any, P = unknown>(method: WalletMethod | RPCMeth
     port.onMessage.addListener(handler);
 
     // eslint-disable-next-line no-console
-    if (method !== WalletMethod.IsAllowedWord 
-    && method !== WalletMethod.IsAllowedSeed
-    && method !== WalletMethod.GenerateSeed) {
-      console.info(`sending ${method}:${target} with`, params);
-    }
+    //console.info(`sending ${method}:${target} with`, params); 
+
     port.postMessage({ id: target, method, params });
   });
 }
