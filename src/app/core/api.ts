@@ -61,7 +61,11 @@ export function postMessage<T = any, P = unknown>(method: WalletMethod | RPCMeth
     port.onMessage.addListener(handler);
 
     // eslint-disable-next-line no-console
-    console.info(`sending ${method}:${target} with`, params);
+    if (method !== WalletMethod.IsAllowedWord 
+    && method !== WalletMethod.IsAllowedSeed
+    && method !== WalletMethod.GenerateSeed) {
+      console.info(`sending ${method}:${target} with`, params);
+    }
     port.postMessage({ id: target, method, params });
   });
 }
@@ -167,6 +171,14 @@ export function approveContractInfoRequest(req) {
 
 export function rejectContractInfoRequest(req) {
   return postMessage(WalletMethod.NotificationRejectInfo, { req });
+}
+
+export function approveSendRequest(req) {
+  return postMessage(WalletMethod.NotificationApproveSend, { req });
+}
+
+export function rejectSendRequest(req) {
+  return postMessage(WalletMethod.NotificationRejectSend, { req });
 }
 
 export interface CalculateChangeParams {

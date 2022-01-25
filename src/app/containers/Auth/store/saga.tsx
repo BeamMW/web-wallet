@@ -36,6 +36,8 @@ export function* handleConnect({ notification, is_running, onboarding }: Connect
     NotificationController.setNotification(notification);
     if (notification.type === NotificationType.AUTH) {
       yield put(navigate(ROUTES.AUTH.LOGIN));
+    } else if (notification.type === NotificationType.APPROVE_TX) {
+      yield put(navigate(is_running ? ROUTES.NOTIFICATIONS.APPROVE_SEND : ROUTES.AUTH.LOGIN));
     } else if (notification.type === NotificationType.APPROVE_INVOKE) {
       yield put(navigate(is_running ? ROUTES.NOTIFICATIONS.APPROVE_INVOKE : ROUTES.AUTH.LOGIN));
     } else if (notification.type === NotificationType.CONNECT) {
@@ -68,6 +70,8 @@ export function* handleProgress({
         window.close();
       } else if (notification.type === NotificationType.CONNECT) {
         yield put(navigate(ROUTES.NOTIFICATIONS.CONNECT));
+      } else if (notification.type === NotificationType.APPROVE_TX) {
+        yield put(navigate(ROUTES.NOTIFICATIONS.APPROVE_SEND));
       } else if (notification.type === NotificationType.APPROVE_INVOKE) {
         yield put(navigate(ROUTES.NOTIFICATIONS.APPROVE_INVOKE));
       }

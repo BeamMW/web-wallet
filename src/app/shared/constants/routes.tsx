@@ -23,6 +23,7 @@ export const ROUTES = {
     BASE: '/notifications',
     CONNECT: '/notifications/connect',
     APPROVE_INVOKE: '/notifications/approve_invoke',
+    APPROVE_SEND: '/notifications/approve_send',
   },
   SETTINGS: {
     BASE: '/settings',
@@ -55,6 +56,7 @@ export const ROUTES_PATH = {
   NOTIFICATIONS: {
     CONNECT: '/connect',
     APPROVE_INVOKE: '/approve_invoke',
+    APPROVE_SEND: '/approve_send',
   },
   SETTINGS: {
     BASE: '/settings',

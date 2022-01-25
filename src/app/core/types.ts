@@ -48,6 +48,8 @@ export enum WalletMethod {
   NotificationAuthenticaticated = 'notification_authenticaticated',
   NotificationApproveInfo = 'notification_approve_info',
   NotificationRejectInfo = 'notification_reject_info',
+  NotificationApproveSend = 'notification_approve_send',
+  NotificationRejectSend = 'notification_reject_send',
   LoadBackgroundLogs = 'load_background_logs',
   LoadConnectedSites = 'load_connected_sites',
   DisconnectSite = 'disconnect_site',
@@ -301,7 +303,7 @@ export interface NotificationParams {
 }
 
 export interface Notification {
-  type: NotificationType.APPROVE_INVOKE | NotificationType.CONNECT | NotificationType.AUTH;
+  type: NotificationType;
   params: NotificationParams;
 }
 

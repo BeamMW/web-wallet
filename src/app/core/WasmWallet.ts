@@ -68,8 +68,10 @@ export default class WasmWallet {
   private static instance: WasmWallet;
 
   private contractInfoHandler;
-
   private contractInfoHandlerCallback;
+
+  private sendHandler;
+  private sendHandlerCallback;
 
   // TODO:BRO map [url->app]
   private apps = {};
@@ -247,6 +249,14 @@ export default class WasmWallet {
     this.contractInfoHandlerCallback = cb;
   }
 
+  initSendHandler(handler) {
+    this.sendHandler = handler;
+  }
+
+  initSendHandlerCallback(cb) {
+    this.sendHandlerCallback = cb;
+  }
+
   emit(id: number | RPCEvent | BackgroundEvent, result?: any, error?: any) {
     // eslint-disable-next-line no-console
     console.info(`emitted event "${id}" with`, result);
@@ -272,6 +282,7 @@ export default class WasmWallet {
     this.wallet.startWallet();
     this.wallet.subscribe(responseHandler);
     this.wallet.setApproveContractInfoHandler(this.contractInfoHandler);
+    this.wallet.setApproveSendHandler(this.sendHandler);
 
     await this.loadConnectedApps();
 
@@ -559,6 +570,16 @@ export default class WasmWallet {
       case WalletMethod.NotificationRejectInfo:
         if (params.req) {
           this.contractInfoHandlerCallback.contractInfoRejected(params.req);
+        }
+        break;
+      case WalletMethod.NotificationApproveSend:
+        if (params.req) {
+          this.sendHandlerCallback.sendApproved(params.req);
+        }
+        break;
+      case WalletMethod.NotificationRejectSend:
+        if (params.req) {
+          this.sendHandlerCallback.sendRejected(params.req);
         }
         break;
       case WalletMethod.LoadBackgroundLogs:

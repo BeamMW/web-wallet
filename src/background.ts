@@ -95,4 +95,9 @@ wallet.initContractInfoHandler((req, info, amounts, cb) => {
   notificationManager.openContractNotification(req, info, amounts);
 });
 
+wallet.initSendHandler((req, info, cb) => {
+  wallet.initSendHandlerCallback(cb);
+  notificationManager.openSendNotification(req, info);
+});
+
 extensionizer.runtime.onConnect.addListener(handleConnect);

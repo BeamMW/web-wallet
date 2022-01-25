@@ -77,6 +77,19 @@ export default class NotificationManager {
     this.openPopup();
   }
 
+  openSendNotification(req, info) {
+    this.notification = {
+      type: NotificationType.APPROVE_TX,
+      params: {
+        req,
+        info,
+        appname: this.appname,
+      },
+    };
+    this.notificationIsOpen = true;
+    this.openPopup();
+  }
+
   openContractNotification(req, info, amounts) {
     this.notification = {
       type: NotificationType.APPROVE_INVOKE,
