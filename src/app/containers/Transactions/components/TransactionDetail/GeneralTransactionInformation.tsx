@@ -55,6 +55,16 @@ export const InformationItem = styled.div<AssetIconProps>`
       .asset-name {
         color: ${({ asset_id }) => (PALLETE_ASSETS[asset_id] ? PALLETE_ASSETS[asset_id] : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length])};
       }
+      &.income {
+        .asset-name {
+          color: #0bccf7;
+        }
+      }
+      &.outcome {
+        .asset-name {
+          color: #c061e0;
+        }
+      }
     }
 
     &.asset {
@@ -70,14 +80,22 @@ export const InformationItem = styled.div<AssetIconProps>`
         opacity: 0.5;
         margin-left: 36px;
       }
-      .multi-asset {
-        margin-left: 0;
-      }
-      .multi-asset-title {
-        margin-left: 36px;
-        &::after {
-          content: '';
-          padding: 0;
+      &.mlt-asset {
+        display: flex;
+        margin-top: -5px;
+        .multi-asset {
+          margin-left: 0;
+        }
+
+        .multi-asset-title {
+          padding-top: 20px;
+          font-weight: 600;
+          font-size: 16px;
+
+          &::after {
+            content: '';
+            padding: 0;
+          }
         }
       }
     }
@@ -175,7 +193,7 @@ const GeneralTransactionInformation = ({
               variant="icon"
               pallete="white"
               icon={CopySmallIcon}
-              onClick={() => copy(transactionDetail.sender, 'Sender copied to clipboard')}
+              onClick={() => copy(transactionDetail.sender, 'Address copied to clipboard')}
             />
           </div>
         </InformationItem>
@@ -189,15 +207,16 @@ const GeneralTransactionInformation = ({
               variant="icon"
               pallete="white"
               icon={CopySmallIcon}
-              onClick={() => copy(transactionDetail.receiver, 'Receiver copied to clipboard')}
+              onClick={() => copy(transactionDetail.receiver, 'Address copied to clipboard')}
             />
           </div>
         </InformationItem>
       )}
-      {transactionDetail.invoke_data?.length && (
-        <InformationItem asset_id={transactionDetail.asset_id}>
+
+      {transactionDetail.invoke_data?.length && transactionDetail.invoke_data[0].amounts.length > 1 ? (
+        <InformationItem asset_id={transactionDetail.asset_id ?? 0}>
           <div className="title">Amount:</div>
-          <div className="value asset">
+          <div className="value asset mlt-asset">
             <MultipleAssets className="multi-asset">
               {transactionDetail.invoke_data?.map((i) => i.amounts
                 .slice()
@@ -211,6 +230,24 @@ const GeneralTransactionInformation = ({
             </div> */}
           </div>
         </InformationItem>
+      ) : (
+        <InformationItem asset_id={transactionDetail.invoke_data[0].amounts[0].asset_id}>
+          <div className="title">Amount:</div>
+          <div className="value asset">
+            <AssetLabel
+              value={Math.abs(transactionDetail.invoke_data[0].amounts[0].amount)}
+              asset_id={transactionDetail.invoke_data[0].amounts[0].asset_id}
+              comment=""
+              className={`asset-label ${transactionDetail.income ? 'income' : 'outcome'}`}
+              iconClass="iconClass"
+              showRate={false}
+              isBalanceHidden={isBalanceHidden}
+            />
+            {/*   <div className="amount-comment">
+              {toUSD(fromGroths(transactionDetail.value), rate)} (сalculated with the exchange rate at the current time)
+            </div> */}
+          </div>
+        </InformationItem>
       )}
 
       {transactionDetail.value && (
@@ -221,7 +258,7 @@ const GeneralTransactionInformation = ({
               value={transactionDetail.value}
               asset_id={transactionDetail.asset_id}
               comment=""
-              className="asset-label"
+              className={`asset-label ${transactionDetail.income ? 'income' : 'outcome'}`}
               iconClass="iconClass"
               showRate={false}
               isBalanceHidden={isBalanceHidden}
