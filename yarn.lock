@@ -2023,10 +2023,10 @@ beam-wasm-client-masternet@6.2.12175:
   resolved "https://registry.yarnpkg.com/beam-wasm-client-masternet/-/beam-wasm-client-masternet-6.2.12175.tgz#d9c2e606bc51b3d920d300ca25fd92a7c503040a"
   integrity sha512-/RPKlUiNeXFnCimY7BODDlWzv/5N4Xpwj99wYibVMskWYGg7tpBn+LUC89P1ZTY9dian1JPqkg0y04zQSC1Q5w==
 
-beam-wasm-client@^6.1.12024:
-  version "6.2.12301"
-  resolved "https://registry.yarnpkg.com/beam-wasm-client/-/beam-wasm-client-6.2.12301.tgz#765096a5af44f7ea03c7849f77de2c143e1d089f"
-  integrity sha512-qULqDxpbEoC6QD3hyzOmfrnbo/vl/9odzd7mQeqtEOYLhbnbfySlnxVQlqGLyNgaxwqx0j7HsnrU50unpRp0Wg==
+beam-wasm-client@6.2.12512:
+  version "6.2.12512"
+  resolved "https://registry.yarnpkg.com/beam-wasm-client/-/beam-wasm-client-6.2.12512.tgz#0d48708cd605ab791500137cdc6e5dd3467a02ae"
+  integrity sha512-lZrwfieeo3S/3lHTV7ZM3SfWb6tiFdkoaMIZgKgrUDqDKf2jTbzC8jvtSjBMY8f2rlZ3jP7LkzFD0SdDtTBlgw==
 
 big.js@^5.2.2:
   version "5.2.2"
