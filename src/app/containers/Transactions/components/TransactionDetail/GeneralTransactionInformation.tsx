@@ -278,7 +278,7 @@ const GeneralTransactionInformation = ({
 
       {amount}
 
-      {transactionDetail.fee && (
+      {transactionDetail.fee > 0 && (
         <InformationItem asset_id={0}>
           <div className="title">Fee:</div>
           <div className="value asset">
