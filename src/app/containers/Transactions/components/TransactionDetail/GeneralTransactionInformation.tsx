@@ -148,7 +148,7 @@ const GeneralTransactionInformation = ({
       }
     }));
     return title;
-  }, [transactionDetail, isBalanceHidden]);
+  }, [transactionDetail, assets, isBalanceHidden]);
 
   const getTransactionDate = () => {
     const txDate = new Date(transactionDetail.create_time * 1000);
@@ -198,7 +198,8 @@ const GeneralTransactionInformation = ({
           </div>
         </InformationItem>
       );
-    } if (transactionDetail.invoke_data?.length && transactionDetail.invoke_data[0].amounts.length === 1) {
+    }
+    if (transactionDetail.invoke_data?.length && transactionDetail.invoke_data[0].amounts.length === 1) {
       return (
         <InformationItem asset_id={transactionDetail.invoke_data[0].amounts[0].asset_id}>
           <div className="title">Amount:</div>
@@ -238,7 +239,7 @@ const GeneralTransactionInformation = ({
         </div>
       </InformationItem>
     ) : null;
-  }, [transactionDetail, multipleAssetsTitle]);
+  }, [transactionDetail, isBalanceHidden, multipleAssetsTitle]);
 
   return (
     <GeneralTransactionWrapper>
