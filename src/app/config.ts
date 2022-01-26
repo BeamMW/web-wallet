@@ -8,9 +8,6 @@ const development: Configuration = {
   restore_url: 'https://mobile-restore.beam.mw/masternet/masternet_recovery.bin',
 };
 
-const production: Configuration = {
-  ...development,
-};
 const master_net: Configuration = {
   ...development,
 };
@@ -25,6 +22,10 @@ const main_net: Configuration = {
   ...development,
   explorer_url: 'https://explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/mainnet/mainnet_recovery.bin',
+};
+
+const production: Configuration = {
+  ...test_net,
 };
 
 const config: ConfigurationObject = {
