@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { styled } from '@linaria/react';
 import { TransactionDetail, WalletTotal } from '@core/types';
 import { compact, fromGroths, truncate } from '@core/utils';
@@ -135,7 +135,7 @@ const GeneralTransactionInformation = ({
   isBalanceHidden,
   copy,
 }: GeneralTransactionInformationProps) => {
-  const multipleAssetsTitle = () => {
+  const multipleAssetsTitle = useCallback(() => {
     let title = '';
     transactionDetail.invoke_data?.forEach((i) => i.amounts.forEach((a) => {
       const tg = assets.find(({ asset_id: id }) => id === a.asset_id);
@@ -148,7 +148,7 @@ const GeneralTransactionInformation = ({
       }
     }));
     return title;
-  };
+  }, [transactionDetail, isBalanceHidden]);
 
   const getTransactionDate = () => {
     const txDate = new Date(transactionDetail.create_time * 1000);
@@ -177,6 +177,68 @@ const GeneralTransactionInformation = ({
   //   }));
   //   return res;
   // };
+
+  const amount = useMemo(() => {
+    if (transactionDetail.invoke_data?.length && transactionDetail.invoke_data[0].amounts.length > 1) {
+      return (
+        <InformationItem asset_id={transactionDetail.asset_id ?? 0}>
+          <div className="title">Amount:</div>
+          <div className="value asset mlt-asset">
+            <MultipleAssets className="multi-asset">
+              {transactionDetail.invoke_data?.map((i) => i.amounts
+                .slice()
+                .reverse()
+                .map((a) => <AssetIcon key={a.asset_id} asset_id={a.asset_id} />))}
+            </MultipleAssets>
+            <span className="multi-asset-title">{multipleAssetsTitle()}</span>
+            {/* <div className="amount-comment">
+              {toUSD(fromGroths(multipleAssetsAmount()), rate)}
+              (сalculated with the exchange rate at the current time)
+            </div> */}
+          </div>
+        </InformationItem>
+      );
+    } if (transactionDetail.invoke_data?.length && transactionDetail.invoke_data[0].amounts.length === 1) {
+      return (
+        <InformationItem asset_id={transactionDetail.invoke_data[0].amounts[0].asset_id}>
+          <div className="title">Amount:</div>
+          <div className="value asset">
+            <AssetLabel
+              value={Math.abs(transactionDetail.invoke_data[0].amounts[0].amount)}
+              asset_id={transactionDetail.invoke_data[0].amounts[0].asset_id}
+              comment=""
+              className={`asset-label ${transactionDetail.income ? 'income' : 'outcome'}`}
+              iconClass="iconClass"
+              showRate={false}
+              isBalanceHidden={isBalanceHidden}
+            />
+            {/*   <div className="amount-comment">
+              {toUSD(fromGroths(transactionDetail.value), rate)} (сalculated with the exchange rate at the current time)
+            </div> */}
+          </div>
+        </InformationItem>
+      );
+    }
+    return transactionDetail.value ? (
+      <InformationItem asset_id={transactionDetail.asset_id}>
+        <div className="title">Amount:</div>
+        <div className="value asset">
+          <AssetLabel
+            value={transactionDetail.value}
+            asset_id={transactionDetail.asset_id}
+            comment=""
+            className={`asset-label ${transactionDetail.income ? 'income' : 'outcome'}`}
+            iconClass="iconClass"
+            showRate={false}
+            isBalanceHidden={isBalanceHidden}
+          />
+          {/*   <div className="amount-comment">
+              {toUSD(fromGroths(transactionDetail.value), rate)} (сalculated with the exchange rate at the current time)
+            </div> */}
+        </div>
+      </InformationItem>
+    ) : null;
+  }, [transactionDetail, multipleAssetsTitle]);
 
   return (
     <GeneralTransactionWrapper>
@@ -213,62 +275,7 @@ const GeneralTransactionInformation = ({
         </InformationItem>
       )}
 
-      {transactionDetail.invoke_data?.length && transactionDetail.invoke_data[0].amounts.length > 1 ? (
-        <InformationItem asset_id={transactionDetail.asset_id ?? 0}>
-          <div className="title">Amount:</div>
-          <div className="value asset mlt-asset">
-            <MultipleAssets className="multi-asset">
-              {transactionDetail.invoke_data?.map((i) => i.amounts
-                .slice()
-                .reverse()
-                .map((a) => <AssetIcon key={a.asset_id} asset_id={a.asset_id} />))}
-            </MultipleAssets>
-            <span className="multi-asset-title">{multipleAssetsTitle()}</span>
-            {/* <div className="amount-comment">
-              {toUSD(fromGroths(multipleAssetsAmount()), rate)}
-              (сalculated with the exchange rate at the current time)
-            </div> */}
-          </div>
-        </InformationItem>
-      ) : (
-        <InformationItem asset_id={transactionDetail.invoke_data[0].amounts[0].asset_id}>
-          <div className="title">Amount:</div>
-          <div className="value asset">
-            <AssetLabel
-              value={Math.abs(transactionDetail.invoke_data[0].amounts[0].amount)}
-              asset_id={transactionDetail.invoke_data[0].amounts[0].asset_id}
-              comment=""
-              className={`asset-label ${transactionDetail.income ? 'income' : 'outcome'}`}
-              iconClass="iconClass"
-              showRate={false}
-              isBalanceHidden={isBalanceHidden}
-            />
-            {/*   <div className="amount-comment">
-              {toUSD(fromGroths(transactionDetail.value), rate)} (сalculated with the exchange rate at the current time)
-            </div> */}
-          </div>
-        </InformationItem>
-      )}
-
-      {transactionDetail.value && (
-        <InformationItem asset_id={transactionDetail.asset_id}>
-          <div className="title">Amount:</div>
-          <div className="value asset">
-            <AssetLabel
-              value={transactionDetail.value}
-              asset_id={transactionDetail.asset_id}
-              comment=""
-              className={`asset-label ${transactionDetail.income ? 'income' : 'outcome'}`}
-              iconClass="iconClass"
-              showRate={false}
-              isBalanceHidden={isBalanceHidden}
-            />
-            {/*   <div className="amount-comment">
-              {toUSD(fromGroths(transactionDetail.value), rate)} (сalculated with the exchange rate at the current time)
-            </div> */}
-          </div>
-        </InformationItem>
-      )}
+      {amount}
 
       {transactionDetail.fee && (
         <InformationItem asset_id={0}>
