@@ -17,9 +17,10 @@ async function setupInpageApi() {
   }).then((api) => {
     global.BeamApi = api;
     window.postMessage('apiInjected', window.origin);
+    // eslint-disable-next-line no-console
     console.log('BEAM WALLET API INJECTED');
     return api;
   });
 }
-
+// eslint-disable-next-line no-console
 setupInpageApi().catch(console.error);

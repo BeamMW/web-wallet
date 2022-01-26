@@ -2,23 +2,21 @@ import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
 import PortStream from '@core/PortStream';
 
-import { isNil } from '@core/utils';
-import { GROTHS_IN_BEAM } from '@app/model/rates';
-import {
-  RPCMethod,
-  RPCEvent,
-  BackgroundEvent,
-  WalletMethod,
-  CreateWalletParams,
-  Notification,
-} from './types';
+import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
+import config from '@app/config';
+
+import { SyncStep } from '@app/containers/Auth/interfaces';
+import { BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod } from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
+import { ExternalAppConnection } from '@core/types';
 
 declare const BeamModule: any;
 
 const PATH_DB = '/beam_wallet/wallet.db';
 const PATH_NODE = 'eu-node01.mainnet.beam.mw:8200';
+
+const notificationManager = NotificationManager.getInstance();
 
 let WasmWalletClient;
 export interface WalletEvent<T = any> {
@@ -36,37 +34,46 @@ type WalletEventHandler = {
   (event: WalletEvent): void;
 };
 
-let bgLogs = {
+const bgLogs = {
   common: [],
+  // eslint-disable-next-line no-console
   commonDef: console.log.bind(console),
   errors: [],
+  // eslint-disable-next-line no-console
   errorsDef: console.error.bind(console),
   warns: [],
+  // eslint-disable-next-line no-console
   warnsDef: console.warn.bind(console),
-}
+};
 
-console.log = function() {
-  bgLogs.commonDef.apply(console, arguments);
-  bgLogs.common.push(Array.from(arguments));
-}
-console.error = function() {
-  bgLogs.errorsDef.apply(console, arguments);
-  bgLogs.errors.push(Array.from(arguments));
-}
-console.warn = function() {
-  bgLogs.warnsDef.apply(console, arguments);
-  bgLogs.warns.push(Array.from(arguments));
-}
+// eslint-disable-next-line no-console
+console.log = function (...args) {
+  bgLogs.commonDef.apply(console, args);
+  bgLogs.common.push(Array.from(args));
+};
+// eslint-disable-next-line no-console
+console.error = function (...args) {
+  bgLogs.errorsDef.apply(console, args);
+  bgLogs.errors.push(Array.from(args));
+};
+// eslint-disable-next-line no-console
+console.warn = function (...args) {
+  bgLogs.warnsDef.apply(console, args);
+  bgLogs.warns.push(Array.from(args));
+};
 
 export default class WasmWallet {
   private static instance: WasmWallet;
 
   private contractInfoHandler;
-
   private contractInfoHandlerCallback;
+
+  private sendHandler;
+  private sendHandlerCallback;
 
   // TODO:BRO map [url->app]
   private apps = {};
+  private connectedApps = [];
 
   static getInstance() {
     if (this.instance != null) {
@@ -107,6 +114,12 @@ export default class WasmWallet {
     });
   }
 
+  static initConnectedSites() {
+    extensionizer.storage.local.set({
+      sites: [],
+    });
+  }
+
   static async saveWallet(pass: string) {
     const data = await passworder.encrypt(pass, Date.now());
     extensionizer.storage.local.remove(['wallet']);
@@ -126,11 +139,14 @@ export default class WasmWallet {
       }
 
       extensionizer.storage.local.get('wallet', ({ wallet }) => {
-        passworder.decrypt(pass, wallet).then(() => {
-          resolve(pass);
-        }).catch(() => {
-          reject(ErrorMessage.INVALID);
-        });
+        passworder
+          .decrypt(pass, wallet)
+          .then(() => {
+            resolve(pass);
+          })
+          .catch(() => {
+            reject(ErrorMessage.INVALID);
+          });
       });
     });
   }
@@ -143,7 +159,7 @@ export default class WasmWallet {
     return WasmWalletClient.IsAllowedWord(word);
   }
 
-  static isAppSupported(apiver:string, apivermin: string): boolean {
+  static isAppSupported(apiver: string, apivermin: string): boolean {
     return WasmWalletClient.IsAppSupported(apiver, apivermin);
   }
 
@@ -164,16 +180,14 @@ export default class WasmWallet {
       const json = WasmWalletClient.ConvertTokenToJson(token);
       const result = JSON.parse(json);
 
-      const {
-        Amount: amount,
-        AssetID: id,
-      } = result.params;
+      const { Amount: amount, AssetID: id } = result.params;
 
       return {
-        amount: isNil(amount) ? null : parseFloat(amount) / GROTHS_IN_BEAM,
-        asset_id: isNil(id) ? null : parseInt(id, 10),
+        amount: !amount ? null : parseFloat(amount) / GROTHS_IN_BEAM,
+        asset_id: !id ? null : parseInt(id, 10),
       };
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
       return null;
     }
@@ -196,7 +210,7 @@ export default class WasmWallet {
       this.emit(BackgroundEvent.CONNECTED, {
         onboarding: false,
         is_running: true,
-        notification: !isNil(notification) ? notification : null,
+        notification,
       });
 
       this.toggleEvents(false);
@@ -214,7 +228,7 @@ export default class WasmWallet {
       this.emit(BackgroundEvent.CONNECTED, {
         is_running: false,
         onboarding: !WasmWalletClient.IsInitialized(PATH_DB),
-        notification: !isNil(notification) ? notification : null,
+        notification,
       });
     } catch {
       this.emit(BackgroundEvent.CONNECTED, {
@@ -233,11 +247,16 @@ export default class WasmWallet {
     this.contractInfoHandlerCallback = cb;
   }
 
-  emit(
-    id: number | RPCEvent | BackgroundEvent,
-    result?: any,
-    error?: any,
-  ) {
+  initSendHandler(handler) {
+    this.sendHandler = handler;
+  }
+
+  initSendHandlerCallback(cb) {
+    this.sendHandlerCallback = cb;
+  }
+
+  emit(id: number | RPCEvent | BackgroundEvent, result?: any, error?: any) {
+    // eslint-disable-next-line no-console
     console.info(`emitted event "${id}" with`, result);
     this.eventHandler({
       id,
@@ -246,20 +265,22 @@ export default class WasmWallet {
     });
   }
 
-  start(pass: string) {
-    if (isNil(this.wallet)) {
+  async start(pass: string) {
+    if (!this.wallet) {
       this.wallet = new WasmWalletClient(PATH_DB, pass, PATH_NODE);
     }
 
     const responseHandler = (response) => {
       const event = JSON.parse(response);
-      console.info(event);
       this.eventHandler(event);
     };
 
     this.wallet.startWallet();
     this.wallet.subscribe(responseHandler);
     this.wallet.setApproveContractInfoHandler(this.contractInfoHandler);
+    this.wallet.setApproveSendHandler(this.sendHandler);
+
+    await this.loadConnectedApps();
 
     this.toggleEvents(true);
   }
@@ -277,18 +298,13 @@ export default class WasmWallet {
   }
 
   isRunning(): boolean {
-    return isNil(this.wallet) ? false : this.wallet.isRunning();
+    return !this.wallet ? false : this.wallet.isRunning();
   }
 
-  async createAppAPI(
-    apiver: string,
-    apivermin: string,
-    appurl: string,
-    appname:string,
-    handler: any,
-  ) {
+  async createAppAPI(apiver: string, apivermin: string, appurl: string, appname: string, handler: any) {
     return new Promise((resolve, reject) => {
       const appid = WasmWallet.generateAppID(appname, appurl);
+      // eslint-disable-next-line no-console
       console.log(`createAppAPI for ${appname}, ${appid}`);
       // eslint-disable-next-line consistent-return
       this.wallet.createAppAPI(apiver, apivermin, appid, appname, (err, api) => {
@@ -301,6 +317,41 @@ export default class WasmWallet {
     });
   }
 
+  private loadConnectedApps() {
+    return new Promise((resolve, reject) => {
+      extensionizer.storage.local.get('sites', ({ sites }) => {
+        this.connectedApps = sites ? sites : [];
+        resolve(true);
+      });
+    });
+  }
+
+  isConnectedSite(site: ExternalAppConnection): boolean {
+    const isConnected = !!this.connectedApps.find((item) => item.appUrl === site.appUrl);
+    return isConnected;
+  }
+
+  removeConnectedSite(site: ExternalAppConnection) {
+    const filteredSites = this.connectedApps.filter(function (el) {
+      return el.appUrl !== site.appUrl && el.appName !== site.appName;
+    });
+
+    this.connectedApps = filteredSites;
+    extensionizer.storage.local.set({
+      sites: filteredSites,
+    });
+  }
+
+  addConnectedSite(site: ExternalAppConnection) {
+    const isExist = this.connectedApps.find((item: ExternalAppConnection) => item.appUrl === site.appUrl);
+    if (!isExist) {
+      this.connectedApps.push(site);
+      extensionizer.storage.local.set({
+        sites: this.connectedApps,
+      });
+    }
+  }
+
   setApproveSendHandler(handler) {
     this.wallet.setApproveSendHandler(handler);
   }
@@ -309,11 +360,66 @@ export default class WasmWallet {
     this.wallet.setApproveContractInfoHandler(handler);
   }
 
-  async create({
-    seed,
-    password,
-    isSeedConfirmed,
-  }: CreateWalletParams) {
+  async fastSync() {
+    const response = await fetch(config.restore_url);
+    const reader = response.body.getReader();
+
+    const contentLength = +response.headers.get('Content-Length');
+
+    this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.DOWNLOAD);
+
+    let receivedLength = 0;
+    let download_percent = 0;
+    let restore_percent = 0;
+    const chunks = [];
+    while (true) {
+      /* eslint-disable no-await-in-loop */
+      const { done, value } = await reader.read();
+      /* eslint-enable no-await-in-loop */
+      if (value) {
+        chunks.push(value);
+        receivedLength += value.length;
+        const percent = Number(Math.floor(100 / (contentLength / receivedLength)).toFixed());
+        if (percent > download_percent) {
+          download_percent = percent;
+          this.emit(BackgroundEvent.DOWNLOAD_DB_PROGRESS, {
+            done: receivedLength,
+            total: contentLength,
+          });
+        }
+      }
+      if (done) {
+        break;
+      }
+    }
+    const blob = new Blob(chunks);
+    const data = await blob.arrayBuffer();
+    const payload = new Uint8Array(data);
+
+    this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.RESTORE);
+
+    this.wallet.importRecovery(payload, (error, done, total) => {
+      if (done === total) {
+        this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.SYNC);
+      }
+      if (error == null) {
+        const percent = Number(Math.floor(100 / (total / done)).toFixed());
+        if (percent > restore_percent) {
+          restore_percent = percent;
+          this.emit(BackgroundEvent.RESTORE_DB_PROGRESS, {
+            done,
+            total,
+          });
+        }
+      } else {
+        console.log(`Failed to recover: ${error}`);
+      }
+    });
+
+    return null;
+  }
+
+  async create({ seed, password, isSeedConfirmed }: CreateWalletParams) {
     try {
       if (WasmWallet.isInitialized()) {
         WasmWallet.removeWallet();
@@ -321,24 +427,32 @@ export default class WasmWallet {
 
       WasmWallet.saveWallet(password);
       WasmWallet.initSettings(isSeedConfirmed);
+      WasmWallet.initConnectedSites();
 
       WasmWalletClient.CreateWallet(seed, PATH_DB, password);
+      if (!this.wallet) {
+        this.wallet = new WasmWalletClient(PATH_DB, password, PATH_NODE);
+      }
+      this.fastSync();
       this.start(password);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   }
 
   stop() {
     return new Promise((resolve, reject) => {
-      if (isNil(this.wallet)) {
+      if (!this.wallet) {
         resolve(true);
         return;
       }
 
       this.wallet.stopWallet((data) => {
         const running = this.wallet.isRunning();
+        // eslint-disable-next-line no-console
         console.log(`is running: ${this.wallet.isRunning()}`);
+        // eslint-disable-next-line no-console
         console.log('wallet stopped:', data);
 
         if (running) {
@@ -349,6 +463,41 @@ export default class WasmWallet {
         }
       });
     });
+  }
+
+  async connectExternal(params) {
+    if (!WasmWallet.isAppSupported(params.apiver, params.apivermin)) {
+      return notificationManager.postMessage({
+        result: false,
+        errcode: -1,
+        ermsg: 'Unsupported API version required',
+      });
+      // TODO:BRO handle error in Utils.js
+    }
+    try {
+      this.apps[params.appurl] = new DnodeApp();
+      await this.apps[params.appurl].createAppAPI(
+        WasmWallet.getInstance(),
+        params.apiver,
+        params.apivermin,
+        params.appname,
+        params.appurl,
+      );
+      const port = NotificationManager.getPort();
+
+      const portStream = new PortStream(port);
+      this.apps[params.appurl].connectPage(portStream, params.appurl);
+      notificationManager.postMessage({
+        result: true,
+      });
+    } catch (err) {
+      // TODO:BRO handle error in Utils.js
+      notificationManager.postMessage({
+        result: false,
+        errcode: -2,
+        ermsg: err,
+      });
+    }
   }
 
   async callInternal(id: number, method: WalletMethod, params: any) {
@@ -364,8 +513,7 @@ export default class WasmWallet {
         break;
       }
       case WalletMethod.IsAllowedWord: {
-        const result = params === ''
-          ? null : WasmWallet.isAllowedWord(params);
+        const result = params === '' ? null : WasmWallet.isAllowedWord(params);
         this.emit(id, result);
         break;
       }
@@ -386,6 +534,9 @@ export default class WasmWallet {
           this.emit(id, null, error);
         }
         break;
+      case WalletMethod.StopWallet:
+        await this.stop();
+        break;
       case WalletMethod.DeleteWallet:
         try {
           await WasmWallet.checkPassword(params);
@@ -396,41 +547,32 @@ export default class WasmWallet {
           this.emit(id, null, error);
         }
         break;
-      case WalletMethod.NotificationConnect:
-        // eslint-disable-next-line no-case-declarations
-        const notificationPort = NotificationManager.getReqPort();
+      case WalletMethod.NotificationAuthenticaticated:
         if (params.result) {
-          if (!WasmWallet.isAppSupported(params.apiver, params.apivermin)) {
-            return notificationPort.postMessage({
-              result: false,
-              errcode: -1,
-              ermsg: 'Unsupported API version required',
-            });
-            // TODO:BRO handle error in Utils.js
-          }
-          try {
-            this.apps[params.appurl] = new DnodeApp();
-            await this.apps[params.appurl].createAppAPI(
-              WasmWallet.getInstance(),
-              params.apiver,
-              params.apivermin,
-              params.appname,
-              params.appurl,
-            );
-            const portStream = new PortStream(NotificationManager.getPort());
-            this.apps[params.appurl].connectPage(portStream, params.appurl);
-            notificationPort.postMessage({
-              result: true,
-            });
-          } catch (err) {
-            // TODO:BRO handle error in Utils.js
-            notificationPort.postMessage({
-              result: false,
-              errcode: -2,
-              ermsg: err,
-            });
+          if (this.isConnectedSite({ appName: params.appname, appUrl: params.appurl })) {
+            this.connectExternal(params);
           }
         }
+        break;
+      case WalletMethod.NotificationConnect:
+        // eslint-disable-next-line no-case-declarations
+        if (params.result) {
+          this.addConnectedSite({ appName: params.appname, appUrl: params.appurl });
+          this.connectExternal(params);
+        } else {
+          return notificationManager.postMessage({
+            result: false,
+            errcode: -3,
+            ermsg: 'Connection rejected',
+          });
+        }
+        break;
+      case WalletMethod.LoadConnectedSites:
+        this.emit(id, this.connectedApps);
+        break;
+      case WalletMethod.DisconnectSite:
+        this.removeConnectedSite(params);
+        this.emit(id, true);
         break;
       case WalletMethod.NotificationApproveInfo:
         if (params.req) {
@@ -440,6 +582,16 @@ export default class WasmWallet {
       case WalletMethod.NotificationRejectInfo:
         if (params.req) {
           this.contractInfoHandlerCallback.contractInfoRejected(params.req);
+        }
+        break;
+      case WalletMethod.NotificationApproveSend:
+        if (params.req) {
+          this.sendHandlerCallback.sendApproved(params.req);
+        }
+        break;
+      case WalletMethod.NotificationRejectSend:
+        if (params.req) {
+          this.sendHandlerCallback.sendRejected(params.req);
         }
         break;
       case WalletMethod.LoadBackgroundLogs:

@@ -2,16 +2,20 @@ export type Pallete = 'green' | 'ghost' | 'purple' | 'blue' | 'red' | 'white';
 
 export type ButtonVariant = 'regular' | 'ghost' | 'block' | 'link' | 'icon';
 
-export type AddressType =
-  'regular' | 'regular_new' | 'max_privacy' | 'offline' | 'public_offline' | 'unknown';
+export type AddressType = 'regular' | 'regular_new' | 'max_privacy' | 'offline' | 'public_offline' | 'unknown';
 export interface CreateWalletParams {
   seed: string;
   password: string;
   isSeedConfirmed: boolean;
 }
 
+export interface ExternalAppConnection {
+  appUrl: string;
+  appName: string;
+}
+
 export interface CreateAddressParams {
-  type: AddressType,
+  type: AddressType;
 }
 
 export enum RPCMethod {
@@ -26,36 +30,53 @@ export enum RPCMethod {
   GetTXList = 'tx_list',
   SendTransaction = 'tx_send',
   GetVersion = 'get_version',
+  TxStatus = 'tx_status',
+  ExportPaymentProof = 'export_payment_proof',
+  VerifyPaymentProof = 'verify_payment_proof',
 }
 
 export enum WalletMethod {
   StartWallet = 'wasm_start_wallet',
   CreateWallet = 'wasm_create_wallet',
   DeleteWallet = 'wasm_delete_wallet',
+  StopWallet = 'wasm_stop_wallet',
   IsAllowedWord = 'wasm_is_allowed_word',
   IsAllowedSeed = 'wasm_is_allowed_seed',
   GenerateSeed = 'wasm_generate_seed',
   ConvertTokenToJson = 'wasm_convert_token_to_json',
   NotificationConnect = 'notification_connect',
+  NotificationAuthenticaticated = 'notification_authenticaticated',
   NotificationApproveInfo = 'notification_approve_info',
   NotificationRejectInfo = 'notification_reject_info',
+  NotificationApproveSend = 'notification_approve_send',
+  NotificationRejectSend = 'notification_reject_send',
   LoadBackgroundLogs = 'load_background_logs',
+  LoadConnectedSites = 'load_connected_sites',
+  DisconnectSite = 'disconnect_site',
+}
+
+export enum ExternalAppMethod {
+  CreateBeamApi = 'create_beam_api',
+  CreateBeamApiRetry = 'retry_beam_api',
 }
 
 export interface RemoteRequest {
   id: number;
-  method: WalletMethod | RPCMethod,
+  method: WalletMethod | RPCMethod;
   params: any;
 }
 export interface RemoteResponse {
-  id: number | RPCEvent;
-  method: WalletMethod | RPCMethod,
+  id: number | RPCEvent | BackgroundEvent;
+  method: WalletMethod | RPCMethod;
   result: any;
   error: any;
 }
 
 export enum BackgroundEvent {
   CONNECTED = 'connected',
+  CHANGE_SYNC_STEP = 'change_sync_step',
+  DOWNLOAD_DB_PROGRESS = 'download_db_progress',
+  RESTORE_DB_PROGRESS = 'restore_db_progress',
 }
 
 export enum RPCEvent {
@@ -78,7 +99,7 @@ export interface ToggleSubscribeToParams {
 export interface ConnectedData {
   is_running: boolean;
   onboarding: boolean;
-  notification: Notification
+  notification: Notification;
 }
 
 export interface SyncHash {
@@ -242,6 +263,14 @@ export interface Transaction {
   tx_type_string: string;
   value: number;
   invoke_data: Contract[];
+  appname: string;
+}
+
+export interface TransactionDetail extends Transaction {
+  failure_reason: string;
+  sender_identity: string;
+  receiver_identity: string;
+  token: string;
 }
 
 export interface WalletChangeEvent {
@@ -259,21 +288,23 @@ export interface TxsEvent extends WalletChangeEvent {
 export enum NotificationType {
   CONNECT = 'connect',
   APPROVE_INVOKE = 'approve_invoke',
+  APPROVE_TX = 'approve_tx',
+  AUTH = 'auth',
 }
 
 export interface NotificationParams {
-  appname?: string,
-  info?: string,
-  amounts?: string,
-  req?: string,
-  apiver?: string,
-  apivermin?: string,
-  appurl?:string
+  appname?: string;
+  info?: string;
+  amounts?: string;
+  req?: string;
+  apiver?: string;
+  apivermin?: string;
+  appurl?: string;
 }
 
 export interface Notification {
-  type: NotificationType.APPROVE_INVOKE | NotificationType.CONNECT;
-  params: NotificationParams
+  type: NotificationType;
+  params: NotificationParams;
 }
 
 export enum Environment {
@@ -290,4 +321,23 @@ export interface ConnectRequest {
   apiver: string;
   apivermin: string;
   appname: string;
+}
+
+export interface SendTransactionParams {
+  value: number;
+  fee?: number;
+  from?: string;
+  address: string;
+  comment?: string;
+  asset_id?: number;
+  offline?: boolean;
+}
+
+export interface PaymentProof {
+  amount: number;
+  asset_id: number;
+  is_valid: boolean;
+  kernel: string;
+  receiver: string;
+  sender: string;
 }

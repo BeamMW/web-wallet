@@ -1,26 +1,35 @@
 import ExtensionPlatform from './Extension';
+import * as extensionizer from 'extensionizer';
+import { NotificationType, ExternalAppMethod } from '@core/types';
 
 const NOTIFICATION_HEIGHT = 600;
 const NOTIFICATION_WIDTH = 375;
 
-let contentReqPort;
 let contentPort;
 
 export default class NotificationManager {
   platform = null;
+  openBeamTabsIDs = {};
+  notificationIsOpen = false;
+  notification = null;
+  appname = '';
 
+  private static instance: NotificationManager;
+
+  private uiIsTriggering = false;
   private popupId = null;
+  private contentReqPort = null;
 
-  static setReqPort(port) {
-    contentReqPort = port;
+  static getInstance() {
+    if (this.instance != null) {
+      return this.instance;
+    }
+    this.instance = new NotificationManager();
+    return this.instance;
   }
 
   static setPort(port) {
     contentPort = port;
-  }
-
-  static getReqPort() {
-    return contentReqPort;
   }
 
   static getPort() {
@@ -29,6 +38,116 @@ export default class NotificationManager {
 
   constructor() {
     this.platform = new ExtensionPlatform();
+  }
+
+  setReqPort(port) {
+    this.contentReqPort = port;
+  }
+
+  postMessage(message) {
+    this.contentReqPort.postMessage(message);
+  }
+
+  openConnectNotification(msg, appurl) {
+    this.notification = {
+      type: NotificationType.CONNECT,
+      params: {
+        appurl,
+        appname: msg.appname,
+        apiver: msg.apiver,
+        apivermin: msg.apivermin,
+      },
+    };
+    this.appname = msg.appname;
+    this.notificationIsOpen = true;
+    this.openPopup();
+  }
+  
+  openAuthNotification(msg, appurl) {
+    this.notification = {
+      type: NotificationType.AUTH,
+      params: {
+        appurl,
+        appname: msg.appname,
+        apiver: msg.apiver,
+        apivermin: msg.apivermin,
+      },
+    };
+    this.notificationIsOpen = true;
+    this.openPopup();
+  }
+
+  openSendNotification(req, info) {
+    this.notification = {
+      type: NotificationType.APPROVE_TX,
+      params: {
+        req,
+        info,
+        appname: this.appname,
+      },
+    };
+    this.notificationIsOpen = true;
+    this.openPopup();
+  }
+
+  openContractNotification(req, info, amounts) {
+    this.notification = {
+      type: NotificationType.APPROVE_INVOKE,
+      params: {
+        req,
+        info,
+        amounts,
+        appname: this.appname,
+      },
+    };
+    this.notificationIsOpen = true;
+    this.openPopup();
+  }
+  
+  checkForError = () => {
+    const { lastError } = extensionizer.runtime;
+    if (!lastError) {
+      return undefined;
+    }
+    if (lastError.stack && lastError.message) {
+      return lastError;
+    }
+    return new Error(lastError.message);
+  };
+
+  getActiveTabs = () => new Promise<any[]>((resolve, reject) => {
+    extensionizer.tabs.query({ active: true }, (tabs) => {
+      const error = this.checkForError();
+      if (error) {
+        return reject(error);
+      }
+      return resolve(tabs);
+    });
+  })
+  
+  async triggerUi() {
+    const tabs = await this.getActiveTabs();
+    const currentlyActiveBeamTab = Boolean(tabs.find((tab) => this.openBeamTabsIDs[tab.id]));
+    if (!this.uiIsTriggering && !currentlyActiveBeamTab) {
+      this.uiIsTriggering = true;
+      try {
+        await this.showPopup();
+      } finally {
+        this.uiIsTriggering = false;
+      }
+    }
+  }
+  
+  async openPopup() {
+    await this.triggerUi();
+    await new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (!this.notificationIsOpen) {
+          clearInterval(interval);
+          resolve(true);
+        }
+      }, 1000);
+    });
   }
 
   async showPopup() {
@@ -75,8 +194,6 @@ export default class NotificationManager {
   }
 
   private getPopupIn(windows) {
-    return windows
-      ? windows.find((win) => (win && win.type === 'popup' && win.id === this.popupId))
-      : null;
+    return windows ? windows.find((win) => win && win.type === 'popup' && win.id === this.popupId) : null;
   }
 }
