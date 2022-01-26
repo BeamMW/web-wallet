@@ -78,7 +78,7 @@ const ReceiverAddress = styled.div`
 const ApproveSend = () => {
   const notification = NotificationController.getNotification();
 
-  const amount = fromGroths(parseInt(JSON.parse(notification.params.info).amount));
+  const amount = fromGroths(parseInt(JSON.parse(notification.params.req).params.value));
   const info = JSON.parse(notification.params.info);
 
   const handleCancelClick = () => {
