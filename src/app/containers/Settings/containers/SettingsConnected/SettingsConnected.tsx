@@ -14,6 +14,11 @@ const SitesStyled = styled.div`
   margin-bottom: 30px;
 `;
 
+const ListEmptyStyled = styled.div`
+    margin-top: 100px;
+    opacity: .6;
+`;
+
 const SettingsConnected = () => {
   const navigate = useNavigate();
   const sites: any = useSelector(selectConnectedSites());
@@ -25,7 +30,11 @@ const SettingsConnected = () => {
   return (
     <Window title="Connected sites" onPrevious={handlePrevious}>
         <SitesStyled>
-            <SitesList data={sites}></SitesList>
+            {
+                sites.length > 0
+                ? (<SitesList data={sites}></SitesList>)
+                : <ListEmptyStyled>Your connected sites list is empty</ListEmptyStyled>
+            }
         </SitesStyled>
     </Window>
   );
