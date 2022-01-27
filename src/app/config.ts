@@ -9,7 +9,7 @@ const development: Configuration = {
 };
 
 const production: Configuration = {
-  ...development,
+  ...main_net,
 };
 const master_net: Configuration = {
   ...development,
