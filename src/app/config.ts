@@ -15,7 +15,7 @@ const master_net: Configuration = {
 const test_net: Configuration = {
   ...development,
   explorer_url: 'https://testnet.explorer.beam.mw/block?kernel_id=',
-  restore_url: 'https://mobile-restore.beam.mw/mainnet/mainnet_recovery.bin',
+  restore_url: 'https://mobile-restore.beam.mw/testnet/testnet_recovery.bin',
 };
 
 const main_net: Configuration = {
