@@ -6,22 +6,30 @@ const development: Configuration = {
   env: NODE_ENV,
   explorer_url: 'https://master-net.explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/masternet/masternet_recovery.bin',
+  path_node: 'localhost:8200',
 };
 
 const master_net: Configuration = {
   ...development,
+  path_node: 'eu-node01.masternet.beam.mw:8200',
 };
 
 const test_net: Configuration = {
   ...development,
   explorer_url: 'https://testnet.explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/testnet/testnet_recovery.bin',
+  path_node: '',
 };
 
 const main_net: Configuration = {
   ...development,
   explorer_url: 'https://explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/mainnet/mainnet_recovery.bin',
+  path_node: 'eu-node01.mainnet.beam.mw:8200',
+};
+
+const production: Configuration = {
+  ...master_net,
 };
 
 const production: Configuration = {
