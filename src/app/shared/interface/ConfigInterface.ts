@@ -1,6 +1,7 @@
 export interface Configuration {
   explorer_url: string;
   restore_url: string;
+  path_node: string;
   env: string;
 }
 

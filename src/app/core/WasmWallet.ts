@@ -6,9 +6,7 @@ import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
-import {
-  BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
-} from './types';
+import { BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod } from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
 import { ExternalAppConnection } from '@core/types';
@@ -16,7 +14,6 @@ import { ExternalAppConnection } from '@core/types';
 declare const BeamModule: any;
 
 const PATH_DB = '/beam_wallet/wallet.db';
-const PATH_NODE = process.env.NODE_ENV === 'development' ? 'localhost:8200' : 'eu-node01.masternet.beam.mw:8200';
 
 const notificationManager = NotificationManager.getInstance();
 
@@ -118,7 +115,7 @@ export default class WasmWallet {
 
   static initConnectedSites() {
     extensionizer.storage.local.set({
-      sites: []
+      sites: [],
     });
   }
 
@@ -269,7 +266,7 @@ export default class WasmWallet {
 
   async start(pass: string) {
     if (!this.wallet) {
-      this.wallet = new WasmWalletClient(PATH_DB, pass, PATH_NODE);
+      this.wallet = new WasmWalletClient(PATH_DB, pass, config.path_node);
     }
 
     const responseHandler = (response) => {
@@ -326,8 +323,8 @@ export default class WasmWallet {
       extensionizer.storage.local.get('sites', ({ sites }) => {
         this.connectedApps = sites ? sites : [];
         resolve(true);
-      }); 
-    })
+      });
+    });
   }
 
   isConnectedSite(site: ExternalAppConnection): boolean {
@@ -336,22 +333,22 @@ export default class WasmWallet {
   }
 
   removeConnectedSite(site: ExternalAppConnection) {
-    const filteredSites = this.connectedApps.filter(function(el){ 
+    const filteredSites = this.connectedApps.filter(function (el) {
       return el.appUrl !== site.appUrl && el.appName !== site.appName;
     });
 
     this.connectedApps = filteredSites;
     extensionizer.storage.local.set({
-      sites: filteredSites
+      sites: filteredSites,
     });
   }
 
   addConnectedSite(site: ExternalAppConnection) {
-    const isExist = this.connectedApps.find((item: ExternalAppConnection) => item.appUrl === site.appUrl)
+    const isExist = this.connectedApps.find((item: ExternalAppConnection) => item.appUrl === site.appUrl);
     if (!isExist) {
       this.connectedApps.push(site);
       extensionizer.storage.local.set({
-        sites: this.connectedApps
+        sites: this.connectedApps,
       });
     }
   }
@@ -435,7 +432,7 @@ export default class WasmWallet {
 
       WasmWalletClient.CreateWallet(seed, PATH_DB, password);
       if (!this.wallet) {
-        this.wallet = new WasmWalletClient(PATH_DB, password, PATH_NODE);
+        this.wallet = new WasmWalletClient(PATH_DB, password, config.path_node);
       }
       this.fastSync();
       this.start(password);
@@ -553,7 +550,7 @@ export default class WasmWallet {
         break;
       case WalletMethod.NotificationAuthenticaticated:
         if (params.result) {
-          if (this.isConnectedSite({appName: params.appname, appUrl: params.appurl})) {
+          if (this.isConnectedSite({ appName: params.appname, appUrl: params.appurl })) {
             this.connectExternal(params);
           }
         }
@@ -561,7 +558,7 @@ export default class WasmWallet {
       case WalletMethod.NotificationConnect:
         // eslint-disable-next-line no-case-declarations
         if (params.result) {
-          this.addConnectedSite({appName: params.appname, appUrl: params.appurl})
+          this.addConnectedSite({ appName: params.appname, appUrl: params.appurl });
           this.connectExternal(params);
         } else {
           return notificationManager.postMessage({
