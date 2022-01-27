@@ -29,10 +29,6 @@ const main_net: Configuration = {
 };
 
 const production: Configuration = {
-  ...master_net,
-};
-
-const production: Configuration = {
   ...test_net,
 };
 
