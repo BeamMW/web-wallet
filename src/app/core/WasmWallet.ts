@@ -14,7 +14,6 @@ import { ExternalAppConnection } from '@core/types';
 declare const BeamModule: any;
 
 const PATH_DB = '/beam_wallet/wallet.db';
-const PATH_NODE = 'eu-node01.mainnet.beam.mw:8200';
 
 const notificationManager = NotificationManager.getInstance();
 
@@ -267,7 +266,7 @@ export default class WasmWallet {
 
   async start(pass: string) {
     if (!this.wallet) {
-      this.wallet = new WasmWalletClient(PATH_DB, pass, PATH_NODE);
+      this.wallet = new WasmWalletClient(PATH_DB, pass, config.path_node);
     }
 
     const responseHandler = (response) => {
@@ -431,7 +430,7 @@ export default class WasmWallet {
 
       WasmWalletClient.CreateWallet(seed, PATH_DB, password);
       if (!this.wallet) {
-        this.wallet = new WasmWalletClient(PATH_DB, password, PATH_NODE);
+        this.wallet = new WasmWalletClient(PATH_DB, password, config.path_node);
       }
       this.fastSync();
       this.start(password);
