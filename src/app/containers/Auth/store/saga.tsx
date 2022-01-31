@@ -10,7 +10,9 @@ import {
 } from '@core/api';
 import { navigate, setError } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
-import { ConnectedData, Environment, NotificationType, SyncProgress } from '@core/types';
+import {
+  ConnectedData, Environment, NotificationType, SyncProgress,
+} from '@core/types';
 import NotificationController from '@core/NotificationController';
 import { DatabaseSyncProgress, SyncStep } from '@app/containers/Auth/interfaces';
 
@@ -81,16 +83,14 @@ export function* handleProgress({
         yield put(navigate(ROUTES.NOTIFICATIONS.APPROVE_INVOKE));
       }
     }
-  } else {
-    if (sync_requests_done !== 0) {
-      yield put(actions.setSyncStep(SyncStep.SYNC));
-      yield put(
-        actions.updateWalletSyncProgress({
-          sync_requests_done,
-          sync_requests_total,
-        }),
-      );
-    }
+  } else if (sync_requests_done !== 0) {
+    yield put(actions.setSyncStep(SyncStep.SYNC));
+    yield put(
+      actions.updateWalletSyncProgress({
+        sync_requests_done,
+        sync_requests_total,
+      }),
+    );
   }
 }
 
