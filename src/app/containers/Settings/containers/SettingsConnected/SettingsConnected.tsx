@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { Button, Window } from '@app/shared/components';
+import { Window } from '@app/shared/components';
 import { styled } from '@linaria/react';
-import * as extensionizer from 'extensionizer';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +11,11 @@ import { SitesList } from '../../components';
 
 const SitesStyled = styled.div`
   margin-bottom: 30px;
+`;
+
+const ListEmptyStyled = styled.div`
+  margin-top: 100px;
+  opacity: 0.6;
 `;
 
 const SettingsConnected = () => {
@@ -24,9 +28,13 @@ const SettingsConnected = () => {
 
   return (
     <Window title="Connected sites" onPrevious={handlePrevious}>
-        <SitesStyled>
-            <SitesList data={sites}></SitesList>
-        </SitesStyled>
+      <SitesStyled>
+        {sites.length > 0 ? (
+          <SitesList data={sites} />
+        ) : (
+          <ListEmptyStyled>Your connected sites list is empty</ListEmptyStyled>
+        )}
+      </SitesStyled>
     </Window>
   );
 };

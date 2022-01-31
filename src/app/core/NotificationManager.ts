@@ -1,6 +1,6 @@
-import ExtensionPlatform from './Extension';
 import * as extensionizer from 'extensionizer';
-import { NotificationType, ExternalAppMethod } from '@core/types';
+import { NotificationType } from '@core/types';
+import ExtensionPlatform from './Extension';
 
 const NOTIFICATION_HEIGHT = 600;
 const NOTIFICATION_WIDTH = 375;
@@ -9,15 +9,21 @@ let contentPort;
 
 export default class NotificationManager {
   platform = null;
+
   openBeamTabsIDs = {};
+
   notificationIsOpen = false;
+
   notification = null;
+
   appname = '';
 
   private static instance: NotificationManager;
 
   private uiIsTriggering = false;
+
   private popupId = null;
+
   private contentReqPort = null;
 
   static getInstance() {
@@ -62,7 +68,7 @@ export default class NotificationManager {
     this.notificationIsOpen = true;
     this.openPopup();
   }
-  
+
   openAuthNotification(msg, appurl) {
     this.notification = {
       type: NotificationType.AUTH,
@@ -103,7 +109,7 @@ export default class NotificationManager {
     this.notificationIsOpen = true;
     this.openPopup();
   }
-  
+
   checkForError = () => {
     const { lastError } = extensionizer.runtime;
     if (!lastError) {
@@ -123,8 +129,8 @@ export default class NotificationManager {
       }
       return resolve(tabs);
     });
-  })
-  
+  });
+
   async triggerUi() {
     const tabs = await this.getActiveTabs();
     const currentlyActiveBeamTab = Boolean(tabs.find((tab) => this.openBeamTabsIDs[tab.id]));
@@ -137,7 +143,7 @@ export default class NotificationManager {
       }
     }
   }
-  
+
   async openPopup() {
     await this.triggerUi();
     await new Promise((resolve) => {

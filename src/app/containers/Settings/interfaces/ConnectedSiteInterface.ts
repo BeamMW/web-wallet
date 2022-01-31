@@ -1,5 +1,4 @@
 export interface connectedSiteInterface {
-    app_url: string;
-    app_name: string;
+  app_url: string;
+  app_name: string;
 }
-  

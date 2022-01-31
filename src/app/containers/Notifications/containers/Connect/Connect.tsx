@@ -35,7 +35,10 @@ const Connect = () => {
     <>
       <StyledTitle>DApp Connection Request</StyledTitle>
       <StyledMessage>
-        <b>{notification.params.appname} </b>
+        <b>
+          {notification.params.appname}
+          {' '}
+        </b>
         is trying to connect
         <br />
         to the BEAM Web Wallet.

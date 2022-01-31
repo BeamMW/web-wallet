@@ -13,7 +13,7 @@ import {
   CreateAddressParams,
   SendTransactionParams,
   TransactionDetail,
-  ExternalAppConnection
+  ExternalAppConnection,
 } from './types';
 
 let port;
@@ -61,7 +61,7 @@ export function postMessage<T = any, P = unknown>(method: WalletMethod | RPCMeth
     port.onMessage.addListener(handler);
 
     // eslint-disable-next-line no-console
-    //console.info(`sending ${method}:${target} with`, params); 
+    // console.info(`sending ${method}:${target} with`, params);
 
     port.postMessage({ id: target, method, params });
   });

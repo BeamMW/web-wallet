@@ -3,9 +3,7 @@ import NotificationController from '@core/NotificationController';
 import { styled } from '@linaria/react';
 import { approveSendRequest, rejectSendRequest } from '@core/api';
 import { Button, AssetIcon } from '@app/shared/components';
-import {
-  CancelIcon, ArrowUpIcon,
-} from '@app/shared/icons';
+import { CancelIcon, ArrowUpIcon } from '@app/shared/icons';
 import { fromGroths, compact } from '@core/utils';
 
 const ContainerStyled = styled.div`
@@ -78,7 +76,7 @@ const ReceiverAddress = styled.div`
 const ApproveSend = () => {
   const notification = NotificationController.getNotification();
 
-  const amount = fromGroths(parseInt(JSON.parse(notification.params.req).params.value));
+  const amount = fromGroths(parseInt(JSON.parse(notification.params.req).params.value, 10));
   const info = JSON.parse(notification.params.info);
 
   const handleCancelClick = () => {
@@ -96,10 +94,8 @@ const ApproveSend = () => {
       <ContainerStyled>
         <TitleStyled>Confirm transaction details</TitleStyled>
         <Receiver>
-            <Subtitle>Recipient: </Subtitle>
-            <ReceiverAddress>
-                {compact(info.token, 16)}
-            </ReceiverAddress>
+          <Subtitle>Recipient: </Subtitle>
+          <ReceiverAddress>{compact(info.token, 16)}</ReceiverAddress>
         </Receiver>
         {/* <Section>
             <Subtitle>Transaction type: </Subtitle>
@@ -108,15 +104,13 @@ const ApproveSend = () => {
             </ReceiverAddress>
         </Section> */}
         <Section>
-            <Subtitle>Amount: </Subtitle>
-            <Amounts>
-                <AssetItem key={info.assetID}>
-                    <AssetIcon asset_id={info.assetID} />
-                    <LabelStyled is_spend={info.isSpend}>
-                        {amount}
-                    </LabelStyled>
-                </AssetItem>
-            </Amounts>
+          <Subtitle>Amount: </Subtitle>
+          <Amounts>
+            <AssetItem key={info.assetID}>
+              <AssetIcon asset_id={info.assetID} />
+              <LabelStyled is_spend={info.isSpend}>{amount}</LabelStyled>
+            </AssetItem>
+          </Amounts>
         </Section>
         <Section>
           <Subtitle>Fee: </Subtitle>
@@ -131,11 +125,7 @@ const ApproveSend = () => {
           </FeeValue>
         </Section>
         <ControlsStyled>
-          <Button
-            pallete={info.isSpend ? 'purple' : 'blue'}
-            icon={ArrowUpIcon}
-            onClick={handleConfirmClick}
-          >
+          <Button pallete={info.isSpend ? 'purple' : 'blue'} icon={ArrowUpIcon} onClick={handleConfirmClick}>
             confirm
           </Button>
           <Button variant="ghost" icon={CancelIcon} onClick={handleCancelClick}>
