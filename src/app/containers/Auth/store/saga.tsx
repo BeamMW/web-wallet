@@ -1,7 +1,12 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 
 import {
-  getEnvironment, startWallet, isAllowedWord, isAllowedSeed, generateSeed, finishNotificationAuth
+  finishNotificationAuth,
+  generateSeed,
+  getEnvironment,
+  isAllowedSeed,
+  isAllowedWord,
+  startWallet,
 } from '@core/api';
 import { navigate, setError } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
@@ -63,10 +68,12 @@ export function* handleProgress({
     } else {
       const notification = NotificationController.getNotification();
       if (notification.type === NotificationType.AUTH) {
-        finishNotificationAuth(notification.params.apiver,
+        finishNotificationAuth(
+          notification.params.apiver,
           notification.params.apivermin,
           notification.params.appname,
-          notification.params.appurl);
+          notification.params.appurl,
+        );
         window.close();
       } else if (notification.type === NotificationType.CONNECT) {
         yield put(navigate(ROUTES.NOTIFICATIONS.CONNECT));
@@ -76,8 +83,14 @@ export function* handleProgress({
         yield put(navigate(ROUTES.NOTIFICATIONS.APPROVE_INVOKE));
       }
     }
-  } else {
-    yield put(actions.updateWalletSyncProgress({ sync_requests_done, sync_requests_total }));
+  } else if (sync_requests_done !== 0) {
+    yield put(actions.setSyncStep(SyncStep.SYNC));
+    yield put(
+      actions.updateWalletSyncProgress({
+        sync_requests_done,
+        sync_requests_total,
+      }),
+    );
   }
 }
 
@@ -86,9 +99,13 @@ export function* handleSyncStep(payload: SyncStep) {
 }
 export function* handleDatabaseSyncProgress(payload: DatabaseSyncProgress) {
   yield put(actions.downloadDatabaseFile(payload));
+  yield put(actions.setSyncStep(SyncStep.DOWNLOAD));
+  yield put(navigate(ROUTES.AUTH.PROGRESS));
 }
 export function* handleDatabaseRestore(payload: DatabaseSyncProgress) {
   yield put(actions.restoreWallet(payload));
+  yield put(actions.setSyncStep(SyncStep.RESTORE));
+  yield put(navigate(ROUTES.AUTH.PROGRESS));
 }
 
 function* startWalletSaga(action: ReturnType<typeof actions.startWallet.request>): Generator {

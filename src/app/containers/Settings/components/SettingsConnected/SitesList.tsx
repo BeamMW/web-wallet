@@ -1,9 +1,9 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 import { ExternalAppConnection } from '@core/types';
-import { Button } from '@app/shared/components'
+import { Button } from '@app/shared/components';
 import { RemoveIcon } from '@app/shared/icons';
-//import { disconnectSite } from '@core/api';
+// import { disconnectSite } from '@core/api';
 import { disconnectAllowedSite } from '@app/containers/Settings/store/actions';
 import { useDispatch } from 'react-redux';
 
@@ -24,13 +24,13 @@ const ListItemStyled = styled.li`
   justify-content: space-between;
 
   &:nth-child(odd) {
-    background-color: rgba(255, 255, 255, .05);
+    background-color: rgba(255, 255, 255, 0.05);
   }
 `;
 
 const UrlItemStyled = styled.div`
   font-size: 14px;
-  color: rgba(255, 255, 255, .6);
+  color: rgba(255, 255, 255, 0.6);
 `;
 
 const SitesList: React.FC<SitesProps> = ({ data: sites }) => {
@@ -42,17 +42,15 @@ const SitesList: React.FC<SitesProps> = ({ data: sites }) => {
 
   return sites.length ? (
     <ListStyled>
-      {sites.map((site) => {
-        return (
-          <ListItemStyled key={site.appName}>
-            <span>
-              <div>{site.appName}</div>
-              <UrlItemStyled>{site.appUrl}</UrlItemStyled>
-            </span>
-            <Button variant="icon" icon={RemoveIcon} pallete="ghost" onClick={()=>handleRemoveSite(site)}></Button>
-          </ListItemStyled>
-        );
-      })}
+      {sites.map((site) => (
+        <ListItemStyled key={site.appName}>
+          <span>
+            <div>{site.appName}</div>
+            <UrlItemStyled>{site.appUrl}</UrlItemStyled>
+          </span>
+          <Button variant="icon" icon={RemoveIcon} pallete="ghost" onClick={() => handleRemoveSite(site)} />
+        </ListItemStyled>
+      ))}
     </ListStyled>
   ) : (
     <></>

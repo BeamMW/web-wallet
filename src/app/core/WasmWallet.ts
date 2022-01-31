@@ -6,10 +6,12 @@ import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
-import { BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod } from './types';
+import { ExternalAppConnection } from '@core/types';
+import {
+  BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
+} from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
-import { ExternalAppConnection } from '@core/types';
 
 declare const BeamModule: any;
 
@@ -65,13 +67,16 @@ export default class WasmWallet {
   private static instance: WasmWallet;
 
   private contractInfoHandler;
+
   private contractInfoHandlerCallback;
 
   private sendHandler;
+
   private sendHandlerCallback;
 
   // TODO:BRO map [url->app]
   private apps = {};
+
   private connectedApps = [];
 
   static getInstance() {
@@ -317,9 +322,9 @@ export default class WasmWallet {
   }
 
   private loadConnectedApps() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       extensionizer.storage.local.get('sites', ({ sites }) => {
-        this.connectedApps = sites ? sites : [];
+        this.connectedApps = sites || [];
         resolve(true);
       });
     });
@@ -331,9 +336,7 @@ export default class WasmWallet {
   }
 
   removeConnectedSite(site: ExternalAppConnection) {
-    const filteredSites = this.connectedApps.filter(function (el) {
-      return el.appUrl !== site.appUrl && el.appName !== site.appName;
-    });
+    const filteredSites = this.connectedApps.filter((el) => el.appUrl !== site.appUrl && el.appName !== site.appName);
 
     this.connectedApps = filteredSites;
     extensionizer.storage.local.set({
@@ -432,7 +435,8 @@ export default class WasmWallet {
       if (!this.wallet) {
         this.wallet = new WasmWalletClient(PATH_DB, password, config.path_node);
       }
-      this.fastSync();
+      await this.fastSync();
+
       this.start(password);
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -486,12 +490,12 @@ export default class WasmWallet {
 
       const portStream = new PortStream(port);
       this.apps[params.appurl].connectPage(portStream, params.appurl);
-      notificationManager.postMessage({
+      return notificationManager.postMessage({
         result: true,
       });
     } catch (err) {
       // TODO:BRO handle error in Utils.js
-      notificationManager.postMessage({
+      return notificationManager.postMessage({
         result: false,
         errcode: -2,
         ermsg: err,

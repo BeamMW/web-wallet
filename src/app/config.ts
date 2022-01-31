@@ -6,7 +6,7 @@ const development: Configuration = {
   env: NODE_ENV,
   explorer_url: 'https://master-net.explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/masternet/masternet_recovery.bin',
-  path_node: 'localhost:8200',
+  path_node: 'eu-node01.masternet.beam.mw:8200',
 };
 
 const master_net: Configuration = {

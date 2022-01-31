@@ -1,8 +1,8 @@
 import { createAsyncAction } from 'typesafe-actions';
 import { ErrorMessage } from '@core/WasmWallet';
 import { VersionInterface, connectedSiteInterface } from '@app/containers/Settings/interfaces';
-import { SettingsActionTypes } from './constants';
 import { ExternalAppConnection } from '@core/types';
+import { SettingsActionTypes } from './constants';
 
 export const deleteWallet = createAsyncAction(
   SettingsActionTypes.DELETE_WALLET,
