@@ -25,7 +25,7 @@ const main_net: Configuration = {
   ...development,
   explorer_url: 'https://explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/mainnet/mainnet_recovery.bin',
-  path_node: 'eu-node01.mainnet.beam.mw:8200',
+  path_node: 'web-wallet.beam.mw:8200',
 };
 
 const production: Configuration = {
