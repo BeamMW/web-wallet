@@ -63,7 +63,7 @@ const Login: React.FC = () => {
         visible={warningVisible}
         title="Restore wallet or create a new one"
         confirmButton={(
-          <Button icon={DoneIcon} onClick={() => navigate(ROUTES.AUTH.RESTORE)}>
+          <Button icon={DoneIcon} onClick={() => navigate(ROUTES.AUTH.BASE)}>
             I agree
           </Button>
         )}

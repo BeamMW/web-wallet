@@ -5,7 +5,7 @@ import WasmWallet from '@core/WasmWallet';
 import { Environment, RemoteRequest } from '@app/core/types';
 
 import NotificationManager from '@core/NotificationManager';
-import { NotificationType, ExternalAppMethod } from '@core/types';
+import { ExternalAppMethod } from '@core/types';
 
 window.global = globalThis;
 
@@ -32,9 +32,9 @@ function handleConnect(remote) {
   port.onDisconnect.addListener(() => {
     connected = false;
     if (activeTab && port.name === Environment.NOTIFICATION) {
-      //notificationManager.closeTab(activeTab);
+      // notificationManager.closeTab(activeTab);
       activeTab = null;
-      notificationManager.appname = ''; //TODO: check with reconnect
+      notificationManager.appname = ''; // TODO: check with reconnect
     }
   });
 
@@ -66,18 +66,16 @@ function handleConnect(remote) {
       contentPort = remote;
       contentPort.onMessage.addListener((msg) => {
         if (wallet.isRunning()) {
-          if (wallet.isConnectedSite({appName: msg.appname, appUrl: remote.sender.url})) {
-            msg['appurl'] = remote.sender.url;
+          if (wallet.isConnectedSite({ appName: msg.appname, appUrl: remote.sender.url })) {
+            msg.appurl = remote.sender.url;
             wallet.connectExternal(msg);
-          } else {
-            if (msg.type === ExternalAppMethod.CreateBeamApi) {
-              notificationManager.openConnectNotification(msg, remote.sender.url);
-            } else if (msg.type === ExternalAppMethod.CreateBeamApiRetry) {
-              /* eslint-disable-next-line @typescript-eslint/no-unused-expressions */
-              notificationManager.appname === msg.appname 
-                ? notificationManager.openPopup() 
-                : notificationManager.openConnectNotification(msg, remote.sender.url);
-            }
+          } else if (msg.type === ExternalAppMethod.CreateBeamApi) {
+            notificationManager.openConnectNotification(msg, remote.sender.url);
+          } else if (msg.type === ExternalAppMethod.CreateBeamApiRetry) {
+            /* eslint-disable-next-line @typescript-eslint/no-unused-expressions */
+            notificationManager.appname === msg.appname
+              ? notificationManager.openPopup()
+              : notificationManager.openConnectNotification(msg, remote.sender.url);
           }
         } else {
           notificationManager.openAuthNotification(msg, remote.sender.url);

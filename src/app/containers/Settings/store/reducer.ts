@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { ActionType, createReducer } from 'typesafe-actions';
 
-import { SettingsStateType, connectedSiteInterface } from '../interfaces';
+import { SettingsStateType } from '../interfaces';
 import * as actions from './actions';
 
 type Action = ActionType<typeof actions>;
@@ -12,7 +12,7 @@ const initialState: SettingsStateType = {
     beam_branch_name: '',
   },
   logs: '',
-  connectedSites: []
+  connectedSites: [],
 };
 
 const reducer = createReducer<SettingsStateType, Action>(initialState)
