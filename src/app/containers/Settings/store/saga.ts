@@ -1,11 +1,13 @@
 import { takeLatest, put, call } from 'redux-saga/effects';
 import { actions } from '@app/containers/Settings/store';
 import { navigate, setError } from '@app/shared/store/actions';
-import { deleteWallet, loadBackgroundLogs, loadConnectedSites, getVersion, disconnectAllowedSite } from '@core/api';
+import {
+  deleteWallet, loadBackgroundLogs, loadConnectedSites, getVersion, disconnectAllowedSite,
+} from '@core/api';
 import { ROUTES } from '@app/shared/constants';
 import { VersionInterface, connectedSiteInterface } from '@app/containers/Settings/interfaces';
-import store from '../../../../index';
 import { setDefaultSyncState } from '@app/containers/Auth/store/actions';
+import store from '../../../../index';
 
 function* deleteWalletSaga(action: ReturnType<typeof actions.deleteWallet.request>): Generator {
   try {
