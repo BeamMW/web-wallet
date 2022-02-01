@@ -12,6 +12,8 @@ export const startWallet = createAsyncAction(
 
 export const setSyncedWalletState = createAction(AuthActionTypes.SET_SYNCED_WALLET_STATE)<boolean>();
 
+export const setDefaultSyncState = createAction(AuthActionTypes.SET_DEFAULT_SYNC_STATE)();
+
 export const updateWalletSyncProgress = createAction(AuthActionTypes.UPDATE_WALLET_SYNC_PROGRESS)<SyncProgress>();
 
 export const downloadDatabaseFile = createAction(AuthActionTypes.DOWNLOAD_DATABASE_FILE)<DatabaseSyncProgress>();

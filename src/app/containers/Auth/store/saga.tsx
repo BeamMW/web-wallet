@@ -10,9 +10,7 @@ import {
 } from '@core/api';
 import { navigate, setError } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
-import {
-  ConnectedData, Environment, NotificationType, SyncProgress,
-} from '@core/types';
+import { ConnectedData, Environment, NotificationType, SyncProgress } from '@core/types';
 import NotificationController from '@core/NotificationController';
 import { DatabaseSyncProgress, SyncStep } from '@app/containers/Auth/interfaces';
 
@@ -105,7 +103,11 @@ export function* handleDatabaseSyncProgress(payload: DatabaseSyncProgress) {
 export function* handleDatabaseRestore(payload: DatabaseSyncProgress) {
   yield put(actions.restoreWallet(payload));
   yield put(actions.setSyncStep(SyncStep.RESTORE));
-  yield put(navigate(ROUTES.AUTH.PROGRESS));
+  if (payload.total !== payload.done) {
+    yield put(navigate(ROUTES.AUTH.PROGRESS));
+  } else {
+    yield put(navigate(ROUTES.WALLET.BASE));
+  }
 }
 
 function* startWalletSaga(action: ReturnType<typeof actions.startWallet.request>): Generator {
