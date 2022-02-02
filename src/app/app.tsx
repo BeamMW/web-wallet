@@ -8,7 +8,7 @@ import './styles';
 import { ROUTES } from '@app/shared/constants';
 import { actions as sharedActions, selectors as sharedSelectors } from '@app/shared/store';
 
-import { useNavigate, useRoutes } from 'react-router-dom';
+import { useNavigate, useRoutes, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@app/shared/components';
 import { ToastContainer } from 'react-toastify';
@@ -59,11 +59,14 @@ const App = () => {
   const dispatch = useDispatch();
   const content = useRoutes(routes);
   const navigate = useNavigate();
+  const location = useLocation();
   const navigateURL = useSelector(sharedSelectors.selectRouterLink());
 
   useEffect(() => {
     if (navigateURL) {
-      navigate(navigateURL);
+      if (location.pathname !== navigateURL) {
+        navigate(navigateURL);
+      }
       dispatch(sharedActions.navigate(''));
     }
   }, [navigateURL, dispatch, navigate]);

@@ -105,7 +105,11 @@ export function* handleDatabaseSyncProgress(payload: DatabaseSyncProgress) {
 export function* handleDatabaseRestore(payload: DatabaseSyncProgress) {
   yield put(actions.restoreWallet(payload));
   yield put(actions.setSyncStep(SyncStep.RESTORE));
-  yield put(navigate(ROUTES.AUTH.PROGRESS));
+  if (payload.total !== payload.done) {
+    yield put(navigate(ROUTES.AUTH.PROGRESS));
+  } else {
+    yield put(navigate(ROUTES.WALLET.BASE));
+  }
 }
 
 function* startWalletSaga(action: ReturnType<typeof actions.startWallet.request>): Generator {
