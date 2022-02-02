@@ -6,6 +6,7 @@ import {
 } from '@core/api';
 import { ROUTES } from '@app/shared/constants';
 import { VersionInterface, connectedSiteInterface } from '@app/containers/Settings/interfaces';
+import { setDefaultSyncState } from '@app/containers/Auth/store/actions';
 import store from '../../../../index';
 
 function* deleteWalletSaga(action: ReturnType<typeof actions.deleteWallet.request>): Generator {
@@ -13,6 +14,7 @@ function* deleteWalletSaga(action: ReturnType<typeof actions.deleteWallet.reques
     yield call(deleteWallet, action.payload);
     yield put(setError(null));
     yield put(navigate(ROUTES.AUTH.BASE));
+    yield put(setDefaultSyncState());
   } catch (e) {
     yield put(setError(e));
     yield put(actions.deleteWallet.failure(e));

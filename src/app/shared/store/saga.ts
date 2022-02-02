@@ -18,7 +18,7 @@ import { handleTransactions } from '@app/containers/Transactions/store/saga';
 import { actions } from '@app/shared/store/index';
 import { navigate } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
-import { setSyncedWalletState } from '@app/containers/Auth/store/actions';
+import { setDefaultSyncState, setSyncedWalletState } from '@app/containers/Auth/store/actions';
 
 export function remoteEventChannel() {
   return eventChannel((emitter) => {
@@ -42,6 +42,7 @@ export function remoteEventChannel() {
 function* stopWalletSaga() {
   yield put(setSyncedWalletState(false));
   yield put(navigate(ROUTES.AUTH.LOGIN));
+  yield put(setDefaultSyncState());
   yield call(stopWallet);
 }
 
