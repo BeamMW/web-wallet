@@ -340,4 +340,5 @@ export interface PaymentProof {
   kernel: string;
   receiver: string;
   sender: string;
+  payment_proof: string;
 }

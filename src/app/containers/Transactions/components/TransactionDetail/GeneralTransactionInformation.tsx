@@ -296,10 +296,10 @@ const GeneralTransactionInformation = ({
         </InformationItem>
       )}
 
-      {/*  <InformationItem>
+      <InformationItem>
         <div className="title">Source:</div>
         <div className="value">{transactionDetail.appname ?? 'Wallet'}</div>
-      </InformationItem> */}
+      </InformationItem>
 
       {transactionDetail.comment && (
         <InformationItem>

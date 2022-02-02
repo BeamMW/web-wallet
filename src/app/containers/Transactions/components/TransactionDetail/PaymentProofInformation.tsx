@@ -78,6 +78,19 @@ const PaymentProofInformation = ({ paymentProof, isBalanceHidden, copy }: Paymen
         />
       </div>
     </InformationItem>
+
+    <InformationItem>
+      <div className="title">Code:</div>
+      <div className="value">
+        <p>{paymentProof.payment_proof}</p>
+        <Button
+          variant="icon"
+          pallete="white"
+          icon={CopySmallIcon}
+          onClick={() => copy(paymentProof.payment_proof, 'Code copied to clipboard')}
+        />
+      </div>
+    </InformationItem>
   </PaymentProofWrapper>
 );
 

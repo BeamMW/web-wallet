@@ -79,19 +79,19 @@ const TransactionBottom = styled.div`
   justify-content: space-between;
 `;
 
-// const TransactionSource = styled.div`
-//   margin-top: 8px;
-//   font-size: 14px;
-//   font-stretch: normal;
-//   font-style: normal;
-//   line-height: normal;
-//   letter-spacing: normal;
-//   color: #fff;
-//   text-align: left;
-//   width: 100%;
-//   opacity: 0.7;
-//   font-weight: bold;
-// `;
+const TransactionSource = styled.div`
+  margin-top: 8px;
+  font-size: 14px;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #fff;
+  text-align: left;
+  width: 100%;
+  opacity: 0.7;
+  font-weight: bold;
+`;
 
 const TransactionItem = ({
   data,
@@ -176,7 +176,7 @@ const TransactionItem = ({
       )}
       <StatusLabel data={data} />
       <TransactionBottom>
-        {/*  <TransactionSource>{data.appname ?? 'Wallet'}</TransactionSource> */}
+        <TransactionSource>{data.appname ?? 'Wallet'}</TransactionSource>
         <TransactionDate>{getTransactionDate()}</TransactionDate>
       </TransactionBottom>
     </>
