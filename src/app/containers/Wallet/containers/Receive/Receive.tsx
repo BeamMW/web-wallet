@@ -84,11 +84,20 @@ const Receive = () => {
   const { amount, asset_id } = receiveAmount;
 
   const [maxAnonymity, setMaxAnonymity] = useState(false);
+  const [comment, setComment] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(generateAddress.request({ type: maxAnonymity ? 'max_privacy' : 'offline' }));
-  }, [dispatch, maxAnonymity]);
+    if (comment) {
+      dispatch(generateAddress.request({ type: maxAnonymity ? 'max_privacy' : 'offline', comment }));
+    } else {
+      dispatch(
+        generateAddress.request({
+          type: maxAnonymity ? 'max_privacy' : 'offline',
+        }),
+      );
+    }
+  }, [dispatch, maxAnonymity, comment]);
 
   const copyAddress = async () => {
     toast('Address copied to clipboard');
@@ -158,12 +167,23 @@ const Receive = () => {
           onChange={(e) => dispatch(setReceiveAmount(e))}
         />
       </Section>
+      <Section title="Comment" variant="gray" collapse>
+        <Input
+          variant="gray"
+          placeholder="Comment"
+          value={comment}
+          onChange={(e) => {
+            setComment(e.target.value);
+          }}
+        />
+      </Section>
       <Section title="Advanced" variant="gray" collapse>
         <RowStyled>
           <LabelStyled htmlFor="ma">Maximum anonymity set </LabelStyled>
           <Toggle id="ma" value={maxAnonymity} onChange={() => setMaxAnonymity((v) => !v)} />
         </RowStyled>
       </Section>
+
       {maxAnonymity ? (
         <WarningStyled>
           Transaction can last at most 72 hours.

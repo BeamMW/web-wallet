@@ -54,7 +54,7 @@ interface SendFormData {
   address: string;
   offline: boolean;
   send_amount: TransactionAmount;
-
+  comment: string;
   misc: {
     beam: AssetTotal;
     selected: AssetTotal;
@@ -142,6 +142,7 @@ const SendForm = () => {
         amount: '',
         asset_id: 0,
       },
+      comment: '',
       misc: {
         addressData,
         fee,
@@ -301,7 +302,9 @@ const SendForm = () => {
   };
 
   const submitSend = useCallback(() => {
-    const { send_amount, address, offline } = values;
+    const {
+      send_amount, address, offline, comment,
+    } = values;
     const isMaxPrivacy = addressData.type === 'max_privacy';
     const value = send_amount.amount === '' ? 0 : toGroths(parseFloat(send_amount.amount));
 
@@ -309,7 +312,7 @@ const SendForm = () => {
       fee,
       value,
       address,
-      comment: '',
+      comment,
       asset_id: send_amount.asset_id,
       offline: offline || isMaxPrivacy,
     };
@@ -376,13 +379,14 @@ const SendForm = () => {
               </Button>
             )}
           </Section>
-          {/* <Section title="Comment" variant="gray" collapse>
-          <Input
-            variant="gray"
-            value={comment}
-            onInput={onCommentChange}
-          />
-        </Section> */}
+          <Section title="Comment" variant="gray" collapse>
+            <Input
+              variant="gray"
+              placeholder="Comment"
+              value={values.comment}
+              onChange={(e) => setFieldValue('comment', e.target.value)}
+            />
+          </Section>
           <WarningStyled>{warning}</WarningStyled>
           <Button pallete="purple" icon={ArrowRightIcon} type="submit" disabled={isFormDisabled()}>
             next
