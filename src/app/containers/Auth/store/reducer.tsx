@@ -73,6 +73,21 @@ const reducer = createReducer<AuthStateType, Action>(initialState)
   .handleAction(actions.setRegistrationSeed, (state, action) => produce(state, (nexState) => {
     nexState.registration_seed = action.payload.registration_seed;
     nexState.is_restore = action.payload.is_restore;
+  }))
+  .handleAction(actions.setDefaultSyncState, (state) => produce(state, (nexState) => {
+    nexState.sync_step = SyncStep.SYNC;
+    nexState.sync_progress = {
+      sync_requests_done: 0,
+      sync_requests_total: 0,
+    };
+    nexState.download_db_progress = {
+      done: 0,
+      total: 0,
+    };
+    nexState.database_sync_progress = {
+      done: 0,
+      total: 0,
+    };
   }));
 
 export { reducer as AuthReducer };
