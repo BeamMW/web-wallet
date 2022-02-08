@@ -8,7 +8,7 @@ import {
   isAllowedWord,
   startWallet,
 } from '@core/api';
-import { navigate, setError } from '@app/shared/store/actions';
+import { navigate, setError, unlockWallet } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import {
   ConnectedData, Environment, NotificationType, SyncProgress,
@@ -103,10 +103,13 @@ export function* handleSyncStep(payload: SyncStep) {
   yield put(actions.setSyncStep(payload));
 }
 
-export function* handleUnlockWallet() {
-  localStorage.removeItem('locked');
-
-  yield put(navigate(ROUTES.WALLET.BASE));
+export function* handleUnlockWallet(payload: boolean) {
+  yield put(unlockWallet());
+  if (payload) {
+    store.dispatch(navigate(ROUTES.WALLET.BASE));
+  } else {
+    store.dispatch(navigate(ROUTES.AUTH.PROGRESS));
+  }
 }
 
 export function* handleDatabaseSyncProgress(payload: DatabaseSyncProgress) {

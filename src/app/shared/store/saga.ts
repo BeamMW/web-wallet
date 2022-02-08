@@ -59,7 +59,7 @@ function* sharedSaga() {
           break;
 
         case BackgroundEvent.UNLOCK_WALLET:
-          yield fork(handleUnlockWallet);
+          yield fork(handleUnlockWallet, payload.result);
           break;
 
         case BackgroundEvent.CHANGE_SYNC_STEP:
