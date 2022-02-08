@@ -1,5 +1,6 @@
 import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
+import { sha256 } from 'js-sha256';
 import PortStream from '@core/PortStream';
 
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
@@ -7,9 +8,7 @@ import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
 import { ExternalAppConnection } from '@core/types';
-import {
-  BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
-} from './types';
+import { BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod } from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
 
@@ -65,7 +64,7 @@ console.warn = function (...args) {
 
 export default class WasmWallet {
   private static instance: WasmWallet;
-
+  private passwordHash: string;
   private contractInfoHandler;
 
   private contractInfoHandlerCallback;
@@ -270,6 +269,10 @@ export default class WasmWallet {
   }
 
   async start(pass: string) {
+    if (this.isRunning()) {
+      this.emit(BackgroundEvent.UNLOCK_WALLET);
+      return;
+    }
     if (!this.wallet) {
       this.wallet = new WasmWalletClient(PATH_DB, pass, config.path_node);
     }
@@ -280,7 +283,6 @@ export default class WasmWallet {
       console.info(event);
       this.eventHandler(event);
     };
-
     this.wallet.startWallet();
     this.wallet.subscribe(responseHandler);
     this.wallet.setApproveContractInfoHandler(this.contractInfoHandler);
@@ -361,7 +363,7 @@ export default class WasmWallet {
       this.apps[url].appApi.delete();
       delete this.apps[url].appApi;
       delete this.apps[url].appApiHandler;
-      delete this.apps[url]
+      delete this.apps[url];
     }
 
     console.log(this.apps);

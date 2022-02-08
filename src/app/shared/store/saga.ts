@@ -1,9 +1,7 @@
-import {
-  call, take, fork, takeLatest, put,
-} from 'redux-saga/effects';
+import { call, take, fork, takeLatest, put } from 'redux-saga/effects';
 
 import { eventChannel, END } from 'redux-saga';
-import { initRemoteWallet, stopWallet } from '@core/api';
+import { initRemoteWallet } from '@core/api';
 import { BackgroundEvent, RemoteResponse, RPCEvent } from '@core/types';
 
 import {
@@ -12,13 +10,13 @@ import {
   handleDatabaseSyncProgress,
   handleProgress,
   handleSyncStep,
+  handleUnlockWallet,
 } from '@app/containers/Auth/store/saga';
 import { handleTotals, handleAssets } from '@app/containers/Wallet/store/saga';
 import { handleTransactions } from '@app/containers/Transactions/store/saga';
 import { actions } from '@app/shared/store/index';
 import { navigate } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
-import { setDefaultSyncState, setSyncedWalletState } from '@app/containers/Auth/store/actions';
 
 export function remoteEventChannel() {
   return eventChannel((emitter) => {
@@ -39,17 +37,15 @@ export function remoteEventChannel() {
   });
 }
 
-function* stopWalletSaga() {
-  yield put(setSyncedWalletState(false));
+function* lockWallet() {
+  localStorage.setItem('locked', '1');
   yield put(navigate(ROUTES.AUTH.LOGIN));
-  yield put(setDefaultSyncState());
-  yield call(stopWallet);
 }
 
 function* sharedSaga() {
   const remoteChannel = yield call(remoteEventChannel);
 
-  yield takeLatest(actions.stopWallet, stopWalletSaga);
+  yield takeLatest(actions.lockWallet, lockWallet);
   while (true) {
     try {
       // An error from socketChannel will cause the saga jump to the catch block
@@ -58,6 +54,10 @@ function* sharedSaga() {
       switch (payload.id) {
         case BackgroundEvent.CONNECTED:
           yield fork(handleConnect, payload.result);
+          break;
+
+        case BackgroundEvent.UNLOCK_WALLET:
+          yield fork(handleUnlockWallet);
           break;
 
         case BackgroundEvent.CHANGE_SYNC_STEP:

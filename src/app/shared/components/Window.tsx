@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
-import {
-  IconEye, IconLockWallet, MenuIcon, IconEyeCrossed,
-} from '@app/shared/icons';
+import { IconEye, IconLockWallet, MenuIcon, IconEyeCrossed } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -224,7 +222,7 @@ export const Window: React.FC<WindowProps> = ({
   const handleCancelClick = () => setVisible(false);
 
   const stopWallet = () => {
-    dispatch(actions.stopWallet());
+    dispatch(actions.lockWallet());
   };
 
   const hideBalance = () => {

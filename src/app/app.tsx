@@ -17,6 +17,7 @@ import { AuthContainer, Progress } from './containers/Auth';
 import { SettingsContainer } from './containers/Settings';
 import { NotificationContainer } from './containers/Notifications';
 import { TransactionContainer } from './containers/Transactions';
+import { selectIsLocked } from '@app/shared/store/selectors';
 
 const trackStyle = css`
   z-index: 999;
@@ -61,6 +62,7 @@ const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const navigateURL = useSelector(sharedSelectors.selectRouterLink());
+  const isLocked = useSelector(sharedSelectors.selectIsLocked());
 
   useEffect(() => {
     if (navigateURL) {
@@ -70,6 +72,12 @@ const App = () => {
       dispatch(sharedActions.navigate(''));
     }
   }, [navigateURL, dispatch, navigate]);
+
+  useEffect(() => {
+    if (isLocked) {
+      navigate(ROUTES.AUTH.LOGIN);
+    }
+  }, [isLocked]);
 
   return (
     <ErrorBoundary>

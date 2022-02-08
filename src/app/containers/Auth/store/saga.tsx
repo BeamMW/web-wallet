@@ -10,9 +10,7 @@ import {
 } from '@core/api';
 import { navigate, setError } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
-import {
-  ConnectedData, Environment, NotificationType, SyncProgress,
-} from '@core/types';
+import { ConnectedData, Environment, NotificationType, SyncProgress } from '@core/types';
 import NotificationController from '@core/NotificationController';
 import { DatabaseSyncProgress, SyncStep } from '@app/containers/Auth/interfaces';
 
@@ -49,7 +47,7 @@ export function* handleConnect({ notification, is_running, onboarding }: Connect
       yield put(navigate(is_running ? ROUTES.NOTIFICATIONS.CONNECT : ROUTES.AUTH.LOGIN));
     }
   } else {
-    yield put(navigate(is_running ? ROUTES.WALLET.BASE : ROUTES.AUTH.LOGIN));
+    yield put(navigate(is_running && localStorage.getItem('lock') ? ROUTES.WALLET.BASE : ROUTES.AUTH.LOGIN));
   }
 }
 
@@ -64,7 +62,12 @@ export function* handleProgress({
   if (current_state_hash === tip_state_hash) {
     yield put(actions.setSyncedWalletState(true));
     if (getEnvironment() !== Environment.NOTIFICATION) {
-      yield put(navigate(ROUTES.WALLET.BASE));
+      const isLocked = localStorage.getItem('locked');
+      if (isLocked) {
+        yield put(navigate(ROUTES.AUTH.LOGIN));
+      } else {
+        yield put(navigate(ROUTES.WALLET.BASE));
+      }
     } else {
       const notification = NotificationController.getNotification();
       if (notification.type === NotificationType.AUTH) {
@@ -97,6 +100,13 @@ export function* handleProgress({
 export function* handleSyncStep(payload: SyncStep) {
   yield put(actions.setSyncStep(payload));
 }
+
+export function* handleUnlockWallet() {
+  localStorage.removeItem('locked');
+
+  yield put(navigate(ROUTES.WALLET.BASE));
+}
+
 export function* handleDatabaseSyncProgress(payload: DatabaseSyncProgress) {
   yield put(actions.downloadDatabaseFile(payload));
   yield put(actions.setSyncStep(SyncStep.DOWNLOAD));
