@@ -358,6 +358,7 @@ export default class WasmWallet {
 
   disconnectAppApi(url) {
     if (this.apps[url]) {
+      this.apps[url].appApi.delete();
       delete this.apps[url].appApi;
       delete this.apps[url].appApiHandler;
       delete this.apps[url]
