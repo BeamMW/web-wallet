@@ -351,7 +351,8 @@ export default class WasmWallet {
   }
 
   removeConnectedSite(site: ExternalAppConnection) {
-    const filteredSites = this.connectedApps.filter((el) => el.appUrl !== site.appUrl && el.appName !== site.appName);
+    const filteredSites = this.connectedApps.splice(this.connectedApps.findIndex(el => 
+      el.appUrl === site.appUrl && el.appName === site.appName), 1);
 
     this.connectedApps = filteredSites;
     extensionizer.storage.local.set({
@@ -376,8 +377,6 @@ export default class WasmWallet {
       delete this.apps[url].appApiHandler;
       delete this.apps[url];
     }
-
-    console.log(this.apps);
   }
 
   setApproveSendHandler(handler) {

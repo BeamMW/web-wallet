@@ -66,24 +66,24 @@ function handleConnect(remote) {
       contentPort = remote;
       contentPort.onMessage.addListener((msg) => {
         if (wallet.isRunning()) {
-          if (wallet.isConnectedSite({ appName: msg.appname, appUrl: remote.sender.url })) {
-            msg.appurl = remote.sender.url;
+          if (wallet.isConnectedSite({ appName: msg.appname, appUrl: remote.sender.origin })) {
+            msg.appurl = remote.sender.origin;
             wallet.connectExternal(msg);
           } else if (msg.type === ExternalAppMethod.CreateBeamApi) {
-            notificationManager.openConnectNotification(msg, remote.sender.url);
+            notificationManager.openConnectNotification(msg, remote.sender.origin);
           } else if (msg.type === ExternalAppMethod.CreateBeamApiRetry) {
             /* eslint-disable-next-line @typescript-eslint/no-unused-expressions */
             notificationManager.appname === msg.appname
               ? notificationManager.openPopup()
-              : notificationManager.openConnectNotification(msg, remote.sender.url);
+              : notificationManager.openConnectNotification(msg, remote.sender.origin);
           }
         } else {
-          notificationManager.openAuthNotification(msg, remote.sender.url);
+          notificationManager.openAuthNotification(msg, remote.sender.origin);
         }
       });
 
       contentPort.onDisconnect.addListener((e) => {
-        wallet.disconnectAppApi(e.sender.url);
+        wallet.disconnectAppApi(e.sender.origin);
       });
       break;
     }
