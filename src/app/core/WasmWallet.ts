@@ -291,7 +291,7 @@ export default class WasmWallet {
     this.wallet.subscribe(responseHandler);
     this.wallet.setApproveContractInfoHandler(this.contractInfoHandler);
     this.wallet.setApproveSendHandler(this.sendHandler);
-
+    this.emit(BackgroundEvent.UNLOCK_WALLET);
     await this.loadConnectedApps();
 
     this.toggleEvents(true);
