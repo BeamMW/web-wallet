@@ -1,6 +1,6 @@
 import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
-import { sha256 } from 'js-sha256';
+
 import PortStream from '@core/PortStream';
 
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
@@ -8,7 +8,9 @@ import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
 import { ExternalAppConnection } from '@core/types';
-import { BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod } from './types';
+import {
+  BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
+} from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
 
@@ -64,7 +66,9 @@ console.warn = function (...args) {
 
 export default class WasmWallet {
   private static instance: WasmWallet;
+
   private passwordHash: string;
+
   private contractInfoHandler;
 
   private contractInfoHandlerCallback;

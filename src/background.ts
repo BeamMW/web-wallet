@@ -83,7 +83,7 @@ function handleConnect(remote) {
       });
 
       contentPort.onDisconnect.addListener((e) => {
-        wallet.disconnectAppApi(e.sender.url)
+        wallet.disconnectAppApi(e.sender.url);
       });
       break;
     }

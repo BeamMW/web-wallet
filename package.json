@@ -13,6 +13,11 @@
     "serve": "webpack serve --mode=development",
     "build": "webpack --env NODE_ENV=production --mode=production"
   },
+  "pre-commit": [
+    "prettier",
+    "lint",
+    "commit-hook"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.14.8",
     "@babel/core": "^7.14.8",
@@ -67,7 +72,6 @@
     "file-saver": "^2.0.5",
     "formik": "^2.2.9",
     "immer": "^9.0.6",
-    "js-sha256": "^0.9.0",
     "jszip": "^3.7.1",
     "patronum": "^1.1.0",
     "post-message-stream": "^3.0.0",
