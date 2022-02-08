@@ -70,7 +70,7 @@ const App = () => {
       }
       dispatch(sharedActions.navigate(''));
     }
-  }, [navigateURL, dispatch, location.pathname, navigate]);
+  }, [navigateURL, dispatch, navigate]);
 
   useEffect(() => {
     if (isLocked) {

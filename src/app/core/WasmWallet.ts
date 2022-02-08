@@ -274,9 +274,16 @@ export default class WasmWallet {
 
   async start(pass: string) {
     if (this.isRunning()) {
-      this.emit(BackgroundEvent.UNLOCK_WALLET);
+      this.emit(BackgroundEvent.UNLOCK_WALLET, true);
+      this.emit(BackgroundEvent.CONNECTED, {
+        onboarding: false,
+        is_running: true,
+        notification: null,
+      });
       return;
     }
+    this.emit(BackgroundEvent.UNLOCK_WALLET, false);
+
     if (!this.wallet) {
       this.wallet = new WasmWalletClient(PATH_DB, pass, config.path_node);
     }
@@ -287,11 +294,11 @@ export default class WasmWallet {
       console.info(event);
       this.eventHandler(event);
     };
+
     this.wallet.startWallet();
     this.wallet.subscribe(responseHandler);
     this.wallet.setApproveContractInfoHandler(this.contractInfoHandler);
     this.wallet.setApproveSendHandler(this.sendHandler);
-    this.emit(BackgroundEvent.UNLOCK_WALLET);
     await this.loadConnectedApps();
 
     this.toggleEvents(true);
