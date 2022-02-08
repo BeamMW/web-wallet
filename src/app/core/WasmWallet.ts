@@ -356,6 +356,16 @@ export default class WasmWallet {
     }
   }
 
+  disconnectAppApi(url) {
+    if (this.apps[url]) {
+      delete this.apps[url].appApi;
+      delete this.apps[url].appApiHandler;
+      delete this.apps[url]
+    }
+
+    console.log(this.apps);
+  }
+
   setApproveSendHandler(handler) {
     this.wallet.setApproveSendHandler(handler);
   }

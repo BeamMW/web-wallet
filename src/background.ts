@@ -81,6 +81,10 @@ function handleConnect(remote) {
           notificationManager.openAuthNotification(msg, remote.sender.url);
         }
       });
+
+      contentPort.onDisconnect.addListener((e) => {
+        wallet.disconnectAppApi(e.sender.url)
+      });
       break;
     }
     default:
