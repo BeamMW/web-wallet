@@ -74,6 +74,10 @@ function* sharedSaga() {
           yield fork(handleDatabaseRestore, payload.result);
           break;
 
+        case BackgroundEvent.CLOSE_NOTIFICATION:
+          window.close();
+          break;
+        
         case RPCEvent.SYNC_PROGRESS:
           yield fork(handleProgress, payload.result);
           break;

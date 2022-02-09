@@ -14,6 +14,7 @@ const wallet = WasmWallet.getInstance();
 
 let port = null;
 let contentPort = null;
+let notificationPort = null;
 let connected = false;
 let activeTab = null;
 
@@ -31,11 +32,6 @@ function handleConnect(remote) {
 
   port.onDisconnect.addListener(() => {
     connected = false;
-    if (activeTab && port.name === Environment.NOTIFICATION) {
-      // notificationManager.closeTab(activeTab);
-      activeTab = null;
-      notificationManager.appname = ''; // TODO: check with reconnect
-    }
   });
 
   port.onMessage.addListener(({ id, method, params }: RemoteRequest) => {
@@ -53,6 +49,16 @@ function handleConnect(remote) {
       const tabId = remote.sender.tab.id;
       notificationManager.openBeamTabsIDs[tabId] = true;
       activeTab = remote.sender.tab.id;
+      notificationPort = remote;
+      notificationPort.onDisconnect.addListener((e)=> {
+        if (activeTab) {
+          // notificationManager.closeTab(activeTab);
+          activeTab = null;
+          notificationManager.appname = ''; // TODO: check with reconnect
+          notificationManager.openBeamTabsIDs = {};
+        }
+      })
+
       wallet.init(postMessage, notificationManager.notification);
       break;
     }
@@ -65,7 +71,7 @@ function handleConnect(remote) {
       notificationManager.setReqPort(remote);
       contentPort = remote;
       contentPort.onMessage.addListener((msg) => {
-        if (wallet.isRunning()) {
+        if (wallet.isRunning() && !localStorage.getItem('locked')) {
           if (wallet.isConnectedSite({ appName: msg.appname, appUrl: remote.sender.origin })) {
             msg.appurl = remote.sender.origin;
             wallet.connectExternal(msg);
@@ -91,6 +97,13 @@ function handleConnect(remote) {
       break;
   }
 }
+
+
+// notificationManager.postMessage({
+//   result: false,
+//   errcode: -1,
+//   ermsg: 'Unsupported API version required',
+// });
 
 wallet.initContractInfoHandler((req, info, amounts, cb) => {
   wallet.initcontractInfoHandlerCallback(cb);

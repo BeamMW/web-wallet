@@ -7,7 +7,7 @@ import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
-import { ExternalAppConnection } from '@core/types';
+import { ExternalAppConnection, NotificationType } from '@core/types';
 import {
   BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
 } from './types';
@@ -275,11 +275,30 @@ export default class WasmWallet {
   async start(pass: string) {
     if (this.isRunning()) {
       this.emit(BackgroundEvent.UNLOCK_WALLET, true);
-      this.emit(BackgroundEvent.CONNECTED, {
-        onboarding: false,
-        is_running: true,
-        notification: null,
-      });
+      if (notificationManager.notification && notificationManager.notification.type === NotificationType.AUTH) {
+        if (this.isConnectedSite({ 
+            appName: notificationManager.notification.params.appname, 
+            appUrl: notificationManager.notification.params.appurl })) {
+          this.connectExternal(notificationManager.notification.params);
+          this.emit(BackgroundEvent.CLOSE_NOTIFICATION);
+        } else {
+          const notification = {
+            type: 'connect',
+            params: notificationManager.notification.params,
+          };
+          this.emit(BackgroundEvent.CONNECTED, {
+            onboarding: false,
+            is_running: true,
+            notification,
+          });
+        }
+      } else {
+        this.emit(BackgroundEvent.CONNECTED, {
+          onboarding: false,
+          is_running: true,
+          notification: null,
+        });
+      }
       return;
     }
     this.emit(BackgroundEvent.UNLOCK_WALLET, false);
@@ -578,6 +597,18 @@ export default class WasmWallet {
         if (params.result) {
           if (this.isConnectedSite({ appName: params.appname, appUrl: params.appurl })) {
             this.connectExternal(params);
+            this.emit(BackgroundEvent.CLOSE_NOTIFICATION);
+          } else {
+            const notification = {
+              type: 'connect',
+              params,
+            };
+            this.emit(BackgroundEvent.CONNECTED, {
+              onboarding: false,
+              is_running: true,
+              notification,
+            });
+            //notificationManager.openConnectNotification(params, params.appurl)
           }
         }
         break;
