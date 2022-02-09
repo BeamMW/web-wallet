@@ -8,6 +8,10 @@ export const ROUTES = {
     SET_PASSWORD: '/auth/set_password',
     PROGRESS: '/auth/progress',
   },
+  ASSETS: {
+    BASE: '/assets',
+    DETAIL: '/assets/:id',
+  },
   WALLET: {
     BASE: '/wallet',
     SEND: '/wallet/send',

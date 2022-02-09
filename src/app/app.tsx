@@ -17,6 +17,7 @@ import { AuthContainer, Progress } from './containers/Auth';
 import { SettingsContainer } from './containers/Settings';
 import { NotificationContainer } from './containers/Notifications';
 import { TransactionContainer } from './containers/Transactions';
+import { AssetContainer } from './containers/Assets/containers';
 
 const trackStyle = css`
   z-index: 999;
@@ -28,6 +29,10 @@ const routes = [
   {
     path: '/',
     element: <Progress />,
+  },
+  {
+    path: `${ROUTES.ASSETS.BASE}/*`,
+    element: <AssetContainer />,
   },
   {
     path: `${ROUTES.AUTH.BASE}/*`,

@@ -45,10 +45,15 @@ const Wallet = () => {
   }, [dispatch, rate]);
 
   const sorted = transactions.slice().sort(createdComparator);
-  const sliced = sorted.slice(0, TXS_MAX);
+  const txs = sorted.slice(0, TXS_MAX);
+  const assts = assets.slice(0, TXS_MAX);
 
   const navigateToTransactions = useCallback(() => {
     navigate(ROUTES.TRANSACTIONS.BASE);
+  }, [navigate]);
+
+  const navigateToAssets = useCallback(() => {
+    navigate(ROUTES.ASSETS.BASE);
   }, [navigate]);
 
   return (
@@ -61,12 +66,12 @@ const Wallet = () => {
           receive
         </Button>
       </ActionsStyled>
-      <Section title="Assets">
-        <Assets data={assets} isBalanceHidden={isBalanceHidden} />
+      <Section title="Assets" showAllAction={assets.length > TXS_MAX ? navigateToAssets : undefined}>
+        <Assets data={assts} isBalanceHidden={isBalanceHidden} />
       </Section>
 
       <Section title="Transactions" showAllAction={sorted.length > TXS_MAX ? navigateToTransactions : undefined}>
-        <TransactionList data={sliced} isBalanceHidden={isBalanceHidden} />
+        <TransactionList data={txs} isBalanceHidden={isBalanceHidden} />
       </Section>
     </Window>
   );
