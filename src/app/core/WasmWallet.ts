@@ -1,5 +1,6 @@
 import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
+
 import PortStream from '@core/PortStream';
 
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
@@ -65,6 +66,8 @@ console.warn = function (...args) {
 
 export default class WasmWallet {
   private static instance: WasmWallet;
+
+  private passwordHash: string;
 
   private contractInfoHandler;
 
@@ -270,6 +273,17 @@ export default class WasmWallet {
   }
 
   async start(pass: string) {
+    if (this.isRunning()) {
+      this.emit(BackgroundEvent.UNLOCK_WALLET, true);
+      this.emit(BackgroundEvent.CONNECTED, {
+        onboarding: false,
+        is_running: true,
+        notification: null,
+      });
+      return;
+    }
+    this.emit(BackgroundEvent.UNLOCK_WALLET, false);
+
     if (!this.wallet) {
       this.wallet = new WasmWalletClient(PATH_DB, pass, config.path_node);
     }
@@ -285,7 +299,6 @@ export default class WasmWallet {
     this.wallet.subscribe(responseHandler);
     this.wallet.setApproveContractInfoHandler(this.contractInfoHandler);
     this.wallet.setApproveSendHandler(this.sendHandler);
-
     await this.loadConnectedApps();
 
     this.toggleEvents(true);
@@ -338,11 +351,13 @@ export default class WasmWallet {
   }
 
   removeConnectedSite(site: ExternalAppConnection) {
-    const filteredSites = this.connectedApps.filter((el) => el.appUrl !== site.appUrl && el.appName !== site.appName);
+    this.connectedApps.splice(
+      this.connectedApps.findIndex((el) => el.appUrl === site.appUrl && el.appName === site.appName),
+      1,
+    );
 
-    this.connectedApps = filteredSites;
     extensionizer.storage.local.set({
-      sites: filteredSites,
+      sites: this.connectedApps,
     });
   }
 
@@ -353,6 +368,15 @@ export default class WasmWallet {
       extensionizer.storage.local.set({
         sites: this.connectedApps,
       });
+    }
+  }
+
+  disconnectAppApi(url) {
+    if (this.apps[url]) {
+      this.apps[url].appApi.delete();
+      delete this.apps[url].appApi;
+      delete this.apps[url].appApiHandler;
+      delete this.apps[url];
     }
   }
 

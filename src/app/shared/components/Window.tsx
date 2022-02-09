@@ -224,7 +224,7 @@ export const Window: React.FC<WindowProps> = ({
   const handleCancelClick = () => setVisible(false);
 
   const stopWallet = () => {
-    dispatch(actions.stopWallet());
+    dispatch(actions.lockWallet());
   };
 
   const hideBalance = () => {

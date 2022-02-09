@@ -78,6 +78,7 @@ export enum BackgroundEvent {
   CHANGE_SYNC_STEP = 'change_sync_step',
   DOWNLOAD_DB_PROGRESS = 'download_db_progress',
   RESTORE_DB_PROGRESS = 'restore_db_progress',
+  UNLOCK_WALLET = 'unlock_wallet',
 }
 
 export enum RPCEvent {
