@@ -257,7 +257,7 @@ export const Window: React.FC<WindowProps> = ({
           </BurgerWrapper>
         </FrameStyled>
         <Title variant="heading">{title}</Title>
-        {title === 'Wallet' && (
+        {(title === 'Wallet' || title === 'Assets') && (
           <Button
             variant="icon"
             icon={!isBalanceHidden ? IconEye : IconEyeCrossed}

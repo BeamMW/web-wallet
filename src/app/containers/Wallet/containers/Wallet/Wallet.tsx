@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect } from 'react';
-import { styled } from '@linaria/react';
 
-import { Button, Window, Section } from '@app/shared/components';
-
-import { ArrowUpIcon, ArrowDownIcon } from '@app/shared/icons';
+import { Window, Section, WalletActions } from '@app/shared/components';
 
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
@@ -19,16 +16,6 @@ import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 import { Assets } from '../../components/Wallet';
 
 const TXS_MAX = 4;
-
-const ActionsStyled = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 10px -14px 0;
-
-  > button {
-    margin: 0 4px !important;
-  }
-`;
 
 const Wallet = () => {
   const dispatch = useDispatch();
@@ -58,14 +45,7 @@ const Wallet = () => {
 
   return (
     <Window title="Wallet" primary>
-      <ActionsStyled>
-        <Button pallete="purple" icon={ArrowUpIcon} onClick={() => navigate(ROUTES.WALLET.SEND)}>
-          send
-        </Button>
-        <Button pallete="blue" icon={ArrowDownIcon} onClick={() => navigate(ROUTES.WALLET.RECEIVE)}>
-          receive
-        </Button>
-      </ActionsStyled>
+      <WalletActions />
       <Section title="Assets" showAllAction={assets.length > TXS_MAX ? navigateToAssets : undefined}>
         <Assets data={assts} isBalanceHidden={isBalanceHidden} />
       </Section>
