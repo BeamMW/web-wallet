@@ -76,12 +76,13 @@ function handleConnect(remote) {
             msg.appurl = remote.sender.origin;
             wallet.connectExternal(msg);
           } else if (msg.type === ExternalAppMethod.CreateBeamApi) {
-            notificationManager.openConnectNotification(msg, remote.sender.origin);
-          } else if (msg.type === ExternalAppMethod.CreateBeamApiRetry) {
-            /* eslint-disable-next-line @typescript-eslint/no-unused-expressions */
-            notificationManager.appname === msg.appname
+            if (msg.is_reconnect) {
+              notificationManager.appname === msg.appname
               ? notificationManager.openPopup()
               : notificationManager.openConnectNotification(msg, remote.sender.origin);
+            } else {
+              notificationManager.openConnectNotification(msg, remote.sender.origin);
+            }
           }
         } else {
           notificationManager.openAuthNotification(msg, remote.sender.origin);

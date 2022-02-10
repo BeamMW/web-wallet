@@ -57,8 +57,7 @@ export enum WalletMethod {
 }
 
 export enum ExternalAppMethod {
-  CreateBeamApi = 'create_beam_api',
-  CreateBeamApiRetry = 'retry_beam_api',
+  CreateBeamApi = 'create_beam_api'
 }
 
 export interface RemoteRequest {
@@ -324,6 +323,7 @@ export interface ConnectRequest {
   apiver: string;
   apivermin: string;
   appname: string;
+  is_reconnect: boolean;
 }
 
 export interface SendTransactionParams {

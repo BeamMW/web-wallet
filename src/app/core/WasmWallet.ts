@@ -279,7 +279,13 @@ export default class WasmWallet {
         if (this.isConnectedSite({ 
             appName: notificationManager.notification.params.appname, 
             appUrl: notificationManager.notification.params.appurl })) {
-          this.connectExternal(notificationManager.notification.params);
+          if(!notificationManager.notification.params.is_reconnect) {
+            this.connectExternal(notificationManager.notification.params);
+          } else {
+            for (let url in this.apps) {
+              this.apps[url].walletUnlocked();
+            }
+          }
           this.emit(BackgroundEvent.CLOSE_NOTIFICATION);
         } else {
           const notification = {
@@ -656,15 +662,9 @@ export default class WasmWallet {
         this.emit(id, WasmWallet.loadLogs());
         break;
       case WalletMethod.WalletLocked:
-
-        // notificationManager.postMessage({
-        //   result: false,
-        //   errcode: -5,
-        //   ermsg: 'Wallet is locked',
-        // });
-        // for (let variable in this.apps) {
-        //   this.apps[variable].sendError();
-        // }
+        for (let url in this.apps) {
+          this.apps[url].walletIsLocked();
+        }
 
         break;
       default:

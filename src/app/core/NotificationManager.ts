@@ -77,6 +77,7 @@ export default class NotificationManager {
         appname: msg.appname,
         apiver: msg.apiver,
         apivermin: msg.apivermin,
+        is_reconnect: msg.is_reconnect
       },
     };
     this.notificationIsOpen = true;
