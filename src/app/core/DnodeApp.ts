@@ -11,6 +11,10 @@ export default class DnodeApp {
     });
   }
 
+  sendError() {
+    this.appApiHandler('error!');
+  }
+
   pageApi() {
     return {
       callWalletApiResult: async (handler: any) => {

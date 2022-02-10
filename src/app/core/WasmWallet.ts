@@ -655,6 +655,18 @@ export default class WasmWallet {
       case WalletMethod.LoadBackgroundLogs:
         this.emit(id, WasmWallet.loadLogs());
         break;
+      case WalletMethod.WalletLocked:
+
+        // notificationManager.postMessage({
+        //   result: false,
+        //   errcode: -5,
+        //   ermsg: 'Wallet is locked',
+        // });
+        // for (let variable in this.apps) {
+        //   this.apps[variable].sendError();
+        // }
+
+        break;
       default:
         break;
     }

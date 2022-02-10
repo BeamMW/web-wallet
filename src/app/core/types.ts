@@ -53,6 +53,7 @@ export enum WalletMethod {
   LoadBackgroundLogs = 'load_background_logs',
   LoadConnectedSites = 'load_connected_sites',
   DisconnectSite = 'disconnect_site',
+  WalletLocked = 'wallet_locked',
 }
 
 export enum ExternalAppMethod {

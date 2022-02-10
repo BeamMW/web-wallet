@@ -3,7 +3,7 @@ import {
 } from 'redux-saga/effects';
 
 import { eventChannel, END } from 'redux-saga';
-import { initRemoteWallet } from '@core/api';
+import { initRemoteWallet, walletLocked } from '@core/api';
 import { BackgroundEvent, RemoteResponse, RPCEvent } from '@core/types';
 
 import {
@@ -19,6 +19,7 @@ import { handleTransactions } from '@app/containers/Transactions/store/saga';
 import { actions } from '@app/shared/store/index';
 import { navigate } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
+import NotificationController from '@app/core/NotificationController';
 
 export function remoteEventChannel() {
   return eventChannel((emitter) => {
@@ -41,6 +42,7 @@ export function remoteEventChannel() {
 
 function* lockWallet() {
   localStorage.setItem('locked', '1');
+  walletLocked();
   yield put(navigate(ROUTES.AUTH.LOGIN));
 }
 
@@ -75,7 +77,9 @@ function* sharedSaga() {
           break;
 
         case BackgroundEvent.CLOSE_NOTIFICATION:
-          window.close();
+          if (NotificationController.getNotification()) {
+            window.close();
+          }
           break;
         
         case RPCEvent.SYNC_PROGRESS:

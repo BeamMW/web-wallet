@@ -98,13 +98,6 @@ function handleConnect(remote) {
   }
 }
 
-
-// notificationManager.postMessage({
-//   result: false,
-//   errcode: -1,
-//   ermsg: 'Unsupported API version required',
-// });
-
 wallet.initContractInfoHandler((req, info, amounts, cb) => {
   wallet.initcontractInfoHandlerCallback(cb);
   notificationManager.openContractNotification(req, info, amounts);
