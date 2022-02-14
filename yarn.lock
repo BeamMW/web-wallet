@@ -2018,10 +2018,10 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-beam-wasm-client-masternet@6.2.12180:
-  version "6.2.12180"
-  resolved "https://registry.yarnpkg.com/beam-wasm-client-masternet/-/beam-wasm-client-masternet-6.2.12180.tgz#329a5584b3021b82c8f5290fdb5526de8146a011"
-  integrity sha512-NdDorO4JT2f8n9tudR8oQ4ozR6HCy9+dzASacc40eujJ4etm9JhqXI3slj5wHKiaf6+FD1KGL0DBiSxcwAa6ew==
+beam-wasm-client-masternet@6.2.12182:
+  version "6.2.12182"
+  resolved "https://registry.yarnpkg.com/beam-wasm-client-masternet/-/beam-wasm-client-masternet-6.2.12182.tgz#1cecbad61eca2ddd3a52284baa98970497dd0940"
+  integrity sha512-gcT9K6l9GvwCl5w+RyYtLatyzMZtMLdqvi/HyVLavagLRbuYP9hm1O8xolX0op2picTvRAg4hbSOmhw4nhQ5HA==
 
 big.js@^5.2.2:
   version "5.2.2"
@@ -3820,11 +3820,6 @@ jest-worker@^27.0.6:
     "@types/node" "*"
     merge-stream "^2.0.0"
     supports-color "^8.0.0"
-
-js-sha256@^0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/js-sha256/-/js-sha256-0.9.0.tgz#0b89ac166583e91ef9123644bd3c5334ce9d0966"
-  integrity sha512-sga3MHh9sgQN2+pJ9VYZ+1LPwXOxuBJBA5nrR5/ofPfuiJBE2hnjsaN8se8JznOmGLN2p49Pe5U/ttafcs/apA==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
