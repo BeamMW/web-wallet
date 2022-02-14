@@ -21,6 +21,7 @@ const PATH_DB = '/beam_wallet/wallet.db';
 const notificationManager = NotificationManager.getInstance();
 
 let WasmWalletClient;
+var MyModule;
 export interface WalletEvent<T = any> {
   id: number | RPCEvent | BackgroundEvent;
   result: T;
@@ -92,6 +93,7 @@ export default class WasmWallet {
 
   static async mount(): Promise<boolean> {
     const module = await BeamModule();
+    MyModule = module;
     WasmWalletClient = module.WasmWalletClient;
 
     return new Promise((resolve) => {
@@ -447,9 +449,11 @@ export default class WasmWallet {
     const data = await blob.arrayBuffer();
     const payload = new Uint8Array(data);
 
+    const recoveryFileName = 'recovery.bin';
+    MyModule.FS.writeFile(recoveryFileName, payload);
     this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.RESTORE);
 
-    this.wallet.importRecovery(payload, (error, done, total) => {
+    this.wallet.importRecoveryFromFile(recoveryFileName, (error, done, total) => {
       if (done === total) {
         this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.SYNC);
       }
