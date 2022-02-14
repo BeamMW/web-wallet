@@ -1,12 +1,13 @@
 import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
+
 import PortStream from '@core/PortStream';
 
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
-import { ExternalAppConnection } from '@core/types';
+import { ExternalAppConnection, NotificationType } from '@core/types';
 import {
   BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
 } from './types';
@@ -20,6 +21,7 @@ const PATH_DB = '/beam_wallet/wallet.db';
 const notificationManager = NotificationManager.getInstance();
 
 let WasmWalletClient;
+var MyModule;
 export interface WalletEvent<T = any> {
   id: number | RPCEvent | BackgroundEvent;
   result: T;
@@ -66,6 +68,8 @@ console.warn = function (...args) {
 export default class WasmWallet {
   private static instance: WasmWallet;
 
+  private passwordHash: string;
+
   private contractInfoHandler;
 
   private contractInfoHandlerCallback;
@@ -89,6 +93,7 @@ export default class WasmWallet {
 
   static async mount(): Promise<boolean> {
     const module = await BeamModule();
+    MyModule = module;
     WasmWalletClient = module.WasmWalletClient;
 
     return new Promise((resolve) => {
@@ -270,6 +275,42 @@ export default class WasmWallet {
   }
 
   async start(pass: string) {
+    if (this.isRunning()) {
+      this.emit(BackgroundEvent.UNLOCK_WALLET, true);
+      if (notificationManager.notification && notificationManager.notification.type === NotificationType.AUTH) {
+        if (this.isConnectedSite({ 
+            appName: notificationManager.notification.params.appname, 
+            appUrl: notificationManager.notification.params.appurl })) {
+          if(!notificationManager.notification.params.is_reconnect) {
+            this.connectExternal(notificationManager.notification.params);
+          } else {
+            for (let url in this.apps) {
+              this.apps[url].walletUnlocked();
+            }
+          }
+          this.emit(BackgroundEvent.CLOSE_NOTIFICATION);
+        } else {
+          const notification = {
+            type: 'connect',
+            params: notificationManager.notification.params,
+          };
+          this.emit(BackgroundEvent.CONNECTED, {
+            onboarding: false,
+            is_running: true,
+            notification,
+          });
+        }
+      } else {
+        this.emit(BackgroundEvent.CONNECTED, {
+          onboarding: false,
+          is_running: true,
+          notification: null,
+        });
+      }
+      return;
+    }
+    this.emit(BackgroundEvent.UNLOCK_WALLET, false);
+
     if (!this.wallet) {
       this.wallet = new WasmWalletClient(PATH_DB, pass, config.path_node);
     }
@@ -283,7 +324,6 @@ export default class WasmWallet {
     this.wallet.subscribe(responseHandler);
     this.wallet.setApproveContractInfoHandler(this.contractInfoHandler);
     this.wallet.setApproveSendHandler(this.sendHandler);
-
     await this.loadConnectedApps();
 
     this.toggleEvents(true);
@@ -336,11 +376,11 @@ export default class WasmWallet {
   }
 
   removeConnectedSite(site: ExternalAppConnection) {
-    const filteredSites = this.connectedApps.filter((el) => el.appUrl !== site.appUrl && el.appName !== site.appName);
+    this.connectedApps.splice(this.connectedApps.findIndex(el => 
+      el.appUrl === site.appUrl && el.appName === site.appName), 1);
 
-    this.connectedApps = filteredSites;
     extensionizer.storage.local.set({
-      sites: filteredSites,
+      sites: this.connectedApps,
     });
   }
 
@@ -351,6 +391,15 @@ export default class WasmWallet {
       extensionizer.storage.local.set({
         sites: this.connectedApps,
       });
+    }
+  }
+
+  disconnectAppApi(url) {
+    if (this.apps[url]) {
+      this.apps[url].appApi.delete();
+      delete this.apps[url].appApi;
+      delete this.apps[url].appApiHandler;
+      delete this.apps[url];
     }
   }
 
@@ -398,9 +447,11 @@ export default class WasmWallet {
     const data = await blob.arrayBuffer();
     const payload = new Uint8Array(data);
 
+    const recoveryFileName = 'recovery.bin';
+    MyModule.FS.writeFile(recoveryFileName, payload);
     this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.RESTORE);
 
-    this.wallet.importRecovery(payload, (error, done, total) => {
+    this.wallet.importRecoveryFromFile(recoveryFileName, (error, done, total) => {
       if (done === total) {
         this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.SYNC);
       }
@@ -554,6 +605,18 @@ export default class WasmWallet {
         if (params.result) {
           if (this.isConnectedSite({ appName: params.appname, appUrl: params.appurl })) {
             this.connectExternal(params);
+            this.emit(BackgroundEvent.CLOSE_NOTIFICATION);
+          } else {
+            const notification = {
+              type: 'connect',
+              params,
+            };
+            this.emit(BackgroundEvent.CONNECTED, {
+              onboarding: false,
+              is_running: true,
+              notification,
+            });
+            //notificationManager.openConnectNotification(params, params.appurl)
           }
         }
         break;
@@ -599,6 +662,12 @@ export default class WasmWallet {
         break;
       case WalletMethod.LoadBackgroundLogs:
         this.emit(id, WasmWallet.loadLogs());
+        break;
+      case WalletMethod.WalletLocked:
+        for (let url in this.apps) {
+          this.apps[url].walletIsLocked();
+        }
+
         break;
       default:
         break;

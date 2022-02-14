@@ -8,7 +8,7 @@ import {
   isAllowedWord,
   startWallet,
 } from '@core/api';
-import { navigate, setError } from '@app/shared/store/actions';
+import { navigate, setError, unlockWallet } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import {
   ConnectedData, Environment, NotificationType, SyncProgress,
@@ -49,7 +49,7 @@ export function* handleConnect({ notification, is_running, onboarding }: Connect
       yield put(navigate(is_running ? ROUTES.NOTIFICATIONS.CONNECT : ROUTES.AUTH.LOGIN));
     }
   } else {
-    yield put(navigate(is_running ? ROUTES.WALLET.BASE : ROUTES.AUTH.LOGIN));
+    yield put(navigate(is_running && localStorage.getItem('lock') ? ROUTES.WALLET.BASE : ROUTES.AUTH.LOGIN));
   }
 }
 
@@ -63,18 +63,24 @@ export function* handleProgress({
   if (is_wallet_synced) return;
   if (current_state_hash === tip_state_hash) {
     yield put(actions.setSyncedWalletState(true));
+    const isLocked = localStorage.getItem('locked');
     if (getEnvironment() !== Environment.NOTIFICATION) {
-      yield put(navigate(ROUTES.WALLET.BASE));
+      if (isLocked) {
+        yield put(navigate(ROUTES.AUTH.LOGIN));
+      } else {
+        yield put(navigate(ROUTES.WALLET.BASE));
+      }
     } else {
       const notification = NotificationController.getNotification();
       if (notification.type === NotificationType.AUTH) {
-        finishNotificationAuth(
-          notification.params.apiver,
-          notification.params.apivermin,
-          notification.params.appname,
-          notification.params.appurl,
-        );
-        window.close();
+        if(!isLocked) {
+          finishNotificationAuth(
+            notification.params.apiver,
+            notification.params.apivermin,
+            notification.params.appname,
+            notification.params.appurl,
+          );
+        }
       } else if (notification.type === NotificationType.CONNECT) {
         yield put(navigate(ROUTES.NOTIFICATIONS.CONNECT));
       } else if (notification.type === NotificationType.APPROVE_TX) {
@@ -97,6 +103,19 @@ export function* handleProgress({
 export function* handleSyncStep(payload: SyncStep) {
   yield put(actions.setSyncStep(payload));
 }
+
+export function* handleUnlockWallet(payload: boolean) {
+  yield put(unlockWallet());
+  const notification = NotificationController.getNotification();
+  if (!notification) {
+    if (payload) {
+      store.dispatch(navigate(ROUTES.WALLET.BASE));
+    } else {
+      store.dispatch(navigate(ROUTES.AUTH.PROGRESS));
+    }
+  }
+}
+
 export function* handleDatabaseSyncProgress(payload: DatabaseSyncProgress) {
   yield put(actions.downloadDatabaseFile(payload));
   yield put(actions.setSyncStep(SyncStep.DOWNLOAD));

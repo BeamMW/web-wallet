@@ -69,32 +69,28 @@ window.addEventListener('message', (event) => {
     return;
   }
 
+  const reqData: ConnectRequest = {
+    type: event.data.type,
+    apiver: event.data.apiver,
+    apivermin: event.data.apivermin,
+    appname: event.data.appname,
+    is_reconnect: event.data.is_reconnect
+  };
+  
   if (event.data.type === 'create_beam_api') {
-    const reqData: ConnectRequest = {
-      type: event.data.type,
-      apiver: event.data.apiver,
-      apivermin: event.data.apivermin,
-      appname: event.data.appname,
-    };
+    if (event.data.is_reconnect) {
+      extensionPort.postMessage(reqData);
+    } else {
+      setupConnection();
 
-    setupConnection();
-
-    extensionPort.postMessage(reqData);
-    extensionPort.onMessage.addListener((msg) => {
-      if (msg.result && shouldInjectProvider()) {
-        injectScript();
-      } else if (!msg.result) {
-        window.postMessage('rejected', window.origin);
-      }
-    });
-  } else if (event.data.type === 'retry_beam_api') {
-    const reqData: ConnectRequest = {
-      type: event.data.type,
-      apiver: event.data.apiver,
-      apivermin: event.data.apivermin,
-      appname: event.data.appname,
-    };
-
-    extensionPort.postMessage(reqData);
+      extensionPort.postMessage(reqData);
+      extensionPort.onMessage.addListener((msg) => {
+        if (msg.result && shouldInjectProvider()) {
+          injectScript();
+        } else if (!msg.result) {
+          window.postMessage('rejected', window.origin);
+        }
+      });
+    }
   }
 });

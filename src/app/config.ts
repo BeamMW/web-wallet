@@ -18,7 +18,7 @@ const test_net: Configuration = {
   ...development,
   explorer_url: 'https://testnet.explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/testnet/testnet_recovery.bin',
-  path_node: '',
+  path_node: 'eu-node01.testnet.beam.mw:8200',
 };
 
 const main_net: Configuration = {
