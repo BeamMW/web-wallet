@@ -61,6 +61,7 @@ const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const navigateURL = useSelector(sharedSelectors.selectRouterLink());
+  const isLocked = useSelector(sharedSelectors.selectIsLocked());
 
   useEffect(() => {
     if (navigateURL) {
@@ -70,6 +71,12 @@ const App = () => {
       dispatch(sharedActions.navigate(''));
     }
   }, [navigateURL, dispatch, navigate]);
+
+  useEffect(() => {
+    if (isLocked) {
+      navigate(ROUTES.AUTH.LOGIN);
+    }
+  }, [isLocked, navigate]);
 
   return (
     <ErrorBoundary>
