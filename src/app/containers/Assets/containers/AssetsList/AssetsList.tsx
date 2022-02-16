@@ -10,7 +10,7 @@ const AssetsList = () => {
   const assets = useSelector(selectAssets());
 
   return (
-    <Window title="Assets">
+    <Window title="Assets" showHideButton>
       <WalletActions />
       <Section title="">
         <Assets data={assets} isBalanceHidden={isBalanceHidden} />

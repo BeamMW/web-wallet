@@ -22,6 +22,7 @@ interface WindowProps {
   primary?: boolean;
   pallete?: 'default' | 'blue' | 'purple';
   onPrevious?: React.MouseEventHandler | undefined;
+  showHideButton?: boolean;
 }
 
 function getColor(pallete: string): string {
@@ -190,6 +191,7 @@ export const Window: React.FC<WindowProps> = ({
   pallete = 'default',
   children,
   onPrevious,
+  showHideButton,
 }) => {
   const dispatch = useDispatch();
   const isBalanceHidden = useSelector(selectIsBalanceHidden());
@@ -257,7 +259,7 @@ export const Window: React.FC<WindowProps> = ({
           </BurgerWrapper>
         </FrameStyled>
         <Title variant="heading">{title}</Title>
-        {(title === 'Wallet' || title === 'Assets') && (
+        {showHideButton && (
           <Button
             variant="icon"
             icon={!isBalanceHidden ? IconEye : IconEyeCrossed}

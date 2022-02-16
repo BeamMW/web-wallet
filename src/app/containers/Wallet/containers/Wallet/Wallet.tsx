@@ -44,7 +44,7 @@ const Wallet = () => {
   }, [navigate]);
 
   return (
-    <Window title="Wallet" primary>
+    <Window title="Wallet" primary showHideButton>
       <WalletActions />
       <Section title="Assets" showAllAction={assets.length > TXS_MAX ? navigateToAssets : undefined}>
         <Assets data={assts} isBalanceHidden={isBalanceHidden} />
