@@ -2018,10 +2018,10 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-beam-wasm-client@6.2.12529:
-  version "6.2.12529"
-  resolved "https://registry.yarnpkg.com/beam-wasm-client/-/beam-wasm-client-6.2.12529.tgz#b07495362e51ca424eb2dede4c6182fd17e138ba"
-  integrity sha512-L1y8UyZxsmDG4M4JUj8+ft9/sOpdOkeVwar3ot6bPtM8sXT9RsQdSO/pWgVJ+9FgXMKg+T8aHyXcUX6sxhTU3Q==
+beam-wasm-client@6.2.12531:
+  version "6.2.12531"
+  resolved "https://registry.yarnpkg.com/beam-wasm-client/-/beam-wasm-client-6.2.12531.tgz#15edc6966ca05482ca1b957797d586087d811de6"
+  integrity sha512-2Eg0y2P1E16fLiOuiSzKuG+EegY6PM0Yo8XjX6/6xK8kTsox0oYK3hBGxZ5HWOQbMsZ65twpUqxmZbUFGL+qfg==
 
 big.js@^5.2.2:
   version "5.2.2"
