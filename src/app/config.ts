@@ -7,11 +7,13 @@ const development: Configuration = {
   explorer_url: 'https://master-net.explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/masternet/masternet_recovery.bin',
   path_node: 'eu-node01.masternet.beam.mw:8200',
+  theme: 'masternet',
 };
 
 const master_net: Configuration = {
   ...development,
   path_node: 'eu-node01.masternet.beam.mw:8200',
+  theme: 'masternet',
 };
 
 const test_net: Configuration = {
@@ -19,6 +21,7 @@ const test_net: Configuration = {
   explorer_url: 'https://testnet.explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/testnet/testnet_recovery.bin',
   path_node: 'eu-node01.testnet.beam.mw:8200',
+  theme: 'testnet',
 };
 
 const main_net: Configuration = {
@@ -26,6 +29,7 @@ const main_net: Configuration = {
   explorer_url: 'https://explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/mainnet/mainnet_recovery.bin',
   path_node: 'web-wallet.beam.mw:8200',
+  theme: 'mainnet',
 };
 
 const production: Configuration = {
@@ -40,6 +44,6 @@ const config: ConfigurationObject = {
   main_net,
 };
 
-const configElement: Configuration = (config as any)[NODE_ENV];
+const configElement: Configuration = (config as any)[NODE_ENV];;
 
 export default configElement;
