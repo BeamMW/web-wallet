@@ -44,6 +44,6 @@ const config: ConfigurationObject = {
   main_net,
 };
 
-const configElement: Configuration = test_net;
+const configElement: Configuration = (config as any)[NODE_ENV];;
 
 export default configElement;
