@@ -7,7 +7,7 @@ const development: Configuration = {
   explorer_url: 'https://master-net.explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/masternet/masternet_recovery.bin',
   path_node: 'eu-node01.masternet.beam.mw:8200',
-  theme: 'mainnet',
+  theme: 'masternet',
 };
 
 const master_net: Configuration = {
@@ -44,6 +44,6 @@ const config: ConfigurationObject = {
   main_net,
 };
 
-const configElement: Configuration = (config as any)[NODE_ENV];
+const configElement: Configuration = test_net;
 
 export default configElement;
