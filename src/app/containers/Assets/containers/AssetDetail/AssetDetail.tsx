@@ -30,8 +30,18 @@ const AssetDetail = () => {
     navigate(ROUTES.ASSETS.BASE);
   }, [navigate]);
 
+  const navigateToInfo = useCallback(() => {
+    navigate(`${ROUTES.ASSETS.INFO.replace(':id', '')}${currentAsset.asset_id}`);
+  }, [navigate, currentAsset?.asset_id]);
+
   return (
-    <Window title={currentAsset?.metadata_pairs.UN} showHideButton onPrevious={navigateToAssets}>
+    <Window
+      title={currentAsset?.metadata_pairs.UN}
+      showHideButton
+      // showInfoButton
+      onPrevious={navigateToAssets}
+      navigateToInfo={navigateToInfo}
+    >
       <WalletActions />
       <Section title="">
         <Assets data={[currentAsset]} isBalanceHidden={isBalanceHidden} />

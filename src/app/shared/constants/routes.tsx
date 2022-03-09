@@ -11,6 +11,7 @@ export const ROUTES = {
   ASSETS: {
     BASE: '/assets',
     DETAIL: '/assets/:id',
+    INFO: '/assets/info/:id',
   },
   WALLET: {
     BASE: '/wallet',
@@ -56,6 +57,11 @@ export const ROUTES_PATH = {
   TRANSACTIONS: {
     BASE: '/',
     DETAIL: '/:id',
+  },
+  ASSETS: {
+    BASE: '/',
+    DETAIL: '/:id',
+    INFO: '/info/:id',
   },
   NOTIFICATIONS: {
     CONNECT: '/connect',

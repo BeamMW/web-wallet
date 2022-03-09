@@ -10,6 +10,7 @@ interface SectionProps {
   collapse?: boolean;
   variant?: 'regular' | 'gray';
   showAllAction?: () => void;
+  defaultCollapseState?: boolean;
 }
 
 const SectionStyled = styled.div`
@@ -86,8 +87,9 @@ const Section: React.FC<SectionProps> = ({
   subtitle,
   children,
   showAllAction,
+  defaultCollapseState,
 }) => {
-  const [hidden, setHidden] = useState(collapse);
+  const [hidden, setHidden] = useState(defaultCollapseState ?? collapse);
 
   const handleMouseDown: React.MouseEventHandler = () => {
     setHidden(!hidden);
