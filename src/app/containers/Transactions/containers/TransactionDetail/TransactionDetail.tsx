@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { styled } from '@linaria/react';
 import { useParams } from 'react-router-dom';
 import { Window } from '@app/shared/components';
 
@@ -11,33 +10,7 @@ import { selectAssets } from '@app/containers/Wallet/store/selectors';
 import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 import { toast } from 'react-toastify';
 import { copyToClipboard } from '@core/utils';
-
-const TransactionTabs = styled.div`
-  display: flex;
-  margin: 0 -30px;
-  .transaction-item {
-    padding: 10px 30px;
-    font-size: 14px;
-    font-weight: 500;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: 3px;
-    text-align: center;
-    color: #fff;
-    text-transform: uppercase;
-    opacity: 0.5;
-    cursor: pointer;
-    &.active {
-      opacity: 1;
-      border-bottom: 3px solid #00f6d2;
-    }
-  }
-`;
-
-const TransactionDetailWrapper = styled.div`
-  padding: 30px 0;
-`;
+import { DetailInfoWrapper, DetailTabs } from '@app/shared/components/DetailInformationLayout';
 
 const TransactionDetail = () => {
   const params = useParams();
@@ -74,7 +47,7 @@ const TransactionDetail = () => {
 
   return (
     <Window title="Transaction Info">
-      <TransactionTabs>
+      <DetailTabs>
         <div
           role="link"
           className={`transaction-item ${activeTab === 'general' ? 'active' : ''}`}
@@ -95,8 +68,8 @@ const TransactionDetail = () => {
             Payment proof
           </div>
         )}
-      </TransactionTabs>
-      <TransactionDetailWrapper>
+      </DetailTabs>
+      <DetailInfoWrapper>
         {activeTab === 'general' && transactionDetail && (
           <GeneralTransactionInformation
             transactionDetail={transactionDetail}
@@ -108,7 +81,7 @@ const TransactionDetail = () => {
         {activeTab === 'payment-proof' && (
           <PaymentProofInformation paymentProof={paymentProof} isBalanceHidden={isBalanceHidden} copy={copy} />
         )}
-      </TransactionDetailWrapper>
+      </DetailInfoWrapper>
     </Window>
   );
 };

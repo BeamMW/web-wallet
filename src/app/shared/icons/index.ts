@@ -53,6 +53,8 @@ import ExternalLink from './external_link.svg';
 import IconEye from './icn-eye.svg';
 import IconEyeCrossed from './icn-eye-crossed.svg';
 import IconQrCode from './ic-qr-copy-9.svg';
+import InfoButton from './info-button.svg';
+import Chevron from './icn-grey-arrow.svg';
 
 export {
   AddIcon,
@@ -102,4 +104,6 @@ export {
   IconEye,
   IconEyeCrossed,
   IconQrCode,
+  InfoButton,
+  Chevron,
 };

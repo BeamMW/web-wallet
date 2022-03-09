@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 import {
-  IconEye, IconLockWallet, MenuIcon, IconEyeCrossed,
+  IconEye, IconLockWallet, MenuIcon, IconEyeCrossed, InfoButton,
 } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +22,9 @@ interface WindowProps {
   primary?: boolean;
   pallete?: 'default' | 'blue' | 'purple';
   onPrevious?: React.MouseEventHandler | undefined;
+  navigateToInfo?: React.MouseEventHandler | undefined;
+  showHideButton?: boolean;
+  showInfoButton?: boolean;
 }
 
 function getColor(pallete: string): string {
@@ -98,6 +101,14 @@ const menuEyeStyle = css`
   z-index: 3;
   top: 74px;
   right: 12px;
+  margin: 0;
+`;
+
+const menuInfoStyle = css`
+  position: fixed;
+  z-index: 3;
+  top: 74px;
+  right: 55px;
   margin: 0;
 `;
 
@@ -190,6 +201,9 @@ export const Window: React.FC<WindowProps> = ({
   pallete = 'default',
   children,
   onPrevious,
+  showHideButton,
+  showInfoButton,
+  navigateToInfo,
 }) => {
   const dispatch = useDispatch();
   const isBalanceHidden = useSelector(selectIsBalanceHidden());
@@ -257,7 +271,10 @@ export const Window: React.FC<WindowProps> = ({
           </BurgerWrapper>
         </FrameStyled>
         <Title variant="heading">{title}</Title>
-        {title === 'Wallet' && (
+        {showInfoButton && (
+          <Button variant="icon" icon={InfoButton} className={menuInfoStyle} onClick={navigateToInfo} />
+        )}
+        {showHideButton && (
           <Button
             variant="icon"
             icon={!isBalanceHidden ? IconEye : IconEyeCrossed}

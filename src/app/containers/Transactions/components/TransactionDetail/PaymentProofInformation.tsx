@@ -6,7 +6,7 @@ import { compact } from '@core/utils';
 import { Button } from '@app/shared/components';
 import { CopySmallIcon, ExternalLink } from '@app/shared/icons';
 import config from '@app/config';
-import { InformationItem } from './GeneralTransactionInformation';
+import { InformationItem } from '@app/shared/components/DetailInformationLayout';
 import AssetLabel from '../../../../shared/components/AssetLabel';
 
 interface PaymentProofInformationInterface {

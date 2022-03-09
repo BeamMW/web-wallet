@@ -8,6 +8,11 @@ export const ROUTES = {
     SET_PASSWORD: '/auth/set_password',
     PROGRESS: '/auth/progress',
   },
+  ASSETS: {
+    BASE: '/assets',
+    DETAIL: '/assets/:id',
+    INFO: '/assets/info/:id',
+  },
   WALLET: {
     BASE: '/wallet',
     SEND: '/wallet/send',
@@ -52,6 +57,11 @@ export const ROUTES_PATH = {
   TRANSACTIONS: {
     BASE: '/',
     DETAIL: '/:id',
+  },
+  ASSETS: {
+    BASE: '/',
+    DETAIL: '/:id',
+    INFO: '/info/:id',
   },
   NOTIFICATIONS: {
     CONNECT: '/connect',
