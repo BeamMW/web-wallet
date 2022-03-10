@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect } from 'react';
 
 import { Window, Section, WalletActions } from '@app/shared/components';
