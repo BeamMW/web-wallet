@@ -30,7 +30,7 @@ const Login: React.FC = () => {
       dispatch(setError(null));
       dispatch(startWallet.request(value));
     },
-    [dispatch, inputRef?.current],
+    [dispatch],
   );
 
   return (
