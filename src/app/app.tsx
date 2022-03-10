@@ -78,10 +78,10 @@ const App = () => {
   }, [navigateURL, dispatch, navigate]);
 
   useEffect(() => {
-    if (isLocked) {
+    if (isLocked && !location.pathname.includes('auth')) {
       navigate(ROUTES.AUTH.LOGIN);
     }
-  }, [isLocked, navigate]);
+  }, [isLocked, navigate, location.pathname]);
 
   return (
     <ErrorBoundary>
