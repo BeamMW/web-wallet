@@ -22,6 +22,17 @@ import { toast } from 'react-toastify';
 const AddressStyled = styled.div`
   line-height: 24px;
 `;
+const AddressHint = styled.div`
+  margin-top: 10px;
+  opacity: 0.5;
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: italic;
+  line-height: 1.14;
+  letter-spacing: normal;
+  color: #fff;
+`;
 
 const TipStyled = styled.div`
   line-height: 1.14;
@@ -158,6 +169,9 @@ const Receive = () => {
           <Button variant="icon" pallete="white" icon={IconQrCode} onClick={() => setQrVisible(true)} />
           <Button variant="icon" pallete="white" icon={CopySmallIcon} onClick={copyAddress} />
         </AddressStyled>
+        {!maxAnonymity ? (
+          <AddressHint>To ensure a better privacy, new address is generated every time.</AddressHint>
+        ) : null}
       </Section>
       <Section title="requested amount (optional)" variant="gray">
         <AmountInput
