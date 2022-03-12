@@ -43,7 +43,6 @@ export const Splash: React.FC<SplashProps> = ({
       Confidential DeFi Platform
       {' '}
       <br />
-      {' '}
       and Cryptocurrency
     </TitleStyled>
     {children}
