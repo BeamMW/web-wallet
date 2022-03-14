@@ -77,6 +77,7 @@ export default class NotificationManager {
         appname: msg.appname,
         apiver: msg.apiver,
         apivermin: msg.apivermin,
+        is_reconnect: msg.is_reconnect,
       },
     };
     this.notificationIsOpen = true;
@@ -133,6 +134,16 @@ export default class NotificationManager {
 
   async triggerUi() {
     const tabs = await this.getActiveTabs();
+
+    await Promise.all(
+      tabs.map(async (item) => {
+        if (this.openBeamTabsIDs[item.id] !== undefined) {
+          await this.closeTab(item.id);
+          delete this.openBeamTabsIDs[item.id];
+        }
+      }),
+    );
+
     const currentlyActiveBeamTab = Boolean(tabs.find((tab) => this.openBeamTabsIDs[tab.id]));
     if (!this.uiIsTriggering && !currentlyActiveBeamTab) {
       this.uiIsTriggering = true;
@@ -190,8 +201,8 @@ export default class NotificationManager {
     }
   }
 
-  closeTab(tabId) {
-    this.platform.closeTab(tabId);
+  async closeTab(tabId) {
+    return this.platform.closeTab(tabId);
   }
 
   private async getPopup() {

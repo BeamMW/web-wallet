@@ -78,8 +78,13 @@ export function startWallet(pass: string) {
 export function deleteWallet(pass: string) {
   return postMessage(WalletMethod.DeleteWallet, pass);
 }
+
 export function stopWallet() {
   return postMessage(WalletMethod.StopWallet);
+}
+
+export function walletLocked() {
+  return postMessage(WalletMethod.WalletLocked);
 }
 
 export function createWallet(params: CreateWalletParams) {

@@ -7,7 +7,7 @@ import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
-import { ExternalAppConnection } from '@core/types';
+import { ExternalAppConnection, NotificationType } from '@core/types';
 import {
   BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
 } from './types';
@@ -21,6 +21,7 @@ const PATH_DB = '/beam_wallet/wallet.db';
 const notificationManager = NotificationManager.getInstance();
 
 let WasmWalletClient;
+let MyModule;
 export interface WalletEvent<T = any> {
   id: number | RPCEvent | BackgroundEvent;
   result: T;
@@ -92,6 +93,7 @@ export default class WasmWallet {
 
   static async mount(): Promise<boolean> {
     const module = await BeamModule();
+    MyModule = module;
     WasmWalletClient = module.WasmWalletClient;
 
     return new Promise((resolve) => {
@@ -275,11 +277,39 @@ export default class WasmWallet {
   async start(pass: string) {
     if (this.isRunning()) {
       this.emit(BackgroundEvent.UNLOCK_WALLET, true);
-      this.emit(BackgroundEvent.CONNECTED, {
-        onboarding: false,
-        is_running: true,
-        notification: null,
-      });
+      if (notificationManager.notification && notificationManager.notification.type === NotificationType.AUTH) {
+        if (
+          this.isConnectedSite({
+            appName: notificationManager.notification.params.appname,
+            appUrl: notificationManager.notification.params.appurl,
+          })
+        ) {
+          if (!notificationManager.notification.params.is_reconnect) {
+            this.connectExternal(notificationManager.notification.params);
+          } else {
+            Object.values(this.apps).forEach((url: string) => {
+              this.apps[url].walletUnlocked();
+            });
+          }
+          this.emit(BackgroundEvent.CLOSE_NOTIFICATION);
+        } else {
+          const notification = {
+            type: 'connect',
+            params: notificationManager.notification.params,
+          };
+          this.emit(BackgroundEvent.CONNECTED, {
+            onboarding: false,
+            is_running: true,
+            notification,
+          });
+        }
+      } else {
+        this.emit(BackgroundEvent.CONNECTED, {
+          onboarding: false,
+          is_running: true,
+          notification: null,
+        });
+      }
       return;
     }
     this.emit(BackgroundEvent.UNLOCK_WALLET, false);
@@ -424,9 +454,11 @@ export default class WasmWallet {
     const data = await blob.arrayBuffer();
     const payload = new Uint8Array(data);
 
+    const recoveryFileName = 'recovery.bin';
+    MyModule.FS.writeFile(recoveryFileName, payload);
     this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.RESTORE);
 
-    this.wallet.importRecovery(payload, (error, done, total) => {
+    this.wallet.importRecoveryFromFile(recoveryFileName, (error, done, total) => {
       if (done === total) {
         this.emit(BackgroundEvent.CHANGE_SYNC_STEP, SyncStep.SYNC);
       }
@@ -580,6 +612,18 @@ export default class WasmWallet {
         if (params.result) {
           if (this.isConnectedSite({ appName: params.appname, appUrl: params.appurl })) {
             this.connectExternal(params);
+            this.emit(BackgroundEvent.CLOSE_NOTIFICATION);
+          } else {
+            const notification = {
+              type: 'connect',
+              params,
+            };
+            this.emit(BackgroundEvent.CONNECTED, {
+              onboarding: false,
+              is_running: true,
+              notification,
+            });
+            // notificationManager.openConnectNotification(params, params.appurl)
           }
         }
         break;
@@ -625,6 +669,12 @@ export default class WasmWallet {
         break;
       case WalletMethod.LoadBackgroundLogs:
         this.emit(id, WasmWallet.loadLogs());
+        break;
+      case WalletMethod.WalletLocked:
+        Object.values(this.apps).forEach((url: string) => {
+          this.apps[url].walletIsLocked();
+        });
+
         break;
       default:
         break;

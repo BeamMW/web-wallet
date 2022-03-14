@@ -6,6 +6,7 @@ import {
 } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
+import config from '@app/config';
 
 import useOutsideClick from '@app/shared/hooks/OutsideClickHook';
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,7 +35,7 @@ function getColor(pallete: string): string {
     case 'purple':
       return 'var(--color-purple)';
     default:
-      return '#035b8f';
+      return `var(--color-gradient-finish-${config.theme})`;
   }
 }
 
@@ -52,7 +53,11 @@ const ContainerStyled = styled.div<WindowProps>`
     left: 0;
     width: 100%;
     height: 100px;
-    background-image: linear-gradient(to top, rgba(3, 91, 143, 0), ${({ pallete }) => getColor(pallete)} 150%);
+    background-image: linear-gradient(
+      to top,
+      ${`var(--color-gradient-start-${config.theme})`},
+      ${({ pallete }) => getColor(pallete)} 150%
+    );
   }
 `;
 
@@ -65,7 +70,7 @@ const HeadingStyled = styled.div<{ pallete: string }>`
   width: 375px;
   height: 130px;
   padding-top: 50px;
-  background-color: var(--color-dark-blue);
+  background-color: ${`var(--color-bg-${config.theme})`};
 
   &:before {
     content: '';
@@ -75,7 +80,11 @@ const HeadingStyled = styled.div<{ pallete: string }>`
     left: 0;
     width: 100%;
     height: 100px;
-    background-image: linear-gradient(to top, rgba(3, 91, 143, 0), ${({ pallete }) => getColor(pallete)} 150%);
+    background-image: linear-gradient(
+      to top,
+      ${`var(--color-gradient-start-${config.theme})`},
+      ${({ pallete }) => getColor(pallete)} 150%
+    );
   }
 `;
 
