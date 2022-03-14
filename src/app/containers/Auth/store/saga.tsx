@@ -63,8 +63,8 @@ export function* handleProgress({
   if (is_wallet_synced) return;
   if (current_state_hash === tip_state_hash) {
     yield put(actions.setSyncedWalletState(true));
+    const isLocked = localStorage.getItem('locked');
     if (getEnvironment() !== Environment.NOTIFICATION) {
-      const isLocked = localStorage.getItem('locked');
       if (isLocked) {
         yield put(navigate(ROUTES.AUTH.LOGIN));
       } else {
@@ -73,13 +73,14 @@ export function* handleProgress({
     } else {
       const notification = NotificationController.getNotification();
       if (notification.type === NotificationType.AUTH) {
-        finishNotificationAuth(
-          notification.params.apiver,
-          notification.params.apivermin,
-          notification.params.appname,
-          notification.params.appurl,
-        );
-        window.close();
+        if (!isLocked) {
+          finishNotificationAuth(
+            notification.params.apiver,
+            notification.params.apivermin,
+            notification.params.appname,
+            notification.params.appurl,
+          );
+        }
       } else if (notification.type === NotificationType.CONNECT) {
         yield put(navigate(ROUTES.NOTIFICATIONS.CONNECT));
       } else if (notification.type === NotificationType.APPROVE_TX) {
@@ -105,10 +106,13 @@ export function* handleSyncStep(payload: SyncStep) {
 
 export function* handleUnlockWallet(payload: boolean) {
   yield put(unlockWallet());
-  if (payload) {
-    store.dispatch(navigate(ROUTES.WALLET.BASE));
-  } else {
-    store.dispatch(navigate(ROUTES.AUTH.PROGRESS));
+  const notification = NotificationController.getNotification();
+  if (!notification) {
+    if (payload) {
+      store.dispatch(navigate(ROUTES.WALLET.BASE));
+    } else {
+      store.dispatch(navigate(ROUTES.AUTH.PROGRESS));
+    }
   }
 }
 
