@@ -269,11 +269,20 @@ export interface Transaction {
   appname: string;
 }
 
+export interface Rate {
+  from: string | number;
+  rate: number;
+  rate_str: string;
+  to: string;
+}
+
 export interface TransactionDetail extends Transaction {
   failure_reason: string;
   sender_identity: string;
   receiver_identity: string;
   token: string;
+  address_type: AddressType;
+  rates: Rate[];
 }
 
 export interface WalletChangeEvent {

@@ -1,5 +1,5 @@
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
-import { Transaction } from '@core/types';
+import { AddressType, Transaction } from '@core/types';
 
 export const copyToClipboard = (value: string) => navigator.clipboard.writeText(value);
 
@@ -30,7 +30,7 @@ export function toUSD(amount: number, rate: number): string {
       return '0 USD';
     case amount > 0.01: {
       const value = amount * rate;
-      return `${value.toFixed(2)} USD`;
+      return value > 0.01 ? `${value.toFixed(2)} USD` : '< 1 cent';
     }
     default:
       return '< 1 cent';
@@ -56,3 +56,14 @@ export function createdComparator({ create_time: a }: Transaction, { create_time
 
   return a < b ? 1 : -1;
 }
+
+export const getTxType = (type: AddressType, offline: boolean): string => {
+  if (type === 'max_privacy') {
+    return 'Maximum anonymity';
+  }
+  if (type === 'public_offline') {
+    return 'Public offline';
+  }
+
+  return offline ? 'Offline' : 'Regular';
+};

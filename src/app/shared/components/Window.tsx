@@ -174,7 +174,7 @@ const BurgerWrapper = styled.div`
     padding: 20px 0;
     border-radius: 10px;
     box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.14);
-    background-color: #003f6f;
+    background-color: ${`var(--color-popup-${config.theme})`};
     width: 205px;
     position: absolute;
     right: 8px;
@@ -195,7 +195,7 @@ const BurgerWrapper = styled.div`
       opacity: 0.8;
       &:hover {
         opacity: 1;
-        background: #114b77;
+        background: ${`var(--color-hover-${config.theme})`};
       }
       span {
         margin-left: 14px;

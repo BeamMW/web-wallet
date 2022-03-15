@@ -4,7 +4,7 @@ import { AssetIconProps } from '@app/shared/components/AssetIcon';
 
 export const DetailTabs = styled.div`
   display: flex;
-  margin: 0 -30px;
+  margin: 0 -30px 30px;
   .transaction-item {
     padding: 10px 30px;
     font-size: 14px;
@@ -26,7 +26,7 @@ export const DetailTabs = styled.div`
 `;
 
 export const DetailInfoWrapper = styled.div`
-  padding: 30px 0;
+  padding: 0;
 `;
 
 export const InformationItem = styled.div<AssetIconProps>`
