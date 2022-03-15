@@ -47,28 +47,30 @@ const TransactionDetail = () => {
 
   return (
     <Window title="Transaction Info">
-      <DetailTabs>
-        <div
-          role="link"
-          className={`transaction-item ${activeTab === 'general' ? 'active' : ''}`}
-          onClick={() => setActiveTab('general')}
-          onKeyDown={handleButton}
-          tabIndex={0}
-        >
-          General
-        </div>
-        {paymentProof && (
+      {!transactionDetail?.invoke_data?.length && (
+        <DetailTabs>
           <div
             role="link"
-            className={`transaction-item ${activeTab === 'payment-proof' ? 'active' : ''}`}
-            onClick={() => setActiveTab('payment-proof')}
+            className={`transaction-item ${activeTab === 'general' ? 'active' : ''}`}
+            onClick={() => setActiveTab('general')}
             onKeyDown={handleButton}
-            tabIndex={-1}
+            tabIndex={0}
           >
-            Payment proof
+            General
           </div>
-        )}
-      </DetailTabs>
+          {paymentProof && (
+            <div
+              role="link"
+              className={`transaction-item ${activeTab === 'payment-proof' ? 'active' : ''}`}
+              onClick={() => setActiveTab('payment-proof')}
+              onKeyDown={handleButton}
+              tabIndex={-1}
+            >
+              Payment proof
+            </div>
+          )}
+        </DetailTabs>
+      )}
       <DetailInfoWrapper>
         {activeTab === 'general' && transactionDetail && (
           <GeneralTransactionInformation

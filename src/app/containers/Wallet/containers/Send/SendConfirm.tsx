@@ -7,7 +7,9 @@ import { ArrowUpIcon } from '@app/shared/icons';
 
 import { styled } from '@linaria/react';
 
-import { fromGroths, compact, toGroths } from '@core/utils';
+import {
+  fromGroths, compact, toGroths, getTxType,
+} from '@core/utils';
 import { AddressData, AddressType } from '@core/types';
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 
@@ -16,17 +18,6 @@ const BeamAmount = styled.p`
   color: var(--color-violet);
   margin: 0;
 `;
-
-const getTxType = (type: AddressType, offline: boolean): string => {
-  if (type === 'max_privacy') {
-    return 'Maximum anonymity';
-  }
-  if (type === 'public_offline') {
-    return 'Public offline';
-  }
-
-  return offline ? 'Offline' : 'Regular';
-};
 
 interface SendConfirmProps {
   address: string;
