@@ -10,6 +10,7 @@ interface Props {
   income?: boolean;
   groths?: boolean;
   className?: string;
+  txRate?: number;
 }
 
 const Ratetyled = styled.div`
@@ -18,7 +19,7 @@ const Ratetyled = styled.div`
 `;
 
 const Rate: React.FC<Props> = ({
-  value, income, groths, className,
+  value, income, groths, className, txRate,
 }) => {
   const rate = useSelector(selectRate());
   const sign = income ? getSign(income) : '';
@@ -26,7 +27,7 @@ const Rate: React.FC<Props> = ({
   return (
     <Ratetyled className={className}>
       {sign}
-      {toUSD(amount, rate)}
+      {toUSD(amount, txRate || rate)}
     </Ratetyled>
   );
 };

@@ -8,6 +8,7 @@ import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 import { TransactionList } from '@app/containers/Transactions';
 import { selectTransactions } from '@app/containers/Transactions/store/selectors';
 import { ROUTES } from '@app/shared/constants';
+import { truncate } from '@core/utils';
 
 const AssetDetail = () => {
   const [showAll, setShowAll] = useState(false);
@@ -17,9 +18,9 @@ const AssetDetail = () => {
   const transactions = useSelector(selectTransactions());
   const isBalanceHidden = useSelector(selectIsBalanceHidden());
 
-  const currentAsset = useMemo(() => assets.find((a) => a.asset_id.toString() === params?.id), [params?.id, assets]);
+  const currentAsset = useMemo(() => assets.find((a) => a.asset_id?.toString() === params?.id), [params?.id, assets]);
 
-  const filtered = transactions.filter((tx) => tx.asset_id.toString() === params?.id);
+  const filtered = transactions.filter((tx) => tx.asset_id?.toString() === params?.id);
   const txs = showAll ? filtered : filtered.slice(0, 4);
 
   const showFullTxList = useCallback(() => {
@@ -36,7 +37,7 @@ const AssetDetail = () => {
 
   return (
     <Window
-      title={currentAsset?.metadata_pairs.UN}
+      title={truncate(currentAsset?.metadata_pairs.UN)}
       showHideButton
       // showInfoButton
       onPrevious={navigateToAssets}

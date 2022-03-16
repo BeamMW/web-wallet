@@ -267,6 +267,7 @@ export interface Transaction {
   value: number;
   invoke_data: Contract[];
   appname: string;
+  rates: Rate[];
 }
 
 export interface Rate {
@@ -282,7 +283,6 @@ export interface TransactionDetail extends Transaction {
   receiver_identity: string;
   token: string;
   address_type: AddressType;
-  rates: Rate[];
 }
 
 export interface WalletChangeEvent {
