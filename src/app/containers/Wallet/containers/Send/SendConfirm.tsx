@@ -8,7 +8,7 @@ import { ArrowUpIcon } from '@app/shared/icons';
 import { styled } from '@linaria/react';
 
 import {
-  fromGroths, compact, toGroths, getTxType,
+  fromGroths, compact, toGroths, getTxType, truncate,
 } from '@core/utils';
 import { AddressData, AddressType } from '@core/types';
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
@@ -64,7 +64,7 @@ const SendConfirm = (props: SendConfirmProps) => {
         <BeamAmount>
           {fromGroths(value)}
           &nbsp;
-          {metadata_pairs.UN}
+          {truncate(metadata_pairs.UN)}
         </BeamAmount>
       </Section>
       <Section subtitle="Transaction Fee">
@@ -75,13 +75,13 @@ const SendConfirm = (props: SendConfirmProps) => {
       <Section subtitle="Change">
         {fromGroths(selected.asset_id === 0 ? change : asset_change)}
         &nbsp;
-        {metadata_pairs.UN}
+        {truncate(metadata_pairs.UN)}
         <Rate value={selected.asset_id === 0 ? change : asset_change} groths />
       </Section>
       <Section subtitle="Remaining">
         {fromGroths(remaining)}
         &nbsp;
-        {metadata_pairs.UN}
+        {truncate(metadata_pairs.UN)}
         <Rate value={remaining} groths />
       </Section>
       {selected.asset_id !== 0 && (
