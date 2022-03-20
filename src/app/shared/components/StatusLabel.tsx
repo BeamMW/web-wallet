@@ -35,6 +35,8 @@ const IconStyled = styled.div<{ reverse: boolean }>`
   vertical-align: middle;
   line-height: 0;
   margin-right: 8px;
+  width: 20px;
+  height: 20px;
   transform: ${({ reverse }) => (reverse ? 'rotate(180deg)' : 'none')};
 `;
 
@@ -95,7 +97,7 @@ const StatusLabel: React.FC<StatusLabelProps> = ({ data }) => {
   const IconComponent = getIconComponent(data);
   return (
     <ContainerStyled color={color}>
-      <IconStyled reverse={!data.income}>
+      <IconStyled reverse={data.status_string === TxStatusString.EXPIRED ? false : !data.income}>
         <IconComponent />
       </IconStyled>
       {data.status_string}
