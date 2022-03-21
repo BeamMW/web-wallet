@@ -195,11 +195,18 @@ const GeneralTransactionInformation = ({
         </InformationItem>
       )}
 
-      {!!transactionDetail.address_type && (
+      {transactionDetail.address_type && transactionDetail.tx_type === 7 ? (
         <InformationItem>
           <div className="title">Address type:</div>
           <div className="value">
             <p>{getTxType(transactionDetail.address_type, transactionDetail.address_type === 'offline')}</p>
+          </div>
+        </InformationItem>
+      ) : (
+        <InformationItem>
+          <div className="title">Address type:</div>
+          <div className="value">
+            <p>Regular</p>
           </div>
         </InformationItem>
       )}
