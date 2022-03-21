@@ -200,6 +200,7 @@ export enum TxStatusString {
   COMPLETED = 'completed',
   SELF_SENDING = 'self sending',
   SENT_TO_OWN_ADDRESS = 'sent to own address',
+  SENT_OFFLINE_TO_OWN_ADDRESS = 'sent offline to own address',
 
   SENT_OFFLINE = 'sent offline',
   RECEIVED_OFFLINE = 'received offline',

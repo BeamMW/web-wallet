@@ -6,7 +6,7 @@ import {
   TxCanceledMPIcon,
   TxCanceledOffIcon,
   TxCompletedIcon,
-  // TxCompletedMPOwnIcon,
+  TxSentOfflineMPOwnIcon,
   TxCompletedMPIcon,
   TxCompletedOffIcon,
   TxCompletedOwnIcon,
@@ -59,7 +59,7 @@ const ICONS_REGULAR = [TxPendingIcon, TxCompletedIcon, TxCanceledIcon];
 function getIconComponent({ status, status_string }: Transaction): React.FC {
   const pos = getIconPos(status);
   const offline = status_string.includes('offline');
-  const maxPrivacy = status_string.includes('max privacy');
+  const maxPrivacy = status_string.includes('max privacy') || status_string.includes('maximum anonymity');
 
   switch (true) {
     case status_string === TxStatusString.EXPIRED:
@@ -68,6 +68,8 @@ function getIconComponent({ status, status_string }: Transaction): React.FC {
       return TxPendingOwnIcon;
     case status_string === TxStatusString.SENT_TO_OWN_ADDRESS:
       return TxCompletedOwnIcon;
+    case status_string === TxStatusString.SENT_OFFLINE_TO_OWN_ADDRESS:
+      return TxSentOfflineMPOwnIcon;
     case offline:
       return ICONS_OFFLINE[pos];
     case maxPrivacy:
@@ -97,7 +99,14 @@ const StatusLabel: React.FC<StatusLabelProps> = ({ data }) => {
   const IconComponent = getIconComponent(data);
   return (
     <ContainerStyled color={color}>
-      <IconStyled reverse={data.status_string === TxStatusString.EXPIRED ? false : !data.income}>
+      <IconStyled
+        reverse={
+          data.status_string === TxStatusString.EXPIRED
+          || data.status_string === TxStatusString.SENT_OFFLINE_TO_OWN_ADDRESS
+            ? false
+            : !data.income
+        }
+      >
         <IconComponent />
       </IconStyled>
       {data.status_string}
