@@ -151,10 +151,10 @@ const GeneralTransactionInformation = ({
             showRate={false}
             isBalanceHidden={isBalanceHidden}
           />
-          {toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))}
-          {' '}
-          (сalculated with the exchange rate
-          at the time of the transaction)
+          <div className="amount-comment">
+            {toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))}
+            (сalculated with the exchange rate at the time of the transaction)
+          </div>
         </div>
       </InformationItem>
     ) : null;
@@ -246,10 +246,7 @@ const GeneralTransactionInformation = ({
       <InformationItem>
         <div className="title">Transaction Id:</div>
         <div className="value">
-          <p>
-            {' '}
-            {transactionDetail.txId}
-          </p>
+          <p>{transactionDetail.txId}</p>
           <Button
             variant="icon"
             pallete="white"
