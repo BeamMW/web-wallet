@@ -101,14 +101,14 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
   const { available } = selected;
   const value = toGroths(parseFloat(send_amount.amount));
 
-  const total = value + fee;
+  const total = value + (send_amount.asset_id === 0 ? fee : 0);
 
   if (beam.available < fee) {
     errors.send_amount = AmountError.FEE;
   }
 
   if (total > available) {
-    const max = fromGroths(available - fee);
+    const max = fromGroths(available - (send_amount.asset_id === 0 ? fee : 0));
     errors.send_amount = `${AmountError.AMOUNT} ${max} ${truncate(selected.metadata_pairs.UN)}`;
   }
 
