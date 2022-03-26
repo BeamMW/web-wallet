@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import {
   fromGroths, compact, toGroths, getTxType, truncate,
 } from '@core/utils';
-import { AddressData, AddressType } from '@core/types';
+import { AddressData } from '@core/types';
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 
 const BeamAmount = styled.p`
