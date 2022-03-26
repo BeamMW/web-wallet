@@ -9,6 +9,7 @@ import {
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
+import config from '@app/config';
 import Button from './Button';
 import BackDrop from './Backdrop';
 
@@ -38,7 +39,7 @@ const ContainerStyled = styled.nav`
   left: 0;
   width: 319px;
   height: 550px;
-  background-image: linear-gradient(to bottom, #0a4c7e, #042548);
+  background: ${`var(--color-popup-${config.theme})`};
 `;
 
 const ListStyled = styled.ul`
