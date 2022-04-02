@@ -54,6 +54,7 @@ const initialState: WalletStateType = {
   change: 0,
   asset_change: 0,
   is_send_ready: false,
+  selected_asset_id: 0,
 };
 
 const handleAssets = (state: WalletStateType) => {
@@ -119,6 +120,9 @@ const reducer = createReducer<WalletStateType, Action>(initialState)
   }))
   .handleAction(actions.setSendTransactionState, (state, action) => produce(state, (nexState) => {
     nexState.is_send_ready = action.payload;
+  }))
+  .handleAction(actions.setSelectedAssetId, (state, action) => produce(state, (nexState) => {
+    nexState.selected_asset_id = action.payload;
   }));
 
 export { reducer as WalletReducer };

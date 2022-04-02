@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   resetSendData,
   sendTransaction,
+  setSelectedAssetId,
   validateAmount,
   validateSendAddress,
 } from '@app/containers/Wallet/store/actions';
@@ -30,6 +31,7 @@ import {
   selectAssets,
   selectChange,
   selectIsSendReady,
+  selectSelectedAssetId,
   selectSendAddressData,
   selectSendFee,
 } from '@app/containers/Wallet/store/selectors';
@@ -131,6 +133,7 @@ const SendForm = () => {
   const change = useSelector(selectChange());
   const asset_change = useSelector(selectAssetChange());
   const is_send_ready = useSelector(selectIsSendReady());
+  const selected_asset_id = useSelector(selectSelectedAssetId());
 
   const beam = useMemo(() => assets.find((a) => a.asset_id === 0), [assets]);
 
@@ -140,7 +143,7 @@ const SendForm = () => {
       offline: false,
       send_amount: {
         amount: '',
-        asset_id: 0,
+        asset_id: selected_asset_id,
       },
       comment: '',
       misc: {
@@ -163,9 +166,18 @@ const SendForm = () => {
 
   const { type: addressType } = addressData;
 
+  useEffect(() => {
+    if (selected_asset_id !== 0) {
+      console.log('selected_asset_id', selected_asset_id);
+      setFieldValue('send_amount', { amount: 0, asset_id: selected_asset_id }, true);
+      dispatch(setSelectedAssetId(0));
+    }
+  }, [selected_asset_id, dispatch]);
+
   useEffect(
     () => () => {
       dispatch(resetSendData());
+      dispatch(setSelectedAssetId(0));
     },
     [dispatch],
   );
