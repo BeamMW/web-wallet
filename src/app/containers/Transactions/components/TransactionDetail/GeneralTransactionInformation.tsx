@@ -129,10 +129,11 @@ const GeneralTransactionInformation = ({
               isBalanceHidden={isBalanceHidden}
             />
             <div className="amount-comment">
-              {toUSD(fromGroths(transactionDetail.value), assetRate?.rate)}
-              {' '}
-              (сalculated with the exchange rate at the
-              time of the transaction)
+              {assetRate?.rate
+                ? `${toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))
+                } `
+                  + '(сalculated with the exchange rate at the time of the transaction)'
+                : 'Exchange rate was not available at the time of transaction'}
             </div>
           </div>
         </InformationItem>
@@ -152,8 +153,11 @@ const GeneralTransactionInformation = ({
             isBalanceHidden={isBalanceHidden}
           />
           <div className="amount-comment">
-            {toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))}
-            (сalculated with the exchange rate at the time of the transaction)
+            {assetRate?.rate
+              ? `${toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))
+              } `
+                + '(сalculated with the exchange rate at the time of the transaction)'
+              : 'Exchange rate was not available at the time of transaction'}
           </div>
         </div>
       </InformationItem>
@@ -226,7 +230,11 @@ const GeneralTransactionInformation = ({
               showRate={false}
               isBalanceHidden={isBalanceHidden}
             />
-            <div className="amount-comment">{toUSD(fromGroths(transactionDetail.fee), fromGroths(feeRate?.rate))}</div>
+            <div className="amount-comment">
+              {feeRate?.rate
+                ? toUSD(fromGroths(transactionDetail.fee), assetRate?.rate)
+                : 'Exchange rate was not available at the time of transaction'}
+            </div>
           </div>
         </InformationItem>
       )}
