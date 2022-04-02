@@ -4,6 +4,8 @@ import { ArrowDownIcon, ArrowUpIcon } from '@app/shared/icons';
 import { ROUTES } from '@app/shared/constants';
 import { styled } from '@linaria/react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setSelectedAssetId } from '@app/containers/Wallet/store/actions';
 
 const ActionsStyled = styled.div`
   display: flex;
@@ -15,11 +17,24 @@ const ActionsStyled = styled.div`
   }
 `;
 
-export const WalletActions = () => {
+interface WalletActionsProps {
+  selected_asset_id?: number;
+}
+
+export const WalletActions = ({ selected_asset_id }: WalletActionsProps) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const navigateToSend = () => {
+    if (selected_asset_id) {
+      dispatch(setSelectedAssetId(selected_asset_id));
+    }
+    navigate(ROUTES.WALLET.SEND);
+  };
+
   return (
     <ActionsStyled>
-      <Button pallete="purple" icon={ArrowUpIcon} onClick={() => navigate(ROUTES.WALLET.SEND)}>
+      <Button pallete="purple" icon={ArrowUpIcon} onClick={() => navigateToSend()}>
         send
       </Button>
       <Button pallete="blue" icon={ArrowDownIcon} onClick={() => navigate(ROUTES.WALLET.RECEIVE)}>

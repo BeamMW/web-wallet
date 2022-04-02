@@ -5,7 +5,7 @@ import {
 import { ErrorMessage } from '@core/WasmWallet';
 import { CalculateChangeParams } from '@core/api';
 import { WalletActionTypes } from './constants';
-import { TransactionAmount } from '../interfaces';
+import { TransactionAmount, WalletStateType } from '../interfaces';
 
 export const setTotals = createAction(WalletActionTypes.SET_TOTALS)<WalletTotal[]>();
 export const setAssets = createAction(WalletActionTypes.SET_ASSETS)<Asset[]>();
@@ -46,3 +46,7 @@ export const sendTransaction = createAsyncAction(
   WalletActionTypes.SEND_TRANSACTION_SUCCESS,
   WalletActionTypes.SEND_TRANSACTION_FAILURE,
 )<SendTransactionParams, void, ErrorMessage>();
+
+export const setSelectedAssetId = createAction(WalletActionTypes.SET_SELECTED_ASSET_ID)<
+WalletStateType['selected_asset_id']
+>();

@@ -43,7 +43,7 @@ const AssetDetail = () => {
       onPrevious={navigateToAssets}
       navigateToInfo={navigateToInfo}
     >
-      <WalletActions />
+      <WalletActions selected_asset_id={currentAsset?.asset_id} />
       <Section title="">
         <Assets data={[currentAsset]} isBalanceHidden={isBalanceHidden} />
       </Section>

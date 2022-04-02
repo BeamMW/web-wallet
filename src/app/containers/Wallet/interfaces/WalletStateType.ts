@@ -15,4 +15,5 @@ export interface WalletStateType {
   change: number;
   asset_change: number;
   is_send_ready: boolean;
+  selected_asset_id: number;
 }
