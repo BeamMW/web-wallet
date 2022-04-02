@@ -130,8 +130,7 @@ const GeneralTransactionInformation = ({
             />
             <div className="amount-comment">
               {assetRate?.rate
-                ? `${toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))
-                } `
+                ? `${toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))} `
                   + '(сalculated with the exchange rate at the time of the transaction)'
                 : 'Exchange rate was not available at the time of transaction'}
             </div>
@@ -154,8 +153,7 @@ const GeneralTransactionInformation = ({
           />
           <div className="amount-comment">
             {assetRate?.rate
-              ? `${toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))
-              } `
+              ? `${toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))} `
                 + '(сalculated with the exchange rate at the time of the transaction)'
               : 'Exchange rate was not available at the time of transaction'}
           </div>
@@ -225,7 +223,7 @@ const GeneralTransactionInformation = ({
               value={transactionDetail.fee}
               asset_id={0}
               comment=""
-              className="asset-label"
+              className="asset-label fee"
               iconClass="iconClass"
               showRate={false}
               isBalanceHidden={isBalanceHidden}

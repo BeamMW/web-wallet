@@ -57,6 +57,12 @@ export const InformationItem = styled.div<AssetIconProps>`
 
     .asset-label {
       align-items: center;
+
+      &.fee {
+        .asset-name {
+          color: white;
+        }
+      }
       .iconClass {
         position: relative;
       }
