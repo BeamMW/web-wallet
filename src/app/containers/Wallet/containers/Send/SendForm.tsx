@@ -168,7 +168,6 @@ const SendForm = () => {
 
   useEffect(() => {
     if (selected_asset_id !== 0) {
-      console.log('selected_asset_id', selected_asset_id);
       setFieldValue('send_amount', { amount: 0, asset_id: selected_asset_id }, true);
       dispatch(setSelectedAssetId(0));
     }

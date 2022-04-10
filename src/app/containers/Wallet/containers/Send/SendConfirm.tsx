@@ -66,6 +66,7 @@ const SendConfirm = (props: SendConfirmProps) => {
           &nbsp;
           {truncate(metadata_pairs.UN)}
         </BeamAmount>
+        {selected.asset_id !== 0 && <Rate value={value} groths />}
       </Section>
       <Section subtitle="Transaction Fee">
         {fromGroths(fee)}
