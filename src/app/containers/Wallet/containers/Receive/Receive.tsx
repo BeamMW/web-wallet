@@ -14,7 +14,7 @@ import AmountInput from '@app/shared/components/AmountInput';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAddress, selectReceiveAmount } from '@app/containers/Wallet/store/selectors';
+import { selectAddress, selectReceiveAmount, selectSelectedAssetId } from '@app/containers/Wallet/store/selectors';
 import { generateAddress, resetReceive, setReceiveAmount } from '@app/containers/Wallet/store/actions';
 import { compact, copyToClipboard } from '@core/utils';
 import { toast } from 'react-toastify';
@@ -82,7 +82,7 @@ const Receive = () => {
   const [qrVisible, setQrVisible] = useState(false);
   const receiveAmount = useSelector(selectReceiveAmount());
   const addressFull = useSelector(selectAddress());
-
+  const selected_asset_id = useSelector(selectSelectedAssetId());
   const address = compact(addressFull);
 
   useEffect(
@@ -97,6 +97,12 @@ const Receive = () => {
   const [maxAnonymity, setMaxAnonymity] = useState(false);
   const [comment, setComment] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (selected_asset_id) {
+      dispatch(setReceiveAmount({ amount, asset_id: selected_asset_id }));
+    }
+  }, [selected_asset_id]);
 
   useEffect(() => {
     if (comment) {
@@ -193,7 +199,7 @@ const Receive = () => {
       </Section>
       <Section title="Advanced" variant="gray" collapse>
         <RowStyled>
-          <LabelStyled htmlFor="ma">Maximum anonymity set </LabelStyled>
+          <LabelStyled>Maximum anonymity set </LabelStyled>
           <Toggle id="ma" value={maxAnonymity} onChange={() => setMaxAnonymity((v) => !v)} />
         </RowStyled>
       </Section>

@@ -32,12 +32,19 @@ export const WalletActions = ({ selected_asset_id }: WalletActionsProps) => {
     navigate(ROUTES.WALLET.SEND);
   };
 
+  const navigateToReceive = () => {
+    if (selected_asset_id) {
+      dispatch(setSelectedAssetId(selected_asset_id));
+    }
+    navigate(ROUTES.WALLET.RECEIVE);
+  };
+
   return (
     <ActionsStyled>
       <Button pallete="purple" icon={ArrowUpIcon} onClick={() => navigateToSend()}>
         send
       </Button>
-      <Button pallete="blue" icon={ArrowDownIcon} onClick={() => navigate(ROUTES.WALLET.RECEIVE)}>
+      <Button pallete="blue" icon={ArrowDownIcon} onClick={() => navigateToReceive()}>
         receive
       </Button>
     </ActionsStyled>
