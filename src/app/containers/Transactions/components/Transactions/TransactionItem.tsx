@@ -173,7 +173,7 @@ const TransactionItem = ({
           <AssetIcon asset_id={data.asset_id} className={iconClassName} />
           <AmountStyled>{isBalanceHidden ? name : label}</AmountStyled>
           {assetRate ? (
-            <Rate value={Number(amount)} income={income} txRate={fromGroths(assetRate.rate)} className={rateStyle} />
+            <Rate value={amount} income={income} txRate={fromGroths(assetRate.rate)} className={rateStyle} />
           ) : null}
         </ContainerStyled>
       ) : (
