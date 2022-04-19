@@ -113,7 +113,7 @@ const TransactionItem = ({
   const amount = fromGroths(fee_only ? fee : value);
   const sign = getSign(income) ?? '';
   const name = truncate(target?.metadata_pairs.UN) ?? '';
-  const label = `${sign}${amount} ${name}`;
+  const label = `${sign}${amount < 0.00001 ? amount.toFixed(8) : amount} ${name}`;
 
   const multipleAssetsTitle = () => {
     let title = '';
@@ -173,7 +173,7 @@ const TransactionItem = ({
           <AssetIcon asset_id={data.asset_id} className={iconClassName} />
           <AmountStyled>{isBalanceHidden ? name : label}</AmountStyled>
           {assetRate ? (
-            <Rate value={amount} income={income} txRate={fromGroths(assetRate.rate)} className={rateStyle} />
+            <Rate value={Number(amount)} income={income} txRate={fromGroths(assetRate.rate)} className={rateStyle} />
           ) : null}
         </ContainerStyled>
       ) : (

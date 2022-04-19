@@ -62,7 +62,7 @@ const SendConfirm = (props: SendConfirmProps) => {
       <Section subtitle="Transaction type">{txType}</Section>
       <Section subtitle="Amount">
         <BeamAmount>
-          {fromGroths(value)}
+          {amount}
           &nbsp;
           {truncate(metadata_pairs.UN)}
         </BeamAmount>
