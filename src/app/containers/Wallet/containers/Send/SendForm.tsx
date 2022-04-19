@@ -292,7 +292,9 @@ const SendForm = () => {
     const { available } = selected;
     const { send_amount } = values;
     const isMaxPrivacy = addressData.type === 'max_privacy';
-    const total = send_amount.asset_id === 0 ? Math.max(available - fee, 0) : available;
+    const currentFee = values.offline || isMaxPrivacy ? 1100000 : fee;
+
+    const total = send_amount.asset_id === 0 ? Math.max(available - currentFee, 0) : available;
     const new_amount = fromGroths(total).toString();
 
     const amount = {
