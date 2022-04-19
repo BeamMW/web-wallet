@@ -372,7 +372,7 @@ const SendForm = () => {
             />
             {values.address && <IconCancel className="cancel-button" onClick={() => setFieldValue('address', '')} />}
           </Section>
-          {addressType === 'offline' && (
+          {values.address && addressType === 'offline' && (
             <Section title="Transaction Type" variant="gray">
               <LabeledToggle left="Online" right="Offline" value={values.offline} onChange={(e) => handleOffline(e)} />
             </Section>
