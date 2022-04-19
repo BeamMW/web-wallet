@@ -25,7 +25,6 @@ export function truncate(value: string): string {
 }
 
 export function toUSD(amount: number, rate: number): string {
-  console.log(rate);
   switch (true) {
     case amount === 0 || Number.isNaN(amount):
       return '0 USD';

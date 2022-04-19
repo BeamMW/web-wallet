@@ -32,7 +32,6 @@ const GeneralTransactionInformation = ({
   isBalanceHidden,
   copy,
 }: GeneralTransactionInformationProps) => {
-  console.log(transactionDetail);
   const multipleAssetsTitle = useCallback(() => {
     let title = '';
     transactionDetail.invoke_data?.forEach((i) => i.amounts.forEach((a) => {
