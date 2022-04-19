@@ -113,7 +113,7 @@ const TransactionItem = ({
   const amount = fromGroths(fee_only ? fee : value);
   const sign = getSign(income) ?? '';
   const name = truncate(target?.metadata_pairs.UN) ?? '';
-  const label = `${sign}${amount} ${name}`;
+  const label = `${sign}${amount < 0.00001 ? amount.toFixed(8) : amount} ${name}`;
 
   const multipleAssetsTitle = () => {
     let title = '';

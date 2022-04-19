@@ -60,7 +60,7 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   const signed = !!income;
   const sign = signed ? getSign(income) : '';
   const name = truncate(target?.metadata_pairs.UN) ?? '';
-  const label = `${sign}${amount} ${name}`;
+  const label = `${sign}${amount < 0.00001 ? amount.toFixed(8) : amount} ${name}`;
 
   return (
     <ContainerStyled className={className}>

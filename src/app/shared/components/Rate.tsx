@@ -24,10 +24,11 @@ const Rate: React.FC<Props> = ({
   const rate = useSelector(selectRate());
   const sign = income ? getSign(income) : '';
   const amount = groths ? fromGroths(value) : value;
+  const usd = toUSD(amount, txRate || rate);
   return (
     <Ratetyled className={className}>
-      {sign}
-      {toUSD(amount, txRate || rate)}
+      {usd !== '< 1 cent' ? sign : ''}
+      {usd}
     </Ratetyled>
   );
 };
