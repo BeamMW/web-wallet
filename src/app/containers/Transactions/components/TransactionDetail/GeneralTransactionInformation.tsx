@@ -230,7 +230,7 @@ const GeneralTransactionInformation = ({
             />
             <div className="amount-comment">
               {feeRate?.rate
-                ? toUSD(fromGroths(transactionDetail.fee), assetRate?.rate)
+                ? toUSD(fromGroths(transactionDetail.fee), fromGroths(feeRate?.rate))
                 : 'Exchange rate was not available at the time of transaction'}
             </div>
           </div>
