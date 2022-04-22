@@ -185,7 +185,7 @@ const SendForm = () => {
       setFieldValue('send_amount', { amount: 0, asset_id: selected_asset_id }, true);
       setFieldValue('misc.selected', current_asset, true);
     }
-  }, [selected_asset_id, assets, dispatch]);
+  }, [selected_asset_id, setFieldValue, assets, dispatch]);
 
   useEffect(
     () => () => {
