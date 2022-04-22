@@ -105,6 +105,15 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
 
   const total = value + (send_amount.asset_id === 0 ? fee : 0);
 
+  if (
+    Number(send_amount.amount) < 0.00000001
+    && Number(send_amount.amount) !== 0
+    && send_amount.amount !== ''
+    && send_amount.asset_id === 0
+  ) {
+    errors.send_amount = AmountError.LESS;
+  }
+
   if (beam.available < fee) {
     errors.send_amount = AmountError.FEE;
   }
@@ -171,7 +180,7 @@ const SendForm = () => {
       setFieldValue('send_amount', { amount: 0, asset_id: selected_asset_id }, true);
       dispatch(setSelectedAssetId(0));
     }
-  }, [selected_asset_id, dispatch]);
+  }, [selected_asset_id, setFieldValue, dispatch]);
 
   useEffect(
     () => () => {
@@ -275,12 +284,14 @@ const SendForm = () => {
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
+
     setFieldValue('address', value, true);
     if (value.length) validateAddressHandler(value);
   };
 
   const handleAssetChange = (e: TransactionAmount) => {
     const isMaxPrivacy = addressData.type === 'max_privacy';
+
     setFieldValue('send_amount', e, true);
     const asset = assets.find(({ asset_id: id }) => id === e.asset_id) ?? ASSET_BLANK;
     setSelected(asset);

@@ -18,6 +18,8 @@ import { selectAddress, selectReceiveAmount, selectSelectedAssetId } from '@app/
 import { generateAddress, resetReceive, setReceiveAmount } from '@app/containers/Wallet/store/actions';
 import { compact, copyToClipboard } from '@core/utils';
 import { toast } from 'react-toastify';
+import { AmountError } from '@app/containers/Wallet/constants';
+import { TransactionAmount } from '@app/containers/Wallet/interfaces';
 
 const AddressStyled = styled.div`
   line-height: 24px;
@@ -84,6 +86,7 @@ const Receive = () => {
   const addressFull = useSelector(selectAddress());
   const selected_asset_id = useSelector(selectSelectedAssetId());
   const address = compact(addressFull);
+  const [amountError, setAmountError] = useState('');
 
   useEffect(
     () => () => {
@@ -99,10 +102,10 @@ const Receive = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (selected_asset_id) {
+    if (selected_asset_id && Number(asset_id) !== selected_asset_id) {
       dispatch(setReceiveAmount({ amount, asset_id: selected_asset_id }));
     }
-  }, [selected_asset_id]);
+  }, [selected_asset_id, asset_id, amount, dispatch]);
 
   useEffect(() => {
     if (comment) {
@@ -130,6 +133,20 @@ const Receive = () => {
   const copyAndCloseQr = async () => {
     await copyAddress();
     setQrVisible(false);
+  };
+
+  const saveReceiveAmount = (send_amount: TransactionAmount) => {
+    setAmountError('');
+    if (
+      Number(send_amount.amount) < 0.00000001
+      && Number(send_amount.amount) !== 0
+      && send_amount.amount !== ''
+      && send_amount.asset_id === 0
+    ) {
+      setAmountError(AmountError.LESS);
+    }
+
+    dispatch(setReceiveAmount(send_amount));
   };
 
   return (
@@ -184,7 +201,8 @@ const Receive = () => {
           value={amount}
           asset_id={asset_id}
           pallete="blue"
-          onChange={(e) => dispatch(setReceiveAmount(e))}
+          error={amountError}
+          onChange={(e) => saveReceiveAmount(e)}
         />
       </Section>
       <Section title="Comment" variant="gray" collapse>
@@ -223,7 +241,7 @@ const Receive = () => {
       {/* <Section title="Comment" variant="gray" collapse>
           <Input variant="gray" />
         </Section> */}
-      <Button pallete="blue" type="button" onClick={submitForm}>
+      <Button pallete="blue" type="button" onClick={submitForm} disabled={!!amountError}>
         copy and close
       </Button>
     </Window>

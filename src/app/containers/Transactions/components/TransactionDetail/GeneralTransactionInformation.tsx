@@ -160,7 +160,7 @@ const GeneralTransactionInformation = ({
         </div>
       </InformationItem>
     ) : null;
-  }, [transactionDetail, isBalanceHidden, multipleAssetsTitle]);
+  }, [transactionDetail, isBalanceHidden, assetRate?.rate, multipleAssetsTitle]);
 
   return (
     <GeneralTransactionWrapper>
