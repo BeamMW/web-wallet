@@ -102,10 +102,10 @@ const Receive = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (selected_asset_id) {
+    if (selected_asset_id && Number(asset_id) !== selected_asset_id) {
       dispatch(setReceiveAmount({ amount, asset_id: selected_asset_id }));
     }
-  }, [selected_asset_id]);
+  }, [selected_asset_id, asset_id, amount, dispatch]);
 
   useEffect(() => {
     if (comment) {
