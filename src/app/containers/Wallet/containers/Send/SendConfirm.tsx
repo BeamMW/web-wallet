@@ -8,7 +8,7 @@ import { ArrowUpIcon } from '@app/shared/icons';
 import { styled } from '@linaria/react';
 
 import {
-  fromGroths, compact, toGroths, getTxType, truncate,
+  fromGroths, compact, toGroths, getTxType, truncate, convertLowAmount,
 } from '@core/utils';
 import { AddressData } from '@core/types';
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
@@ -62,32 +62,32 @@ const SendConfirm = (props: SendConfirmProps) => {
       <Section subtitle="Transaction type">{txType}</Section>
       <Section subtitle="Amount">
         <BeamAmount>
-          {amount}
+          {convertLowAmount(Number(amount))}
           &nbsp;
           {truncate(metadata_pairs.UN)}
         </BeamAmount>
         {selected.asset_id === 0 && <Rate value={value} groths />}
       </Section>
       <Section subtitle="Transaction Fee">
-        {fromGroths(fee)}
+        {convertLowAmount(fromGroths(fee))}
         &nbsp;BEAM
         <Rate value={fee} groths />
       </Section>
       <Section subtitle="Change">
-        {fromGroths(selected.asset_id === 0 ? change : asset_change)}
+        {convertLowAmount(fromGroths(selected.asset_id === 0 ? change : asset_change))}
         &nbsp;
         {truncate(metadata_pairs.UN)}
         <Rate value={selected.asset_id === 0 ? change : asset_change} groths />
       </Section>
       <Section subtitle="Remaining">
-        {fromGroths(remaining)}
+        {convertLowAmount(fromGroths(remaining))}
         &nbsp;
         {truncate(metadata_pairs.UN)}
         <Rate value={remaining} groths />
       </Section>
       {selected.asset_id !== 0 && (
         <Section subtitle="Beam Remaining">
-          {fromGroths(beamRemaining)}
+          {convertLowAmount(fromGroths(beamRemaining))}
           &nbsp;BEAM
           <Rate value={beamRemaining} groths />
         </Section>
