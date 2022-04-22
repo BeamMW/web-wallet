@@ -3,7 +3,9 @@ import { styled } from '@linaria/react';
 import { Transaction } from '@core/types';
 import { Rate, StatusLabel } from '@app/shared/components';
 import { css } from '@linaria/core';
-import { fromGroths, getSign, truncate } from '@core/utils';
+import {
+  convertLowAmount, fromGroths, getSign, truncate,
+} from '@core/utils';
 import { AssetTotal } from '@app/containers/Wallet/interfaces';
 import AssetIcon from '../../../../shared/components/AssetIcon';
 
@@ -113,7 +115,7 @@ const TransactionItem = ({
   const amount = fromGroths(fee_only ? fee : value);
   const sign = getSign(income) ?? '';
   const name = truncate(target?.metadata_pairs.UN) ?? '';
-  const label = `${sign}${amount < 0.00001 ? amount.toFixed(8) : amount} ${name}`;
+  const label = `${sign}${convertLowAmount(amount)} ${name}`;
 
   const multipleAssetsTitle = () => {
     let title = '';

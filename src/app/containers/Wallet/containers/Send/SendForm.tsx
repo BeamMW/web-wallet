@@ -12,7 +12,9 @@ import { ArrowRightIcon, ArrowUpIcon, IconCancel } from '@app/shared/icons';
 import { styled } from '@linaria/react';
 import LabeledToggle from '@app/shared/components/LabeledToggle';
 import { css } from '@linaria/core';
-import { fromGroths, toGroths, truncate } from '@core/utils';
+import {
+  convertLowAmount, fromGroths, toGroths, truncate,
+} from '@core/utils';
 import { useFormik } from 'formik';
 
 import {
@@ -177,10 +179,13 @@ const SendForm = () => {
 
   useEffect(() => {
     if (selected_asset_id !== 0) {
+      const current_asset = assets.find((a) => a.asset_id === selected_asset_id);
+
+      setSelected(current_asset);
       setFieldValue('send_amount', { amount: 0, asset_id: selected_asset_id }, true);
-      dispatch(setSelectedAssetId(0));
+      setFieldValue('misc.selected', current_asset, true);
     }
-  }, [selected_asset_id, setFieldValue, dispatch]);
+  }, [selected_asset_id, setFieldValue, assets, dispatch]);
 
   useEffect(
     () => () => {
@@ -396,7 +401,7 @@ const SendForm = () => {
               onChange={(e) => handleAssetChange(e)}
             />
             <Title variant="subtitle">Available</Title>
-            {`${groths} ${truncate(selected.metadata_pairs.N)}`}
+            {`${convertLowAmount(groths)} ${truncate(selected.metadata_pairs.N)}`}
             {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
             {groths > 0 && (
               <Button
