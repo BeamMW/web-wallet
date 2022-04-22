@@ -21,6 +21,7 @@ export enum AddressTip {
 export enum AmountError {
   FEE = 'Insufficient funds to pay transaction fee.',
   AMOUNT = 'Insufficient funds to complete the transaction. Maximum amount is ',
+  LESS = 'Insufficient funds to complete the transaction. Minimum amount is 0.00000001 BEAM',
 }
 
 export const ASSET_BLANK: AssetTotal = {
