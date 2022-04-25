@@ -117,6 +117,8 @@ const TransactionItem = ({
   const name = truncate(target?.metadata_pairs.UN) ?? '';
   const label = `${sign}${convertLowAmount(amount)} ${name}`;
 
+  console.log(convertLowAmount(amount), amount);
+
   const multipleAssetsTitle = () => {
     let title = '';
     invoke_data.forEach((i) => i.amounts.forEach((a) => {
