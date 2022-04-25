@@ -46,3 +46,7 @@ Utils.callApi("METHOD_NAME", PARAMS, (error, result, full) => {});
 ```
 Utils.invokeContract("role=manager,action=view,cid=" + CID, (error, result, full) => {});
 ```
+
+Examples:
+
+[DAO Voting App](https://github.com/BeamMW/dao-voting-app)
