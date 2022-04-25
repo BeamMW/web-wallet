@@ -2,6 +2,7 @@ import { AssetTotal } from '@app/containers/Wallet/interfaces';
 
 export const GROTHS_IN_BEAM = 100000000;
 export const AMOUNT_MAX = 253999999.9999999;
+export const AMOUNT_MIN = 0.00000001;
 export const FEE_DEFAULT = 100000;
 
 export enum AddressLabel {

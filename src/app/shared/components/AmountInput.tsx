@@ -4,11 +4,11 @@ import { styled } from '@linaria/react';
 
 import Select, { Option } from '@app/shared/components/Select';
 
-import { truncate } from '@core/utils';
+import { convertLowAmount, truncate } from '@core/utils';
 
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
-import { AMOUNT_MAX } from '@app/containers/Wallet/constants';
+import { AMOUNT_MAX, AMOUNT_MIN } from '@app/containers/Wallet/constants';
 import { TransactionAmount } from '@app/containers/Wallet/interfaces';
 import Input from './Input';
 import AssetIcon from './AssetIcon';
@@ -57,11 +57,13 @@ const AmountInput: React.FC<AmountInputProps> = ({
   const assets = useSelector(selectAssets());
 
   const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    const { value: raw } = event.target;
-
-    if ((raw !== '' && !REG_AMOUNT.test(raw)) || parseFloat(raw) > AMOUNT_MAX) {
+    let { value: raw } = event.target;
+    const val = parseFloat(raw ?? '0');
+    if ((val !== 0 && raw !== '' && !REG_AMOUNT.test(raw)) || val > AMOUNT_MAX) {
       return;
     }
+
+    if (val < AMOUNT_MIN && val !== 0) raw = convertLowAmount(AMOUNT_MIN).toString();
 
     onChange({ amount: raw, asset_id });
   };
