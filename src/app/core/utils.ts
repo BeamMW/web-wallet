@@ -42,7 +42,8 @@ export function fromGroths(value: number): number {
 }
 
 export function toGroths(value: number): number {
-  return value > 0 ? Math.floor(value * GROTHS_IN_BEAM) : 0;
+  const val = Number(parseFloat((value * GROTHS_IN_BEAM).toString()).toPrecision(12));
+  return value > 0 ? Math.floor(val) : 0;
 }
 
 export function getSign(positive: boolean): string {
