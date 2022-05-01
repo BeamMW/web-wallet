@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { styled } from '@linaria/react';
-import { TransactionDetail } from '@core/types';
+import { Rate, TransactionDetail } from '@core/types';
 import {
   compact, fromGroths, getTxType, toUSD, truncate,
 } from '@core/utils';
@@ -24,6 +24,8 @@ interface GeneralTransactionInformationProps {
   assets: AssetTotal[];
   isBalanceHidden: boolean;
   copy: (value: string, tM: string) => void;
+  assetRate: Rate;
+  feeRate: Rate;
 }
 
 const GeneralTransactionInformation = ({
@@ -31,6 +33,8 @@ const GeneralTransactionInformation = ({
   assets,
   isBalanceHidden,
   copy,
+  assetRate,
+  feeRate,
 }: GeneralTransactionInformationProps) => {
   const multipleAssetsTitle = useCallback(() => {
     let title = '';
@@ -46,24 +50,6 @@ const GeneralTransactionInformation = ({
     }));
     return title;
   }, [transactionDetail, assets, isBalanceHidden]);
-
-  const assetRate = useMemo(() => {
-    let rate = transactionDetail?.rates.find((a) => a.from === transactionDetail.asset_id && a.to === 'usd');
-
-    if (!rate && transactionDetail.invoke_data?.length && transactionDetail.invoke_data[0].amounts.length === 1) {
-      rate = transactionDetail?.rates.find(
-        (a) => a.from === transactionDetail.invoke_data[0].amounts[0].asset_id && a.to === 'usd',
-      );
-    }
-
-    return rate;
-  }, [transactionDetail]);
-
-  const feeRate = useMemo(() => {
-    const rate = transactionDetail?.rates.find((a) => a.from === 0 && a.to === 'usd');
-
-    return rate;
-  }, [transactionDetail]);
 
   const getTransactionDate = () => {
     const txDate = new Date(transactionDetail.create_time * 1000);
