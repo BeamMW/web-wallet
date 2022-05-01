@@ -32,6 +32,12 @@ const InputStyled = styled.input<InputProps>`
     transform: translateX(1px);
   }
 
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
   &[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
