@@ -69,4 +69,14 @@ export const getTxType = (type: AddressType, offline: boolean): string => {
   return offline ? 'Offline' : 'Regular';
 };
 
-export const convertLowAmount = (amount: number) => (+amount <= 0.0000001 ? amount.toFixed(Number(amount.toString().replace(`${amount.toString()[0]}e-`, ''))) : amount);
+export const convertLowAmount = (amount: number) => {
+  if (amount.toString().includes('e-')) {
+    const exp = amount.toString().split('e-');
+    return amount.toFixed(Number(exp[1]));
+  }
+  return amount;
+
+  // return +amount <= 0.0000001
+  //   ? amount.toFixed(Number(amount.toString().replace(`${amount.toString()[0]}e-`, '')))
+  //   : amount;
+};
