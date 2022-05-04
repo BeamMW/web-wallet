@@ -85,6 +85,9 @@ const AmountInput: React.FC<AmountInputProps> = ({
         placeholder="0"
         className={containerStyle}
         onInput={handleInput}
+        onWheelCapture={(e) => {
+          e.currentTarget.blur();
+        }}
       />
       {asset_id === 0 && !error && <Rate value={parseFloat(value)} className={rateStyle} />}
       <Select value={asset_id} className={selectClassName} onSelect={handleSelect}>
