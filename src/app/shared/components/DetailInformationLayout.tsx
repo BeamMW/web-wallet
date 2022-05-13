@@ -55,6 +55,26 @@ export const InformationItem = styled.div<AssetIconProps>`
     align-items: center;
     word-break: break-word;
 
+    .confidential-id {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      .confidential-id-label {
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        color: #fff;
+        opacity: 0.5;
+        margin-right: 10px;
+      }
+      .confidential-id-value {
+        display: flex;
+        align-items: center;
+      }
+    }
+
     .asset-label {
       align-items: center;
 

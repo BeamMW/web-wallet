@@ -8,12 +8,14 @@ const development: Configuration = {
   restore_url: 'https://mobile-restore.beam.mw/masternet/masternet_recovery.bin',
   path_node: 'eu-node01.masternet.beam.mw:8200',
   theme: 'masternet',
+  explorer_url_confidential_id: 'https://master-net.explorer.beam.mw/assets/details/',
 };
 
 const master_net: Configuration = {
   ...development,
   path_node: 'eu-node01.masternet.beam.mw:8200',
   theme: 'masternet',
+  explorer_url_confidential_id: 'https://master-net.explorer.beam.mw/assets/details/',
 };
 
 const test_net: Configuration = {
@@ -22,6 +24,7 @@ const test_net: Configuration = {
   restore_url: 'https://mobile-restore.beam.mw/testnet/testnet_recovery.bin',
   path_node: 'eu-node01.testnet.beam.mw:8200',
   theme: 'testnet',
+  explorer_url_confidential_id: 'https://testnet.explorer.beam.mw/assets/details/',
 };
 
 const main_net: Configuration = {
@@ -30,6 +33,7 @@ const main_net: Configuration = {
   restore_url: 'https://mobile-restore.beam.mw/mainnet/mainnet_recovery.bin',
   path_node: 'web-wallet.beam.mw:8200',
   theme: 'mainnet',
+  explorer_url_confidential_id: 'https://explorer.beam.mw/assets/details/',
 };
 
 const production: Configuration = {

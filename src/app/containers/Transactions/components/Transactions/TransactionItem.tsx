@@ -174,7 +174,7 @@ const TransactionItem = ({
         <ContainerStyled>
           <AssetIcon asset_id={data.asset_id} className={iconClassName} />
           <AmountStyled>{isBalanceHidden ? name : label}</AmountStyled>
-          {assetRate ? (
+          {assetRate && !isBalanceHidden ? (
             <Rate value={amount} income={income} txRate={fromGroths(assetRate.rate)} className={rateStyle} />
           ) : null}
         </ContainerStyled>
@@ -187,7 +187,7 @@ const TransactionItem = ({
               .map((a) => <AssetIcon key={a.asset_id} asset_id={a.asset_id} />))}
           </MultipleAssets>
           <AmountStyled>{multipleAssetsTitle()}</AmountStyled>
-          {assetRate ? (
+          {assetRate && !isBalanceHidden ? (
             <Rate
               value={multipleAssetsAmount()}
               txRate={fromGroths(assetRate.rate)}
