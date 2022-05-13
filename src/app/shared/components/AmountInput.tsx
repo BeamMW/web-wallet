@@ -35,6 +35,8 @@ const containerStyle = css`
   flex-grow: 1;
 `;
 
+const invalidChars = ['-', '+', 'e'];
+
 interface AmountInputProps {
   value: string;
   asset_id: number;
@@ -87,6 +89,11 @@ const AmountInput: React.FC<AmountInputProps> = ({
         onInput={handleInput}
         onWheelCapture={(e) => {
           e.currentTarget.blur();
+        }}
+        onKeyDown={(e) => {
+          if (invalidChars.includes(e.key)) {
+            e.preventDefault();
+          }
         }}
       />
       {asset_id === 0 && !error && <Rate value={parseFloat(value)} className={rateStyle} />}
