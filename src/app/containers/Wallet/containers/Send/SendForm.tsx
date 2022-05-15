@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 
 import {
-  AmountInput, Button, Input, Rate, Section, Title, Window,
+  AmountInput, Button, Input, Loader, Rate, Section, Title, Window,
 } from '@app/shared/components';
 
 import { ArrowRightIcon, ArrowUpIcon, IconCancel } from '@app/shared/icons';
@@ -18,7 +18,7 @@ import {
 import { useFormik } from 'formik';
 
 import {
-  AddressLabel, AddressTip, AmountError, ASSET_BLANK,
+  AddressLabel, AddressTip, AmountError, ASSET_BLANK, FEE_DEFAULT,
 } from '@app/containers/Wallet/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -40,6 +40,7 @@ import {
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 import { AddressData } from '@core/types';
 import { SendConfirm } from '@app/containers';
+import WasmWallet from '@core/WasmWallet';
 
 const WarningStyled = styled.div`
   margin: 30px -20px;
@@ -81,7 +82,7 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
     errors.address = AddressLabel.ERROR;
   }
 
-  if (values.offline) {
+  if (values.offline && addressData.type !== 'max_privacy' && addressData.type !== 'public_offline') {
     const warning = addressData.payments > 1
       ? 'transactions left.'
       : 'transaction left. Ask receiver to come online to support more offline transactions.';
@@ -134,6 +135,7 @@ const SendForm = () => {
   const [validateInterval, setValidateInterval] = useState<null | NodeJS.Timer>(null);
   const [validateAmountInterval, setValidateAmountInterval] = useState<null | NodeJS.Timer>(null);
   const addressData = useSelector(selectSendAddressData());
+
   const [warning, setWarning] = useState('');
   const [hint, setHint] = useState('');
   const [selected, setSelected] = useState(ASSET_BLANK);
@@ -251,7 +253,7 @@ const SendForm = () => {
       if (addressData.type === 'public_offline') {
         setWarning(AddressTip.OFFLINE);
         setHint(AddressLabel.OFFLINE);
-
+        setFieldValue('offline', true, false);
         validateAmountHandler(values.send_amount, true);
         return;
       }
@@ -304,11 +306,15 @@ const SendForm = () => {
     validateAmountHandler(e, values.offline || isMaxPrivacy);
   };
 
-  const handleMaxAmount = () => {
+  const handleMaxAmount = (offline?: boolean) => {
     const { available } = selected;
     const { send_amount } = values;
     const isMaxPrivacy = addressData.type === 'max_privacy';
-    const currentFee = values.offline || isMaxPrivacy ? 1100000 : fee;
+    let currentFee = values.offline || isMaxPrivacy || offline ? 1100000 : fee;
+
+    if (typeof offline !== 'undefined') {
+      currentFee = offline ? 1100000 : FEE_DEFAULT;
+    }
 
     const total = send_amount.asset_id === 0 ? Math.max(available - currentFee, 0) : available;
     const new_amount = fromGroths(total).toString();
@@ -320,12 +326,24 @@ const SendForm = () => {
 
     setFieldValue('send_amount', amount, true);
 
-    validateAmountHandler(amount, values.offline || isMaxPrivacy);
+    validateAmountHandler(amount, values.offline || isMaxPrivacy || offline);
   };
 
   const handleOffline = (e: boolean) => {
     setFieldValue('offline', e, true);
-    validateAmountHandler(values.send_amount, e);
+    const { send_amount } = values;
+    const { amount, asset_id } = send_amount;
+    if (amount === '0') {
+      validateAmountHandler(values.send_amount, e);
+    } else if (asset_id === 0) {
+      const { available } = selected;
+      const value = Number(amount);
+      const val = available - toGroths(value);
+
+      if (fromGroths(val) < 1) {
+        handleMaxAmount(e);
+      }
+    }
   };
 
   const getAddressHint = () => {
@@ -409,7 +427,7 @@ const SendForm = () => {
                 variant="link"
                 pallete="purple"
                 className={maxButtonStyle}
-                onClick={handleMaxAmount}
+                onClick={() => handleMaxAmount()}
               >
                 max
               </Button>

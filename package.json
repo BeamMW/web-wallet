@@ -64,7 +64,7 @@
     "@linaria/react": "^3.0.0-beta.7",
     "@types/readable-stream": "^2.3.11",
     "babel-polyfill": "^6.26.0",
-    "beam-wasm-client-masternet": "7.0.12678",
+    "beam-wasm-client-masternet": "7.1.12734",
     "browser-passworder": "^2.0.3",
     "buffer": "^6.0.3",
     "dnode": "^1.2.2",
