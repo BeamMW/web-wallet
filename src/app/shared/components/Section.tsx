@@ -39,6 +39,15 @@ const SectionGrayStyled = styled.div`
   background-color: rgba(255, 255, 255, 0.05);
   text-align: left;
 
+  > .full-address-button {
+    position: absolute;
+    top: 65px;
+    right: 38px;
+    cursor: pointer;
+    background: #202124;
+    margin: 0;
+  }
+
   > .cancel-button {
     position: absolute;
     top: 68px;
@@ -46,7 +55,7 @@ const SectionGrayStyled = styled.div`
     cursor: pointer;
   }
   > .send-input {
-    width: 95%;
+    width: 87%;
   }
 `;
 

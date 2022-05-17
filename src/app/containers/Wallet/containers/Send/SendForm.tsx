@@ -4,10 +4,12 @@ import React, {
 } from 'react';
 
 import {
-  AmountInput, Button, Input, Loader, Rate, Section, Title, Window,
+  AmountInput, Button, Input, Rate, Section, Title, Window,
 } from '@app/shared/components';
 
-import { ArrowRightIcon, ArrowUpIcon, IconCancel } from '@app/shared/icons';
+import {
+  ArrowRightIcon, ArrowUpIcon, CopySmallIcon, IconCancel, InfoButton,
+} from '@app/shared/icons';
 
 import { styled } from '@linaria/react';
 import LabeledToggle from '@app/shared/components/LabeledToggle';
@@ -39,8 +41,7 @@ import {
 } from '@app/containers/Wallet/store/selectors';
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 import { AddressData } from '@core/types';
-import { SendConfirm } from '@app/containers';
-import WasmWallet from '@core/WasmWallet';
+import { FullAddress, SendConfirm } from '@app/containers';
 
 const WarningStyled = styled.div`
   margin: 30px -20px;
@@ -132,6 +133,7 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
 const SendForm = () => {
   const dispatch = useDispatch();
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showFullAddress, setShowFullAddress] = useState(false);
   const [validateInterval, setValidateInterval] = useState<null | NodeJS.Timer>(null);
   const [validateAmountInterval, setValidateAmountInterval] = useState<null | NodeJS.Timer>(null);
   const addressData = useSelector(selectSendAddressData());
@@ -390,7 +392,15 @@ const SendForm = () => {
     return !(is_send_ready && errors.address);
   };
 
-  return (
+  return showFullAddress ? (
+    <FullAddress
+      addressData={addressData}
+      pallete="purple"
+      address={values.address}
+      onClose={() => setShowFullAddress(false)}
+      hint={getAddressHint()}
+    />
+  ) : (
     <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
       {!showConfirm ? (
         <form onSubmit={submitForm}>
@@ -404,6 +414,16 @@ const SendForm = () => {
               onInput={handleAddressChange}
               className="send-input"
             />
+
+            <Button
+              className="full-address-button"
+              variant="icon"
+              disabled={!values.address || !addressData.is_valid}
+              pallete="white"
+              icon={InfoButton}
+              onClick={() => setShowFullAddress(true)}
+            />
+
             {values.address && <IconCancel className="cancel-button" onClick={() => setFieldValue('address', '')} />}
           </Section>
           {values.address && addressType === 'offline' && (
