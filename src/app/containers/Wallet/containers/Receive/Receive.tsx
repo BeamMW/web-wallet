@@ -7,7 +7,7 @@ import {
   Window, Section, Button, Input, Toggle, Popup,
 } from '@app/shared/components';
 
-import { CopySmallIcon, DoneIcon, IconQrCode } from '@app/shared/icons';
+import { CopySmallIcon, IconQrCode, InfoButton } from '@app/shared/icons';
 
 import AmountInput from '@app/shared/components/AmountInput';
 
@@ -20,6 +20,7 @@ import { compact, copyToClipboard } from '@core/utils';
 import { toast } from 'react-toastify';
 import { AmountError } from '@app/containers/Wallet/constants';
 import { TransactionAmount } from '@app/containers/Wallet/interfaces';
+import { FullAddress } from '@app/containers';
 
 const AddressStyled = styled.div`
   line-height: 24px;
@@ -82,6 +83,7 @@ const QrCodeWrapper = styled.div`
 const Receive = () => {
   const dispatch = useDispatch();
   const [qrVisible, setQrVisible] = useState(false);
+  const [showFullAddress, setShowFullAddress] = useState(false);
   const receiveAmount = useSelector(selectReceiveAmount());
   const addressFull = useSelector(selectAddress());
   const selected_asset_id = useSelector(selectSelectedAssetId());
@@ -149,7 +151,9 @@ const Receive = () => {
     dispatch(setReceiveAmount(send_amount));
   };
 
-  return (
+  return showFullAddress ? (
+    <FullAddress pallete="blue" address={addressFull} onClose={() => setShowFullAddress(false)} />
+  ) : (
     <Window title="Receive" pallete="blue">
       <Popup
         visible={qrVisible}
@@ -191,6 +195,13 @@ const Receive = () => {
           &nbsp;
           <Button variant="icon" pallete="white" icon={IconQrCode} onClick={() => setQrVisible(true)} />
           <Button variant="icon" pallete="white" icon={CopySmallIcon} onClick={copyAddress} />
+          <Button
+            className="full-address-button"
+            variant="icon"
+            pallete="white"
+            icon={InfoButton}
+            onClick={() => setShowFullAddress(true)}
+          />
         </AddressStyled>
         {!maxAnonymity ? (
           <AddressHint>To ensure a better privacy, new address is generated every time.</AddressHint>
