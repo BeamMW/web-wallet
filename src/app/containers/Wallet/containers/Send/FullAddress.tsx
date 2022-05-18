@@ -12,6 +12,7 @@ interface FullAddressProps {
   onClose: () => void;
   address: string;
   hint?: string;
+  isMaxAnonymity?: boolean;
 }
 
 const FullAddressWrapper = styled.div`
@@ -77,7 +78,7 @@ const AddressInformationWrapper = styled.div`
 `;
 
 const FullAddress = ({
-  pallete, onClose, addressData, address, hint,
+  pallete, onClose, addressData, address, hint, isMaxAnonymity,
 }: FullAddressProps) => {
   const isMaxPrivacy = addressData?.type === 'max_privacy';
 
@@ -91,8 +92,18 @@ const FullAddress = ({
     onClose();
   };
 
+  const getTitle = () => {
+    if (isMaxPrivacy) {
+      return 'Max Privacy';
+    }
+    if (isMaxAnonymity) {
+      return 'MAX anonymity';
+    }
+    return 'Address Details';
+  };
+
   return (
-    <Window pallete={pallete} onPrevious={onClose} title={isMaxPrivacy ? 'Max anonomity' : 'Address Details'}>
+    <Window pallete={pallete} onPrevious={onClose} title={getTitle()}>
       <FullAddressWrapper>
         <AddressInformationWrapper>
           <div className="title">Address</div>

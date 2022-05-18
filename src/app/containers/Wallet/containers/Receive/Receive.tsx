@@ -152,7 +152,12 @@ const Receive = () => {
   };
 
   return showFullAddress ? (
-    <FullAddress pallete="blue" address={addressFull} onClose={() => setShowFullAddress(false)} />
+    <FullAddress
+      pallete="blue"
+      address={addressFull}
+      onClose={() => setShowFullAddress(false)}
+      isMaxAnonymity={maxAnonymity}
+    />
   ) : (
     <Window title="Receive" pallete="blue">
       <Popup

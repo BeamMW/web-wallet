@@ -42,20 +42,20 @@ const SectionGrayStyled = styled.div`
   > .full-address-button {
     position: absolute;
     top: 65px;
-    right: 38px;
     cursor: pointer;
     background: #202124;
     margin: 0;
+    right: 20px;
   }
 
   > .cancel-button {
     position: absolute;
-    top: 68px;
-    right: 20px;
+    top: 70px;
+    right: 47px;
     cursor: pointer;
   }
   > .send-input {
-    width: 87%;
+    width: 88%;
   }
 `;
 
