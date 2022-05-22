@@ -13,6 +13,7 @@ interface FullAddressProps {
   address: string;
   hint?: string;
   isMaxAnonymity?: boolean;
+  isOffline?: boolean;
 }
 
 const FullAddressWrapper = styled.div`
@@ -78,8 +79,9 @@ const AddressInformationWrapper = styled.div`
 `;
 
 const FullAddress = ({
-  pallete, onClose, addressData, address, hint, isMaxAnonymity,
+  pallete, onClose, addressData, address, hint, isMaxAnonymity, isOffline,
 }: FullAddressProps) => {
+  let hintItem = hint;
   const isMaxPrivacy = addressData?.type === 'max_privacy';
 
   const copyAddress = async () => {
@@ -93,23 +95,49 @@ const FullAddress = ({
   };
 
   const getTitle = () => {
+    if (addressData?.type === 'offline') {
+      if (!isOffline) {
+        hintItem = 'Regular address includes both online and offline addresses.';
+      }
+      return isOffline ? 'Public offline' : 'Regular Address';
+    }
+    if (addressData?.type === 'regular') {
+      return 'ONLINE ADDRESS';
+    }
+    if (addressData?.type === 'public_offline') {
+      return 'Public offline';
+    }
     if (isMaxPrivacy) {
-      return 'Max Privacy';
+      return 'MAXIMUM ANONYMITY';
     }
     if (isMaxAnonymity) {
       return 'MAXIMUM ANONYMITY';
     }
+
+    hintItem = 'Regular address includes both online and offline addresses.';
     return 'Regular Address';
+  };
+
+  const showAddress = () => {
+    if (isMaxAnonymity) return false;
+    if (isMaxPrivacy) return false;
+    if (addressData?.type === 'public_offline') return false;
+    if (addressData?.type === 'offline') return false;
+    if (addressData?.type === 'regular') return false;
+
+    return true;
   };
 
   return (
     <Window pallete={pallete} onPrevious={onClose} title={getTitle()}>
       <FullAddressWrapper>
         <AddressInformationWrapper>
-          {!isMaxAnonymity && <div className="title">Address</div>}
+          {(showAddress() || getTitle() === 'ONLINE ADDRESS') && (
+            <div className="title">{getTitle() === 'ONLINE ADDRESS' ? 'ONLINE (SBBS) ADDRESS' : 'Address'}</div>
+          )}
           <div className="address-information">{address}</div>
           <Button variant="icon" pallete="white" icon={CopySmallIcon} onClick={copyAddress} />
-          <div className="hint">{!isMaxPrivacy ? hint : ''}</div>
+          <div className="hint">{showAddress() || addressData?.type === 'max_privacy' ? hintItem : ''}</div>
         </AddressInformationWrapper>
         <Button icon={CopySmallIcon} pallete={pallete} onClick={copyAndClose}>
           copy address and close
