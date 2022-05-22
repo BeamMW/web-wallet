@@ -157,6 +157,7 @@ const Receive = () => {
       address={addressFull}
       onClose={() => setShowFullAddress(false)}
       isMaxAnonymity={maxAnonymity}
+      hint={!maxAnonymity ? 'Regular address includes both online and offline addresses.' : ''}
     />
   ) : (
     <Window title="Receive" pallete="blue">

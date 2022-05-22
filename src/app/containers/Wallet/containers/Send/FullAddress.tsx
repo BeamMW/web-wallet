@@ -42,10 +42,10 @@ const AddressInformationWrapper = styled.div`
     letter-spacing: 1px;
     color: #fff;
     text-transform: uppercase;
-    margin-bottom: 10px;
     text-align: left;
   }
   .address-information {
+    margin-top: 10px;
     white-space: initial;
     width: 300px;
     text-align: left;
@@ -97,19 +97,19 @@ const FullAddress = ({
       return 'Max Privacy';
     }
     if (isMaxAnonymity) {
-      return 'MAX anonymity';
+      return 'MAXIMUM ANONYMITY';
     }
-    return 'Address Details';
+    return 'Regular Address';
   };
 
   return (
     <Window pallete={pallete} onPrevious={onClose} title={getTitle()}>
       <FullAddressWrapper>
         <AddressInformationWrapper>
-          <div className="title">Address</div>
+          {!isMaxAnonymity && <div className="title">Address</div>}
           <div className="address-information">{address}</div>
           <Button variant="icon" pallete="white" icon={CopySmallIcon} onClick={copyAddress} />
-          <div className="hint">{hint}</div>
+          <div className="hint">{!isMaxPrivacy ? hint : ''}</div>
         </AddressInformationWrapper>
         <Button icon={CopySmallIcon} pallete={pallete} onClick={copyAndClose}>
           copy address and close
