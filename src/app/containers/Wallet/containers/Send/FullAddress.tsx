@@ -63,6 +63,10 @@ const AddressInformationWrapper = styled.div`
     position: absolute;
     top: 25px;
     right: -20px;
+
+    &.no-title {
+      top: 0;
+    }
   }
   .hint {
     margin-top: 10px;
@@ -136,7 +140,13 @@ const FullAddress = ({
             <div className="title">{getTitle() === 'ONLINE ADDRESS' ? 'ONLINE (SBBS) ADDRESS' : 'Address'}</div>
           )}
           <div className="address-information">{address}</div>
-          <Button variant="icon" pallete="white" icon={CopySmallIcon} onClick={copyAddress} />
+          <Button
+            className={showAddress() || getTitle() === 'ONLINE ADDRESS' ? '' : 'no-title'}
+            variant="icon"
+            pallete="white"
+            icon={CopySmallIcon}
+            onClick={copyAddress}
+          />
           <div className="hint">{showAddress() || addressData?.type === 'max_privacy' ? hintItem : ''}</div>
         </AddressInformationWrapper>
         <Button icon={CopySmallIcon} pallete={pallete} onClick={copyAndClose}>

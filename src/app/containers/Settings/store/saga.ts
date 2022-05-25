@@ -12,6 +12,7 @@ import store from '../../../../index';
 
 function* deleteWalletSaga(action: ReturnType<typeof actions.deleteWallet.request>): Generator {
   try {
+    yield put(actions.deleteWallet.success());
     yield call(deleteWallet, action.payload);
     yield put(setTransactions([]));
     yield put(setError(null));

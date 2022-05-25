@@ -1,10 +1,11 @@
 import produce from 'immer';
 import { ActionType, createReducer } from 'typesafe-actions';
 
+import { deleteWallet } from '@app/containers/Settings/store/actions';
 import { TransactionsStateType } from '../interfaces';
 import * as actions from './actions';
 
-type Action = ActionType<typeof actions>;
+type Action = ActionType<typeof actions & typeof deleteWallet>;
 
 const initialState: TransactionsStateType = {
   transactions: [],
@@ -23,6 +24,7 @@ const reducer = createReducer<TransactionsStateType, Action>(initialState)
   }))
   .handleAction(actions.setPaymentProof, (state, action) => produce(state, (nexState) => {
     nexState.payment_proof = action.payload;
-  }));
+  }))
+  .handleAction(deleteWallet.success, (state) => produce(state, (nexState) => ({ ...nexState, ...initialState })));
 
 export { reducer as TransactionsReducer };
