@@ -3,10 +3,11 @@ import { ActionType, createReducer } from 'typesafe-actions';
 
 import { Asset } from '@core/types';
 import { FEE_DEFAULT } from '@app/containers/Wallet/constants';
+import { deleteWallet } from '@app/containers/Settings/store/actions';
 import { WalletStateType } from '../interfaces';
 import * as actions from './actions';
 
-type Action = ActionType<typeof actions>;
+type Action = ActionType<typeof actions & typeof deleteWallet>;
 
 const META_BLANK: Partial<Asset> = {
   metadata_pairs: {
@@ -123,6 +124,7 @@ const reducer = createReducer<WalletStateType, Action>(initialState)
   }))
   .handleAction(actions.setSelectedAssetId, (state, action) => produce(state, (nexState) => {
     nexState.selected_asset_id = action.payload;
-  }));
+  }))
+  .handleAction(deleteWallet.success, (state) => produce(state, (nexState) => ({ ...nexState, ...initialState })));
 
 export { reducer as WalletReducer };

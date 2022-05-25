@@ -399,6 +399,7 @@ const SendForm = () => {
       address={values.address}
       onClose={() => setShowFullAddress(false)}
       hint={getAddressHint()}
+      isOffline={values.offline}
     />
   ) : (
     <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
