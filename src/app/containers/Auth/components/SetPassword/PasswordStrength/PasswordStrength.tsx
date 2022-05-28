@@ -43,7 +43,7 @@ const BARS_MAX = 6;
 const ContainerStyled = styled.div`
   position: relative;
   height: 40px;
-  margin: 20px 0;
+  margin: 20px 0 0;
 `;
 
 const ListStyled = styled.ol`

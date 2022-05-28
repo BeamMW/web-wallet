@@ -18,9 +18,40 @@ import { PasswordStrength } from '../../components';
 const FormStyled = styled.form`
   text-align: left;
 
+  h3 {
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #fff;
+    text-align: center;
+    margin: 0 auto 30px;
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #fff;
+  }
   > ul {
     margin-bottom: 30px;
     padding-left: 20px;
+    list-style-type: circle;
+
+    li {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+  p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.5);
   }
 `;
 
@@ -66,7 +97,26 @@ const SetPassword = () => {
     <>
       <Window title="Password" onPrevious={handlePrevious}>
         <FormStyled onSubmit={handleSubmit}>
-          <Input autoFocus type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+          <h3>Create new password to access your wallet</h3>
+          <span> Password </span>
+
+          <Input
+            id="pwd"
+            autoFocus
+            type="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <span>Password </span>
+          <Input
+            id="confirm"
+            type="password"
+            valid={valid}
+            label={error}
+            placeholder="Confirm password"
+            onChange={(e) => setConfirm(e.target.value)}
+          />
+
           <PasswordStrength value={pass} />
           <p>Strong password needs to meet the following requirements:</p>
           <ul>
@@ -75,16 +125,9 @@ const SetPassword = () => {
             <li>must contain at least one uppercase letter</li>
             <li>must contain at least one number</li>
           </ul>
-          <Input
-            type="password"
-            valid={valid}
-            label={error}
-            placeholder="Confirm password"
-            onChange={(e) => setConfirm(e.target.value)}
-          />
           <Footer>
             <Button type="submit" icon={ArrowRightIcon} disabled={!ready}>
-              next
+              Start using your wallet
             </Button>
           </Footer>
         </FormStyled>

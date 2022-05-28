@@ -147,7 +147,9 @@ const FullAddress = ({
             icon={CopySmallIcon}
             onClick={copyAddress}
           />
-          <div className="hint">{showAddress() || addressData?.type === 'max_privacy' ? hintItem : ''}</div>
+          <div className="hint">
+            {showAddress() || addressData?.type === 'max_privacy' || getTitle() === 'Regular Address' ? hintItem : ''}
+          </div>
         </AddressInformationWrapper>
         <Button icon={CopySmallIcon} pallete={pallete} onClick={copyAndClose}>
           copy address and close
