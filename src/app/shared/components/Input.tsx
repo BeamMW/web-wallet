@@ -17,19 +17,27 @@ const ContainerStyled = styled.div<InputProps>`
 
 const InputStyled = styled.input<InputProps>`
   width: 100%;
-  height: 33px;
-  line-height: 31px;
+  height: 45px;
+  line-height: 40px;
+  padding: 15px;
   border: none;
-  border-bottom: 2px solid transparent;
-  background-color: transparent;
+  outline: none;
+  // background-color: transparent;
   font-size: 14px;
   color: white;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
 
   &::placeholder {
-    color: white;
-    opacity: 0.5;
-    font-size: 14px;
     transform: translateX(1px);
+    opacity: 0.2;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: italic;
+    line-height: normal;
+    letter-spacing: 0.26px;
+    color: #fff;
   }
 
   &::-webkit-outer-spin-button,
@@ -41,6 +49,15 @@ const InputStyled = styled.input<InputProps>`
   &[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  &:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &.invalid {
+    background-color: rgba(255, 116, 107, 0.15);
+    color: #ff625c;
   }
 `;
 
@@ -80,7 +97,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <ContainerStyled className={className} margin={margin}>
-        <InputComponent ref={ref} valid={valid} pallete={pallete} {...rest} />
+        <InputComponent ref={ref} valid={valid} pallete={pallete} {...rest} className={!valid ? 'invalid' : ''} />
         {!!label && <LabelStyled valid={valid}>{label}</LabelStyled>}
       </ContainerStyled>
     );

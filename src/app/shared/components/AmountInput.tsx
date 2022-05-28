@@ -49,8 +49,8 @@ const REG_AMOUNT = /^(?!0\d)(\d+)(\.)?(\d+)?$/;
 
 const rateStyle = css`
   position: absolute;
-  top: 33px;
-  left: 0;
+  top: 48px;
+  left: 10px;
 `;
 
 const AmountInput: React.FC<AmountInputProps> = ({

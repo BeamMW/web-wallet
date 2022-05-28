@@ -41,7 +41,7 @@ const SectionGrayStyled = styled.div`
 
   > .full-address-button {
     position: absolute;
-    top: 65px;
+    top: 68px;
     cursor: pointer;
     background: #202124;
     margin: 0;
@@ -50,7 +50,7 @@ const SectionGrayStyled = styled.div`
 
   > .cancel-button {
     position: absolute;
-    top: 70px;
+    top: 73px;
     right: 47px;
     cursor: pointer;
   }
