@@ -87,7 +87,7 @@ const App = () => {
     const tabId = localStorage.getItem('beamTabId');
 
     if (!tabId) {
-      chrome.tabs.create(
+      const asd = chrome.tabs.create(
         {
           url: 'background.html',
           active: false,
@@ -96,10 +96,12 @@ const App = () => {
           localStorage.setItem('beamTabId', tab.id.toString());
         },
       );
+
+      console.log('TAB', asd);
     } else {
       chrome.tabs.query({ status: 'complete' }, (tabs) => {
         const tab = tabs?.filter((t) => t.id.toString() === tabId);
-
+        console.log('TAB', tab);
         if (!tab.length) {
           chrome.tabs.create(
             {

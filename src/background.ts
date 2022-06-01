@@ -24,6 +24,9 @@ function postMessage(data) {
   }
 }
 
+// wasm test
+wallet.test();
+
 function handleConnect(remote) {
   port = remote;
   connected = true;

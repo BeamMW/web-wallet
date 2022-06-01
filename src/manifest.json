@@ -1,15 +1,18 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Beam Web Wallet (Masternet)",
   "short_name": "Beam Web Wallet (Masternet)",
   "description": "Beam Web Wallet (Masternet)",
-  "version": "1.0.1",
-  "browser_action": {
+  "action": {
+    "default_icon": {
+      "16": "assets/chrome-extention-icon-16x16.png"
+    },
+    "default_title": "Sourc3 (masternet)",
     "default_popup": "popup.html"
   },
+  "version": "1.0.1",
   "background": {
-    "page": "background.html",
-    "persistent": true
+    "service_worker": "appinit.js"
   },
   "content_scripts": [
     {
@@ -31,8 +34,13 @@
     "storage",
     "tabs"
   ],
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "content_security_policy":  { 
+    "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' 'unsafe-inline';"
+  },
   "web_accessible_resources": [
-    "inpage.js"
+    {
+      "resources": ["inpage.js", "assets/*.png"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
   ]
 }
