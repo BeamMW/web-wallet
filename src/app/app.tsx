@@ -83,6 +83,38 @@ const App = () => {
     }
   }, [isLocked, navigate, location.pathname]);
 
+  useEffect(() => {
+    const tabId = localStorage.getItem('beamTabId');
+
+    if (!tabId) {
+      chrome.tabs.create(
+        {
+          url: 'background.html',
+          active: false,
+        },
+        (tab) => {
+          localStorage.setItem('beamTabId', tab.id.toString());
+        },
+      );
+    } else {
+      chrome.tabs.query({ status: 'complete' }, (tabs) => {
+        const tab = tabs?.filter((t) => t.id.toString() === tabId);
+
+        if (!tab.length) {
+          chrome.tabs.create(
+            {
+              url: 'background.html',
+              active: false,
+            },
+            (newTab) => {
+              localStorage.setItem('beamTabId', newTab.id.toString());
+            },
+          );
+        }
+      });
+    }
+  }, []);
+
   return (
     <ErrorBoundary>
       <Scrollbars
