@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@linaria/react';
+import Button from '@app/shared/components/Button';
+import { IconEye, IconEyeCrossed } from '@app/shared/icons';
+import { css } from '@linaria/core';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -85,6 +88,14 @@ const LabelStyled = styled.div<InputProps>`
   color: ${({ valid }) => (valid ? 'var(--color-gray)' : 'var(--color-red)')};
 `;
 
+const menuEyeStyle = css`
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  right: 12px;
+  margin: 0;
+`;
+
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({
     label, valid = true, variant = 'regular', margin = 'none', pallete, className, ...rest
@@ -94,11 +105,44 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       gray: InputGrayStyled,
       amount: InputAmountStyled,
     }[variant];
+    const [focus, setFocus] = useState(false);
+    const [inputVisible, setInputVisible] = useState(false);
 
     return (
       <ContainerStyled className={className} margin={margin}>
-        <InputComponent ref={ref} valid={valid} pallete={pallete} {...rest} className={!valid ? 'invalid' : ''} />
+        <InputComponent
+          ref={ref}
+          valid={valid}
+          pallete={pallete}
+          {...rest}
+          type={inputVisible ? 'text' : rest.type}
+          className={!valid ? 'invalid' : ''}
+          onFocus={(e) => {
+            e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length);
+            setFocus(true);
+          }}
+          onBlur={() => setTimeout(() => {
+            setFocus(false);
+            if (rest.id) {
+              document.getElementById(rest.id)?.focus();
+            }
+          }, 100)}
+        />
         {!!label && <LabelStyled valid={valid}>{label}</LabelStyled>}
+
+        {rest.type === 'password' && focus ? (
+          <Button
+            variant="icon"
+            icon={!inputVisible ? IconEye : IconEyeCrossed}
+            className={menuEyeStyle}
+            onClick={(e) => {
+              setInputVisible((v) => !v);
+
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          />
+        ) : null}
       </ContainerStyled>
     );
   },

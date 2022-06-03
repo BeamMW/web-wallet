@@ -40,6 +40,7 @@ const Login: React.FC = () => {
           <p>Enter your password to access the wallet</p>
           <Input
             autoFocus
+            id="pwd"
             name="password"
             type="password"
             placeholder="Password"
