@@ -69,7 +69,7 @@ const TransactionDetail = () => {
 
   return (
     <Window title="Transaction Info">
-      {!transactionDetail?.invoke_data?.length && (
+      {!transactionDetail?.invoke_data?.length && !transactionDetail?.income && (
         <DetailTabs>
           <div
             role="link"
