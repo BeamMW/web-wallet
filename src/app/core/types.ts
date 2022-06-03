@@ -164,6 +164,7 @@ export interface AddressData {
   // extra data from token
   amount: number;
   asset_id: number;
+  peer_id?: string;
 }
 
 export interface SyncProgress extends SyncHash {

@@ -14,8 +14,15 @@ import AmountInput from '@app/shared/components/AmountInput';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAddress, selectReceiveAmount, selectSelectedAssetId } from '@app/containers/Wallet/store/selectors';
-import { generateAddress, resetReceive, setReceiveAmount } from '@app/containers/Wallet/store/actions';
+import {
+  selectAddress,
+  selectReceiveAmount,
+  selectSbbs,
+  selectSelectedAssetId,
+} from '@app/containers/Wallet/store/selectors';
+import {
+  generateAddress, resetReceive, setReceiveAmount, setSbbs,
+} from '@app/containers/Wallet/store/actions';
 import { compact, copyToClipboard } from '@core/utils';
 import { toast } from 'react-toastify';
 import { AmountError } from '@app/containers/Wallet/constants';
@@ -86,6 +93,7 @@ const Receive = () => {
   const [showFullAddress, setShowFullAddress] = useState(false);
   const receiveAmount = useSelector(selectReceiveAmount());
   const addressFull = useSelector(selectAddress());
+  const sbbs = useSelector(selectSbbs());
   const selected_asset_id = useSelector(selectSelectedAssetId());
   const address = compact(addressFull);
   const [amountError, setAmountError] = useState('');
@@ -93,6 +101,7 @@ const Receive = () => {
   useEffect(
     () => () => {
       dispatch(resetReceive());
+      dispatch(setSbbs(null));
     },
     [dispatch],
   );
@@ -158,6 +167,7 @@ const Receive = () => {
       onClose={() => setShowFullAddress(false)}
       isMaxAnonymity={maxAnonymity}
       hint={!maxAnonymity ? 'Regular address includes both online and offline addresses.' : ''}
+      sbbs={sbbs}
     />
   ) : (
     <Window title="Receive" pallete="blue">

@@ -21,3 +21,5 @@ export const selectAssetChange = () => createSelector(selectWallet, (state) => s
 export const selectIsSendReady = () => createSelector(selectWallet, (state) => state.is_send_ready);
 
 export const selectSelectedAssetId = () => createSelector(selectWallet, (state) => state.selected_asset_id);
+
+export const selectSbbs = () => createSelector(selectWallet, (state) => state.sbbs);

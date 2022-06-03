@@ -15,7 +15,7 @@ import { styled } from '@linaria/react';
 import LabeledToggle from '@app/shared/components/LabeledToggle';
 import { css } from '@linaria/core';
 import {
-  convertLowAmount, fromGroths, toGroths, truncate,
+  compact, convertLowAmount, fromGroths, toGroths, truncate,
 } from '@core/utils';
 import { useFormik } from 'formik';
 
@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   resetSendData,
   sendTransaction,
+  setSbbs,
   setSelectedAssetId,
   validateAmount,
   validateSendAddress,
@@ -35,6 +36,7 @@ import {
   selectAssets,
   selectChange,
   selectIsSendReady,
+  selectSbbs,
   selectSelectedAssetId,
   selectSendAddressData,
   selectSendFee,
@@ -133,10 +135,12 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
 const SendForm = () => {
   const dispatch = useDispatch();
   const [showConfirm, setShowConfirm] = useState(false);
+  const [focus, setFocus] = useState(false);
   const [showFullAddress, setShowFullAddress] = useState(false);
   const [validateInterval, setValidateInterval] = useState<null | NodeJS.Timer>(null);
   const [validateAmountInterval, setValidateAmountInterval] = useState<null | NodeJS.Timer>(null);
   const addressData = useSelector(selectSendAddressData());
+  const sbbs = useSelector(selectSbbs());
 
   const [warning, setWarning] = useState('');
   const [hint, setHint] = useState('');
@@ -181,6 +185,8 @@ const SendForm = () => {
 
   const { type: addressType } = addressData;
 
+  const compactAddress = compact(values.address, 15);
+
   useEffect(() => {
     if (selected_asset_id !== 0) {
       const current_asset = assets.find((a) => a.asset_id === selected_asset_id);
@@ -195,6 +201,7 @@ const SendForm = () => {
     () => () => {
       dispatch(resetSendData());
       dispatch(setSelectedAssetId(0));
+      dispatch(setSbbs(null));
     },
     [dispatch],
   );
@@ -400,6 +407,7 @@ const SendForm = () => {
       onClose={() => setShowFullAddress(false)}
       hint={getAddressHint()}
       isOffline={values.offline}
+      sbbs={sbbs}
     />
   ) : (
     <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
@@ -411,9 +419,11 @@ const SendForm = () => {
               label={getAddressHint()}
               valid={isAddressValid()}
               placeholder="Paste recipient address here"
-              value={values.address}
+              value={focus ? values.address : compactAddress}
               onInput={handleAddressChange}
               className="send-input"
+              onFocus={() => setFocus(true)}
+              onBlur={() => setFocus(false)}
             />
 
             <Button

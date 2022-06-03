@@ -98,8 +98,7 @@ const SetPassword = () => {
       <Window title="Password" onPrevious={handlePrevious}>
         <FormStyled onSubmit={handleSubmit}>
           <h3>Create new password to access your wallet</h3>
-          <span> Password </span>
-
+          <span>Password</span>
           <Input
             id="pwd"
             autoFocus
@@ -107,7 +106,7 @@ const SetPassword = () => {
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <span>Password </span>
+          <span>Confirm Password</span>
           <Input
             id="confirm"
             type="password"
@@ -127,7 +126,7 @@ const SetPassword = () => {
           </ul>
           <Footer>
             <Button type="submit" icon={ArrowRightIcon} disabled={!ready}>
-              Start using your wallet
+              start using your wallet
             </Button>
           </Footer>
         </FormStyled>

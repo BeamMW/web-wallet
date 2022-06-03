@@ -43,6 +43,7 @@ const initialState: WalletStateType = {
     asset_id: 0,
   },
   address: '',
+  sbbs: '',
   send_address_data: {
     type: null,
     amount: null,
@@ -89,6 +90,9 @@ const reducer = createReducer<WalletStateType, Action>(initialState)
   }))
   .handleAction(actions.generateAddress.success, (state, action) => produce(state, (nexState) => {
     nexState.address = action.payload;
+  }))
+  .handleAction(actions.setSbbs, (state, action) => produce(state, (nexState) => {
+    nexState.sbbs = action.payload;
   }))
   .handleAction(actions.resetReceive, (state) => produce(state, (nexState) => {
     nexState.receive_amount = {
