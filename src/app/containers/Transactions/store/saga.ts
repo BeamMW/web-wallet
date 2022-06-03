@@ -6,7 +6,6 @@ import { setPaymentProof } from '@app/containers/Transactions/store/actions';
 import { actions } from '.';
 
 export function* handleTransactions(payload: TxsEvent) {
-  console.log(payload);
   yield put(actions.setTransactions(payload.txs));
 }
 

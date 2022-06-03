@@ -9,6 +9,7 @@ export interface WalletStateType {
   assets_total: AssetTotal[];
   rate: number;
   address: string;
+  sbbs: null | string;
   receive_amount: TransactionAmount;
   send_address_data: AddressData;
   send_fee: number;

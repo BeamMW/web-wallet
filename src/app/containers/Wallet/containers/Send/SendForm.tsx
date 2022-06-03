@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   resetSendData,
   sendTransaction,
+  setSbbs,
   setSelectedAssetId,
   validateAmount,
   validateSendAddress,
@@ -35,6 +36,7 @@ import {
   selectAssets,
   selectChange,
   selectIsSendReady,
+  selectSbbs,
   selectSelectedAssetId,
   selectSendAddressData,
   selectSendFee,
@@ -137,6 +139,7 @@ const SendForm = () => {
   const [validateInterval, setValidateInterval] = useState<null | NodeJS.Timer>(null);
   const [validateAmountInterval, setValidateAmountInterval] = useState<null | NodeJS.Timer>(null);
   const addressData = useSelector(selectSendAddressData());
+  const sbbs = useSelector(selectSbbs());
 
   const [warning, setWarning] = useState('');
   const [hint, setHint] = useState('');
@@ -195,6 +198,7 @@ const SendForm = () => {
     () => () => {
       dispatch(resetSendData());
       dispatch(setSelectedAssetId(0));
+      dispatch(setSbbs(null));
     },
     [dispatch],
   );
@@ -400,6 +404,7 @@ const SendForm = () => {
       onClose={() => setShowFullAddress(false)}
       hint={getAddressHint()}
       isOffline={values.offline}
+      sbbs={sbbs}
     />
   ) : (
     <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>

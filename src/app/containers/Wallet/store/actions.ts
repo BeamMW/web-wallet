@@ -50,3 +50,5 @@ export const sendTransaction = createAsyncAction(
 export const setSelectedAssetId = createAction(WalletActionTypes.SET_SELECTED_ASSET_ID)<
 WalletStateType['selected_asset_id']
 >();
+
+export const setSbbs = createAction(WalletActionTypes.SET_SBBS)<WalletStateType['sbbs']>();
