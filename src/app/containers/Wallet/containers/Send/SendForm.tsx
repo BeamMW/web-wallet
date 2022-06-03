@@ -15,7 +15,7 @@ import { styled } from '@linaria/react';
 import LabeledToggle from '@app/shared/components/LabeledToggle';
 import { css } from '@linaria/core';
 import {
-  convertLowAmount, fromGroths, toGroths, truncate,
+  compact, convertLowAmount, fromGroths, toGroths, truncate,
 } from '@core/utils';
 import { useFormik } from 'formik';
 
@@ -135,6 +135,7 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
 const SendForm = () => {
   const dispatch = useDispatch();
   const [showConfirm, setShowConfirm] = useState(false);
+  const [focus, setFocus] = useState(false);
   const [showFullAddress, setShowFullAddress] = useState(false);
   const [validateInterval, setValidateInterval] = useState<null | NodeJS.Timer>(null);
   const [validateAmountInterval, setValidateAmountInterval] = useState<null | NodeJS.Timer>(null);
@@ -183,6 +184,8 @@ const SendForm = () => {
   } = formik;
 
   const { type: addressType } = addressData;
+
+  const compactAddress = compact(values.address, 15);
 
   useEffect(() => {
     if (selected_asset_id !== 0) {
@@ -416,9 +419,11 @@ const SendForm = () => {
               label={getAddressHint()}
               valid={isAddressValid()}
               placeholder="Paste recipient address here"
-              value={values.address}
+              value={focus ? values.address : compactAddress}
               onInput={handleAddressChange}
               className="send-input"
+              onFocus={() => setFocus(true)}
+              onBlur={() => setFocus(false)}
             />
 
             <Button
