@@ -12,6 +12,12 @@ window.global = globalThis;
 const notificationManager = NotificationManager.getInstance();
 const wallet = WasmWallet.getInstance();
 
+// @ts-ignore
+window.wasm = wallet;
+
+// @ts-ignore
+window.WasmWallet = WasmWallet;
+
 let port = null;
 let contentPort = null;
 let notificationPort = null;

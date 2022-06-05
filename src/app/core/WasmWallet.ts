@@ -213,7 +213,7 @@ export default class WasmWallet {
   private eventHandler: WalletEventHandler;
 
   // wasm test
-  async test() {
+  static async test() {
     await WasmWallet.mount();
   }
 
