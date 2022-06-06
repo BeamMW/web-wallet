@@ -16,6 +16,7 @@ const config = {
     contentscript: path.join(__dirname, "./src/contentscript.ts"),
     inpage: path.join(__dirname, "./src/inpage.ts"),
     appinit: path.join(__dirname, './src/appinit.ts'),
+    test: path.join(__dirname, './src/test.ts'),
   },
   output: {
     path: path.join(__dirname, "dist"),
