@@ -18,6 +18,10 @@ import { PasswordStrength } from '../../components';
 const FormStyled = styled.form`
   text-align: left;
 
+  .input {
+    margin: 0.5rem 0 0.3rem;
+  }
+
   h3 {
     font-size: 14px;
     font-weight: normal;
@@ -39,6 +43,7 @@ const FormStyled = styled.form`
     line-height: normal;
     letter-spacing: normal;
     color: #fff;
+    margin: 0.5rem 0;
   }
   > ul {
     margin-bottom: 30px;
@@ -101,6 +106,7 @@ const SetPassword = () => {
           <span>Password</span>
           <Input
             id="pwd"
+            className="input"
             autoFocus
             type="password"
             placeholder="Password"
@@ -109,6 +115,7 @@ const SetPassword = () => {
           <span>Confirm Password</span>
           <Input
             id="confirm"
+            className="input"
             type="password"
             valid={valid}
             label={error}
