@@ -193,7 +193,7 @@ const FullAddress = ({
     <Window pallete={pallete} onPrevious={onClose} title={getTitle()}>
       <FullAddressWrapper>
         <AddressInformationWrapper>
-          {(showAddress() || getTitle() === 'ONLINE ADDRESS') && (
+          {(showAddress() || getTitle() === 'ONLINE ADDRESS' || getTitle() === 'Regular Address') && (
             <div className="title">{getTitle() === 'ONLINE ADDRESS' ? 'ONLINE (SBBS) ADDRESS' : 'Address'}</div>
           )}
           <div className="address-information">{address}</div>
@@ -209,17 +209,11 @@ const FullAddress = ({
           </div>
         </AddressInformationWrapper>
 
-        {sbbs && (
+        {sbbs && address !== sbbs && (
           <SbbsWrapper>
             <div className="title">Online (SBBS) Address</div>
             <div className="address-information">{sbbs}</div>
-            <Button
-              className={showAddress() || getTitle() === 'ONLINE ADDRESS' ? '' : 'no-title'}
-              variant="icon"
-              pallete="white"
-              icon={CopySmallIcon}
-              onClick={copySbbs}
-            />
+            <Button variant="icon" pallete="white" icon={CopySmallIcon} onClick={copySbbs} />
           </SbbsWrapper>
         )}
 

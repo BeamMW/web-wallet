@@ -105,8 +105,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       gray: InputGrayStyled,
       amount: InputAmountStyled,
     }[variant];
-    const [focus, setFocus] = useState(false);
+
     const [inputVisible, setInputVisible] = useState(false);
+    const [inputValue, setInputValue] = useState('');
+
+    const inputHandler = (e) => {
+      if (rest?.onChange) rest?.onChange(e);
+      setInputValue(e.target.value);
+    };
 
     return (
       <ContainerStyled className={className} margin={margin}>
@@ -117,20 +123,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...rest}
           type={inputVisible ? 'text' : rest.type}
           className={!valid ? 'invalid' : ''}
-          onFocus={(e) => {
-            e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length);
-            setFocus(true);
-          }}
-          onBlur={() => setTimeout(() => {
-            setFocus(false);
-            if (rest.id) {
-              document.getElementById(rest.id)?.focus();
-            }
-          }, 100)}
+          value={inputValue}
+          onChange={inputHandler}
         />
         {!!label && <LabelStyled valid={valid}>{label}</LabelStyled>}
 
-        {rest.type === 'password' && focus ? (
+        {rest.type === 'password' && inputValue.length ? (
           <Button
             variant="icon"
             icon={!inputVisible ? IconEye : IconEyeCrossed}
