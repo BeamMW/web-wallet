@@ -32,6 +32,12 @@ const main_net: Configuration = {
   theme: 'mainnet',
 };
 
+const dapp_net: Configuration = {
+  ...development,
+  path_node: 'eu-node01.dappnet.beam.mw:8200',
+  theme: 'dappnet',
+};
+
 const production: Configuration = {
   ...master_net,
 };
@@ -42,6 +48,7 @@ const config: ConfigurationObject = {
   master_net,
   test_net,
   main_net,
+  dapp_net
 };
 
 const configElement: Configuration = (config as any)[NODE_ENV];
