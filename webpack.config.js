@@ -63,7 +63,7 @@ const config = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.join(__dirname, "./node_modules/beam-wasm-client-masternet/"),
+          from: path.join(__dirname, "./node_modules/beam-wasm-client-dappnet/"),
           globOptions: {
             ignore: ["package.json"],
           },
