@@ -31,11 +31,11 @@ css`
       --color-gradient-start-mainnet: rgba(3, 91, 143, 0);
       --color-gradient-start-testnet: #1a132d;
       --color-gradient-start-masternet: #171717;
-      --color-gradient-start-dappnet: #171717;
+      --color-gradient-start-dappnet: #000a16;
       --color-gradient-finish-mainnet: #035b8f;
       --color-gradient-finish-testnet: #4c3677;
       --color-gradient-finish-masternet: #393939;
-      --color-gradient-finish-dappnet: #393939;
+      --color-gradient-finish-dappnet: #001f45;
     }
 
     @font-face {

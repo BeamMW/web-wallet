@@ -35,6 +35,8 @@ const main_net: Configuration = {
 const dapp_net: Configuration = {
   ...development,
   path_node: 'eu-node01.dappnet.beam.mw:8200',
+  explorer_url: 'https://dappnet.beam.mw/block?kernel_id=',
+  restore_url: 'https://mobile-restore.beam.mw/dappnet/dappnet_recovery.bin',
   theme: 'dappnet',
 };
 
