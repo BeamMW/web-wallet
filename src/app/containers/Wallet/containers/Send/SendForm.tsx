@@ -185,7 +185,7 @@ const SendForm = () => {
 
   const { type: addressType } = addressData;
 
-  const compactAddress = compact(values.address, 15);
+  const compactAddress = useMemo(() => compact(values.address, 15), [values.address]);
 
   useEffect(() => {
     if (selected_asset_id !== 0) {
@@ -420,6 +420,7 @@ const SendForm = () => {
               valid={isAddressValid()}
               placeholder="Paste recipient address here"
               value={focus ? values.address : compactAddress}
+              defaultValue={focus ? values.address : compactAddress}
               onInput={handleAddressChange}
               className="send-input"
               onFocus={() => setFocus(true)}
