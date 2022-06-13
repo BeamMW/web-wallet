@@ -99,6 +99,7 @@ const SeedList: React.FC<SeedListProps> = ({
   data, errors, initial, indexByValue, onInput,
 }) => {
   useEffect(() => {
+    console.log(initial);
     if (initial) {
       fillFromSeed(initial.replace(/\s/g, ';'), true);
     }

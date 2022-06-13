@@ -112,7 +112,7 @@ const SetPassword = () => {
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <span>Confirm Password</span>
+          <span>Confirm password</span>
           <Input
             id="confirm"
             className="input"

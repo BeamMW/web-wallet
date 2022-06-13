@@ -198,7 +198,9 @@ const FullAddress = ({
           )}
           <div className="address-information">{address}</div>
           <Button
-            className={showAddress() || getTitle() === 'ONLINE ADDRESS' ? '' : 'no-title'}
+            className={
+              showAddress() || getTitle() === 'ONLINE ADDRESS' || getTitle() === 'Regular Address' ? '' : 'no-title'
+            }
             variant="icon"
             pallete="white"
             icon={CopySmallIcon}

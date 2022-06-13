@@ -107,7 +107,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     }[variant];
 
     const [inputVisible, setInputVisible] = useState(false);
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState(rest.value ?? '');
 
     const inputHandler = (e) => {
       if (rest?.onChange) rest?.onChange(e);
@@ -123,12 +123,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...rest}
           type={inputVisible ? 'text' : rest.type}
           className={!valid ? 'invalid' : ''}
-          value={inputValue}
           onChange={inputHandler}
         />
         {!!label && <LabelStyled valid={valid}>{label}</LabelStyled>}
 
-        {rest.type === 'password' && inputValue.length ? (
+        {rest.type === 'password' && inputValue?.toString().length ? (
           <Button
             variant="icon"
             icon={!inputVisible ? IconEye : IconEyeCrossed}
