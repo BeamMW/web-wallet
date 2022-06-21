@@ -36,6 +36,14 @@ const main_net: Configuration = {
   explorer_url_confidential_id: 'https://explorer.beam.mw/assets/details/',
 };
 
+const dapp_net: Configuration = {
+  ...development,
+  path_node: 'eu-node02.dappnet.beam.mw:8200',
+  explorer_url: 'https://dappnet.explorer.beam.mw/block?kernel_id=',
+  restore_url: 'https://mobile-restore.beam.mw/dappnet/dappnet_recovery.bin',
+  theme: 'dappnet',
+};
+
 const production: Configuration = {
   ...master_net,
 };
@@ -46,6 +54,7 @@ const config: ConfigurationObject = {
   master_net,
   test_net,
   main_net,
+  dapp_net,
 };
 
 const configElement: Configuration = (config as any)[NODE_ENV];
