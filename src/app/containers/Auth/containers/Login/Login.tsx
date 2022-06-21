@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 
 import {
   Popup, Button, Input, Splash,
@@ -22,13 +22,16 @@ const Login: React.FC = () => {
 
   const inputRef = useRef<HTMLInputElement>();
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    const { value } = inputRef.current;
+  const handleSubmit = useCallback(
+    (event: React.FormEvent) => {
+      event.preventDefault();
+      const { value } = inputRef.current;
 
-    dispatch(setError(null));
-    dispatch(startWallet.request(value));
-  }
+      dispatch(setError(null));
+      dispatch(startWallet.request(value));
+    },
+    [dispatch],
+  );
 
   return (
     <>
@@ -37,6 +40,7 @@ const Login: React.FC = () => {
           <p>Enter your password to access the wallet</p>
           <Input
             autoFocus
+            id="pwd"
             name="password"
             type="password"
             placeholder="Password"

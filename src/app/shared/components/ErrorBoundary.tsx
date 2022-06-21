@@ -1,8 +1,23 @@
 import React from 'react';
+import { styled } from '@linaria/react';
+import { ErrorSvg } from '@app/shared/icons';
 
 interface State {
   hasError: boolean;
 }
+
+const ErrorWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 150px;
+  > svg {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 25px;
+  }
+`;
 
 export default class ErrorBoundary extends React.Component<any, State> {
   constructor(props) {
@@ -25,7 +40,13 @@ export default class ErrorBoundary extends React.Component<any, State> {
     const { hasError } = this.state;
     if (hasError) {
       // You can render any custom fallback UI
-      return <div>Something went wrong.</div>;
+      return (
+        <ErrorWrapper>
+          <ErrorSvg />
+          <h1>Something went wrong.</h1>
+          <h2>Please, reload extension.</h2>
+        </ErrorWrapper>
+      );
     }
 
     const { children } = this.props;

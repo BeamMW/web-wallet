@@ -29,7 +29,7 @@ export function* loadTransactionStatusSaga(
         payment_proof.payment_proof,
       ) as unknown) as PaymentProof;
 
-      yield put(setPaymentProof(payment_proof_validation));
+      yield put(setPaymentProof({ ...payment_proof_validation, ...payment_proof }));
     }
   } catch (e) {
     yield put(actions.loadTransactionStatus.failure(e));

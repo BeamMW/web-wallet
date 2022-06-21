@@ -1,4 +1,4 @@
-export type Pallete = 'green' | 'ghost' | 'purple' | 'blue' | 'red' | 'white';
+export type Pallete = 'green' | 'ghost' | 'purple' | 'blue' | 'red' | 'white' | 'default';
 
 export type ButtonVariant = 'regular' | 'ghost' | 'block' | 'link' | 'icon';
 
@@ -16,6 +16,7 @@ export interface ExternalAppConnection {
 
 export interface CreateAddressParams {
   type: AddressType;
+  comment?: string;
 }
 
 export enum RPCMethod {
@@ -57,7 +58,7 @@ export enum WalletMethod {
 }
 
 export enum ExternalAppMethod {
-  CreateBeamApi = 'create_beam_api'
+  CreateBeamApi = 'create_beam_api',
 }
 
 export interface RemoteRequest {
@@ -78,7 +79,7 @@ export enum BackgroundEvent {
   DOWNLOAD_DB_PROGRESS = 'download_db_progress',
   RESTORE_DB_PROGRESS = 'restore_db_progress',
   UNLOCK_WALLET = 'unlock_wallet',
-  CLOSE_NOTIFICATION = 'close_notification'
+  CLOSE_NOTIFICATION = 'close_notification',
 }
 
 export enum RPCEvent {
@@ -163,6 +164,7 @@ export interface AddressData {
   // extra data from token
   amount: number;
   asset_id: number;
+  peer_id?: string;
 }
 
 export interface SyncProgress extends SyncHash {
@@ -199,6 +201,7 @@ export enum TxStatusString {
   COMPLETED = 'completed',
   SELF_SENDING = 'self sending',
   SENT_TO_OWN_ADDRESS = 'sent to own address',
+  SENT_OFFLINE_TO_OWN_ADDRESS = 'sent offline to own address',
 
   SENT_OFFLINE = 'sent offline',
   RECEIVED_OFFLINE = 'received offline',
@@ -266,6 +269,14 @@ export interface Transaction {
   value: number;
   invoke_data: Contract[];
   appname: string;
+  rates: Rate[];
+}
+
+export interface Rate {
+  from: string | number;
+  rate: number;
+  rate_str: string;
+  to: string;
 }
 
 export interface TransactionDetail extends Transaction {
@@ -273,6 +284,7 @@ export interface TransactionDetail extends Transaction {
   sender_identity: string;
   receiver_identity: string;
   token: string;
+  address_type: AddressType;
 }
 
 export interface WalletChangeEvent {
@@ -343,4 +355,5 @@ export interface PaymentProof {
   kernel: string;
   receiver: string;
   sender: string;
+  payment_proof: string;
 }

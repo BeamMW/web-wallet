@@ -1,10 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect } from 'react';
-import { styled } from '@linaria/react';
 
-import { Button, Window, Section } from '@app/shared/components';
-
-import { ArrowUpIcon, ArrowDownIcon } from '@app/shared/icons';
+import { Window, Section, WalletActions } from '@app/shared/components';
 
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
@@ -19,16 +15,6 @@ import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 import { Assets } from '../../components/Wallet';
 
 const TXS_MAX = 4;
-
-const ActionsStyled = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 10px -14px 0;
-
-  > button {
-    margin: 0 4px !important;
-  }
-`;
 
 const Wallet = () => {
   const dispatch = useDispatch();
@@ -45,28 +31,26 @@ const Wallet = () => {
   }, [dispatch, rate]);
 
   const sorted = transactions.slice().sort(createdComparator);
-  const sliced = sorted.slice(0, TXS_MAX);
+  const txs = sorted.slice(0, TXS_MAX);
+  const assts = assets.slice(0, TXS_MAX);
 
   const navigateToTransactions = useCallback(() => {
     navigate(ROUTES.TRANSACTIONS.BASE);
   }, [navigate]);
 
+  const navigateToAssets = useCallback(() => {
+    navigate(ROUTES.ASSETS.BASE);
+  }, [navigate]);
+
   return (
-    <Window title="Wallet" primary>
-      <ActionsStyled>
-        <Button pallete="purple" icon={ArrowUpIcon} onClick={() => navigate(ROUTES.WALLET.SEND)}>
-          send
-        </Button>
-        <Button pallete="blue" icon={ArrowDownIcon} onClick={() => navigate(ROUTES.WALLET.RECEIVE)}>
-          receive
-        </Button>
-      </ActionsStyled>
-      <Section title="Assets">
-        <Assets data={assets} isBalanceHidden={isBalanceHidden} />
+    <Window title="Wallet" primary showHideButton>
+      <WalletActions />
+      <Section title="Assets" showAllAction={assets.length > TXS_MAX ? navigateToAssets : undefined}>
+        <Assets data={assts} isBalanceHidden={isBalanceHidden} />
       </Section>
 
       <Section title="Transactions" showAllAction={sorted.length > TXS_MAX ? navigateToTransactions : undefined}>
-        <TransactionList data={sliced} isBalanceHidden={isBalanceHidden} />
+        <TransactionList data={txs} isBalanceHidden={isBalanceHidden} />
       </Section>
     </Window>
   );

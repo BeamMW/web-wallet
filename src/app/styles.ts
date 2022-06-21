@@ -19,7 +19,9 @@ css`
       --color-popup-mainnet: #003f6f;
       --color-popup-testnet: #342e41;
       --color-popup-masternet: #323232;
-      --color-popup-dappnet: #323232;
+      --color-hover-mainnet: #114b77;
+      --color-hover-testnet: #711a75;
+      --color-hover-masternet: rgba(255, 255, 255, 0.05);
       --color-select: #184469;
 
       --color-disabled: #8da1ad;
@@ -115,7 +117,7 @@ css`
     }
 
     body {
-      background-color: ${'var(--color-bg-'+config.theme+')'};
+      background-color: ${`var(--color-bg-${config.theme})`};
       font-size: 14px;
       color: white;
     }

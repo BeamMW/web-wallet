@@ -7,8 +7,10 @@ import { ArrowUpIcon } from '@app/shared/icons';
 
 import { styled } from '@linaria/react';
 
-import { fromGroths, compact, toGroths } from '@core/utils';
-import { AddressData, AddressType } from '@core/types';
+import {
+  fromGroths, compact, toGroths, getTxType, truncate, convertLowAmount,
+} from '@core/utils';
+import { AddressData } from '@core/types';
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 
 const BeamAmount = styled.p`
@@ -16,17 +18,6 @@ const BeamAmount = styled.p`
   color: var(--color-violet);
   margin: 0;
 `;
-
-const getTxType = (type: AddressType, offline: boolean): string => {
-  if (type === 'max_privacy') {
-    return 'Maximum anonymity';
-  }
-  if (type === 'public_offline') {
-    return 'Public offline';
-  }
-
-  return offline ? 'Offline' : 'Regular';
-};
 
 interface SendConfirmProps {
   address: string;
@@ -71,31 +62,32 @@ const SendConfirm = (props: SendConfirmProps) => {
       <Section subtitle="Transaction type">{txType}</Section>
       <Section subtitle="Amount">
         <BeamAmount>
-          {fromGroths(value)}
+          {convertLowAmount(Number(amount))}
           &nbsp;
-          {metadata_pairs.UN}
+          {truncate(metadata_pairs.UN)}
         </BeamAmount>
+        {selected.asset_id === 0 && <Rate value={value} groths />}
       </Section>
       <Section subtitle="Transaction Fee">
-        {fromGroths(fee)}
+        {convertLowAmount(fromGroths(fee))}
         &nbsp;BEAM
         <Rate value={fee} groths />
       </Section>
       <Section subtitle="Change">
-        {fromGroths(selected.asset_id === 0 ? change : asset_change)}
+        {convertLowAmount(fromGroths(selected.asset_id === 0 ? change : asset_change))}
         &nbsp;
-        {metadata_pairs.UN}
+        {truncate(metadata_pairs.UN)}
         <Rate value={selected.asset_id === 0 ? change : asset_change} groths />
       </Section>
       <Section subtitle="Remaining">
-        {fromGroths(remaining)}
+        {convertLowAmount(fromGroths(remaining))}
         &nbsp;
-        {metadata_pairs.UN}
+        {truncate(metadata_pairs.UN)}
         <Rate value={remaining} groths />
       </Section>
       {selected.asset_id !== 0 && (
         <Section subtitle="Beam Remaining">
-          {fromGroths(beamRemaining)}
+          {convertLowAmount(fromGroths(beamRemaining))}
           &nbsp;BEAM
           <Rate value={beamRemaining} groths />
         </Section>

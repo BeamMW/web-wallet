@@ -8,7 +8,7 @@ export const deleteWallet = createAsyncAction(
   SettingsActionTypes.DELETE_WALLET,
   SettingsActionTypes.DELETE_WALLET_SUCCESS,
   SettingsActionTypes.DELETE_WALLET_FAILURE,
-)<string, string, ErrorMessage>();
+)<string, void, ErrorMessage>();
 
 export const loadLogs = createAsyncAction(
   SettingsActionTypes.LOAD_LOGS,

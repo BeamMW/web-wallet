@@ -24,7 +24,7 @@ const ContainerStyled = styled.div`
   width: 335px;
   padding: 30px 20px;
   border-radius: 10px;
-  background-color: ${'var(--color-popup-'+config.theme+')'};
+  background-color: ${`var(--color-popup-${config.theme})`};
   text-align: center;
   color: white;
 
