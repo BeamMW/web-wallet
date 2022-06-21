@@ -16,11 +16,11 @@ function getStrengthTitle(value: number) {
     case 5:
       return 'Strong';
     case 3:
-      return 'Medium strength';
+      return 'Medium strong';
     case 2:
       return 'Weak';
     case 1:
-      return 'Very Weak';
+      return 'Very weak';
     default:
       return null;
   }
@@ -43,7 +43,7 @@ const BARS_MAX = 6;
 const ContainerStyled = styled.div`
   position: relative;
   height: 40px;
-  margin: 20px 0;
+  margin: 20px 0 0;
 `;
 
 const ListStyled = styled.ol`

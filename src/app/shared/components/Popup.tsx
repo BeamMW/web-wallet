@@ -1,6 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
+import config from '@app/config';
 import { CancelIcon } from '@app/shared/icons';
 
 import Backdrop from './Backdrop';
@@ -23,7 +24,7 @@ const ContainerStyled = styled.div`
   width: 335px;
   padding: 30px 20px;
   border-radius: 10px;
-  background-color: var(--color-popup);
+  background-color: ${`var(--color-popup-${config.theme})`};
   text-align: center;
   color: white;
 

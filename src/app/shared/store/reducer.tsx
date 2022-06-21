@@ -10,6 +10,7 @@ const initialState: SharedStateType = {
   routerLink: '',
   errorMessage: null,
   isBalanceHidden: !!localStorage.getItem('isBalanceHidden') ?? false,
+  isLocked: !!localStorage.getItem('locked') ?? false,
 };
 
 const reducer = createReducer<SharedStateType, Action>(initialState)
@@ -26,6 +27,14 @@ const reducer = createReducer<SharedStateType, Action>(initialState)
     } else {
       localStorage.removeItem('isBalanceHidden');
     }
+  }))
+  .handleAction(actions.lockWallet, (state) => produce(state, (nexState) => {
+    nexState.isLocked = true;
+    localStorage.setItem('locked', '1');
+  }))
+  .handleAction(actions.unlockWallet, (state) => produce(state, (nexState) => {
+    nexState.isLocked = false;
+    localStorage.removeItem('locked');
   }));
 
 export { reducer as SharedReducer };

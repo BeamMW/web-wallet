@@ -3,6 +3,8 @@ export interface Configuration {
   restore_url: string;
   path_node: string;
   env: string;
+  theme: string;
+  explorer_url_confidential_id: string;
 }
 
 export interface ConfigurationObject {
@@ -11,4 +13,5 @@ export interface ConfigurationObject {
   master_net: Configuration;
   test_net: Configuration;
   main_net: Configuration;
+  dapp_net: Configuration;
 }

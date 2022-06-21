@@ -1,4 +1,7 @@
 import { setupDnode } from '@core/setupDnode';
+import NotificationManager from '@core/NotificationManager';
+
+const notificationManager = NotificationManager.getInstance();
 
 export default class DnodeApp {
   private appApi = null;
@@ -7,8 +10,36 @@ export default class DnodeApp {
 
   async createAppAPI(wallet: any, apiver: string, apivermin: string, appname: string, origin: string) {
     this.appApi = await wallet.createAppAPI(apiver, apivermin, origin, appname, (...args) => {
-      this.appApiHandler(...args);
+      if (!localStorage.getItem('locked')) {
+        this.appApiHandler(...args);
+      } else {
+        this.appApiHandler(
+          JSON.stringify({
+            error: true,
+            errcode: -5,
+            errormsg: 'Wallet is locked',
+          }),
+        );
+      }
     });
+  }
+
+  walletIsLocked() {
+    this.appApiHandler(
+      JSON.stringify({
+        error: true,
+        errcode: -5,
+        errormsg: 'Wallet is locked',
+      }),
+    );
+  }
+
+  walletUnlocked() {
+    this.appApiHandler(
+      JSON.stringify({
+        is_locked: false,
+      }),
+    );
   }
 
   pageApi() {
@@ -17,13 +48,20 @@ export default class DnodeApp {
         this.appApiHandler = handler;
       },
       callWalletApi: async (callid: string, method: string, params) => {
-        const request = {
-          jsonrpc: '2.0',
-          id: callid,
-          method,
-          params,
-        };
-        this.appApi.callWalletApi(JSON.stringify(request));
+        if (!localStorage.getItem('locked')) {
+          const request = {
+            jsonrpc: '2.0',
+            id: callid,
+            method,
+            params,
+          };
+          this.appApi.callWalletApi(JSON.stringify(request));
+        }
+      },
+      lockedReconnect: async (params) => {
+        if (localStorage.getItem('locked')) {
+          notificationManager.openAuthNotification(params, params.appurl);
+        }
       },
     };
   }
