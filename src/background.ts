@@ -14,6 +14,7 @@ const wallet = WasmWallet.getInstance();
 
 let port = null;
 let contentPort = null;
+let notificationPort = null;
 let connected = false;
 let activeTab = null;
 
@@ -31,11 +32,6 @@ function handleConnect(remote) {
 
   port.onDisconnect.addListener(() => {
     connected = false;
-    if (activeTab && port.name === Environment.NOTIFICATION) {
-      // notificationManager.closeTab(activeTab);
-      activeTab = null;
-      notificationManager.appname = ''; // TODO: check with reconnect
-    }
   });
 
   port.onMessage.addListener(({ id, method, params }: RemoteRequest) => {
@@ -53,6 +49,16 @@ function handleConnect(remote) {
       const tabId = remote.sender.tab.id;
       notificationManager.openBeamTabsIDs[tabId] = true;
       activeTab = remote.sender.tab.id;
+      notificationPort = remote;
+      notificationPort.onDisconnect.addListener(() => {
+        if (activeTab) {
+          // notificationManager.closeTab(activeTab);
+          activeTab = null;
+          notificationManager.appname = ''; // TODO: check with reconnect
+          notificationManager.openBeamTabsIDs = {};
+        }
+      });
+
       wallet.init(postMessage, notificationManager.notification);
       break;
     }
@@ -65,21 +71,27 @@ function handleConnect(remote) {
       notificationManager.setReqPort(remote);
       contentPort = remote;
       contentPort.onMessage.addListener((msg) => {
-        if (wallet.isRunning()) {
-          if (wallet.isConnectedSite({ appName: msg.appname, appUrl: remote.sender.url })) {
-            msg.appurl = remote.sender.url;
+        if (wallet.isRunning() && !localStorage.getItem('locked')) {
+          if (wallet.isConnectedSite({ appName: msg.appname, appUrl: remote.sender.origin })) {
+            msg.appurl = remote.sender.origin;
             wallet.connectExternal(msg);
           } else if (msg.type === ExternalAppMethod.CreateBeamApi) {
-            notificationManager.openConnectNotification(msg, remote.sender.url);
-          } else if (msg.type === ExternalAppMethod.CreateBeamApiRetry) {
-            /* eslint-disable-next-line @typescript-eslint/no-unused-expressions */
-            notificationManager.appname === msg.appname
-              ? notificationManager.openPopup()
-              : notificationManager.openConnectNotification(msg, remote.sender.url);
+            if (msg.is_reconnect) {
+              // eslint-disable-next-line
+              notificationManager.appname === msg.appname
+                ? notificationManager.openPopup()
+                : notificationManager.openConnectNotification(msg, remote.sender.origin);
+            } else {
+              notificationManager.openConnectNotification(msg, remote.sender.origin);
+            }
           }
         } else {
-          notificationManager.openAuthNotification(msg, remote.sender.url);
+          notificationManager.openAuthNotification(msg, remote.sender.origin);
         }
+      });
+
+      contentPort.onDisconnect.addListener((e) => {
+        wallet.disconnectAppApi(e.sender.origin);
       });
       break;
     }

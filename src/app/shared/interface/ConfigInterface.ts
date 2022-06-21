@@ -3,6 +3,8 @@ export interface Configuration {
   restore_url: string;
   path_node: string;
   env: string;
+  theme: string;
+  explorer_url_confidential_id: string;
 }
 
 export interface ConfigurationObject {

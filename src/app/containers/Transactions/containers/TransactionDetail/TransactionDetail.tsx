@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { styled } from '@linaria/react';
+import React, {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import { useParams } from 'react-router-dom';
 import { Window } from '@app/shared/components';
 
@@ -11,33 +12,7 @@ import { selectAssets } from '@app/containers/Wallet/store/selectors';
 import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 import { toast } from 'react-toastify';
 import { copyToClipboard } from '@core/utils';
-
-const TransactionTabs = styled.div`
-  display: flex;
-  margin: 0 -30px;
-  .transaction-item {
-    padding: 10px 30px;
-    font-size: 14px;
-    font-weight: 500;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: 3px;
-    text-align: center;
-    color: #fff;
-    text-transform: uppercase;
-    opacity: 0.5;
-    cursor: pointer;
-    &.active {
-      opacity: 1;
-      border-bottom: 3px solid #00f6d2;
-    }
-  }
-`;
-
-const TransactionDetailWrapper = styled.div`
-  padding: 30px 0;
-`;
+import { DetailInfoWrapper, DetailTabs } from '@app/shared/components/DetailInformationLayout';
 
 const TransactionDetail = () => {
   const params = useParams();
@@ -72,43 +47,73 @@ const TransactionDetail = () => {
     copyToClipboard(value);
   }, []);
 
+  const assetRate = useMemo(() => {
+    if (!transactionDetail) return null;
+    let rate = transactionDetail?.rates.find((a) => a.from === transactionDetail.asset_id && a.to === 'usd');
+
+    if (!rate && transactionDetail.invoke_data?.length && transactionDetail.invoke_data[0].amounts.length === 1) {
+      rate = transactionDetail?.rates.find(
+        (a) => a.from === transactionDetail.invoke_data[0].amounts[0].asset_id && a.to === 'usd',
+      );
+    }
+
+    return rate;
+  }, [transactionDetail]);
+
+  const feeRate = useMemo(() => {
+    if (!transactionDetail) return null;
+    const rate = transactionDetail?.rates.find((a) => a.from === 0 && a.to === 'usd');
+
+    return rate;
+  }, [transactionDetail]);
+
   return (
     <Window title="Transaction Info">
-      <TransactionTabs>
-        <div
-          role="link"
-          className={`transaction-item ${activeTab === 'general' ? 'active' : ''}`}
-          onClick={() => setActiveTab('general')}
-          onKeyDown={handleButton}
-          tabIndex={0}
-        >
-          General
-        </div>
-        {paymentProof && (
+      {!transactionDetail?.invoke_data?.length && !transactionDetail?.income && (
+        <DetailTabs>
           <div
             role="link"
-            className={`transaction-item ${activeTab === 'payment-proof' ? 'active' : ''}`}
-            onClick={() => setActiveTab('payment-proof')}
+            className={`transaction-item ${activeTab === 'general' ? 'active' : ''}`}
+            onClick={() => setActiveTab('general')}
             onKeyDown={handleButton}
-            tabIndex={-1}
+            tabIndex={0}
           >
-            Payment proof
+            General
           </div>
-        )}
-      </TransactionTabs>
-      <TransactionDetailWrapper>
+          {paymentProof && (
+            <div
+              role="link"
+              className={`transaction-item ${activeTab === 'payment-proof' ? 'active' : ''}`}
+              onClick={() => setActiveTab('payment-proof')}
+              onKeyDown={handleButton}
+              tabIndex={-1}
+            >
+              Payment proof
+            </div>
+          )}
+        </DetailTabs>
+      )}
+      <DetailInfoWrapper>
         {activeTab === 'general' && transactionDetail && (
           <GeneralTransactionInformation
             transactionDetail={transactionDetail}
             assets={assets}
             isBalanceHidden={isBalanceHidden}
             copy={copy}
+            assetRate={assetRate}
+            feeRate={feeRate}
           />
         )}
         {activeTab === 'payment-proof' && (
-          <PaymentProofInformation paymentProof={paymentProof} isBalanceHidden={isBalanceHidden} copy={copy} />
+          <PaymentProofInformation
+            transactionDetail={transactionDetail}
+            paymentProof={paymentProof}
+            isBalanceHidden={isBalanceHidden}
+            copy={copy}
+            assetRate={assetRate}
+          />
         )}
-      </TransactionDetailWrapper>
+      </DetailInfoWrapper>
     </Window>
   );
 };

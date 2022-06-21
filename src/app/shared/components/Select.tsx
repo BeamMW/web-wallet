@@ -4,6 +4,7 @@ import React, {
 import { styled } from '@linaria/react';
 
 import { css } from '@linaria/core';
+import config from '@app/config';
 import Angle from './Angle';
 
 const ContainerStyled = styled.div`
@@ -20,7 +21,7 @@ const SelectStyled = styled.div`
   margin-top: 8px;
   padding: 10px 0;
   border-radius: 10px;
-  background-color: var(--color-select);
+  background-color: ${`var(--color-popup-${config.theme})`};
 `;
 
 const OptionStyled = styled.div`

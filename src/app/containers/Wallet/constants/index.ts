@@ -2,10 +2,11 @@ import { AssetTotal } from '@app/containers/Wallet/interfaces';
 
 export const GROTHS_IN_BEAM = 100000000;
 export const AMOUNT_MAX = 253999999.9999999;
+export const AMOUNT_MIN = 0.00000001;
 export const FEE_DEFAULT = 100000;
 
 export enum AddressLabel {
-  ERROR = 'Invalid wallet address',
+  ERROR = 'Incorrect address',
   MAX_PRIVACY = 'Guarantees maximum anonymity set of up to 64K.',
   OFFLINE = 'Offline address.',
   REGULAR = 'Online address',
@@ -21,6 +22,7 @@ export enum AddressTip {
 export enum AmountError {
   FEE = 'Insufficient funds to pay transaction fee.',
   AMOUNT = 'Insufficient funds to complete the transaction. Maximum amount is ',
+  LESS = 'Insufficient funds to complete the transaction. Minimum amount is 0.00000001 BEAM',
 }
 
 export const ASSET_BLANK: AssetTotal = {
