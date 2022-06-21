@@ -16,7 +16,7 @@ const ContainerStyled = styled.div<SplashProps>`
   position: relative;
   height: 600px;
   padding: 120px 30px 0;
-  background-image: url('/assets/background.png');
+  background-image: url('/assets/bg-new.svg');
   text-align: center;
 `;
 
@@ -25,20 +25,22 @@ const TitleStyled = styled.div<SplashProps>`
   text-align: center;
   font-size: 16px;
   font-weight: 700;
-  color: var(--color-blue);
+  color: #fff;
+  opacity: 0.7;
 `;
 
 const backButtonStyle = css`
   top: 23px;
 `;
 
-export const Splash: React.FC<SplashProps> = ({
-  size, blur, onReturn, children,
-}) => (
+export const Splash: React.FC<SplashProps> = ({ size, blur, onReturn, children }) => (
   <ContainerStyled blur={blur}>
     {onReturn && <BackButton onClick={onReturn} className={backButtonStyle} />}
     <Logo size={size} />
-    <TitleStyled size={size}>Scalable confidential cryptocurrency</TitleStyled>
+    <TitleStyled size={size}>
+      Confidential DeFi Platform <br />
+      and Cryptocurrency
+    </TitleStyled>
     {children}
   </ContainerStyled>
 );

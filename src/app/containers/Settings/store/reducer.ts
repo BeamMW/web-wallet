@@ -16,14 +16,20 @@ const initialState: SettingsStateType = {
 };
 
 const reducer = createReducer<SettingsStateType, Action>(initialState)
-  .handleAction(actions.loadLogs.success, (state, action) => produce(state, (nexState) => {
-    nexState.logs = action.payload;
-  }))
-  .handleAction(actions.loadConnectedSites.success, (state, action) => produce(state, (nexState) => {
-    nexState.connectedSites = action.payload;
-  }))
-  .handleAction(actions.loadVersion.success, (state, action) => produce(state, (nexState) => {
-    nexState.version = action.payload;
-  }));
+  .handleAction(actions.loadLogs.success, (state, action) =>
+    produce(state, (nexState) => {
+      nexState.logs = action.payload;
+    }),
+  )
+  .handleAction(actions.loadConnectedSites.success, (state, action) =>
+    produce(state, (nexState) => {
+      nexState.connectedSites = action.payload;
+    }),
+  )
+  .handleAction(actions.loadVersion.success, (state, action) =>
+    produce(state, (nexState) => {
+      nexState.version = action.payload;
+    }),
+  );
 
 export { reducer as SettingsReducer };

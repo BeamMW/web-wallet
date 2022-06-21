@@ -90,12 +90,13 @@ export default class ExtensionPlatform {
     });
   }
 
-  closeCurrentWindow = () => extension.windows.getCurrent((windowDetails) => {
-    if (windowDetails.id !== undefined) {
-      return extension.windows.remove(windowDetails.id);
-    }
-    return false;
-  });
+  closeCurrentWindow = () =>
+    extension.windows.getCurrent((windowDetails) => {
+      if (windowDetails.id !== undefined) {
+        return extension.windows.remove(windowDetails.id);
+      }
+      return false;
+    });
 
   getVersion = () => extension.runtime.getManifest().version;
 

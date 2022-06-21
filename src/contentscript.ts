@@ -74,9 +74,9 @@ window.addEventListener('message', (event) => {
     apiver: event.data.apiver,
     apivermin: event.data.apivermin,
     appname: event.data.appname,
-    is_reconnect: event.data.is_reconnect
+    is_reconnect: event.data.is_reconnect,
   };
-  
+
   if (event.data.type === 'create_beam_api') {
     if (event.data.is_reconnect) {
       extensionPort.postMessage(reqData);

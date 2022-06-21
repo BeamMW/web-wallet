@@ -1,27 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {
-  useCallback, useEffect, useMemo, useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  AmountInput, Button, Input, Rate, Section, Title, Window,
-} from '@app/shared/components';
+import { AmountInput, Button, Input, Rate, Section, Title, Window } from '@app/shared/components';
 
-import { ArrowRightIcon, ArrowUpIcon, IconCancel } from '@app/shared/icons';
+import { ArrowRightIcon, ArrowUpIcon, CopySmallIcon, IconCancel, InfoButton } from '@app/shared/icons';
 
 import { styled } from '@linaria/react';
 import LabeledToggle from '@app/shared/components/LabeledToggle';
 import { css } from '@linaria/core';
-import { fromGroths, toGroths, truncate } from '@core/utils';
+import { compact, convertLowAmount, fromGroths, toGroths, truncate } from '@core/utils';
 import { useFormik } from 'formik';
 
-import {
-  AddressLabel, AddressTip, AmountError, ASSET_BLANK,
-} from '@app/containers/Wallet/constants';
+import { AddressLabel, AddressTip, AmountError, ASSET_BLANK, FEE_DEFAULT } from '@app/containers/Wallet/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   resetSendData,
   sendTransaction,
+  setSbbs,
+  setSelectedAssetId,
   validateAmount,
   validateSendAddress,
 } from '@app/containers/Wallet/store/actions';
@@ -30,12 +26,14 @@ import {
   selectAssets,
   selectChange,
   selectIsSendReady,
+  selectSbbs,
+  selectSelectedAssetId,
   selectSendAddressData,
   selectSendFee,
 } from '@app/containers/Wallet/store/selectors';
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 import { AddressData } from '@core/types';
-import { SendConfirm } from '@app/containers';
+import { FullAddress, SendConfirm } from '@app/containers';
 
 const WarningStyled = styled.div`
   margin: 30px -20px;
@@ -54,7 +52,7 @@ interface SendFormData {
   address: string;
   offline: boolean;
   send_amount: TransactionAmount;
-
+  comment: string;
   misc: {
     beam: AssetTotal;
     selected: AssetTotal;
@@ -65,9 +63,7 @@ interface SendFormData {
 
 const validate = async (values: SendFormData, setHint: (string) => void) => {
   const errors: any = {};
-  const {
-    addressData, selected, beam, fee,
-  } = values.misc;
+  const { addressData, selected, beam, fee } = values.misc;
 
   if (!values.address.length) {
     errors.address = '';
@@ -77,10 +73,11 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
     errors.address = AddressLabel.ERROR;
   }
 
-  if (values.offline) {
-    const warning = addressData.payments > 1
-      ? 'transactions left.'
-      : 'transaction left. Ask receiver to come online to support more offline transactions.';
+  if (values.offline && addressData.type !== 'max_privacy' && addressData.type !== 'public_offline') {
+    const warning =
+      addressData.payments > 1
+        ? 'transactions left.'
+        : 'transaction left. Ask receiver to come online to support more offline transactions.';
 
     const label = `${AddressLabel.OFFLINE} ${addressData.payments} ${warning}`;
 
@@ -101,14 +98,23 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
   const { available } = selected;
   const value = toGroths(parseFloat(send_amount.amount));
 
-  const total = value + fee;
+  const total = value + (send_amount.asset_id === 0 ? fee : 0);
+
+  if (
+    Number(send_amount.amount) < 0.00000001 &&
+    Number(send_amount.amount) !== 0 &&
+    send_amount.amount !== '' &&
+    send_amount.asset_id === 0
+  ) {
+    errors.send_amount = AmountError.LESS;
+  }
 
   if (beam.available < fee) {
     errors.send_amount = AmountError.FEE;
   }
 
   if (total > available) {
-    const max = fromGroths(available - fee);
+    const max = fromGroths(available - (send_amount.asset_id === 0 ? fee : 0));
     errors.send_amount = `${AmountError.AMOUNT} ${max} ${truncate(selected.metadata_pairs.UN)}`;
   }
 
@@ -118,9 +124,13 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
 const SendForm = () => {
   const dispatch = useDispatch();
   const [showConfirm, setShowConfirm] = useState(false);
+  const [focus, setFocus] = useState(false);
+  const [showFullAddress, setShowFullAddress] = useState(false);
   const [validateInterval, setValidateInterval] = useState<null | NodeJS.Timer>(null);
   const [validateAmountInterval, setValidateAmountInterval] = useState<null | NodeJS.Timer>(null);
   const addressData = useSelector(selectSendAddressData());
+  const sbbs = useSelector(selectSbbs());
+
   const [warning, setWarning] = useState('');
   const [hint, setHint] = useState('');
   const [selected, setSelected] = useState(ASSET_BLANK);
@@ -131,6 +141,7 @@ const SendForm = () => {
   const change = useSelector(selectChange());
   const asset_change = useSelector(selectAssetChange());
   const is_send_ready = useSelector(selectIsSendReady());
+  const selected_asset_id = useSelector(selectSelectedAssetId());
 
   const beam = useMemo(() => assets.find((a) => a.asset_id === 0), [assets]);
 
@@ -140,8 +151,9 @@ const SendForm = () => {
       offline: false,
       send_amount: {
         amount: '',
-        asset_id: 0,
+        asset_id: selected_asset_id,
       },
+      comment: '',
       misc: {
         addressData,
         fee,
@@ -156,15 +168,27 @@ const SendForm = () => {
     },
   });
 
-  const {
-    values, setFieldValue, errors, submitForm,
-  } = formik;
+  const { values, setFieldValue, errors, submitForm } = formik;
 
   const { type: addressType } = addressData;
+
+  const compactAddress = useMemo(() => compact(values.address, 15), [values.address]);
+
+  useEffect(() => {
+    if (selected_asset_id !== 0) {
+      const current_asset = assets.find((a) => a.asset_id === selected_asset_id);
+
+      setSelected(current_asset);
+      setFieldValue('send_amount', { amount: 0, asset_id: selected_asset_id }, true);
+      setFieldValue('misc.selected', current_asset, true);
+    }
+  }, [selected_asset_id, setFieldValue, assets, dispatch]);
 
   useEffect(
     () => () => {
       dispatch(resetSendData());
+      dispatch(setSelectedAssetId(0));
+      dispatch(setSbbs(null));
     },
     [dispatch],
   );
@@ -225,7 +249,7 @@ const SendForm = () => {
       if (addressData.type === 'public_offline') {
         setWarning(AddressTip.OFFLINE);
         setHint(AddressLabel.OFFLINE);
-
+        setFieldValue('offline', true, false);
         validateAmountHandler(values.send_amount, true);
         return;
       }
@@ -263,12 +287,14 @@ const SendForm = () => {
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
+
     setFieldValue('address', value, true);
     if (value.length) validateAddressHandler(value);
   };
 
   const handleAssetChange = (e: TransactionAmount) => {
     const isMaxPrivacy = addressData.type === 'max_privacy';
+
     setFieldValue('send_amount', e, true);
     const asset = assets.find(({ asset_id: id }) => id === e.asset_id) ?? ASSET_BLANK;
     setSelected(asset);
@@ -276,11 +302,17 @@ const SendForm = () => {
     validateAmountHandler(e, values.offline || isMaxPrivacy);
   };
 
-  const handleMaxAmount = () => {
+  const handleMaxAmount = (offline?: boolean) => {
     const { available } = selected;
     const { send_amount } = values;
     const isMaxPrivacy = addressData.type === 'max_privacy';
-    const total = send_amount.asset_id === 0 ? Math.max(available - fee, 0) : available;
+    let currentFee = values.offline || isMaxPrivacy || offline ? 1100000 : fee;
+
+    if (typeof offline !== 'undefined') {
+      currentFee = offline ? 1100000 : FEE_DEFAULT;
+    }
+
+    const total = send_amount.asset_id === 0 ? Math.max(available - currentFee, 0) : available;
     const new_amount = fromGroths(total).toString();
 
     const amount = {
@@ -290,12 +322,24 @@ const SendForm = () => {
 
     setFieldValue('send_amount', amount, true);
 
-    validateAmountHandler(amount, values.offline || isMaxPrivacy);
+    validateAmountHandler(amount, values.offline || isMaxPrivacy || offline);
   };
 
   const handleOffline = (e: boolean) => {
     setFieldValue('offline', e, true);
-    validateAmountHandler(values.send_amount, e);
+    const { send_amount } = values;
+    const { amount, asset_id } = send_amount;
+    if (amount === '0') {
+      validateAmountHandler(values.send_amount, e);
+    } else if (asset_id === 0) {
+      const { available } = selected;
+      const value = Number(amount);
+      const val = available - toGroths(value);
+
+      if (fromGroths(val) < 1) {
+        handleMaxAmount(e);
+      }
+    }
   };
 
   const getAddressHint = () => {
@@ -308,7 +352,7 @@ const SendForm = () => {
   };
 
   const submitSend = useCallback(() => {
-    const { send_amount, address, offline } = values;
+    const { send_amount, address, offline, comment } = values;
     const isMaxPrivacy = addressData.type === 'max_privacy';
     const value = send_amount.amount === '' ? 0 : toGroths(parseFloat(send_amount.amount));
 
@@ -316,7 +360,7 @@ const SendForm = () => {
       fee,
       value,
       address,
-      comment: '',
+      comment,
       asset_id: send_amount.asset_id,
       offline: offline || isMaxPrivacy,
     };
@@ -340,7 +384,17 @@ const SendForm = () => {
     return !(is_send_ready && errors.address);
   };
 
-  return (
+  return showFullAddress ? (
+    <FullAddress
+      addressData={addressData}
+      pallete="purple"
+      address={values.address}
+      onClose={() => setShowFullAddress(false)}
+      hint={getAddressHint()}
+      isOffline={values.offline}
+      sbbs={sbbs}
+    />
+  ) : (
     <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
       {!showConfirm ? (
         <form onSubmit={submitForm}>
@@ -350,13 +404,26 @@ const SendForm = () => {
               label={getAddressHint()}
               valid={isAddressValid()}
               placeholder="Paste recipient address here"
-              value={values.address}
+              value={focus ? values.address : compactAddress}
+              defaultValue={focus ? values.address : compactAddress}
               onInput={handleAddressChange}
               className="send-input"
+              onFocus={() => setFocus(true)}
+              onBlur={() => setFocus(false)}
             />
+
+            <Button
+              className="full-address-button"
+              variant="icon"
+              disabled={!values.address || !addressData.is_valid}
+              pallete="white"
+              icon={InfoButton}
+              onClick={() => setShowFullAddress(true)}
+            />
+
             {values.address && <IconCancel className="cancel-button" onClick={() => setFieldValue('address', '')} />}
           </Section>
-          {addressType === 'offline' && (
+          {values.address && addressType === 'offline' && (
             <Section title="Transaction Type" variant="gray">
               <LabeledToggle left="Online" right="Offline" value={values.offline} onChange={(e) => handleOffline(e)} />
             </Section>
@@ -369,7 +436,7 @@ const SendForm = () => {
               onChange={(e) => handleAssetChange(e)}
             />
             <Title variant="subtitle">Available</Title>
-            {`${groths} ${truncate(selected.metadata_pairs.N)}`}
+            {`${convertLowAmount(groths)} ${truncate(selected.metadata_pairs.N)}`}
             {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
             {groths > 0 && (
               <Button
@@ -377,19 +444,20 @@ const SendForm = () => {
                 variant="link"
                 pallete="purple"
                 className={maxButtonStyle}
-                onClick={handleMaxAmount}
+                onClick={() => handleMaxAmount()}
               >
                 max
               </Button>
             )}
           </Section>
-          {/* <Section title="Comment" variant="gray" collapse>
-          <Input
-            variant="gray"
-            value={comment}
-            onInput={onCommentChange}
-          />
-        </Section> */}
+          <Section title="Comment" variant="gray" collapse>
+            <Input
+              variant="gray"
+              placeholder="Comment"
+              value={values.comment}
+              onChange={(e) => setFieldValue('comment', e.target.value)}
+            />
+          </Section>
           <WarningStyled>{warning}</WarningStyled>
           <Button pallete="purple" icon={ArrowRightIcon} type="submit" disabled={isFormDisabled()}>
             next

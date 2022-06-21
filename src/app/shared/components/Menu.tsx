@@ -3,10 +3,11 @@ import React from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
-import { CancelIcon } from '@app/shared/icons';
+import { CancelIcon, HelpIcon, SettingsIcon, WalletIcon } from '@app/shared/icons';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
+import config from '@app/config';
 import Button from './Button';
 import BackDrop from './Backdrop';
 
@@ -14,14 +15,18 @@ const MENU_ITEMS = [
   {
     title: 'Wallet',
     value: ROUTES.WALLET.BASE,
+    IconComponent: WalletIcon,
   },
-  // {
-  //   title: 'UTXO',
-  //   value: View.UTXO,
-  // },
   {
     title: 'Settings',
     value: ROUTES.SETTINGS.BASE,
+    IconComponent: SettingsIcon,
+  },
+  {
+    title: 'Documentation',
+    value: 'https://documentation.beam.mw/',
+    outside: true,
+    IconComponent: HelpIcon,
   },
 ];
 
@@ -32,7 +37,7 @@ const ContainerStyled = styled.nav`
   left: 0;
   width: 319px;
   height: 550px;
-  background-image: linear-gradient(to bottom, #0a4c7e, #042548);
+  background: ${`var(--color-popup-${config.theme})`};
 `;
 
 const ListStyled = styled.ul`
@@ -42,11 +47,17 @@ const ListStyled = styled.ul`
 const ListItemStyled = styled.li<{ active: boolean }>`
   height: 60px;
   line-height: 60px;
-  padding-left: 70px;
-  background-image: ${({ active }) => (!active ? 'none' : 'linear-gradient(to right, rgba(5, 226, 194, 0.1), rgba(5, 226, 194, 0))')};
+  padding-left: 30px;
+  background-image: ${({ active }) =>
+    !active ? 'none' : 'linear-gradient(to right, rgba(5, 226, 194, 0.1), rgba(5, 226, 194, 0))'};
   text-align: left;
   font-size: 16px;
   cursor: ${({ active }) => (active ? 'default' : 'pointer')};
+  display: flex;
+  align-items: center;
+  > svg {
+    margin-right: 26px;
+  }
 `;
 
 const buttonStyle = css`
@@ -66,7 +77,12 @@ const Menu: React.FC<MenuProps> = ({ onCancel }) => {
 
   const handleClick: React.MouseEventHandler<HTMLLIElement> = ({ currentTarget }) => {
     const index = parseInt(currentTarget.dataset.index, 10);
-    navigate(MENU_ITEMS[index].value);
+    const item = MENU_ITEMS[index];
+    if (!item.outside) {
+      navigate(item.value);
+    } else {
+      window.open(item.value);
+    }
   };
 
   return (
@@ -74,9 +90,9 @@ const Menu: React.FC<MenuProps> = ({ onCancel }) => {
       <ContainerStyled>
         <Button variant="icon" icon={CancelIcon} className={buttonStyle} onClick={onCancel} />
         <ListStyled>
-          {MENU_ITEMS.map(({ title, value }, index) => (
+          {MENU_ITEMS.map(({ title, value, IconComponent }, index) => (
             <ListItemStyled key={value} active={location.pathname === value} data-index={index} onClick={handleClick}>
-              {title}
+              <IconComponent /> {title}
             </ListItemStyled>
           ))}
         </ListStyled>

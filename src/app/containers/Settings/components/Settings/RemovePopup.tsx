@@ -8,6 +8,7 @@ import { CancelIcon, ArrowRightIcon, RemoveIcon } from '@app/shared/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteWallet } from '@app/containers/Settings/store/actions';
 import { selectErrorMessage } from '@app/shared/store/selectors';
+import { setError } from '@app/shared/store/actions';
 
 interface RemovePopupProps {
   visible?: boolean;
@@ -19,6 +20,10 @@ const RemovePopup: React.FC<RemovePopupProps> = ({ visible, onCancel }) => {
   const [warned, setWarned] = useState(false);
   const dispatch = useDispatch();
   const error = useSelector(selectErrorMessage());
+
+  const clearError = () => {
+    dispatch(setError(null));
+  };
 
   const handleConfirm: React.MouseEventHandler = () => {
     if (warned) {
@@ -35,7 +40,7 @@ const RemovePopup: React.FC<RemovePopupProps> = ({ visible, onCancel }) => {
     </Button>
   ) : (
     <Button pallete="red" icon={ArrowRightIcon} onClick={handleConfirm}>
-      proceed
+      next
     </Button>
   );
 
@@ -43,16 +48,22 @@ const RemovePopup: React.FC<RemovePopupProps> = ({ visible, onCancel }) => {
     <Popup
       visible={visible}
       title="Remove current wallet"
-      cancelButton={(
+      cancelButton={
         <Button variant="ghost" icon={CancelIcon} onClick={onCancel}>
           cancel
         </Button>
-      )}
+      }
       confirmButton={confirmButton}
       onCancel={onCancel}
     >
       {warned ? (
-        <Input label={!error ? 'Password' : error} type="password" ref={inputRef} valid={!error} />
+        <Input
+          label={!error ? 'Password' : error}
+          type="password"
+          ref={inputRef}
+          valid={!error}
+          onChange={clearError}
+        />
       ) : (
         <>
           All data will be erased. Make sure you’ve saved your seed phrase if you want to restore this wallet later on!
