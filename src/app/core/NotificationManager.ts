@@ -77,7 +77,7 @@ export default class NotificationManager {
         appname: msg.appname,
         apiver: msg.apiver,
         apivermin: msg.apivermin,
-        is_reconnect: msg.is_reconnect
+        is_reconnect: msg.is_reconnect,
       },
     };
     this.notificationIsOpen = true;
@@ -122,25 +122,28 @@ export default class NotificationManager {
     return new Error(lastError.message);
   };
 
-  getActiveTabs = () => new Promise<any[]>((resolve, reject) => {
-    extensionizer.tabs.query({ active: true }, (tabs) => {
-      const error = this.checkForError();
-      if (error) {
-        return reject(error);
-      }
-      return resolve(tabs);
+  getActiveTabs = () =>
+    new Promise<any[]>((resolve, reject) => {
+      extensionizer.tabs.query({ active: true }, (tabs) => {
+        const error = this.checkForError();
+        if (error) {
+          return reject(error);
+        }
+        return resolve(tabs);
+      });
     });
-  });
 
   async triggerUi() {
     const tabs = await this.getActiveTabs();
 
-    for (var item of tabs) {
-      if (this.openBeamTabsIDs[item.id] !== undefined) {
-        await this.closeTab(item.id);
-        delete this.openBeamTabsIDs[item.id];
-      }
-    }
+    await Promise.all(
+      tabs.map(async (item) => {
+        if (this.openBeamTabsIDs[item.id] !== undefined) {
+          await this.closeTab(item.id);
+          delete this.openBeamTabsIDs[item.id];
+        }
+      }),
+    );
 
     const currentlyActiveBeamTab = Boolean(tabs.find((tab) => this.openBeamTabsIDs[tab.id]));
     if (!this.uiIsTriggering && !currentlyActiveBeamTab) {

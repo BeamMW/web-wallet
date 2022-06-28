@@ -10,6 +10,7 @@ interface SectionProps {
   collapse?: boolean;
   variant?: 'regular' | 'gray';
   showAllAction?: () => void;
+  defaultCollapseState?: boolean;
 }
 
 const SectionStyled = styled.div`
@@ -38,14 +39,23 @@ const SectionGrayStyled = styled.div`
   background-color: rgba(255, 255, 255, 0.05);
   text-align: left;
 
-  > .cancel-button {
+  > .full-address-button {
     position: absolute;
     top: 68px;
+    cursor: pointer;
+    background: #202124;
+    margin: 0;
     right: 20px;
+  }
+
+  > .cancel-button {
+    position: absolute;
+    top: 73px;
+    right: 47px;
     cursor: pointer;
   }
   > .send-input {
-    width: 95%;
+    width: 88%;
   }
 `;
 
@@ -86,8 +96,9 @@ const Section: React.FC<SectionProps> = ({
   subtitle,
   children,
   showAllAction,
+  defaultCollapseState,
 }) => {
-  const [hidden, setHidden] = useState(collapse);
+  const [hidden, setHidden] = useState(defaultCollapseState ?? collapse);
 
   const handleMouseDown: React.MouseEventHandler = () => {
     setHidden(!hidden);

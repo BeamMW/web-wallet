@@ -1,6 +1,4 @@
-import {
-  createStore, applyMiddleware, compose, Middleware, MiddlewareAPI, Dispatch,
-} from 'redux';
+import { createStore, applyMiddleware, compose, Middleware, MiddlewareAPI, Dispatch } from 'redux';
 
 import createSagaMiddleware from 'redux-saga';
 

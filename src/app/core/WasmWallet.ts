@@ -8,9 +8,7 @@ import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
 import { ExternalAppConnection, NotificationType } from '@core/types';
-import {
-  BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
-} from './types';
+import { BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod } from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
 
@@ -21,7 +19,7 @@ const PATH_DB = '/beam_wallet/wallet.db';
 const notificationManager = NotificationManager.getInstance();
 
 let WasmWalletClient;
-var MyModule;
+let MyModule;
 export interface WalletEvent<T = any> {
   id: number | RPCEvent | BackgroundEvent;
   result: T;
@@ -187,13 +185,15 @@ export default class WasmWallet {
   static convertTokenToJson(token: string) {
     try {
       const json = WasmWalletClient.ConvertTokenToJson(token);
+
       const result = JSON.parse(json);
 
-      const { Amount: amount, AssetID: id } = result.params;
+      const { Amount: amount, AssetID: id, PeerID: peer_id } = result.params;
 
       return {
         amount: !amount ? null : parseFloat(amount) / GROTHS_IN_BEAM,
         asset_id: !id ? null : parseInt(id, 10),
+        peer_id,
       };
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -278,15 +278,18 @@ export default class WasmWallet {
     if (this.isRunning()) {
       this.emit(BackgroundEvent.UNLOCK_WALLET, true);
       if (notificationManager.notification && notificationManager.notification.type === NotificationType.AUTH) {
-        if (this.isConnectedSite({ 
-            appName: notificationManager.notification.params.appname, 
-            appUrl: notificationManager.notification.params.appurl })) {
-          if(!notificationManager.notification.params.is_reconnect) {
+        if (
+          this.isConnectedSite({
+            appName: notificationManager.notification.params.appname,
+            appUrl: notificationManager.notification.params.appurl,
+          })
+        ) {
+          if (!notificationManager.notification.params.is_reconnect) {
             this.connectExternal(notificationManager.notification.params);
           } else {
-            for (let url in this.apps) {
+            Object.values(this.apps).forEach((url: string) => {
               this.apps[url].walletUnlocked();
-            }
+            });
           }
           this.emit(BackgroundEvent.CLOSE_NOTIFICATION);
         } else {
@@ -378,8 +381,10 @@ export default class WasmWallet {
   }
 
   removeConnectedSite(site: ExternalAppConnection) {
-    this.connectedApps.splice(this.connectedApps.findIndex(el => 
-      el.appUrl === site.appUrl && el.appName === site.appName), 1);
+    this.connectedApps.splice(
+      this.connectedApps.findIndex((el) => el.appUrl === site.appUrl && el.appName === site.appName),
+      1,
+    );
 
     extensionizer.storage.local.set({
       sites: this.connectedApps,
@@ -618,7 +623,7 @@ export default class WasmWallet {
               is_running: true,
               notification,
             });
-            //notificationManager.openConnectNotification(params, params.appurl)
+            // notificationManager.openConnectNotification(params, params.appurl)
           }
         }
         break;
@@ -666,9 +671,9 @@ export default class WasmWallet {
         this.emit(id, WasmWallet.loadLogs());
         break;
       case WalletMethod.WalletLocked:
-        for (let url in this.apps) {
+        Object.values(this.apps).forEach((url: string) => {
           this.apps[url].walletIsLocked();
-        }
+        });
 
         break;
       default:

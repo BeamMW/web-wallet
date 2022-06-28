@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
-import {
-  Button, Footer, Popup, Window,
-} from '@app/shared/components';
+import { Button, Footer, Popup, Window } from '@app/shared/components';
 import { ArrowRightIcon } from '@app/shared/icons';
 
 import { ROUTES } from '@app/shared/constants';
@@ -73,11 +71,11 @@ const RegistrationConfirm: React.FC = () => {
         visible={warningVisible}
         title="Back to seed phrase"
         footerClass="justify-right"
-        confirmButton={(
+        confirmButton={
           <Button type="button" onClick={handlePrevious}>
             generate
           </Button>
-        )}
+        }
         onCancel={() => toggleWarning(false)}
       >
         Your current seed will become obsolete and the new seed will be generated

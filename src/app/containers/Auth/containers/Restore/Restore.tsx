@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button, Footer, Window } from '@app/shared/components';
 
@@ -8,19 +8,34 @@ import { SeedList } from '@app/containers/Auth/components';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setRegistrationSeed, setSeedResult, updateSeedList } from '@app/containers/Auth/store/actions';
-import { selectSeedCache, selectSeedErrors } from '@app/containers/Auth/store/selectors';
+import { selectSeedCache, selectSeedErrors, selectSeedValues } from '@app/containers/Auth/store/selectors';
 
 const Restore: React.FC = () => {
   const [interval, updateInterval] = useState<null | NodeJS.Timer>(null);
+  const [cache, setCache] = useState('');
 
   const dispatch = useDispatch();
 
   const errors = useSelector(selectSeedErrors());
-  const cache = useSelector(selectSeedCache());
+  const seedCache = useSelector(selectSeedCache());
+  const seedValues = useSelector(selectSeedValues());
 
   const valid = !errors.filter((v) => !v).length;
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (seedCache) {
+      setCache(cache);
+    }
+  }, [seedCache]);
+
+  useEffect(() => {
+    if (seedValues.length === 12) {
+      const v = `${seedValues.toString().replace(new RegExp(',', 'g'), ';')};`;
+      setCache(v);
+    }
+  }, [seedValues]);
 
   const handleSubmit: React.ChangeEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
@@ -46,7 +61,7 @@ const Restore: React.FC = () => {
   };
 
   return (
-    <Window title="Restore wallet">
+    <Window title="Restore wallet" onPrevious={() => navigate(ROUTES.AUTH.BASE)}>
       <p>Type in your seed phrase</p>
       <form autoComplete="off" onSubmit={handleSubmit}>
         <SeedList data={errors} initial={cache} onInput={(e) => seedListHandler(e)} />

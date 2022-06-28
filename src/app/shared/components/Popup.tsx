@@ -24,7 +24,7 @@ const ContainerStyled = styled.div`
   width: 335px;
   padding: 30px 20px;
   border-radius: 10px;
-  background-color: ${'var(--color-popup-'+config.theme+')'};
+  background-color: ${`var(--color-popup-${config.theme})`};
   text-align: center;
   color: white;
 
@@ -76,18 +76,19 @@ const Popup: React.FC<PopupProps> = ({
   confirmButton,
   children,
   footerClass,
-}) => (visible ? (
-  <Backdrop onCancel={onCancel}>
-    <ContainerStyled>
-      <TitleStyled>{title}</TitleStyled>
-      <Button className="cancel-header" variant="icon" pallete="white" icon={CancelIcon} onClick={onCancel} />
-      {children}
-      <FooterStyled className={footerClass}>
-        {cancelButton}
-        {confirmButton}
-      </FooterStyled>
-    </ContainerStyled>
-  </Backdrop>
-) : null);
+}) =>
+  visible ? (
+    <Backdrop onCancel={onCancel}>
+      <ContainerStyled>
+        <TitleStyled>{title}</TitleStyled>
+        <Button className="cancel-header" variant="icon" pallete="white" icon={CancelIcon} onClick={onCancel} />
+        {children}
+        <FooterStyled className={footerClass}>
+          {cancelButton}
+          {confirmButton}
+        </FooterStyled>
+      </ContainerStyled>
+    </Backdrop>
+  ) : null;
 
 export default Popup;

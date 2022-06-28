@@ -198,7 +198,7 @@ export function sendTransaction(params: SendTransactionParams) {
 }
 
 export function getTransactionStatus(txId: string) {
-  return postMessage<TransactionDetail>(RPCMethod.TxStatus, { txId });
+  return postMessage<TransactionDetail>(RPCMethod.TxStatus, { txId, rates: true });
 }
 
 export function exportPaymentProof(txId: string) {

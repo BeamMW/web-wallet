@@ -1,6 +1,11 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
-  getWalletStatus, createAddress, validateAddress, calculateChange, sendTransaction,
+  getWalletStatus,
+  createAddress,
+  validateAddress,
+  calculateChange,
+  sendTransaction,
+  convertTokenToJson,
 } from '@core/api';
 import { AddressData, ChangeData, AssetsEvent } from '@core/types';
 import { RateResponse } from '@app/containers/Wallet/interfaces';
@@ -45,8 +50,10 @@ export function* loadRate() {
 export function* generateAddress(action: ReturnType<typeof actions.generateAddress.request>): Generator {
   try {
     const result: string = (yield call(createAddress, action.payload) as unknown) as string;
+    const sbbs: AddressData = (yield call(convertTokenToJson, result) as unknown) as AddressData;
 
     yield put(actions.generateAddress.success(result));
+    yield put(actions.setSbbs(sbbs.peer_id));
   } catch (e) {
     yield put(actions.generateAddress.failure(e));
   }
@@ -58,6 +65,7 @@ export function* validateSendAddress(action: ReturnType<typeof actions.validateS
     const result: AddressData = (yield call(validateAddress, action.payload) as unknown) as AddressData;
 
     yield put(actions.validateSendAddress.success(result));
+    yield put(actions.setSbbs(result.peer_id));
     yield put(actions.setSendTransactionState(true));
   } catch (e) {
     yield put(actions.validateSendAddress.failure(e));
