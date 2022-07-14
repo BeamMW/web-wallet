@@ -7,7 +7,7 @@
     "default_icon": {
       "16": "assets/chrome-extention-icon-16x16.png"
     },
-    "default_title": "Sourc3 (masternet)",
+    "default_title": "Beam Web Wallet (Masternet)",
     "default_popup": "popup.html"
   },
   "version": "1.0.1",
@@ -35,7 +35,7 @@
     "tabs"
   ],
   "content_security_policy":  { 
-    "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' 'unsafe-inline';"
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; script-src-elem 'self' 'unsafe-inline';"
   },
   "web_accessible_resources": [
     {

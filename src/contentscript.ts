@@ -22,7 +22,7 @@ function injectScript() {
     const container = document.head || document.documentElement;
     const scriptTag = document.createElement('script');
     scriptTag.setAttribute('async', 'false');
-    scriptTag.setAttribute('src', chrome.extension.getURL('inpage.js'));
+    scriptTag.setAttribute('src', chrome.runtime.getURL('inpage.js'));
     container.insertBefore(scriptTag, container.children[0]);
     container.removeChild(scriptTag);
   } catch (error) {
@@ -94,21 +94,3 @@ window.addEventListener('message', (event) => {
     }
   }
 });
-
-function injectScriptMV3(url) {
-  try {
-    const container = document.head || document.documentElement;
-    const scriptTag = document.createElement('script');
-    scriptTag.setAttribute('async', 'false');
-    // Inline scripts do not work in MV3 due to more strict security policy
-    scriptTag.setAttribute('src', chrome.runtime.getURL(url));
-    container.insertBefore(scriptTag, container.children[0]);
-    container.removeChild(scriptTag);
-  } catch (error) {
-    console.error('Provider injection failed.', error);
-  }
-}
-
-injectScriptMV3('wasm-client.js');
-// injectScriptMV3('wasm-client.worker.js');
-injectScriptMV3('test.js');
