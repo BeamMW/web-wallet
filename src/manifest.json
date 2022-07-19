@@ -7,8 +7,7 @@
     "default_icon": {
       "16": "assets/chrome-extention-icon-16x16.png"
     },
-    "default_title": "Beam Web Wallet (Masternet)",
-    "default_popup": "popup.html"
+    "default_title": "Beam Web Wallet (Masternet)"
   },
   "version": "1.0.1",
   "background": {
@@ -39,7 +38,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["inpage.js", "test.js", "wasm-client.worker.js", "wasm-client.js", "assets/*.png"],
+      "resources": ["inpage.js", "wasm-client.worker.js", "wasm-client.js", "assets/*.png"],
       "matches": ["http://*/*", "https://*/*"]
     }
   ]

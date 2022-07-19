@@ -590,9 +590,9 @@ export default class WasmWallet {
         try {
           await WasmWallet.checkPassword(params);
           this.start(params);
-          this.emit(id);
+          // this.emit(id);
         } catch (error) {
-          this.emit(id, null, error);
+          // this.emit(id, null, error);
         }
         break;
       case WalletMethod.StopWallet:

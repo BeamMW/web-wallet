@@ -14,7 +14,7 @@ window.global = window;
 
 export default store;
 
-initRemoteWallet();
+// initRemoteWallet();
 
 ReactDOM.render(
   <MemoryRouter>

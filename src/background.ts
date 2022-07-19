@@ -110,4 +110,4 @@ wallet.initSendHandler((req, info, cb) => {
   notificationManager.openSendNotification(req, info);
 });
 
-extensionizer.runtime.onConnect.addListener(handleConnect);
+// extensionizer.runtime.onConnect.addListener(handleConnect);

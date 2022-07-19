@@ -21,18 +21,24 @@ import { navigate } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import NotificationController from '@app/core/NotificationController';
 
+import WasmWallet from '@core/WasmWallet';
+
+const wallet = WasmWallet.getInstance();
+
 export function remoteEventChannel() {
   return eventChannel((emitter) => {
-    const port = initRemoteWallet();
+    // const port = initRemoteWallet();
 
     const handler = (data: RemoteResponse) => {
       emitter(data);
     };
 
-    port.onMessage.addListener(handler);
+    wallet.init(handler, null);
+
+    // port.onMessage.addListener(handler);
 
     const unsubscribe = () => {
-      port.onMessage.removeListener(handler);
+      // port.onMessage.removeListener(handler);
       emitter(END);
     };
 
