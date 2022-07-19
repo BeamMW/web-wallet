@@ -13,11 +13,6 @@
     "serve": "webpack serve --mode=development",
     "build": "webpack --env NODE_ENV=production --mode=production"
   },
-  "pre-commit": [
-    "prettier",
-    "lint",
-    "commit-hook"
-  ],
   "devDependencies": {
     "@babel/cli": "^7.14.8",
     "@babel/core": "^7.14.8",
@@ -64,7 +59,7 @@
     "@linaria/react": "^3.0.0-beta.7",
     "@types/readable-stream": "^2.3.11",
     "babel-polyfill": "^6.26.0",
-    "beam-wasm-client-masternet": "7.1.12759",
+    "beam-wasm-client-masternet": "7.1.12888",
     "browser-passworder": "^2.0.3",
     "buffer": "^6.0.3",
     "dnode": "^1.2.2",

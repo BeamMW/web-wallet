@@ -20,6 +20,7 @@ import { actions } from '@app/shared/store/index';
 import { navigate } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import NotificationController from '@app/core/NotificationController';
+import { getBeamTabId } from '@core/utils';
 
 import WasmWallet from '@core/WasmWallet';
 
