@@ -12,6 +12,8 @@ import { useNavigate, useRoutes, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@app/shared/components';
 import { ToastContainer } from 'react-toastify';
+import { createBeamTab, getBeamTabId } from '@core/utils';
+import { initRemoteWallet } from '@core/api';
 import { WalletContainer } from './containers/Wallet';
 import { AuthContainer, Progress } from './containers/Auth';
 import { SettingsContainer } from './containers/Settings';
@@ -84,37 +86,13 @@ const App = () => {
   }, [isLocked, navigate, location.pathname]);
 
   useEffect(() => {
-    const tabId = localStorage.getItem('beamTabId');
-
-    if (!tabId) {
-      const asd = chrome.tabs.create(
-        {
-          url: 'background.html',
-          active: false,
-        },
-        (tab) => {
-          localStorage.setItem('beamTabId', tab.id.toString());
-        },
-      );
-
-      console.log('TAB', asd);
-    } else {
-      chrome.tabs.query({ status: 'complete' }, (tabs) => {
-        const tab = tabs?.filter((t) => t.id.toString() === tabId);
-        console.log('TAB', tab);
-        if (!tab.length) {
-          chrome.tabs.create(
-            {
-              url: 'background.html',
-              active: false,
-            },
-            (newTab) => {
-              localStorage.setItem('beamTabId', newTab.id.toString());
-            },
-          );
-        }
-      });
-    }
+    (async () => {
+      const tabId = await getBeamTabId();
+      if (!tabId) {
+        return createBeamTab();
+      }
+      return initRemoteWallet();
+    })();
   }, []);
 
   return (
