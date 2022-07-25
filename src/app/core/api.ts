@@ -1,11 +1,7 @@
-import * as extensionizer from 'extensionizer';
-
 import {
   AddressData,
   ChangeData,
-  RPCEvent,
   RPCMethod,
-  WalletMethod,
   RemoteResponse,
   WalletStatus,
   Environment,
@@ -16,7 +12,10 @@ import {
   ExternalAppConnection,
 } from './types';
 
-let port;
+import WasmWallet from '@core/WasmWallet';
+
+const wallet = WasmWallet.getInstance();
+
 let counter = 0;
 
 export function getEnvironment(href = window.location.href) {
@@ -33,23 +32,17 @@ export function getEnvironment(href = window.location.href) {
   }
 }
 
-export function initRemoteWallet() {
-  if (port) return port;
-  const name = getEnvironment();
-  port = extensionizer.runtime.connect({ name });
-
-  return port;
-}
-
-export function postMessage<T = any, P = unknown>(method: WalletMethod | RPCMethod | RPCEvent, params?: P): Promise<T> {
+export function postMessage<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
   return new Promise((resolve, reject) => {
     const target = counter;
 
     counter += 1;
 
     function handler(data: RemoteResponse) {
+      if (method === RPCMethod.GetWalletStatus) {
+        console.log(data);
+      }
       if (data.id === target) {
-        port.onMessage.removeListener(handler);
         if (data.error) {
           return reject(data.error);
         }
@@ -58,78 +51,63 @@ export function postMessage<T = any, P = unknown>(method: WalletMethod | RPCMeth
       return data;
     }
 
-    port.onMessage.addListener(handler);
+    wallet.setRemoteEventHandler(handler);
 
-    // eslint-disable-next-line no-console
-    // console.info(`sending ${method}:${target} with`, params);
-
-    port.postMessage({ id: target, method, params });
+    wallet.send(target, method, params);
   });
 }
 
 export function convertTokenToJson(token: string) {
-  return postMessage(WalletMethod.ConvertTokenToJson, token);
+  return WasmWallet.convertTokenToJson(token);
 }
 
 export function startWallet(pass: string) {
-  return postMessage(WalletMethod.StartWallet, pass);
+  return wallet.start(pass);
 }
 
 export function deleteWallet(pass: string) {
-  return postMessage(WalletMethod.DeleteWallet, pass);
+  return wallet.deleteWallet(pass);
 }
 
 export function stopWallet() {
-  return postMessage(WalletMethod.StopWallet);
+  return wallet.stop();
 }
 
 export function walletLocked() {
-  return postMessage(WalletMethod.WalletLocked);
+  return wallet.lockWallet();
 }
 
 export function createWallet(params: CreateWalletParams) {
-  return postMessage(WalletMethod.CreateWallet, params);
+  return wallet.create(params);
 }
 
 export function isAllowedWord(value: string) {
-  return postMessage<boolean>(WalletMethod.IsAllowedWord, value);
+  return WasmWallet.isAllowedWord(value);
 }
 
 export function isAllowedSeed(value: string[]) {
-  return postMessage<boolean[]>(WalletMethod.IsAllowedSeed, value);
+  return WasmWallet.isAllowedSeed(value);
 }
 
 export function generateSeed() {
-  return postMessage<string>(WalletMethod.GenerateSeed);
-}
-
-export function getWalletStatus() {
-  return postMessage<WalletStatus>(RPCMethod.GetWalletStatus);
-}
-
-export function createAddress(params: CreateAddressParams) {
-  return postMessage<string>(RPCMethod.CreateAddress, params);
-}
-
-export function getVersion() {
-  return postMessage(RPCMethod.GetVersion);
+  return WasmWallet.generateSeed();
 }
 
 export function loadBackgroundLogs() {
-  return postMessage(WalletMethod.LoadBackgroundLogs);
+  return WasmWallet.loadLogs();
 }
 
 export function loadConnectedSites() {
-  return postMessage(WalletMethod.LoadConnectedSites);
+  return wallet.loadConnectedSites();
 }
 
 export function disconnectAllowedSite(params: ExternalAppConnection) {
-  return postMessage(WalletMethod.DisconnectSite, params);
+  return wallet.removeConnectedSite(params);
 }
 
 export async function validateAddress(address: string): Promise<AddressData> {
   const result = await postMessage<AddressData>(RPCMethod.ValidateAddress, { address });
-  const json = await postMessage(WalletMethod.ConvertTokenToJson, address);
+  const json = await convertTokenToJson(address);
 
   if (!json) {
     return result;
@@ -142,7 +120,7 @@ export async function validateAddress(address: string): Promise<AddressData> {
 }
 
 export function finishNotificationAuth(apiver: string, apivermin: string, appname: string, appurl: string) {
-  return postMessage(WalletMethod.NotificationAuthenticaticated, {
+  return wallet.notificationAuthenticaticated({
     result: true,
     apiver,
     apivermin,
@@ -152,7 +130,7 @@ export function finishNotificationAuth(apiver: string, apivermin: string, appnam
 }
 
 export function approveConnection(apiver: string, apivermin: string, appname: string, appurl: string) {
-  return postMessage(WalletMethod.NotificationConnect, {
+  return wallet.approveConnection({
     result: true,
     apiver,
     apivermin,
@@ -162,31 +140,43 @@ export function approveConnection(apiver: string, apivermin: string, appname: st
 }
 
 export function rejectConnection() {
-  return postMessage(WalletMethod.NotificationConnect, {
+  return wallet.notificationAuthenticaticated({
     result: false,
   });
 }
 
 export function approveContractInfoRequest(req) {
-  return postMessage(WalletMethod.NotificationApproveInfo, { req });
+  return wallet.notificationApproveInfo({ req });
 }
 
 export function rejectContractInfoRequest(req) {
-  return postMessage(WalletMethod.NotificationRejectInfo, { req });
+  return wallet.notificationRejectInfo({ req });
 }
 
 export function approveSendRequest(req) {
-  return postMessage(WalletMethod.NotificationApproveSend, { req });
+  return wallet.notificationApproveSend({ req });
 }
 
 export function rejectSendRequest(req) {
-  return postMessage(WalletMethod.NotificationRejectSend, { req });
+  return wallet.notificationRejectSend({ req });
 }
 
 export interface CalculateChangeParams {
   amount: number;
   asset_id: number;
   is_push_transaction: boolean;
+}
+
+export function getWalletStatus() {
+  return postMessage<WalletStatus>(RPCMethod.GetWalletStatus);
+}
+
+export function createAddress(params: CreateAddressParams) {
+  return postMessage<string>(RPCMethod.CreateAddress, params);
+}
+
+export function getVersion() {
+  return postMessage(RPCMethod.GetVersion);
 }
 
 export function calculateChange(params: CalculateChangeParams) {

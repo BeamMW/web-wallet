@@ -8,11 +8,10 @@ import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
 import { ExternalAppConnection, NotificationType } from '@core/types';
-import {
-  BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
-} from './types';
+import { BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod } from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
+import { approveConnection } from '@core/api';
 
 declare const BeamModule: any;
 
@@ -211,6 +210,13 @@ export default class WasmWallet {
   private mounted: boolean = false;
 
   private eventHandler: WalletEventHandler;
+  private remoteEventHandler: WalletEventHandler;
+
+  setRemoteEventHandler(handler: WalletEventHandler) {
+    if (!this.remoteEventHandler) {
+      this.remoteEventHandler = handler;
+    }
+  }
 
   async init(handler: WalletEventHandler, notification: Notification) {
     this.eventHandler = handler;
@@ -323,6 +329,7 @@ export default class WasmWallet {
       // eslint-disable-next-line no-console
       console.info(event);
       this.eventHandler(event);
+      this?.remoteEventHandler(event);
     };
 
     this.wallet.startWallet();
@@ -389,6 +396,8 @@ export default class WasmWallet {
     extensionizer.storage.local.set({
       sites: this.connectedApps,
     });
+
+    return this.connectedApps;
   }
 
   addConnectedSite(site: ExternalAppConnection) {
@@ -558,6 +567,77 @@ export default class WasmWallet {
         errcode: -2,
         ermsg: err,
       });
+    }
+  }
+
+  async deleteWallet(pass: string) {
+    await WasmWallet.checkPassword(pass);
+    await this.stop();
+    return WasmWallet.removeWallet();
+  }
+
+  lockWallet() {
+    Object.values(this.apps).forEach((url: string) => {
+      this.apps[url].walletIsLocked();
+    });
+  }
+
+  loadConnectedSites() {
+    return this.connectedApps;
+  }
+
+  notificationAuthenticaticated(params: any) {
+    if (params.result) {
+      if (this.isConnectedSite({ appName: params.appname, appUrl: params.appurl })) {
+        this.connectExternal(params);
+        this.emit(BackgroundEvent.CLOSE_NOTIFICATION);
+      } else {
+        const notification = {
+          type: 'connect',
+          params,
+        };
+        this.emit(BackgroundEvent.CONNECTED, {
+          onboarding: false,
+          is_running: true,
+          notification,
+        });
+      }
+    }
+  }
+
+  approveConnection(params: any) {
+    if (params.result) {
+      this.addConnectedSite({ appName: params.appname, appUrl: params.appurl });
+      this.connectExternal(params);
+    } else {
+      return notificationManager.postMessage({
+        result: false,
+        errcode: -3,
+        ermsg: 'Connection rejected',
+      });
+    }
+  }
+
+  notificationApproveInfo(params: any) {
+    if (params.req) {
+      this.contractInfoHandlerCallback.contractInfoApproved(params.req);
+    }
+  }
+
+  notificationRejectInfo(params: any) {
+    if (params.req) {
+      this.contractInfoHandlerCallback.contractInfoApproved(params.req);
+    }
+  }
+
+  notificationApproveSend(params: any) {
+    if (params.req) {
+      this.sendHandlerCallback.sendApproved(params.req);
+    }
+  }
+  notificationRejectSend(params: any) {
+    if (params.req) {
+      this.sendHandlerCallback.sendApproved(params.req);
     }
   }
 

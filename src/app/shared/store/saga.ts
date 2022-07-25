@@ -1,9 +1,7 @@
-import {
-  call, take, fork, takeLatest, put,
-} from 'redux-saga/effects';
+import { call, take, fork, takeLatest, put } from 'redux-saga/effects';
 
 import { eventChannel, END } from 'redux-saga';
-import { initRemoteWallet, walletLocked } from '@core/api';
+import { walletLocked } from '@core/api';
 import { BackgroundEvent, RemoteResponse, RPCEvent } from '@core/types';
 
 import {
@@ -20,7 +18,6 @@ import { actions } from '@app/shared/store/index';
 import { navigate } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import NotificationController from '@app/core/NotificationController';
-import { getBeamTabId } from '@core/utils';
 
 import WasmWallet from '@core/WasmWallet';
 
@@ -28,18 +25,13 @@ const wallet = WasmWallet.getInstance();
 
 export function remoteEventChannel() {
   return eventChannel((emitter) => {
-    // const port = initRemoteWallet();
-
     const handler = (data: RemoteResponse) => {
       emitter(data);
     };
 
     wallet.init(handler, null);
 
-    // port.onMessage.addListener(handler);
-
     const unsubscribe = () => {
-      // port.onMessage.removeListener(handler);
       emitter(END);
     };
 
