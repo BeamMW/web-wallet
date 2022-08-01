@@ -6,7 +6,7 @@ interface BackDropProps {
 }
 
 const BackdropStyled = styled.div`
-  position: fixed;
+  position: absolute;
   z-index: 3;
   top: 50px;
   left: 0;
