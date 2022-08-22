@@ -495,7 +495,7 @@ export default class WasmWallet {
       if (!this.wallet) {
         this.wallet = new WasmWalletClient(PATH_DB, password, config.path_node);
       }
-      await this.fastSync();
+      //  await this.fastSync();
 
       this.start(password);
     } catch (error) {
