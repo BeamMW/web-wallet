@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 import {
-  IconEye, IconLockWallet, MenuIcon, IconEyeCrossed,
+  IconEye, IconLockWallet, MenuIcon, IconEyeCrossed, InfoButton,
 } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +23,9 @@ interface WindowProps {
   primary?: boolean;
   pallete?: 'default' | 'blue' | 'purple';
   onPrevious?: React.MouseEventHandler | undefined;
+  navigateToInfo?: React.MouseEventHandler | undefined;
+  showHideButton?: boolean;
+  showInfoButton?: boolean;
 }
 
 function getColor(pallete: string): string {
@@ -32,7 +35,7 @@ function getColor(pallete: string): string {
     case 'purple':
       return 'var(--color-purple)';
     default:
-      return 'var(--color-gradient-finish-'+config.theme+')';
+      return `var(--color-gradient-finish-${config.theme})`;
   }
 }
 
@@ -50,7 +53,11 @@ const ContainerStyled = styled.div<WindowProps>`
     left: 0;
     width: 100%;
     height: 100px;
-    background-image: linear-gradient(to top, ${'var(--color-gradient-start-'+config.theme+')'}, ${({ pallete }) => getColor(pallete)} 150%);
+    background-image: linear-gradient(
+      to top,
+      ${`var(--color-gradient-start-${config.theme})`},
+      ${({ pallete }) => getColor(pallete)} 150%
+    );
   }
 `;
 
@@ -63,7 +70,7 @@ const HeadingStyled = styled.div<{ pallete: string }>`
   width: 375px;
   height: 130px;
   padding-top: 50px;
-  background-color: ${'var(--color-bg-'+config.theme+')'};
+  background-color: ${`var(--color-bg-${config.theme})`};
 
   &:before {
     content: '';
@@ -73,7 +80,11 @@ const HeadingStyled = styled.div<{ pallete: string }>`
     left: 0;
     width: 100%;
     height: 100px;
-    background-image: linear-gradient(to top, ${'var(--color-gradient-start-'+config.theme+')'}, ${({ pallete }) => getColor(pallete)} 150%);
+    background-image: linear-gradient(
+      to top,
+      ${`var(--color-gradient-start-${config.theme})`},
+      ${({ pallete }) => getColor(pallete)} 150%
+    );
   }
 `;
 
@@ -99,6 +110,14 @@ const menuEyeStyle = css`
   z-index: 3;
   top: 74px;
   right: 12px;
+  margin: 0;
+`;
+
+const menuInfoStyle = css`
+  position: fixed;
+  z-index: 3;
+  top: 74px;
+  right: 55px;
   margin: 0;
 `;
 
@@ -155,7 +174,7 @@ const BurgerWrapper = styled.div`
     padding: 20px 0;
     border-radius: 10px;
     box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.14);
-    background-color: #003f6f;
+    background-color: ${`var(--color-popup-${config.theme})`};
     width: 205px;
     position: absolute;
     right: 8px;
@@ -176,7 +195,7 @@ const BurgerWrapper = styled.div`
       opacity: 0.8;
       &:hover {
         opacity: 1;
-        background: #114b77;
+        background: ${`var(--color-hover-${config.theme})`};
       }
       span {
         margin-left: 14px;
@@ -191,6 +210,9 @@ export const Window: React.FC<WindowProps> = ({
   pallete = 'default',
   children,
   onPrevious,
+  showHideButton,
+  showInfoButton,
+  navigateToInfo,
 }) => {
   const dispatch = useDispatch();
   const isBalanceHidden = useSelector(selectIsBalanceHidden());
@@ -258,7 +280,10 @@ export const Window: React.FC<WindowProps> = ({
           </BurgerWrapper>
         </FrameStyled>
         <Title variant="heading">{title}</Title>
-        {title === 'Wallet' && (
+        {showInfoButton && (
+          <Button variant="icon" icon={InfoButton} className={menuInfoStyle} onClick={navigateToInfo} />
+        )}
+        {showHideButton && (
           <Button
             variant="icon"
             icon={!isBalanceHidden ? IconEye : IconEyeCrossed}

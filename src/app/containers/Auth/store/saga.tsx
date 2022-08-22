@@ -73,7 +73,7 @@ export function* handleProgress({
     } else {
       const notification = NotificationController.getNotification();
       if (notification.type === NotificationType.AUTH) {
-        if(!isLocked) {
+        if (!isLocked) {
           finishNotificationAuth(
             notification.params.apiver,
             notification.params.apivermin,

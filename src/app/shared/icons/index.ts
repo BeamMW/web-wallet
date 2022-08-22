@@ -53,6 +53,13 @@ import ExternalLink from './external_link.svg';
 import IconEye from './icn-eye.svg';
 import IconEyeCrossed from './icn-eye-crossed.svg';
 import IconQrCode from './ic-qr-copy-9.svg';
+import InfoButton from './info-button.svg';
+import Chevron from './icn-grey-arrow.svg';
+import HelpIcon from './help-icons.svg';
+import SettingsIcon from './icon-settings.svg';
+import WalletIcon from './ic-wallet.svg';
+import ErrorSvg from './error-svg.svg';
+import TxSentOfflineMPOwnIcon from './icon-sent-own-offline.svg';
 
 export {
   AddIcon,
@@ -102,4 +109,11 @@ export {
   IconEye,
   IconEyeCrossed,
   IconQrCode,
+  InfoButton,
+  Chevron,
+  HelpIcon,
+  SettingsIcon,
+  WalletIcon,
+  ErrorSvg,
+  TxSentOfflineMPOwnIcon,
 };

@@ -1,5 +1,5 @@
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
-import { Transaction } from '@core/types';
+import { AddressType, Transaction } from '@core/types';
 
 export const copyToClipboard = (value: string) => navigator.clipboard.writeText(value);
 
@@ -30,7 +30,7 @@ export function toUSD(amount: number, rate: number): string {
       return '0 USD';
     case amount > 0.01: {
       const value = amount * rate;
-      return `${value.toFixed(2)} USD`;
+      return value > 0.01 ? `${value.toFixed(2)} USD` : '< 1 cent';
     }
     default:
       return '< 1 cent';
@@ -42,7 +42,8 @@ export function fromGroths(value: number): number {
 }
 
 export function toGroths(value: number): number {
-  return value > 0 ? Math.floor(value * GROTHS_IN_BEAM) : 0;
+  const val = Number(parseFloat((value * GROTHS_IN_BEAM).toString()).toPrecision(12));
+  return value > 0 ? Math.floor(val) : 0;
 }
 
 export function getSign(positive: boolean): string {
@@ -56,3 +57,26 @@ export function createdComparator({ create_time: a }: Transaction, { create_time
 
   return a < b ? 1 : -1;
 }
+
+export const getTxType = (type: AddressType, offline: boolean): string => {
+  if (type === 'max_privacy') {
+    return 'Maximum anonymity';
+  }
+  if (type === 'public_offline') {
+    return 'Public offline';
+  }
+
+  return offline ? 'Offline' : 'Regular';
+};
+
+export const convertLowAmount = (amount: number) => {
+  if (amount.toString().includes('e-')) {
+    const exp = amount.toString().split('e-');
+    return amount.toFixed(Number(exp[1]));
+  }
+  return amount;
+
+  // return +amount <= 0.0000001
+  //   ? amount.toFixed(Number(amount.toString().replace(`${amount.toString()[0]}e-`, '')))
+  //   : amount;
+};

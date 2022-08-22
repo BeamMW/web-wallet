@@ -81,7 +81,7 @@ function* sharedSaga() {
             window.close();
           }
           break;
-        
+
         case RPCEvent.SYNC_PROGRESS:
           yield fork(handleProgress, payload.result);
           break;

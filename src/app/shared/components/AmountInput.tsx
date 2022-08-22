@@ -4,11 +4,11 @@ import { styled } from '@linaria/react';
 
 import Select, { Option } from '@app/shared/components/Select';
 
-import { truncate } from '@core/utils';
+import { convertLowAmount, truncate } from '@core/utils';
 
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
-import { AMOUNT_MAX } from '@app/containers/Wallet/constants';
+import { AMOUNT_MAX, AMOUNT_MIN } from '@app/containers/Wallet/constants';
 import { TransactionAmount } from '@app/containers/Wallet/interfaces';
 import Input from './Input';
 import AssetIcon from './AssetIcon';
@@ -35,6 +35,8 @@ const containerStyle = css`
   flex-grow: 1;
 `;
 
+const invalidChars = ['-', '+', 'e'];
+
 interface AmountInputProps {
   value: string;
   asset_id: number;
@@ -47,8 +49,8 @@ const REG_AMOUNT = /^(?!0\d)(\d+)(\.)?(\d+)?$/;
 
 const rateStyle = css`
   position: absolute;
-  top: 33px;
-  left: 0;
+  top: 48px;
+  left: 10px;
 `;
 
 const AmountInput: React.FC<AmountInputProps> = ({
@@ -57,11 +59,13 @@ const AmountInput: React.FC<AmountInputProps> = ({
   const assets = useSelector(selectAssets());
 
   const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    const { value: raw } = event.target;
-
-    if ((raw !== '' && !REG_AMOUNT.test(raw)) || parseFloat(raw) > AMOUNT_MAX) {
+    let { value: raw } = event.target;
+    const val = parseFloat(raw ?? '0');
+    if ((val !== 0 && raw !== '' && !REG_AMOUNT.test(raw)) || val > AMOUNT_MAX) {
       return;
     }
+
+    if (val < AMOUNT_MIN && val !== 0) raw = convertLowAmount(AMOUNT_MIN).toString();
 
     onChange({ amount: raw, asset_id });
   };
@@ -74,6 +78,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
     <ContainerStyled>
       <Input
         variant="amount"
+        type="number"
         valid={!error}
         label={error}
         value={value}
@@ -82,6 +87,14 @@ const AmountInput: React.FC<AmountInputProps> = ({
         placeholder="0"
         className={containerStyle}
         onInput={handleInput}
+        onWheelCapture={(e) => {
+          e.currentTarget.blur();
+        }}
+        onKeyDown={(e) => {
+          if (invalidChars.includes(e.key)) {
+            e.preventDefault();
+          }
+        }}
       />
       {asset_id === 0 && !error && <Rate value={parseFloat(value)} className={rateStyle} />}
       <Select value={asset_id} className={selectClassName} onSelect={handleSelect}>
