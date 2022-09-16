@@ -2018,10 +2018,10 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-beam-wasm-client-dappnet@7.1.12820:
-  version "7.1.12820"
-  resolved "https://registry.yarnpkg.com/beam-wasm-client-dappnet/-/beam-wasm-client-dappnet-7.1.12820.tgz#c1679a0ce5f5ded92c1de194f000eb63e0faceba"
-  integrity sha512-LlOriFNjRZ+5d6nPoikjg79BZ7Yvncrn79lcfv6qAA8Ow/IVMeuN16nTB+4+4SRbXL07cejhQoFwEpsLsP3ckg==
+beam-wasm-client-dappnet@7.2.13136:
+  version "7.2.13136"
+  resolved "https://registry.yarnpkg.com/beam-wasm-client-dappnet/-/beam-wasm-client-dappnet-7.2.13136.tgz#874914c64979983415586b0e6189fc8dfc6106a9"
+  integrity sha512-zmrruNKQOxDShzEUVKHmYmeklAEtuL8miDLbp4OH7Kp2EYViHIjZnEqtvmhRez4ucex/o27x5FrP+sQF/BkHgQ==
 
 big.js@^5.2.2:
   version "5.2.2"
