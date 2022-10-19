@@ -6,7 +6,7 @@ import { CopySmallIcon } from '@app/shared/icons';
 import { toast } from 'react-toastify';
 import { copyToClipboard } from '@core/utils';
 import { useSelector } from 'react-redux';
-import { selectIsAddressUD } from '../../store/selectors';
+import { selectParsedAddressUD } from '../../store/selectors';
 
 interface FullAddressProps {
   addressData?: AddressData;
@@ -141,7 +141,7 @@ const FullAddress = ({
 }: FullAddressProps) => {
   let hintItem = hint;
   const isMaxPrivacy = addressData?.type === 'max_privacy';
-  const is_address_from_ud = useSelector(selectIsAddressUD());
+  const parsed_address_ud = useSelector(selectParsedAddressUD());
 
   const copyAddress = async () => {
     toast('Address copied to clipboard');
@@ -209,7 +209,7 @@ const FullAddress = ({
             icon={CopySmallIcon}
             onClick={copyAddress}
           />
-          {is_address_from_ud ?
+          {parsed_address_ud ?
             <div className="hint">
               Unstoppable Domains
             </div> :

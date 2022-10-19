@@ -50,4 +50,4 @@ export const setSelectedAssetId = createAction(WalletActionTypes.SET_SELECTED_AS
 >();
 
 export const setSbbs = createAction(WalletActionTypes.SET_SBBS)<WalletStateType['sbbs']>();
-export const setIsParsedAddressUD = createAction(WalletActionTypes.SET_IS_UD)<boolean>();
+export const setParsedAddressUD = createAction(WalletActionTypes.SET_ADDRESS_UD)<string>();

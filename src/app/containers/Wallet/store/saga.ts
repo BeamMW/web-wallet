@@ -71,9 +71,9 @@ export function* validateSendAddress(action: ReturnType<typeof actions.validateS
   let addressToValidate = action.payload;
   try {
     addressToValidate = (yield call(resolveUD, action.payload, 'BEAM')) as string;
-    yield put(actions.setIsParsedAddressUD(true));
+    yield put(actions.setParsedAddressUD(addressToValidate));
   } catch (e) {
-    yield put(actions.setIsParsedAddressUD(false));
+    yield put(actions.setParsedAddressUD(null));
   }
 
   try {

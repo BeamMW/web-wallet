@@ -24,4 +24,4 @@ export const selectSelectedAssetId = () => createSelector(selectWallet, (state) 
 
 export const selectSbbs = () => createSelector(selectWallet, (state) => state.sbbs);
 
-export const selectIsAddressUD = () => createSelector(selectWallet, (state) => state.is_address_ud);
+export const selectParsedAddressUD = () => createSelector(selectWallet, (state) => state.parsed_address_ud);
