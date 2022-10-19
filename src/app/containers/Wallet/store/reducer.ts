@@ -44,6 +44,7 @@ const initialState: WalletStateType = {
   },
   address: '',
   sbbs: '',
+  is_address_ud: false,
   send_address_data: {
     type: null,
     amount: null,
@@ -104,6 +105,11 @@ const reducer = createReducer<WalletStateType, Action>(initialState)
   .handleAction(actions.setSbbs, (state, action) =>
     produce(state, (nexState) => {
       nexState.sbbs = action.payload;
+    }),
+  )
+  .handleAction(actions.setIsParsedAddressUD, (state, action) =>
+    produce(state, (nexState) => {
+      nexState.is_address_ud = action.payload;
     }),
   )
   .handleAction(actions.resetReceive, (state) =>

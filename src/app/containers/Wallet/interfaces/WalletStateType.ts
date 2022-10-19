@@ -10,6 +10,7 @@ export interface WalletStateType {
   rate: number;
   address: string;
   sbbs: null | string;
+  is_address_ud: boolean;
   receive_amount: TransactionAmount;
   send_address_data: AddressData;
   send_fee: number;

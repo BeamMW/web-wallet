@@ -5,6 +5,8 @@ import { AddressData } from '@core/types';
 import { CopySmallIcon } from '@app/shared/icons';
 import { toast } from 'react-toastify';
 import { copyToClipboard } from '@core/utils';
+import { useSelector } from 'react-redux';
+import { selectIsAddressUD } from '../../store/selectors';
 
 interface FullAddressProps {
   addressData?: AddressData;
@@ -139,6 +141,7 @@ const FullAddress = ({
 }: FullAddressProps) => {
   let hintItem = hint;
   const isMaxPrivacy = addressData?.type === 'max_privacy';
+  const is_address_from_ud = useSelector(selectIsAddressUD());
 
   const copyAddress = async () => {
     toast('Address copied to clipboard');
@@ -206,9 +209,14 @@ const FullAddress = ({
             icon={CopySmallIcon}
             onClick={copyAddress}
           />
-          <div className="hint">
-            {showAddress() || addressData?.type === 'max_privacy' || getTitle() === 'Regular Address' ? hintItem : ''}
-          </div>
+          {is_address_from_ud ?
+            <div className="hint">
+              Unstoppable Domains
+            </div> :
+            <div className="hint">
+              {showAddress() || addressData?.type === 'max_privacy' || getTitle() === 'Regular Address' ? hintItem : ''}
+            </div>
+          }
         </AddressInformationWrapper>
 
         {sbbs && address !== sbbs && (
