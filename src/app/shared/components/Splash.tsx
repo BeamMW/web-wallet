@@ -33,16 +33,12 @@ const backButtonStyle = css`
   top: 23px;
 `;
 
-export const Splash: React.FC<SplashProps> = ({
-  size, blur, onReturn, children,
-}) => (
+export const Splash: React.FC<SplashProps> = ({ size, blur, onReturn, children }) => (
   <ContainerStyled blur={blur}>
     {onReturn && <BackButton onClick={onReturn} className={backButtonStyle} />}
     <Logo size={size} />
     <TitleStyled size={size}>
-      Confidential DeFi Platform
-      {' '}
-      <br />
+      Confidential DeFi Platform <br />
       and Cryptocurrency
     </TitleStyled>
     {children}

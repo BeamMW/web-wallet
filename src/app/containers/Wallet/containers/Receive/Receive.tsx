@@ -3,9 +3,7 @@ import React, { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { styled } from '@linaria/react';
 
-import {
-  Window, Section, Button, Input, Toggle, Popup,
-} from '@app/shared/components';
+import { Window, Section, Button, Input, Toggle, Popup } from '@app/shared/components';
 
 import { CopySmallIcon, IconQrCode, InfoButton } from '@app/shared/icons';
 
@@ -14,8 +12,13 @@ import AmountInput from '@app/shared/components/AmountInput';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAddress, selectReceiveAmount, selectSelectedAssetId } from '@app/containers/Wallet/store/selectors';
-import { generateAddress, resetReceive, setReceiveAmount } from '@app/containers/Wallet/store/actions';
+import {
+  selectAddress,
+  selectReceiveAmount,
+  selectSbbs,
+  selectSelectedAssetId,
+} from '@app/containers/Wallet/store/selectors';
+import { generateAddress, resetReceive, setReceiveAmount, setSbbs } from '@app/containers/Wallet/store/actions';
 import { compact, copyToClipboard } from '@core/utils';
 import { toast } from 'react-toastify';
 import { AmountError } from '@app/containers/Wallet/constants';
@@ -86,6 +89,7 @@ const Receive = () => {
   const [showFullAddress, setShowFullAddress] = useState(false);
   const receiveAmount = useSelector(selectReceiveAmount());
   const addressFull = useSelector(selectAddress());
+  const sbbs = useSelector(selectSbbs());
   const selected_asset_id = useSelector(selectSelectedAssetId());
   const address = compact(addressFull);
   const [amountError, setAmountError] = useState('');
@@ -93,6 +97,7 @@ const Receive = () => {
   useEffect(
     () => () => {
       dispatch(resetReceive());
+      dispatch(setSbbs(null));
     },
     [dispatch],
   );
@@ -140,10 +145,10 @@ const Receive = () => {
   const saveReceiveAmount = (send_amount: TransactionAmount) => {
     setAmountError('');
     if (
-      Number(send_amount.amount) < 0.00000001
-      && Number(send_amount.amount) !== 0
-      && send_amount.amount !== ''
-      && send_amount.asset_id === 0
+      Number(send_amount.amount) < 0.00000001 &&
+      Number(send_amount.amount) !== 0 &&
+      send_amount.amount !== '' &&
+      send_amount.asset_id === 0
     ) {
       setAmountError(AmountError.LESS);
     }
@@ -158,6 +163,7 @@ const Receive = () => {
       onClose={() => setShowFullAddress(false)}
       isMaxAnonymity={maxAnonymity}
       hint={!maxAnonymity ? 'Regular address includes both online and offline addresses.' : ''}
+      sbbs={sbbs}
     />
   ) : (
     <Window title="Receive" pallete="blue">
@@ -165,11 +171,11 @@ const Receive = () => {
         visible={qrVisible}
         title=""
         onCancel={() => setQrVisible(false)}
-        confirmButton={(
+        confirmButton={
           <Button icon={CopySmallIcon} pallete="blue" onClick={copyAndCloseQr}>
             copy and close
           </Button>
-        )}
+        }
         footerClass="qr-code-popup"
         cancelButton={null}
       >

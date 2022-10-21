@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@linaria/react';
+import Button from '@app/shared/components/Button';
+import { IconEye, IconEyeCrossed } from '@app/shared/icons';
+import { css } from '@linaria/core';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -85,20 +88,56 @@ const LabelStyled = styled.div<InputProps>`
   color: ${({ valid }) => (valid ? 'var(--color-gray)' : 'var(--color-red)')};
 `;
 
+const menuEyeStyle = css`
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  right: 12px;
+  margin: 0;
+`;
+
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({
-    label, valid = true, variant = 'regular', margin = 'none', pallete, className, ...rest
-  }, ref) => {
+  ({ label, valid = true, variant = 'regular', margin = 'none', pallete, className, ...rest }, ref) => {
     const InputComponent = {
       regular: InputRegularStyled,
       gray: InputGrayStyled,
       amount: InputAmountStyled,
     }[variant];
 
+    const [inputVisible, setInputVisible] = useState(false);
+    const [inputValue, setInputValue] = useState(rest.value ?? '');
+
+    const inputHandler = (e) => {
+      if (rest?.onChange) rest?.onChange(e);
+      setInputValue(e.target.value);
+    };
+
     return (
       <ContainerStyled className={className} margin={margin}>
-        <InputComponent ref={ref} valid={valid} pallete={pallete} {...rest} className={!valid ? 'invalid' : ''} />
+        <InputComponent
+          ref={ref}
+          valid={valid}
+          pallete={pallete}
+          {...rest}
+          type={inputVisible ? 'text' : rest.type}
+          className={!valid ? 'invalid' : ''}
+          onChange={inputHandler}
+        />
         {!!label && <LabelStyled valid={valid}>{label}</LabelStyled>}
+
+        {rest.type === 'password' && inputValue?.toString().length ? (
+          <Button
+            variant="icon"
+            icon={!inputVisible ? IconEye : IconEyeCrossed}
+            className={menuEyeStyle}
+            onClick={(e) => {
+              setInputVisible((v) => !v);
+
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          />
+        ) : null}
       </ContainerStyled>
     );
   },

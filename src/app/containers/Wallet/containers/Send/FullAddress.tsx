@@ -5,6 +5,8 @@ import { AddressData } from '@core/types';
 import { CopySmallIcon } from '@app/shared/icons';
 import { toast } from 'react-toastify';
 import { copyToClipboard } from '@core/utils';
+import { useSelector } from 'react-redux';
+import { selectParsedAddressUD } from '../../store/selectors';
 
 interface FullAddressProps {
   addressData?: AddressData;
@@ -14,6 +16,7 @@ interface FullAddressProps {
   hint?: string;
   isMaxAnonymity?: boolean;
   isOffline?: boolean;
+  sbbs?: string | null;
 }
 
 const FullAddressWrapper = styled.div`
@@ -27,12 +30,68 @@ const FullAddressWrapper = styled.div`
     margin-right: auto;
     left: 0;
     right: 0;
-    bottom: -25px;
+    bottom: -35px;
+  }
+
+  .title {
+    opacity: 0.5;
+    font-size: 14px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 1px;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: left;
+  }
+  .address-information {
+    margin-top: 10px;
+    white-space: initial;
+    width: 300px;
+    text-align: left;
+    word-wrap: break-word;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #fff;
   }
 `;
 
 const AddressInformationWrapper = styled.div`
   position: relative;
+
+  button {
+    position: absolute;
+    top: 25px;
+    right: -20px;
+
+    &.no-title {
+      top: 0;
+    }
+  }
+  .hint {
+    margin-top: 10px;
+    opacity: 0.5;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: italic;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #fff;
+  }
+`;
+
+const SbbsWrapper = styled.div`
+  position: relative;
+  border-top: solid 1px #8191a2;
+  padding-top: 14px;
+  margin-top: 14px;
   .title {
     opacity: 0.5;
     font-size: 14px;
@@ -61,36 +120,37 @@ const AddressInformationWrapper = styled.div`
   }
   button {
     position: absolute;
-    top: 25px;
+    top: 40px;
     right: -20px;
 
     &.no-title {
       top: 0;
     }
   }
-  .hint {
-    margin-top: 10px;
-    opacity: 0.5;
-    font-size: 14px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: italic;
-    line-height: normal;
-    letter-spacing: normal;
-    text-align: center;
-    color: #fff;
-  }
 `;
 
 const FullAddress = ({
-  pallete, onClose, addressData, address, hint, isMaxAnonymity, isOffline,
+  pallete,
+  onClose,
+  addressData,
+  address,
+  hint,
+  isMaxAnonymity,
+  isOffline,
+  sbbs,
 }: FullAddressProps) => {
   let hintItem = hint;
   const isMaxPrivacy = addressData?.type === 'max_privacy';
+  const parsed_address_ud = useSelector(selectParsedAddressUD());
 
   const copyAddress = async () => {
     toast('Address copied to clipboard');
     await copyToClipboard(address);
+  };
+
+  const copySbbs = async () => {
+    toast('SBBS copied to clipboard');
+    await copyToClipboard(sbbs);
   };
 
   const copyAndClose = async () => {
@@ -136,21 +196,37 @@ const FullAddress = ({
     <Window pallete={pallete} onPrevious={onClose} title={getTitle()}>
       <FullAddressWrapper>
         <AddressInformationWrapper>
-          {(showAddress() || getTitle() === 'ONLINE ADDRESS') && (
+          {(showAddress() || getTitle() === 'ONLINE ADDRESS' || getTitle() === 'Regular Address') && (
             <div className="title">{getTitle() === 'ONLINE ADDRESS' ? 'ONLINE (SBBS) ADDRESS' : 'Address'}</div>
           )}
           <div className="address-information">{address}</div>
           <Button
-            className={showAddress() || getTitle() === 'ONLINE ADDRESS' ? '' : 'no-title'}
+            className={
+              showAddress() || getTitle() === 'ONLINE ADDRESS' || getTitle() === 'Regular Address' ? '' : 'no-title'
+            }
             variant="icon"
             pallete="white"
             icon={CopySmallIcon}
             onClick={copyAddress}
           />
-          <div className="hint">
-            {showAddress() || addressData?.type === 'max_privacy' || getTitle() === 'Regular Address' ? hintItem : ''}
-          </div>
+          {parsed_address_ud ?
+            <div className="hint">
+              Unstoppable Domains
+            </div> :
+            <div className="hint">
+              {showAddress() || addressData?.type === 'max_privacy' || getTitle() === 'Regular Address' ? hintItem : ''}
+            </div>
+          }
         </AddressInformationWrapper>
+
+        {sbbs && address !== sbbs && (
+          <SbbsWrapper>
+            <div className="title">Online (SBBS) Address</div>
+            <div className="address-information">{sbbs}</div>
+            <Button variant="icon" pallete="white" icon={CopySmallIcon} onClick={copySbbs} />
+          </SbbsWrapper>
+        )}
+
         <Button icon={CopySmallIcon} pallete={pallete} onClick={copyAndClose}>
           copy address and close
         </Button>

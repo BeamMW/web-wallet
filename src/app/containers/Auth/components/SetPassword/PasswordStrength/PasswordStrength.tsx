@@ -16,11 +16,11 @@ function getStrengthTitle(value: number) {
     case 5:
       return 'Strong';
     case 3:
-      return 'Medium strength';
+      return 'Medium strong';
     case 2:
       return 'Weak';
     case 1:
-      return 'Very Weak';
+      return 'Very weak';
     default:
       return null;
   }
@@ -91,13 +91,7 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ value }) => {
           <ListItemStyled key={index} points={p} />
         ))}
       </ListStyled>
-      {title && (
-      <StrengthTitleStyled>
-        {title}
-        {' '}
-        password
-      </StrengthTitleStyled>
-      )}
+      {title && <StrengthTitleStyled>{title} password</StrengthTitleStyled>}
     </ContainerStyled>
   );
 };

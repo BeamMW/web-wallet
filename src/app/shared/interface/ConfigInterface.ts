@@ -13,4 +13,5 @@ export interface ConfigurationObject {
   master_net: Configuration;
   test_net: Configuration;
   main_net: Configuration;
+  dapp_net: Configuration;
 }

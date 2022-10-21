@@ -18,9 +18,7 @@ const Ratetyled = styled.div`
   color: var(--color-gray);
 `;
 
-const Rate: React.FC<Props> = ({
-  value, income, groths, className, txRate,
-}) => {
+const Rate: React.FC<Props> = ({ value, income, groths, className, txRate }) => {
   const rate = useSelector(selectRate());
   const sign = income ? getSign(income) : '';
   const amount = groths ? fromGroths(value) : value;

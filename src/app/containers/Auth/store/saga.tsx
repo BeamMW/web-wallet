@@ -11,9 +11,7 @@ import {
 import WasmWallet from '@core/WasmWallet';
 import { navigate, setError, unlockWallet } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
-import {
-  ConnectedData, Environment, NotificationType, SyncProgress, WalletMethod,
-} from '@core/types';
+import { ConnectedData, Environment, NotificationType, SyncProgress } from '@core/types';
 import NotificationController from '@core/NotificationController';
 import { DatabaseSyncProgress, SyncStep } from '@app/containers/Auth/interfaces';
 

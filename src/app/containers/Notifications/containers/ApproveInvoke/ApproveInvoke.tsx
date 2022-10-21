@@ -3,9 +3,7 @@ import NotificationController from '@core/NotificationController';
 import { styled } from '@linaria/react';
 import { approveContractInfoRequest, rejectContractInfoRequest } from '@core/api';
 import { Button, AssetIcon } from '@app/shared/components';
-import {
-  CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards,
-} from '@app/shared/icons';
+import { CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards } from '@app/shared/icons';
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
 import NotificationManager from '@core/NotificationManager';
@@ -176,20 +174,16 @@ const ApproveInvoke = () => {
           <Amounts>
             {amounts.length > 0
               ? amounts.map((data) => {
-                const assetItem = assets.find((asset) => asset.asset_id === data.assetID);
-                return assetItem ? (
-                  <AssetItem key={data.assetID}>
-                    <AssetIcon asset_id={data.assetID} />
-                    <LabelStyled is_spend={data.spend}>
-                      {data.spend ? '-' : '+'}
-                      {' '}
-                      {data.amount}
-                      {' '}
-                      {assetItem.metadata_pairs.UN}
-                    </LabelStyled>
-                  </AssetItem>
-                ) : null;
-              })
+                  const assetItem = assets.find((asset) => asset.asset_id === data.assetID);
+                  return assetItem ? (
+                    <AssetItem key={data.assetID}>
+                      <AssetIcon asset_id={data.assetID} />
+                      <LabelStyled is_spend={data.spend}>
+                        {data.spend ? '-' : '+'} {data.amount} {assetItem.metadata_pairs.UN}
+                      </LabelStyled>
+                    </AssetItem>
+                  ) : null;
+                })
               : '-'}
           </Amounts>
         </Amount>
@@ -197,12 +191,7 @@ const ApproveInvoke = () => {
           <FeeSubtitle>Fee: </FeeSubtitle>
           <FeeValue>
             <AssetIcon asset_id={0} />
-            <FeeLabelStyled>
-              {info.fee}
-              {' '}
-              BEAM
-              {' '}
-            </FeeLabelStyled>
+            <FeeLabelStyled>{info.fee} BEAM </FeeLabelStyled>
           </FeeValue>
         </Fee>
         <TextStyled>{text}</TextStyled>

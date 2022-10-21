@@ -128,12 +128,7 @@ const ApproveSend = () => {
           <Subtitle>Fee: </Subtitle>
           <FeeValue>
             <AssetIcon asset_id={0} />
-            <FeeLabelStyled>
-              {info.fee}
-              {' '}
-              BEAM
-              {' '}
-            </FeeLabelStyled>
+            <FeeLabelStyled>{info.fee} BEAM </FeeLabelStyled>
           </FeeValue>
         </Section>
         <ControlsStyled>

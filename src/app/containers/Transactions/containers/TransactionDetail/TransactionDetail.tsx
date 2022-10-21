@@ -1,6 +1,4 @@
-import React, {
-  useCallback, useEffect, useMemo, useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Window } from '@app/shared/components';
 
@@ -69,7 +67,7 @@ const TransactionDetail = () => {
 
   return (
     <Window title="Transaction Info">
-      {!transactionDetail?.invoke_data?.length && (
+      {!transactionDetail?.invoke_data?.length && !transactionDetail?.income && (
         <DetailTabs>
           <div
             role="link"

@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { styled } from '@linaria/react';
 
-import {
-  Window, Button, Input, Footer, Popup,
-} from '@app/shared/components';
+import { Window, Button, Input, Footer, Popup } from '@app/shared/components';
 
 import { ArrowLeftIcon, ArrowRightIcon } from '@app/shared/icons';
 
@@ -17,6 +15,10 @@ import { PasswordStrength } from '../../components';
 
 const FormStyled = styled.form`
   text-align: left;
+
+  .input {
+    margin: 0.5rem 0 0.3rem;
+  }
 
   h3 {
     font-size: 14px;
@@ -39,6 +41,7 @@ const FormStyled = styled.form`
     line-height: normal;
     letter-spacing: normal;
     color: #fff;
+    margin: 0.5rem 0;
   }
   > ul {
     margin-bottom: 30px;
@@ -98,18 +101,19 @@ const SetPassword = () => {
       <Window title="Password" onPrevious={handlePrevious}>
         <FormStyled onSubmit={handleSubmit}>
           <h3>Create new password to access your wallet</h3>
-          <span> Password </span>
-
+          <span>Password</span>
           <Input
             id="pwd"
+            className="input"
             autoFocus
             type="password"
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <span>Password </span>
+          <span>Confirm password</span>
           <Input
             id="confirm"
+            className="input"
             type="password"
             valid={valid}
             label={error}
@@ -127,7 +131,7 @@ const SetPassword = () => {
           </ul>
           <Footer>
             <Button type="submit" icon={ArrowRightIcon} disabled={!ready}>
-              Start using your wallet
+              start using your wallet
             </Button>
           </Footer>
         </FormStyled>
@@ -135,11 +139,11 @@ const SetPassword = () => {
       <Popup
         visible={warningVisible}
         title="Return to seed phrase"
-        confirmButton={(
+        confirmButton={
           <Button icon={ArrowLeftIcon} onClick={handleReturnClick}>
             return
           </Button>
-        )}
+        }
         onCancel={() => toggleWarning(false)}
       >
         If you return to seed phrase, it would be changed and your local password won’t be saved.

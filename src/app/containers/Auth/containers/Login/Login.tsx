@@ -1,8 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 
-import {
-  Popup, Button, Input, Splash,
-} from '@app/shared/components';
+import { Popup, Button, Input, Splash } from '@app/shared/components';
 
 import { WalletSmallIcon, DoneIcon } from '@app/shared/icons';
 
@@ -40,6 +38,7 @@ const Login: React.FC = () => {
           <p>Enter your password to access the wallet</p>
           <Input
             autoFocus
+            id="pwd"
             name="password"
             type="password"
             placeholder="Password"
@@ -65,11 +64,11 @@ const Login: React.FC = () => {
       <Popup
         visible={warningVisible}
         title="Restore wallet or create a new one"
-        confirmButton={(
+        confirmButton={
           <Button icon={DoneIcon} onClick={() => navigate(ROUTES.AUTH.BASE)}>
             I agree
           </Button>
-        )}
+        }
         onCancel={() => {
           toggleWarning(false);
         }}
