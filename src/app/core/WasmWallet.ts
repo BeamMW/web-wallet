@@ -218,10 +218,10 @@ export default class WasmWallet {
     }
   }
 
-  async init(handler: WalletEventHandler, notification: Notification) {
+  async init(handler: WalletEventHandler, notification: Notification, is_running?: boolean) {
     this.eventHandler = handler;
 
-    if (this.isRunning()) {
+    if (is_running !== undefined ? is_running : this.isRunning()) {
       this.emit(BackgroundEvent.CONNECTED, {
         onboarding: false,
         is_running: true,

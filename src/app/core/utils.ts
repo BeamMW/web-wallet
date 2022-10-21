@@ -1,6 +1,5 @@
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 import { AddressType, Transaction } from '@core/types';
-import { initRemoteWallet } from '@core/api';
 
 export const copyToClipboard = (value: string) => navigator.clipboard.writeText(value);
 
@@ -81,17 +80,6 @@ export const convertLowAmount = (amount: number) => {
   //   ? amount.toFixed(Number(amount.toString().replace(`${amount.toString()[0]}e-`, '')))
   //   : amount;
 };
-
-export const createBeamTab = () => chrome.tabs.create(
-  {
-    url: 'background.html',
-    active: false,
-  },
-  (tab) => {
-    localStorage.setItem('beamTabId', tab.id.toString());
-    initRemoteWallet();
-  },
-);
 
 export const getBeamTabId = () => {
   const tabId = localStorage.getItem('beamTabId');

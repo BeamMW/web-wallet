@@ -63,6 +63,7 @@ export enum ExternalAppMethod {
 
 export interface RemoteRequest {
   id: number;
+  action: string;
   method: WalletMethod | RPCMethod;
   params: any;
 }

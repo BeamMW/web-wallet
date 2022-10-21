@@ -12,11 +12,28 @@ import {
   ExternalAppConnection,
 } from './types';
 
+import * as extensionizer from 'extensionizer';
+import NotificationManager from '@core/NotificationManager';
 import WasmWallet from '@core/WasmWallet';
+import { ExternalAppMethod } from '@core/types';
+import { RemoteRequest } from '@app/core/types';
 
 const wallet = WasmWallet.getInstance();
+const notificationManager = NotificationManager.getInstance();
 
 let counter = 0;
+let port;
+
+let contentPort = null;
+let notificationPort = null;
+let connected = false;
+let activeTab = null;
+
+function portPostMessage(data) {
+  if (port && connected) {
+    port.postMessage(data);
+  }
+}
 
 export function getEnvironment(href = window.location.href) {
   const url = new URL(href);
@@ -30,6 +47,114 @@ export function getEnvironment(href = window.location.href) {
     default:
       return Environment.BACKGROUND;
   }
+}
+
+function handleConnect(remote) {
+  port = remote;
+  connected = true;
+  // eslint-disable-next-line no-console
+  console.log(`remote connected to "${port.name}"`);
+
+  port.onDisconnect.addListener(() => {
+    connected = false;
+  });
+
+  port.onMessage.addListener(({ id, method, params, action }: RemoteRequest) => {
+    if (method !== undefined) {
+      wallet.send(id, method, params);
+    }
+
+    if (action !== undefined) {
+      switch(action){
+        case 'connect':
+          approveConnection(params);
+          break;
+        case 'connect_rejected':
+          rejectConnection();
+          break;
+        case 'rejectSendRequest':
+          rejectSendRequest(params);
+          break;
+        case 'approveSendRequest':
+          approveSendRequest(params);
+          break;
+        case 'rejectContractInfoRequest':
+          rejectContractInfoRequest(params);
+          break;
+        case 'approveContractInfoRequest':
+          approveContractInfoRequest(params);
+          break;
+        default: 
+          break;
+      }
+    }
+  });
+
+  switch (port.name) {
+   case Environment.NOTIFICATION: {
+      const tabId = remote.sender.tab.id;
+      notificationManager.openBeamTabsIDs[tabId] = true;
+      activeTab = remote.sender.tab.id;
+      notificationPort = remote;
+      notificationPort.onDisconnect.addListener(() => {
+        if (activeTab) {
+          // notificationManager.closeTab(activeTab);
+          activeTab = null;
+          notificationManager.appname = ''; // TODO: check with reconnect
+          notificationManager.openBeamTabsIDs = {};
+        }
+      });
+      notificationPort.postMessage({'isRunning': wallet.isRunning(), 'notification': notificationManager.notification});
+      break;
+    }
+
+    case Environment.CONTENT:
+      NotificationManager.setPort(remote);
+      break;
+
+    case Environment.CONTENT_REQ: {
+      notificationManager.setReqPort(remote);
+      contentPort = remote;
+      contentPort.onMessage.addListener((msg) => {
+        if (wallet.isRunning() && !localStorage.getItem('locked')) {
+          if (wallet.isConnectedSite({ appName: msg.appname, appUrl: remote.sender.origin })) {
+            msg.appurl = remote.sender.origin;
+            wallet.connectExternal(msg);
+          } else if (msg.type === ExternalAppMethod.CreateBeamApi) {
+            if (msg.is_reconnect && notificationManager.appname === msg.appname) {
+              // eslint-disable-next-line
+              notificationManager.openPopup()
+            } else {
+              notificationManager.openConnectNotification(msg, remote.sender.origin);
+            }
+          }
+        } else {
+          notificationManager.openAuthNotification(msg, remote.sender.origin);
+        }
+      });
+
+      contentPort.onDisconnect.addListener((e) => {
+        wallet.disconnectAppApi(e.sender.origin);
+      });
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+export function initRemoteConnection() {
+  extensionizer.runtime.onConnect.addListener(handleConnect);
+
+  wallet.initContractInfoHandler((req, info, amounts, cb) => {
+    wallet.initcontractInfoHandlerCallback(cb);
+    notificationManager.openContractNotification(req, info, amounts);
+  });
+  
+  wallet.initSendHandler((req, info, cb) => {
+    wallet.initSendHandlerCallback(cb);
+    notificationManager.openSendNotification(req, info);
+  });
 }
 
 export function postMessage<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
@@ -129,7 +254,7 @@ export function finishNotificationAuth(apiver: string, apivermin: string, appnam
   });
 }
 
-export function approveConnection(apiver: string, apivermin: string, appname: string, appurl: string) {
+export function approveConnection({apiver, apivermin, appname, appurl}) {
   return wallet.approveConnection({
     result: true,
     apiver,

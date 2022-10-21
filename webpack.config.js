@@ -12,7 +12,6 @@ const config = {
   cache: false,
   entry: {
     index: path.join(__dirname, "./src/index.tsx"),
-    background: path.join(__dirname, "./src/background.ts"),
     contentscript: path.join(__dirname, "./src/contentscript.ts"),
     inpage: path.join(__dirname, "./src/inpage.ts"),
     appinit: path.join(__dirname, './src/appinit.ts')
@@ -86,11 +85,6 @@ const config = {
         },
         {
           from: path.join(__dirname, "src/popup.html"),
-          to: path.join(__dirname, "dist"),
-          context: "public",
-        },
-        {
-          from: path.join(__dirname, "src/background.html"),
           to: path.join(__dirname, "dist"),
           context: "public",
         },

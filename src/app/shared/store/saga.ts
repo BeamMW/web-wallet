@@ -18,10 +18,15 @@ import { actions } from '@app/shared/store/index';
 import { navigate } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import NotificationController from '@app/core/NotificationController';
+import NotificationManager from '@app/core/NotificationManager';
+import ExtensionPlatform from '@app/core/Extension';
+import * as extensionizer from 'extensionizer';
+import { Environment, ConnectRequest } from '@core/types';
 
 import WasmWallet from '@core/WasmWallet';
 
 const wallet = WasmWallet.getInstance();
+const notificationManager = NotificationManager.getInstance();
 
 export function remoteEventChannel() {
   return eventChannel((emitter) => {
@@ -29,7 +34,20 @@ export function remoteEventChannel() {
       emitter(data);
     };
 
-    wallet.init(handler, null);
+    const platform = new ExtensionPlatform();
+
+    if (platform.getEnvironmentType() === 'notification') {
+      const backgroundPort = extensionizer.runtime.connect({
+        name: Environment.NOTIFICATION,
+      });
+
+      notificationManager.setReqPort(backgroundPort);//TODO
+      backgroundPort.onMessage.addListener(({isRunning, notification}) => {
+        wallet.init(handler, notification, isRunning);
+      });
+    } else {
+      wallet.init(handler, null);
+    }
 
     const unsubscribe = () => {
       emitter(END);
