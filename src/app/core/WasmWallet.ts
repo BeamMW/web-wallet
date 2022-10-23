@@ -67,6 +67,8 @@ console.warn = function (...args) {
 export default class WasmWallet {
   private static instance: WasmWallet;
 
+  private counter = 0;
+
   private passwordHash: string;
 
   private contractInfoHandler;
@@ -212,12 +214,16 @@ export default class WasmWallet {
   private mounted: boolean = false;
 
   private eventHandler: WalletEventHandler;
-  private remoteEventHandler: WalletEventHandler;
+  private remoteEventHandler = [];
 
   setRemoteEventHandler(handler: WalletEventHandler) {
-    if (!this.remoteEventHandler) {
-      this.remoteEventHandler = handler;
-    }
+    this.remoteEventHandler.push({'handler': handler, 'is_done': false});
+
+    this.remoteEventHandler.forEach((item, i) => {
+      if (item.is_done) {
+        this.remoteEventHandler.splice(i, 1);
+      }
+    })
   }
 
   async init(handler: WalletEventHandler, notification: Notification, is_running?: boolean) {
@@ -328,10 +334,13 @@ export default class WasmWallet {
 
     const responseHandler = (response) => {
       const event = JSON.parse(response);
-      // eslint-disable-next-line no-console
-      console.info(event);
       this.eventHandler(event);
-      this?.remoteEventHandler(event);
+      if (this.remoteEventHandler !== undefined) {
+        this.remoteEventHandler.forEach((item, i) => {
+          const res = item.handler(event);
+          item.is_done = !!res;
+        });
+      }
     };
 
     this.wallet.startWallet();
@@ -345,7 +354,7 @@ export default class WasmWallet {
 
   // TODO: will be updated after sub response fix in wallet api
   toggleEvents(value: boolean) {
-    this.send(0, RPCMethod.SubUnsub, {
+    this.send(RPCMethod.SubUnsub, {
       ev_addrs_changed: value,
       ev_assets_changed: value,
       ev_sync_progress: value,
@@ -765,8 +774,10 @@ export default class WasmWallet {
     return null;
   }
 
-  send(id: number, method: RPCMethod | WalletMethod, params?: any) {
+  send(method: RPCMethod | WalletMethod, params?: any) {
     const internal = Object.values(WalletMethod).includes(method as WalletMethod);
+    const id = this.counter;
+    this.counter += 1;
 
     if (internal) {
       try {
@@ -785,5 +796,7 @@ export default class WasmWallet {
         params,
       }),
     );
+
+    return id;
   }
 }

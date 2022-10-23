@@ -21,7 +21,6 @@ import { RemoteRequest } from '@app/core/types';
 const wallet = WasmWallet.getInstance();
 const notificationManager = NotificationManager.getInstance();
 
-let counter = 0;
 let port;
 
 let contentPort = null;
@@ -60,10 +59,6 @@ function handleConnect(remote) {
   });
 
   port.onMessage.addListener(({ id, method, params, action }: RemoteRequest) => {
-    if (method !== undefined) {
-      wallet.send(id, method, params);
-    }
-
     if (action !== undefined) {
       switch(action){
         case 'connect':
@@ -159,11 +154,8 @@ export function initRemoteConnection() {
 
 export function postMessage<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
   return new Promise((resolve, reject) => {
-    const target = counter;
-
-    counter += 1;
-
-    function handler(data: RemoteResponse) {
+    const target = wallet.send(method, params)
+    const handler = (data: RemoteResponse) => {
       if (method === RPCMethod.GetWalletStatus) {
         console.log(data);
       }
@@ -174,11 +166,8 @@ export function postMessage<T = any, P = unknown>(method: RPCMethod, params?: P)
         return resolve(data.result);
       }
       return data;
-    }
-
+    };
     wallet.setRemoteEventHandler(handler);
-
-    wallet.send(target, method, params);
   });
 }
 
