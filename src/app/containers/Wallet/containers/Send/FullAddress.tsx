@@ -163,7 +163,7 @@ const FullAddress = ({
       if (!isOffline) {
         hintItem = 'Regular address includes both online and offline addresses.';
       }
-      return isOffline ? 'Public offline' : 'Regular Address';
+      return 'Regular Address';
     }
     if (addressData?.type === 'regular') {
       return 'ONLINE ADDRESS';
@@ -196,13 +196,13 @@ const FullAddress = ({
     <Window pallete={pallete} onPrevious={onClose} title={getTitle()}>
       <FullAddressWrapper>
         <AddressInformationWrapper>
-          {(showAddress() || getTitle() === 'ONLINE ADDRESS' || getTitle() === 'Regular Address') && (
+          {(showAddress() || getTitle() === 'ONLINE ADDRESS' || (getTitle() === 'Regular Address' && !isOffline)) && (
             <div className="title">{getTitle() === 'ONLINE ADDRESS' ? 'ONLINE (SBBS) ADDRESS' : 'Address'}</div>
           )}
           <div className="address-information">{address}</div>
           <Button
             className={
-              showAddress() || getTitle() === 'ONLINE ADDRESS' || getTitle() === 'Regular Address' ? '' : 'no-title'
+              showAddress() || getTitle() === 'ONLINE ADDRESS' || (getTitle() === 'Regular Address' && !isOffline) ? '' : 'no-title'
             }
             variant="icon"
             pallete="white"
@@ -214,12 +214,12 @@ const FullAddress = ({
               Unstoppable Domains
             </div> :
             <div className="hint">
-              {showAddress() || addressData?.type === 'max_privacy' || getTitle() === 'Regular Address' ? hintItem : ''}
+              {showAddress() || addressData?.type === 'max_privacy' || (getTitle() === 'Regular Address' && !isOffline) ? hintItem : ''}
             </div>
           }
         </AddressInformationWrapper>
 
-        {sbbs && address !== sbbs && (
+        {sbbs && address !== sbbs && !isOffline && (
           <SbbsWrapper>
             <div className="title">Online (SBBS) Address</div>
             <div className="address-information">{sbbs}</div>

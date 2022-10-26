@@ -35,6 +35,7 @@ import {
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 import { AddressData } from '@core/types';
 import { FullAddress, SendConfirm } from '@app/containers';
+import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 
 const WarningStyled = styled.div`
   margin: 30px -20px;
@@ -144,6 +145,7 @@ const SendForm = () => {
   const is_send_ready = useSelector(selectIsSendReady());
   const selected_asset_id = useSelector(selectSelectedAssetId());
   const parsed_address_ud = useSelector(selectParsedAddressUD());
+  const isBalanceHidden = useSelector(selectIsBalanceHidden());
 
   const beam = useMemo(() => assets.find((a) => a.asset_id === 0), [assets]);
 
@@ -397,7 +399,7 @@ const SendForm = () => {
       sbbs={sbbs}
     />
   ) : (
-    <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
+    <Window title="Send" pallete="purple" showHideButton={true} onPrevious={showConfirm ? handlePrevious : undefined}>
       {!showConfirm ? (
         <form onSubmit={submitForm}>
           <Section title="Send to" variant="gray">
@@ -437,20 +439,22 @@ const SendForm = () => {
               error={errors.send_amount?.toString()}
               onChange={(e) => handleAssetChange(e)}
             />
-            <Title variant="subtitle">Available</Title>
-            {`${convertLowAmount(groths)} ${truncate(selected.metadata_pairs.N)}`}
-            {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
-            {groths > 0 && (
-              <Button
-                icon={ArrowUpIcon}
-                variant="link"
-                pallete="purple"
-                className={maxButtonStyle}
-                onClick={() => handleMaxAmount()}
-              >
-                max
-              </Button>
-            )}
+            {!isBalanceHidden && <>
+              <Title variant="subtitle">Available</Title>
+              {`${convertLowAmount(groths)} ${truncate(selected.metadata_pairs.N)}`}
+              {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
+              {groths > 0 && (
+                <Button
+                  icon={ArrowUpIcon}
+                  variant="link"
+                  pallete="purple"
+                  className={maxButtonStyle}
+                  onClick={() => handleMaxAmount()}
+                >
+                  max
+                </Button>
+              )}
+            </>}
           </Section>
           <Section title="Comment" variant="gray" collapse>
             <Input
