@@ -10,9 +10,7 @@ import {
 } from '@core/api';
 import { navigate, setError, unlockWallet } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
-import {
-  ConnectedData, Environment, NotificationType, SyncProgress,
-} from '@core/types';
+import { ConnectedData, Environment, NotificationType, SyncProgress } from '@core/types';
 import NotificationController from '@core/NotificationController';
 import { DatabaseSyncProgress, SyncStep } from '@app/containers/Auth/interfaces';
 

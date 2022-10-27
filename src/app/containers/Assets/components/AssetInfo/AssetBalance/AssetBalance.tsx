@@ -29,9 +29,7 @@ const AssetBalance = ({ currentAsset }: AssetBalanceProps) => (
         <div className="title">Available:</div>
         <div className="value">
           <div>
-            {fromGroths(currentAsset.available)}
-            {' '}
-            {currentAsset.metadata_pairs.UN}
+            {fromGroths(currentAsset.available)} {currentAsset.metadata_pairs.UN}
           </div>
           <br />
         </div>
@@ -43,9 +41,7 @@ const AssetBalance = ({ currentAsset }: AssetBalanceProps) => (
         <div className="title">Locked:</div>
         <div className="value">
           <div>
-            {fromGroths(currentAsset.sending)}
-            {' '}
-            {currentAsset.metadata_pairs.UN}
+            {fromGroths(currentAsset.sending)} {currentAsset.metadata_pairs.UN}
           </div>
           <br />
         </div>

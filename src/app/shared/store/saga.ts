@@ -1,6 +1,4 @@
-import {
-  call, take, fork, takeLatest, put,
-} from 'redux-saga/effects';
+import { call, take, fork, takeLatest, put } from 'redux-saga/effects';
 
 import { eventChannel, END } from 'redux-saga';
 import { initRemoteWallet, walletLocked } from '@core/api';

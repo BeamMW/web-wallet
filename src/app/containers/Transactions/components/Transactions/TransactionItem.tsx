@@ -3,9 +3,7 @@ import { styled } from '@linaria/react';
 import { Transaction } from '@core/types';
 import { Rate, StatusLabel } from '@app/shared/components';
 import { css } from '@linaria/core';
-import {
-  convertLowAmount, fromGroths, getSign, truncate,
-} from '@core/utils';
+import { convertLowAmount, fromGroths, getSign, truncate } from '@core/utils';
 import { AssetTotal } from '@app/containers/Wallet/interfaces';
 import AssetIcon from '../../../../shared/components/AssetIcon';
 
@@ -104,9 +102,7 @@ const TransactionItem = ({
   assets: AssetTotal[];
   isBalanceHidden?: boolean;
 }) => {
-  const {
-    asset_id, invoke_data, income, fee, fee_only, value,
-  } = data;
+  const { asset_id, invoke_data, income, fee, fee_only, value } = data;
 
   const target = assets.find(({ asset_id: id }) => id === asset_id);
 
@@ -119,16 +115,18 @@ const TransactionItem = ({
 
   const multipleAssetsTitle = () => {
     let title = '';
-    invoke_data.forEach((i) => i.amounts.forEach((a) => {
-      const tg = assets.find(({ asset_id: id }) => id === a.asset_id);
-      const n = truncate(tg?.metadata_pairs.UN) ?? '';
-      const am = fromGroths(fee_only ? fee : a.amount);
-      if (!isBalanceHidden) {
-        title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
-      } else {
-        title += `${n} `;
-      }
-    }));
+    invoke_data.forEach((i) =>
+      i.amounts.forEach((a) => {
+        const tg = assets.find(({ asset_id: id }) => id === a.asset_id);
+        const n = truncate(tg?.metadata_pairs.UN) ?? '';
+        const am = fromGroths(fee_only ? fee : a.amount);
+        if (!isBalanceHidden) {
+          title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
+        } else {
+          title += `${n} `;
+        }
+      }),
+    );
     return title;
   };
 
@@ -147,11 +145,13 @@ const TransactionItem = ({
   const multipleAssetsAmount = () => {
     let res = 0;
 
-    invoke_data.forEach((i) => i.amounts.forEach((a) => {
-      const am = fromGroths(fee_only ? fee : a.amount);
+    invoke_data.forEach((i) =>
+      i.amounts.forEach((a) => {
+        const am = fromGroths(fee_only ? fee : a.amount);
 
-      if (am > res) res = am;
-    }));
+        if (am > res) res = am;
+      }),
+    );
     return res;
   };
 
@@ -181,10 +181,12 @@ const TransactionItem = ({
       ) : (
         <ContainerStyled>
           <MultipleAssets>
-            {invoke_data.map((i) => i.amounts
-              .slice()
-              .reverse()
-              .map((a) => <AssetIcon key={a.asset_id} asset_id={a.asset_id} />))}
+            {invoke_data.map((i) =>
+              i.amounts
+                .slice()
+                .reverse()
+                .map((a) => <AssetIcon key={a.asset_id} asset_id={a.asset_id} />),
+            )}
           </MultipleAssets>
           <AmountStyled>{multipleAssetsTitle()}</AmountStyled>
           {assetRate && !isBalanceHidden ? (

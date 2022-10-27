@@ -2,9 +2,7 @@ import React from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
-import {
-  convertLowAmount, fromGroths, getSign, truncate,
-} from '@core/utils';
+import { convertLowAmount, fromGroths, getSign, truncate } from '@core/utils';
 import { Transaction } from '@core/types';
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';

@@ -51,7 +51,7 @@ const Settings = () => {
     navigate(ROUTES.SETTINGS.SETTINGS_CONNECTED);
   };
 
-  const version = `v ${manifest.version} (${versionData.beam_branch_name})`;
+  const version = `v ${manifest.version}`;
 
   return (
     <>

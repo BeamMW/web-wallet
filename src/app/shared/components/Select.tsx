@@ -1,6 +1,4 @@
-import React, {
-  ReactElement, useEffect, useRef, useState,
-} from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 
 import { css } from '@linaria/core';
@@ -89,9 +87,7 @@ interface SelectProps<T = any> {
   onSelect: (value: T) => void;
 }
 
-export const Select: React.FC<SelectProps> = ({
-  value, className, children, onSelect,
-}) => {
+export const Select: React.FC<SelectProps> = ({ value, className, children, onSelect }) => {
   const [opened, setOpened] = useState(false);
   const selectRef = useRef<HTMLDivElement>();
 

@@ -1,27 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {
-  useCallback, useEffect, useMemo, useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  AmountInput, Button, Input, Rate, Section, Title, Window,
-} from '@app/shared/components';
+import { AmountInput, Button, Input, Rate, Section, Title, Window } from '@app/shared/components';
 
-import {
-  ArrowRightIcon, ArrowUpIcon, CopySmallIcon, IconCancel, InfoButton,
-} from '@app/shared/icons';
+import { ArrowRightIcon, ArrowUpIcon, CopySmallIcon, IconCancel, InfoButton } from '@app/shared/icons';
 
 import { styled } from '@linaria/react';
 import LabeledToggle from '@app/shared/components/LabeledToggle';
 import { css } from '@linaria/core';
-import {
-  compact, convertLowAmount, fromGroths, toGroths, truncate,
-} from '@core/utils';
+import { compact, convertLowAmount, fromGroths, toGroths, truncate } from '@core/utils';
 import { useFormik } from 'formik';
 
-import {
-  AddressLabel, AddressTip, AmountError, ASSET_BLANK, FEE_DEFAULT,
-} from '@app/containers/Wallet/constants';
+import { AddressLabel, AddressTip, AmountError, ASSET_BLANK, FEE_DEFAULT } from '@app/containers/Wallet/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   resetSendData,
@@ -35,6 +25,7 @@ import {
   selectAssetChange,
   selectAssets,
   selectChange,
+  selectParsedAddressUD,
   selectIsSendReady,
   selectSbbs,
   selectSelectedAssetId,
@@ -44,6 +35,7 @@ import {
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 import { AddressData } from '@core/types';
 import { FullAddress, SendConfirm } from '@app/containers';
+import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 
 const WarningStyled = styled.div`
   margin: 30px -20px;
@@ -73,9 +65,7 @@ interface SendFormData {
 
 const validate = async (values: SendFormData, setHint: (string) => void) => {
   const errors: any = {};
-  const {
-    addressData, selected, beam, fee,
-  } = values.misc;
+  const { addressData, selected, beam, fee } = values.misc;
 
   if (!values.address.length) {
     errors.address = '';
@@ -86,9 +76,10 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
   }
 
   if (values.offline && addressData.type !== 'max_privacy' && addressData.type !== 'public_offline') {
-    const warning = addressData.payments > 1
-      ? 'transactions left.'
-      : 'transaction left. Ask receiver to come online to support more offline transactions.';
+    const warning =
+      addressData.payments > 1
+        ? 'transactions left.'
+        : 'transaction left. Ask receiver to come online to support more offline transactions.';
 
     const label = `${AddressLabel.OFFLINE} ${addressData.payments} ${warning}`;
 
@@ -112,10 +103,10 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
   const total = value + (send_amount.asset_id === 0 ? fee : 0);
 
   if (
-    Number(send_amount.amount) < 0.00000001
-    && Number(send_amount.amount) !== 0
-    && send_amount.amount !== ''
-    && send_amount.asset_id === 0
+    Number(send_amount.amount) < 0.00000001 &&
+    Number(send_amount.amount) !== 0 &&
+    send_amount.amount !== '' &&
+    send_amount.asset_id === 0
   ) {
     errors.send_amount = AmountError.LESS;
   }
@@ -153,6 +144,8 @@ const SendForm = () => {
   const asset_change = useSelector(selectAssetChange());
   const is_send_ready = useSelector(selectIsSendReady());
   const selected_asset_id = useSelector(selectSelectedAssetId());
+  const parsed_address_ud = useSelector(selectParsedAddressUD());
+  const isBalanceHidden = useSelector(selectIsBalanceHidden());
 
   const beam = useMemo(() => assets.find((a) => a.asset_id === 0), [assets]);
 
@@ -179,9 +172,7 @@ const SendForm = () => {
     },
   });
 
-  const {
-    values, setFieldValue, errors, submitForm,
-  } = formik;
+  const { values, setFieldValue, errors, submitForm } = formik;
 
   const { type: addressType } = addressData;
 
@@ -365,16 +356,14 @@ const SendForm = () => {
   };
 
   const submitSend = useCallback(() => {
-    const {
-      send_amount, address, offline, comment,
-    } = values;
+    const { send_amount, address, offline, comment } = values;
     const isMaxPrivacy = addressData.type === 'max_privacy';
     const value = send_amount.amount === '' ? 0 : toGroths(parseFloat(send_amount.amount));
 
     const transactionPayload = {
       fee,
       value,
-      address,
+      address: parsed_address_ud ? parsed_address_ud : address,
       comment,
       asset_id: send_amount.asset_id,
       offline: offline || isMaxPrivacy,
@@ -410,7 +399,7 @@ const SendForm = () => {
       sbbs={sbbs}
     />
   ) : (
-    <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
+    <Window title="Send" pallete="purple" showHideButton={true} onPrevious={showConfirm ? handlePrevious : undefined}>
       {!showConfirm ? (
         <form onSubmit={submitForm}>
           <Section title="Send to" variant="gray">
@@ -419,8 +408,8 @@ const SendForm = () => {
               label={getAddressHint()}
               valid={isAddressValid()}
               placeholder="Paste recipient address here"
-              value={focus ? values.address : compactAddress}
-              defaultValue={focus ? values.address : compactAddress}
+              value={parsed_address_ud || !is_send_ready ? values.address : (focus ? values.address : compactAddress) }
+              defaultValue={parsed_address_ud || !is_send_ready ? values.address : (focus ? values.address : compactAddress)}
               onInput={handleAddressChange}
               className="send-input"
               onFocus={() => setFocus(true)}
@@ -450,20 +439,22 @@ const SendForm = () => {
               error={errors.send_amount?.toString()}
               onChange={(e) => handleAssetChange(e)}
             />
-            <Title variant="subtitle">Available</Title>
-            {`${convertLowAmount(groths)} ${truncate(selected.metadata_pairs.N)}`}
-            {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
-            {groths > 0 && (
-              <Button
-                icon={ArrowUpIcon}
-                variant="link"
-                pallete="purple"
-                className={maxButtonStyle}
-                onClick={() => handleMaxAmount()}
-              >
-                max
-              </Button>
-            )}
+            {!isBalanceHidden && <>
+              <Title variant="subtitle">Available</Title>
+              {`${convertLowAmount(groths)} ${truncate(selected.metadata_pairs.N)}`}
+              {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
+              {groths > 0 && (
+                <Button
+                  icon={ArrowUpIcon}
+                  variant="link"
+                  pallete="purple"
+                  className={maxButtonStyle}
+                  onClick={() => handleMaxAmount()}
+                >
+                  max
+                </Button>
+              )}
+            </>}
           </Section>
           <Section title="Comment" variant="gray" collapse>
             <Input

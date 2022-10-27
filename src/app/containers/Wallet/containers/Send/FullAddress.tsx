@@ -5,6 +5,8 @@ import { AddressData } from '@core/types';
 import { CopySmallIcon } from '@app/shared/icons';
 import { toast } from 'react-toastify';
 import { copyToClipboard } from '@core/utils';
+import { useSelector } from 'react-redux';
+import { selectParsedAddressUD } from '../../store/selectors';
 
 interface FullAddressProps {
   addressData?: AddressData;
@@ -139,6 +141,7 @@ const FullAddress = ({
 }: FullAddressProps) => {
   let hintItem = hint;
   const isMaxPrivacy = addressData?.type === 'max_privacy';
+  const parsed_address_ud = useSelector(selectParsedAddressUD());
 
   const copyAddress = async () => {
     toast('Address copied to clipboard');
@@ -160,7 +163,7 @@ const FullAddress = ({
       if (!isOffline) {
         hintItem = 'Regular address includes both online and offline addresses.';
       }
-      return isOffline ? 'Public offline' : 'Regular Address';
+      return 'Regular Address';
     }
     if (addressData?.type === 'regular') {
       return 'ONLINE ADDRESS';
@@ -193,25 +196,30 @@ const FullAddress = ({
     <Window pallete={pallete} onPrevious={onClose} title={getTitle()}>
       <FullAddressWrapper>
         <AddressInformationWrapper>
-          {(showAddress() || getTitle() === 'ONLINE ADDRESS' || getTitle() === 'Regular Address') && (
+          {(showAddress() || getTitle() === 'ONLINE ADDRESS' || (getTitle() === 'Regular Address' && !isOffline)) && (
             <div className="title">{getTitle() === 'ONLINE ADDRESS' ? 'ONLINE (SBBS) ADDRESS' : 'Address'}</div>
           )}
           <div className="address-information">{address}</div>
           <Button
             className={
-              showAddress() || getTitle() === 'ONLINE ADDRESS' || getTitle() === 'Regular Address' ? '' : 'no-title'
+              showAddress() || getTitle() === 'ONLINE ADDRESS' || (getTitle() === 'Regular Address' && !isOffline) ? '' : 'no-title'
             }
             variant="icon"
             pallete="white"
             icon={CopySmallIcon}
             onClick={copyAddress}
           />
-          <div className="hint">
-            {showAddress() || addressData?.type === 'max_privacy' || getTitle() === 'Regular Address' ? hintItem : ''}
-          </div>
+          {parsed_address_ud ?
+            <div className="hint">
+              Unstoppable Domains
+            </div> :
+            <div className="hint">
+              {showAddress() || addressData?.type === 'max_privacy' || (getTitle() === 'Regular Address' && !isOffline) ? hintItem : ''}
+            </div>
+          }
         </AddressInformationWrapper>
 
-        {sbbs && address !== sbbs && (
+        {sbbs && address !== sbbs && !isOffline && (
           <SbbsWrapper>
             <div className="title">Online (SBBS) Address</div>
             <div className="address-information">{sbbs}</div>

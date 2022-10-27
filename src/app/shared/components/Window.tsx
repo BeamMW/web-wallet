@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
-import {
-  IconEye, IconLockWallet, MenuIcon, IconEyeCrossed, InfoButton,
-} from '@app/shared/icons';
+import { IconEye, IconLockWallet, MenuIcon, IconEyeCrossed, InfoButton } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
 import config from '@app/config';

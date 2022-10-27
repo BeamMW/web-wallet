@@ -101,8 +101,8 @@ const StatusLabel: React.FC<StatusLabelProps> = ({ data }) => {
     <ContainerStyled color={color}>
       <IconStyled
         reverse={
-          data.status_string === TxStatusString.EXPIRED
-          || data.status_string === TxStatusString.SENT_OFFLINE_TO_OWN_ADDRESS
+          data.status_string === TxStatusString.EXPIRED ||
+          data.status_string === TxStatusString.SENT_OFFLINE_TO_OWN_ADDRESS
             ? false
             : !data.income
         }

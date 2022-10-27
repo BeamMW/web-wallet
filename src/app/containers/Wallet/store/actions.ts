@@ -1,7 +1,5 @@
 import { createAction, createAsyncAction } from 'typesafe-actions';
-import {
-  WalletTotal, Asset, CreateAddressParams, AddressData, ChangeData, SendTransactionParams,
-} from '@core/types';
+import { WalletTotal, Asset, CreateAddressParams, AddressData, ChangeData, SendTransactionParams } from '@core/types';
 import { ErrorMessage } from '@core/WasmWallet';
 import { CalculateChangeParams } from '@core/api';
 import { WalletActionTypes } from './constants';
@@ -48,7 +46,8 @@ export const sendTransaction = createAsyncAction(
 )<SendTransactionParams, void, ErrorMessage>();
 
 export const setSelectedAssetId = createAction(WalletActionTypes.SET_SELECTED_ASSET_ID)<
-WalletStateType['selected_asset_id']
+  WalletStateType['selected_asset_id']
 >();
 
 export const setSbbs = createAction(WalletActionTypes.SET_SBBS)<WalletStateType['sbbs']>();
+export const setParsedAddressUD = createAction(WalletActionTypes.SET_ADDRESS_UD)<string>();
