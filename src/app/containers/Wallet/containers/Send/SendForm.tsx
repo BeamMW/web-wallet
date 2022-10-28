@@ -25,6 +25,7 @@ import {
   selectAssetChange,
   selectAssets,
   selectChange,
+  selectParsedAddressUD,
   selectIsSendReady,
   selectSbbs,
   selectSelectedAssetId,
@@ -34,6 +35,7 @@ import {
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 import { AddressData } from '@core/types';
 import { FullAddress, SendConfirm } from '@app/containers';
+import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 
 const WarningStyled = styled.div`
   margin: 30px -20px;
@@ -142,6 +144,8 @@ const SendForm = () => {
   const asset_change = useSelector(selectAssetChange());
   const is_send_ready = useSelector(selectIsSendReady());
   const selected_asset_id = useSelector(selectSelectedAssetId());
+  const parsed_address_ud = useSelector(selectParsedAddressUD());
+  const isBalanceHidden = useSelector(selectIsBalanceHidden());
 
   const beam = useMemo(() => assets.find((a) => a.asset_id === 0), [assets]);
 
@@ -359,7 +363,7 @@ const SendForm = () => {
     const transactionPayload = {
       fee,
       value,
-      address,
+      address: parsed_address_ud ? parsed_address_ud : address,
       comment,
       asset_id: send_amount.asset_id,
       offline: offline || isMaxPrivacy,
@@ -395,7 +399,7 @@ const SendForm = () => {
       sbbs={sbbs}
     />
   ) : (
-    <Window title="Send" pallete="purple" onPrevious={showConfirm ? handlePrevious : undefined}>
+    <Window title="Send" pallete="purple" showHideButton={true} onPrevious={showConfirm ? handlePrevious : undefined}>
       {!showConfirm ? (
         <form onSubmit={submitForm}>
           <Section title="Send to" variant="gray">
@@ -404,8 +408,8 @@ const SendForm = () => {
               label={getAddressHint()}
               valid={isAddressValid()}
               placeholder="Paste recipient address here"
-              value={focus ? values.address : compactAddress}
-              defaultValue={focus ? values.address : compactAddress}
+              value={parsed_address_ud || !is_send_ready ? values.address : (focus ? values.address : compactAddress) }
+              defaultValue={parsed_address_ud || !is_send_ready ? values.address : (focus ? values.address : compactAddress)}
               onInput={handleAddressChange}
               className="send-input"
               onFocus={() => setFocus(true)}
@@ -435,20 +439,22 @@ const SendForm = () => {
               error={errors.send_amount?.toString()}
               onChange={(e) => handleAssetChange(e)}
             />
-            <Title variant="subtitle">Available</Title>
-            {`${convertLowAmount(groths)} ${truncate(selected.metadata_pairs.N)}`}
-            {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
-            {groths > 0 && (
-              <Button
-                icon={ArrowUpIcon}
-                variant="link"
-                pallete="purple"
-                className={maxButtonStyle}
-                onClick={() => handleMaxAmount()}
-              >
-                max
-              </Button>
-            )}
+            {!isBalanceHidden && <>
+              <Title variant="subtitle">Available</Title>
+              {`${convertLowAmount(groths)} ${truncate(selected.metadata_pairs.N)}`}
+              {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
+              {groths > 0 && (
+                <Button
+                  icon={ArrowUpIcon}
+                  variant="link"
+                  pallete="purple"
+                  className={maxButtonStyle}
+                  onClick={() => handleMaxAmount()}
+                >
+                  max
+                </Button>
+              )}
+            </>}
           </Section>
           <Section title="Comment" variant="gray" collapse>
             <Input
