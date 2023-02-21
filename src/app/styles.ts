@@ -111,7 +111,7 @@ css`
 
     html {
       width: 375px;
-      height: 600px;
+      height: 100%;
     }
 
     html * {
