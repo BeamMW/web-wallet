@@ -12,6 +12,7 @@ import { AddressData } from '@core/types';
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 import { useSelector } from 'react-redux';
 import { selectParsedAddressUD } from '../../store/selectors';
+import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 
 const BeamAmount = styled.p`
   font-weight: bold;
@@ -50,6 +51,7 @@ const SendConfirm = (props: SendConfirmProps) => {
   const txType = getTxType(addressType, offline);
 
   const beamRemaining = beam.available - fee;
+  const isBalanceHidden = useSelector(selectIsBalanceHidden());
 
   return (
     <form
@@ -60,38 +62,40 @@ const SendConfirm = (props: SendConfirmProps) => {
     >
       <Section subtitle="Send to">{parsed_address_ud ? compact(parsed_address_ud) : compact(address)}</Section>
       <Section subtitle="Transaction type">{txType}</Section>
-      <Section subtitle="Amount">
-        <BeamAmount>
-          {convertLowAmount(Number(amount))}
+      {!isBalanceHidden && <>
+        <Section subtitle="Amount">
+          <BeamAmount>
+            {convertLowAmount(Number(amount))}
+            &nbsp;
+            {truncate(metadata_pairs.UN)}
+          </BeamAmount>
+          {selected.asset_id === 0 && <Rate value={value} groths />}
+        </Section>
+        <Section subtitle="Transaction Fee">
+          {convertLowAmount(fromGroths(fee))}
+          &nbsp;BEAM
+          <Rate value={fee} groths />
+        </Section>
+        <Section subtitle="Change">
+          {convertLowAmount(fromGroths(selected.asset_id === 0 ? change : asset_change))}
           &nbsp;
           {truncate(metadata_pairs.UN)}
-        </BeamAmount>
-        {selected.asset_id === 0 && <Rate value={value} groths />}
-      </Section>
-      <Section subtitle="Transaction Fee">
-        {convertLowAmount(fromGroths(fee))}
-        &nbsp;BEAM
-        <Rate value={fee} groths />
-      </Section>
-      <Section subtitle="Change">
-        {convertLowAmount(fromGroths(selected.asset_id === 0 ? change : asset_change))}
-        &nbsp;
-        {truncate(metadata_pairs.UN)}
-        <Rate value={selected.asset_id === 0 ? change : asset_change} groths />
-      </Section>
-      <Section subtitle="Remaining">
-        {convertLowAmount(fromGroths(remaining))}
-        &nbsp;
-        {truncate(metadata_pairs.UN)}
-        <Rate value={remaining} groths />
-      </Section>
-      {selected.asset_id !== 0 && (
-        <Section subtitle="Beam Remaining">
-          {convertLowAmount(fromGroths(beamRemaining))}
-          &nbsp;BEAM
-          <Rate value={beamRemaining} groths />
+          <Rate value={selected.asset_id === 0 ? change : asset_change} groths />
         </Section>
-      )}
+        <Section subtitle="Remaining">
+          {convertLowAmount(fromGroths(remaining))}
+          &nbsp;
+          {truncate(metadata_pairs.UN)}
+          <Rate value={remaining} groths />
+        </Section>
+        {selected.asset_id !== 0 && (
+          <Section subtitle="Beam Remaining">
+            {convertLowAmount(fromGroths(beamRemaining))}
+            &nbsp;BEAM
+            <Rate value={beamRemaining} groths />
+          </Section>
+        )}
+      </>}
       <Button type="submit" pallete="purple" icon={ArrowUpIcon} style={{ marginTop: '30px' }}>
         send
       </Button>

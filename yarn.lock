@@ -2206,10 +2206,11 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-beam-wasm-client-masternet@^7.3.13220:
-  version "7.3.13220"
-  resolved "https://registry.yarnpkg.com/beam-wasm-client-masternet/-/beam-wasm-client-masternet-7.3.13220.tgz#05bb833ce9e31d7de5b213be168ce2311a64f715"
-  integrity sha512-Du5LHFIWrrRAPPouhbFtMVHCVa0TM1cYSEykEkxOBWrsJFSZLAN/81v3fD71ESu4HAB9TtL+OrYX2CNSeoNbLg==
+
+beam-wasm-client-dappnet@7.2.13139:
+  version "7.2.13139"
+  resolved "https://registry.yarnpkg.com/beam-wasm-client-dappnet/-/beam-wasm-client-dappnet-7.2.13139.tgz#46855889753bfecd9f09be304df300ee5a76962f"
+  integrity sha512-R6cPQ6sRApU1ff+9F9iknRiQaBrmfH7SuDgNCbf63UQPQLw+Wg4O5SC0KkkJO753SUthVB9pRNVvQBrH/lrWdg==
 
 big.js@^5.2.2:
   version "5.2.2"

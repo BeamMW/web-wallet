@@ -60,7 +60,7 @@
     "@types/readable-stream": "^2.3.11",
     "@unstoppabledomains/resolution": "^8.3.3",
     "babel-polyfill": "^6.26.0",
-    "beam-wasm-client-masternet": "^7.3.13220",
+    "beam-wasm-client-dappnet": "7.2.13139",
     "browser-passworder": "^2.0.3",
     "buffer": "^6.0.3",
     "dnode": "^1.2.2",
