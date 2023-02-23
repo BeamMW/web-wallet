@@ -12,6 +12,7 @@ import { useNavigate, useRoutes, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@app/shared/components';
 import { ToastContainer } from 'react-toastify';
+
 import { WalletContainer } from './containers/Wallet';
 import { AuthContainer, Progress } from './containers/Auth';
 import { SettingsContainer } from './containers/Settings';
@@ -86,7 +87,10 @@ const App = () => {
   return (
     <ErrorBoundary>
       <Scrollbars
-        style={{ width: 375, height: 600 }}
+        style={{ width: 375 }}
+        autoHeight
+        autoHeightMin="100%"
+        autoHeightMax="100%"
         renderThumbVertical={(props) => <div {...props} className={trackStyle} />}
       >
         {content}

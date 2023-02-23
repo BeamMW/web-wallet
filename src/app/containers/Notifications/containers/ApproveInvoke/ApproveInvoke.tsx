@@ -6,6 +6,7 @@ import { Button, AssetIcon } from '@app/shared/components';
 import { CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards } from '@app/shared/icons';
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
+import NotificationManager from '@core/NotificationManager';
 
 const ContainerStyled = styled.div`
   position: relative;
@@ -133,6 +134,7 @@ const getConfirmIcon = (info, amounts) => {
 
 const ApproveInvoke = () => {
   const notification = NotificationController.getNotification();
+  const notificationManager = NotificationManager.getInstance();
 
   const amounts = JSON.parse(notification.params.amounts);
   const info = JSON.parse(notification.params.info);
@@ -144,12 +146,22 @@ const ApproveInvoke = () => {
   const title = getNotificationTitle(info, amounts);
 
   const handleCancelClick = () => {
-    rejectContractInfoRequest(notification.params.req);
+    //rejectContractInfoRequest(notification.params.req);
+    //TODO
+    notificationManager.postMessage({
+      action: 'rejectContractInfoRequest',
+      params: notification.params.req
+    });
     window.close();
   };
 
   const handleConfirmClick = () => {
-    approveContractInfoRequest(notification.params.req);
+    //approveContractInfoRequest(notification.params.req);
+    //TODO
+    notificationManager.postMessage({
+      action: 'approveContractInfoRequest',
+      params: notification.params.req
+    });
     window.close();
   };
 

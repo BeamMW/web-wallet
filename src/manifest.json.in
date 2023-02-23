@@ -1,8 +1,14 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Beam Web Wallet%BEAM_NETWORK%",
   "short_name": "Beam Web Wallet%BEAM_NETWORK%",
   "description": "Beam Web Wallet%BEAM_NETWORK%",
+  "action": {
+    "default_icon": {
+      "16": "assets/chrome-extention-icon-16x16.png"
+    },
+    "default_title": "Beam Web Wallet%BEAM_NETWORK%"
+  },
   "version": "%BEAM_VERSION%",
   "cross_origin_embedder_policy": {
     "value": "require-corp"
@@ -10,12 +16,8 @@
   "cross_origin_opener_policy": {
     "value": "same-origin"
   },
-  "browser_action": {
-    "default_popup": "popup.html"
-  },
   "background": {
-    "page": "background.html",
-    "persistent": true
+    "service_worker": "appinit.js"
   },
   "content_scripts": [
     {
@@ -34,10 +36,16 @@
   },
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "tabs"
   ],
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "content_security_policy":  {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; script-src-elem 'self' 'unsafe-inline';"
+  },
   "web_accessible_resources": [
-    "inpage.js"
+    {
+      "resources": ["inpage.js", "wasm-client.worker.js", "wasm-client.js", "assets/*.png"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
   ]
 }

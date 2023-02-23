@@ -11,7 +11,7 @@ interface BackButtonProps {
 }
 
 const backStyle = css`
-  position: fixed;
+  position: absolute;
   z-index: 3;
   top: 73px;
   left: 15px;

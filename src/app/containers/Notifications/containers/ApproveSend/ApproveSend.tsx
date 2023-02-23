@@ -5,6 +5,7 @@ import { approveSendRequest, rejectSendRequest } from '@core/api';
 import { Button, AssetIcon } from '@app/shared/components';
 import { CancelIcon, ArrowUpIcon } from '@app/shared/icons';
 import { fromGroths, compact } from '@core/utils';
+import NotificationManager from '@core/NotificationManager';
 
 const ContainerStyled = styled.div`
   position: relative;
@@ -75,17 +76,28 @@ const ReceiverAddress = styled.div`
 
 const ApproveSend = () => {
   const notification = NotificationController.getNotification();
+  const notificationManager = NotificationManager.getInstance();
 
   const amount = fromGroths(parseInt(JSON.parse(notification.params.req).params.value, 10));
   const info = JSON.parse(notification.params.info);
 
   const handleCancelClick = () => {
-    rejectSendRequest(notification.params.req);
+    //rejectSendRequest(notification.params.req);
+    //TODO
+    notificationManager.postMessage({
+      action: 'rejectSendRequest',
+      params: notification.params.req
+    });
     window.close();
   };
 
   const handleConfirmClick = () => {
-    approveSendRequest(notification.params.req);
+    //approveSendRequest();
+    //TODO
+    notificationManager.postMessage({
+      action: 'approveSendRequest',
+      params: notification.params.req
+    });
     window.close();
   };
 

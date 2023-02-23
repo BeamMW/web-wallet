@@ -8,6 +8,7 @@ import {
   isAllowedWord,
   startWallet,
 } from '@core/api';
+import WasmWallet from '@core/WasmWallet';
 import { navigate, setError, unlockWallet } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import { ConnectedData, Environment, NotificationType, SyncProgress } from '@core/types';
@@ -18,6 +19,7 @@ import { actions } from '.';
 import store from '../../../../index';
 
 const SEED_CONFIRM_COUNT = 6;
+const wallet = WasmWallet.getInstance();
 
 const getRandomIds = () => {
   const result: number[] = [];
@@ -132,7 +134,8 @@ export function* handleDatabaseRestore(payload: DatabaseSyncProgress) {
 function* startWalletSaga(action: ReturnType<typeof actions.startWallet.request>): Generator {
   try {
     yield put(navigate(ROUTES.AUTH.PROGRESS));
-    yield call(startWallet, action.payload);
+    wallet.start(action.payload);
+    // yield call(startWallet, action.payload);
   } catch (e) {
     yield put(setError(e));
     yield put(actions.startWallet.failure(e));

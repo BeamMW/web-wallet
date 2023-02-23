@@ -31,7 +31,7 @@ const MENU_ITEMS = [
 ];
 
 const ContainerStyled = styled.nav`
-  position: fixed;
+  position: absolute;
   z-index: 4;
   top: 50px;
   left: 0;

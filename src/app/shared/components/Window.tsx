@@ -39,7 +39,7 @@ function getColor(pallete: string): string {
 
 const ContainerStyled = styled.div<WindowProps>`
   position: relative;
-  min-height: 600px;
+  min-height: 100vh;
   padding: 130px 30px 30px;
   text-align: center;
 
@@ -60,7 +60,7 @@ const ContainerStyled = styled.div<WindowProps>`
 `;
 
 const HeadingStyled = styled.div<{ pallete: string }>`
-  position: fixed;
+  position: absolute;
   z-index: 2;
   top: 0;
   left: 0;
@@ -96,7 +96,7 @@ const FrameStyled = styled.div`
 `;
 
 const menuButtonStyle = css`
-  position: fixed;
+  position: absolute;
   z-index: 3;
   top: 74px;
   left: 12px;
@@ -104,7 +104,7 @@ const menuButtonStyle = css`
 `;
 
 const menuEyeStyle = css`
-  position: fixed;
+  position: absolute;
   z-index: 3;
   top: 74px;
   right: 12px;
@@ -112,7 +112,7 @@ const menuEyeStyle = css`
 `;
 
 const menuInfoStyle = css`
-  position: fixed;
+  position: absolute;
   z-index: 3;
   top: 74px;
   right: 55px;

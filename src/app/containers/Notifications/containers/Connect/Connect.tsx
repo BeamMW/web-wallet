@@ -1,6 +1,7 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 import NotificationController from '@core/NotificationController';
+import NotificationManager from '@core/NotificationManager';
 import { approveConnection, rejectConnection } from '@core/api';
 
 import { Button } from '@app/shared/components';
@@ -27,8 +28,14 @@ const StyledApprove = styled.div`
 const Connect = () => {
   const notification = NotificationController.getNotification();
 
+  const notificationManager = NotificationManager.getInstance();
+
   window.addEventListener('beforeunload', () => {
-    rejectConnection();
+    //TODO
+    notificationManager.postMessage({
+      action: 'connect_rejected',
+    });
+    //rejectConnection();
   });
 
   return (
@@ -44,13 +51,23 @@ const Connect = () => {
       <Button
         type="button"
         onClick={() => {
-          approveConnection(
-            notification.params.apiver,
-            notification.params.apivermin,
-            notification.params.appname,
-            notification.params.appurl,
-          );
+          //TODO
+          notificationManager.postMessage({
+            action: 'connect',
+            params: {
+              apiver: notification.params.apiver, 
+              apivermin: notification.params.apivermin,
+              appname: notification.params.appname,
+              appurl: notification.params.appurl
+            }
+          });
           window.close();
+          // approveConnection(
+          //   notification.params.apiver,
+          //   notification.params.apivermin,
+          //   notification.params.appname,
+          //   notification.params.appurl,
+          // );
         }}
       >
         Approve
