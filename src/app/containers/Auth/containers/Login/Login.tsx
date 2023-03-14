@@ -1,3 +1,4 @@
+import { css } from '@linaria/core';
 import React, { useState, useRef, useCallback } from 'react';
 
 import { Popup, Button, Input, Splash } from '@app/shared/components';
@@ -10,6 +11,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { startWallet } from '@app/containers/Auth/store/actions';
 import { setError } from '@app/shared/store/actions';
 import { selectErrorMessage } from '@app/shared/store/selectors';
+
+const inputStyle = css`
+  width: 70%;
+  margin: 0 auto 50px auto;
+`;
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -38,6 +44,7 @@ const Login: React.FC = () => {
           <p>Enter your password to access the wallet</p>
           <Input
             autoFocus
+            className={inputStyle}
             id="pwd"
             name="password"
             type="password"

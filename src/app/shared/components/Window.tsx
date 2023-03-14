@@ -65,7 +65,7 @@ const HeadingStyled = styled.div<{ pallete: string }>`
   top: 0;
   left: 0;
   overflow: hidden;
-  width: 375px;
+  width: 750px;
   height: 130px;
   padding-top: 50px;
   background-color: ${`var(--color-bg-${config.theme})`};
@@ -90,7 +90,7 @@ const FrameStyled = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  width: 375px;
+  width: 750px;
   height: 42px;
   text-align: left;
 `;

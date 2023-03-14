@@ -87,7 +87,7 @@ const App = () => {
   return (
     <ErrorBoundary>
       <Scrollbars
-        style={{ width: 375 }}
+        style={{ width: 750 }}
         autoHeight
         autoHeightMin="100%"
         autoHeightMax="100%"

@@ -33,10 +33,9 @@ const MENU_ITEMS = [
 const ContainerStyled = styled.nav`
   position: absolute;
   z-index: 4;
-  top: 50px;
   left: 0;
   width: 319px;
-  height: 550px;
+  height: 100%;
   background: ${`var(--color-popup-${config.theme})`};
 `;
 
@@ -92,7 +91,8 @@ const Menu: React.FC<MenuProps> = ({ onCancel }) => {
         <ListStyled>
           {MENU_ITEMS.map(({ title, value, IconComponent }, index) => (
             <ListItemStyled key={value} active={location.pathname === value} data-index={index} onClick={handleClick}>
-              <IconComponent /> {title}
+              <IconComponent />
+              {title}
             </ListItemStyled>
           ))}
         </ListStyled>

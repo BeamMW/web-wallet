@@ -110,7 +110,7 @@ css`
     }
 
     html {
-      width: 375px;
+      width: 750px;
       height: 100%;
     }
 
