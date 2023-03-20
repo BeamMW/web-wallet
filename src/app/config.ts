@@ -4,11 +4,11 @@ const { NODE_ENV = 'development' } = process.env;
 
 const development: Configuration = {
   env: NODE_ENV,
-  explorer_url: 'https://master-net.explorer.beam.mw/block?kernel_id=',
-  restore_url: 'https://mobile-restore.beam.mw/masternet/masternet_recovery.bin',
-  path_node: 'eu-node01.masternet.beam.mw:8200',
-  theme: 'masternet',
   explorer_url_confidential_id: 'https://master-net.explorer.beam.mw/assets/details/',
+  path_node: 'eu-node02.dappnet.beam.mw:8200',
+  explorer_url: 'https://dappnet.explorer.beam.mw/block?kernel_id=',
+  restore_url: 'https://mobile-restore.beam.mw/dappnet/dappnet_recovery.bin',
+  theme: 'dappnet',
 };
 
 const master_net: Configuration = {

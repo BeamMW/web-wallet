@@ -109,7 +109,9 @@ export function* handleUnlockWallet(payload: boolean) {
   const notification = NotificationController.getNotification();
   if (!notification) {
     if (payload) {
-      store.dispatch(navigate(ROUTES.WALLET.BASE));
+      setTimeout(() => {
+        store.dispatch(navigate(ROUTES.WALLET.BASE));
+      }, 0);
     } else {
       store.dispatch(navigate(ROUTES.AUTH.PROGRESS));
     }
