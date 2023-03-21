@@ -220,7 +220,7 @@ const SendForm = () => {
   }, [selected, beam, setFieldValue]);
 
   const validateAmountHandler = useCallback(
-    debounce((total: TransactionAmount, offline: boolean) => {
+    (total: TransactionAmount, offline: boolean) => {
       const { amount, asset_id } = total;
 
       if (amount === '0' || !amount) {
@@ -240,7 +240,7 @@ const SendForm = () => {
           is_push_transaction: offline,
         }),
       );
-    }, 200),
+    },
     [dispatch, setFieldValue, fee],
   );
 
@@ -379,7 +379,7 @@ const SendForm = () => {
     };
 
     dispatch(sendTransaction.request(transactionPayload));
-  }, [values, fee, addressData, dispatch]);
+  }, [values, parsed_address_ud, fee, addressData, dispatch]);
 
   const handlePrevious: React.MouseEventHandler = () => {
     setShowConfirm(false);
