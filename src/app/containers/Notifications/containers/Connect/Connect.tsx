@@ -2,7 +2,6 @@ import React from 'react';
 import { styled } from '@linaria/react';
 import NotificationController from '@core/NotificationController';
 import NotificationManager from '@core/NotificationManager';
-import { approveConnection, rejectConnection } from '@core/api';
 
 import { Button } from '@app/shared/components';
 
@@ -31,18 +30,21 @@ const Connect = () => {
   const notificationManager = NotificationManager.getInstance();
 
   window.addEventListener('beforeunload', () => {
-    //TODO
+    // TODO
     notificationManager.postMessage({
       action: 'connect_rejected',
     });
-    //rejectConnection();
+    // rejectConnection();
   });
 
   return (
     <>
       <StyledTitle>DApp Connection Request</StyledTitle>
       <StyledMessage>
-        <b>{notification.params.appname} </b>
+        <b>
+          {notification.params.appname}
+          {' '}
+        </b>
         is trying to connect
         <br />
         to the BEAM Web Wallet.
@@ -51,15 +53,15 @@ const Connect = () => {
       <Button
         type="button"
         onClick={() => {
-          //TODO
+          // TODO
           notificationManager.postMessage({
             action: 'connect',
             params: {
-              apiver: notification.params.apiver, 
+              apiver: notification.params.apiver,
               apivermin: notification.params.apivermin,
               appname: notification.params.appname,
-              appurl: notification.params.appurl
-            }
+              appurl: notification.params.appurl,
+            },
           });
           window.close();
           // approveConnection(

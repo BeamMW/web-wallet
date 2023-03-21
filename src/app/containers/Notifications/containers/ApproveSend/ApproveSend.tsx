@@ -1,7 +1,7 @@
 import React from 'react';
 import NotificationController from '@core/NotificationController';
 import { styled } from '@linaria/react';
-import { approveSendRequest, rejectSendRequest } from '@core/api';
+
 import { Button, AssetIcon } from '@app/shared/components';
 import { CancelIcon, ArrowUpIcon } from '@app/shared/icons';
 import { fromGroths, compact } from '@core/utils';
@@ -82,21 +82,21 @@ const ApproveSend = () => {
   const info = JSON.parse(notification.params.info);
 
   const handleCancelClick = () => {
-    //rejectSendRequest(notification.params.req);
-    //TODO
+    // rejectSendRequest(notification.params.req);
+    // TODO
     notificationManager.postMessage({
       action: 'rejectSendRequest',
-      params: notification.params.req
+      params: notification.params.req,
     });
     window.close();
   };
 
   const handleConfirmClick = () => {
-    //approveSendRequest();
-    //TODO
+    // approveSendRequest();
+    // TODO
     notificationManager.postMessage({
       action: 'approveSendRequest',
-      params: notification.params.req
+      params: notification.params.req,
     });
     window.close();
   };
@@ -128,7 +128,12 @@ const ApproveSend = () => {
           <Subtitle>Fee: </Subtitle>
           <FeeValue>
             <AssetIcon asset_id={0} />
-            <FeeLabelStyled>{info.fee} BEAM </FeeLabelStyled>
+            <FeeLabelStyled>
+              {info.fee}
+              {' '}
+              BEAM
+              {' '}
+            </FeeLabelStyled>
           </FeeValue>
         </Section>
         <ControlsStyled>

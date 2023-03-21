@@ -122,16 +122,15 @@ export default class NotificationManager {
     return new Error(lastError.message);
   };
 
-  getActiveTabs = () =>
-    new Promise<any[]>((resolve, reject) => {
-      extensionizer.tabs.query({ active: true }, (tabs) => {
-        const error = this.checkForError();
-        if (error) {
-          return reject(error);
-        }
-        return resolve(tabs);
-      });
+  getActiveTabs = () => new Promise<any[]>((resolve, reject) => {
+    extensionizer.tabs.query({ active: true }, (tabs) => {
+      const error = this.checkForError();
+      if (error) {
+        return reject(error);
+      }
+      return resolve(tabs);
     });
+  });
 
   async triggerUi() {
     const tabs = await this.getActiveTabs();

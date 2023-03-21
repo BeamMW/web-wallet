@@ -14,7 +14,8 @@ import { navigate } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import store from '../../../../index';
 import { actions } from '.';
-const {default: Resolution} = require('@unstoppabledomains/resolution');
+
+const { default: Resolution } = require('@unstoppabledomains/resolution');
 
 const FETCH_INTERVAL = 310000;
 

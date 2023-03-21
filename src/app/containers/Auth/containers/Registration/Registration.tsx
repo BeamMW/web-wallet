@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from '@linaria/react';
 
-import { Window, Popup, Button, Footer } from '@app/shared/components';
+import {
+  Window, Popup, Button, Footer,
+} from '@app/shared/components';
 
 import { ROUTES } from '@app/shared/constants';
 
@@ -97,11 +99,11 @@ const Registration: React.FC = () => {
       <Popup
         visible={warningVisible}
         title="Save seed phrase"
-        confirmButton={
+        confirmButton={(
           <Button icon={DoneIcon} onClick={handleNextClick}>
             done
           </Button>
-        }
+        )}
         onCancel={handleCancel}
       >
         Please write the seed phrase down. Storing it in a file makes it prone to cyber attacks and, therefore, less

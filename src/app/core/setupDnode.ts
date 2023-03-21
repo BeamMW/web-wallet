@@ -38,14 +38,13 @@ export function setupDnode(connectionStream, api) {
 }
 
 export function cbToPromise(fn, context) {
-  return (...args) =>
-    new Promise((resolve, reject) => {
-      fn.call(context, ...args, (err, val) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(val);
-        }
-      });
+  return (...args) => new Promise((resolve, reject) => {
+    fn.call(context, ...args, (err, val) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(val);
+      }
     });
+  });
 }

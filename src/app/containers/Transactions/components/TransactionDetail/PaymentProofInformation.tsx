@@ -68,8 +68,8 @@ const PaymentProofInformation = ({
         />
         <div className="amount-comment">
           {assetRate?.rate
-            ? `${toUSD(fromGroths(paymentProof.amount), fromGroths(assetRate?.rate))} ` +
-              '(сalculated with the exchange rate at the time of the transaction)'
+            ? `${toUSD(fromGroths(paymentProof.amount), fromGroths(assetRate?.rate))} `
+              + '(сalculated with the exchange rate at the time of the transaction)'
             : 'Exchange rate was not available at the time of transaction'}
         </div>
       </div>

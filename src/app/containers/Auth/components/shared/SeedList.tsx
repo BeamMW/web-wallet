@@ -95,7 +95,9 @@ function fillFromSeed(seed: string, safe: boolean = false): void {
   });
 }
 
-const SeedList: React.FC<SeedListProps> = ({ data, errors, initial, indexByValue, onInput }) => {
+const SeedList: React.FC<SeedListProps> = ({
+  data, errors, initial, indexByValue, onInput,
+}) => {
   useEffect(() => {
     if (initial) {
       fillFromSeed(initial.replace(/\s/g, ';'), true);

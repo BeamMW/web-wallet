@@ -91,7 +91,13 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ value }) => {
           <ListItemStyled key={index} points={p} />
         ))}
       </ListStyled>
-      {title && <StrengthTitleStyled>{title} password</StrengthTitleStyled>}
+      {title && (
+      <StrengthTitleStyled>
+        {title}
+        {' '}
+        password
+      </StrengthTitleStyled>
+      )}
     </ContainerStyled>
   );
 };

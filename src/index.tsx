@@ -7,8 +7,8 @@ import { MemoryRouter } from 'react-router-dom';
 import 'babel-polyfill';
 
 import configureStore from '@app/store/store';
-import App from './app';
 import { initRemoteConnection } from '@app/core/api';
+import App from './app';
 
 const { store } = configureStore();
 

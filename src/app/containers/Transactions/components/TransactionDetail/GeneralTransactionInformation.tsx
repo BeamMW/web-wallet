@@ -1,7 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 import { styled } from '@linaria/react';
 import { Rate, TransactionDetail } from '@core/types';
-import { compact, fromGroths, getTxType, toUSD, truncate } from '@core/utils';
+import {
+  compact, fromGroths, getTxType, toUSD, truncate,
+} from '@core/utils';
 import { Button } from '@app/shared/components';
 import { CopySmallIcon, ExternalLink } from '@app/shared/icons';
 import AssetLabel from '@app/shared/components/AssetLabel';
@@ -36,18 +38,16 @@ const GeneralTransactionInformation = ({
 }: GeneralTransactionInformationProps) => {
   const multipleAssetsTitle = useCallback(() => {
     let title = '';
-    transactionDetail.invoke_data?.forEach((i) =>
-      i.amounts.forEach((a) => {
-        const tg = assets.find(({ asset_id: id }) => id === a.asset_id);
-        const n = truncate(tg?.metadata_pairs.UN) ?? '';
-        const am = fromGroths(transactionDetail.fee_only ? transactionDetail.fee : a.amount);
-        if (!isBalanceHidden) {
-          title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
-        } else {
-          title += `${n} `;
-        }
-      }),
-    );
+    transactionDetail.invoke_data?.forEach((i) => i.amounts.forEach((a) => {
+      const tg = assets.find(({ asset_id: id }) => id === a.asset_id);
+      const n = truncate(tg?.metadata_pairs.UN) ?? '';
+      const am = fromGroths(transactionDetail.fee_only ? transactionDetail.fee : a.amount);
+      if (!isBalanceHidden) {
+        title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
+      } else {
+        title += `${n} `;
+      }
+    }));
     return title;
   }, [transactionDetail, assets, isBalanceHidden]);
 
@@ -86,12 +86,10 @@ const GeneralTransactionInformation = ({
           <div className="title">Amount:</div>
           <div className="value asset mlt-asset">
             <MultipleAssets className="multi-asset">
-              {transactionDetail.invoke_data?.map((i) =>
-                i.amounts
-                  .slice()
-                  .reverse()
-                  .map((a) => <AssetIcon key={a.asset_id} asset_id={a.asset_id} />),
-              )}
+              {transactionDetail.invoke_data?.map((i) => i.amounts
+                .slice()
+                .reverse()
+                .map((a) => <AssetIcon key={a.asset_id} asset_id={a.asset_id} />))}
             </MultipleAssets>
             <span className="multi-asset-title">{multipleAssetsTitle()}</span>
             {/* <div className="amount-comment">
@@ -118,8 +116,8 @@ const GeneralTransactionInformation = ({
             />
             <div className="amount-comment">
               {assetRate?.rate
-                ? `${toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))} ` +
-                  '(сalculated with the exchange rate at the time of the transaction)'
+                ? `${toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))} `
+                  + '(сalculated with the exchange rate at the time of the transaction)'
                 : 'Exchange rate was not available at the time of transaction'}
             </div>
           </div>
@@ -141,8 +139,8 @@ const GeneralTransactionInformation = ({
           />
           <div className="amount-comment">
             {assetRate?.rate
-              ? `${toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))} ` +
-                '(сalculated with the exchange rate at the time of the transaction)'
+              ? `${toUSD(fromGroths(transactionDetail.value), fromGroths(assetRate?.rate))} `
+                + '(сalculated with the exchange rate at the time of the transaction)'
               : 'Exchange rate was not available at the time of transaction'}
           </div>
 

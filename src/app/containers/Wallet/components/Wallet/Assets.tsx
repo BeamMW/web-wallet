@@ -35,12 +35,12 @@ const ListItemStyled = styled.li<{ opt_color?: string; asset_id: number }>`
     background-image: linear-gradient(
       90deg,
       ${({ asset_id, opt_color }) => {
-          if (opt_color) {
-            return opt_color;
-          }
+    if (opt_color) {
+      return opt_color;
+    }
 
-          return PALLETE_ASSETS[asset_id] ? PALLETE_ASSETS[asset_id] : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length];
-        }}
+    return PALLETE_ASSETS[asset_id] ? PALLETE_ASSETS[asset_id] : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length];
+  }}
         0%,
       var(--color-dark-blue) 110%
     );

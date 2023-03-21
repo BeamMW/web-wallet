@@ -53,7 +53,9 @@ const rateStyle = css`
   left: 10px;
 `;
 
-const AmountInput: React.FC<AmountInputProps> = ({ value, asset_id, error, pallete = 'purple', onChange }) => {
+const AmountInput: React.FC<AmountInputProps> = ({
+  value, asset_id, error, pallete = 'purple', onChange,
+}) => {
   const assets = useSelector(selectAssets());
 
   const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {

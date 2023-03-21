@@ -1,6 +1,6 @@
 import * as extensionizer from 'extensionizer';
 
-chrome.action.onClicked.addListener((tab) => {
+chrome.action.onClicked.addListener(() => {
   extensionizer.storage.local.get('beamTabId', ({ beamTabId }) => {
     if (!beamTabId) {
       chrome.tabs.create(
@@ -17,7 +17,7 @@ chrome.action.onClicked.addListener((tab) => {
     } else {
       chrome.tabs.query({ status: 'complete' }, (tabs) => {
         const tab = tabs?.filter((t) => t.id.toString() === beamTabId);
-        console.log('TAB', tab);
+
         if (!tab.length) {
           chrome.tabs.create(
             {

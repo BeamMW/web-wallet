@@ -76,19 +76,18 @@ const Popup: React.FC<PopupProps> = ({
   confirmButton,
   children,
   footerClass,
-}) =>
-  visible ? (
-    <Backdrop onCancel={onCancel}>
-      <ContainerStyled>
-        <TitleStyled>{title}</TitleStyled>
-        <Button className="cancel-header" variant="icon" pallete="white" icon={CancelIcon} onClick={onCancel} />
-        {children}
-        <FooterStyled className={footerClass}>
-          {cancelButton}
-          {confirmButton}
-        </FooterStyled>
-      </ContainerStyled>
-    </Backdrop>
-  ) : null;
+}) => (visible ? (
+  <Backdrop onCancel={onCancel}>
+    <ContainerStyled>
+      <TitleStyled>{title}</TitleStyled>
+      <Button className="cancel-header" variant="icon" pallete="white" icon={CancelIcon} onClick={onCancel} />
+      {children}
+      <FooterStyled className={footerClass}>
+        {cancelButton}
+        {confirmButton}
+      </FooterStyled>
+    </ContainerStyled>
+  </Backdrop>
+) : null);
 
 export default Popup;

@@ -1,3 +1,8 @@
+import * as extensionizer from 'extensionizer';
+import NotificationManager from '@core/NotificationManager';
+import WasmWallet from '@core/WasmWallet';
+import { ExternalAppMethod } from '@core/types';
+import { RemoteRequest } from '@app/core/types';
 import {
   AddressData,
   ChangeData,
@@ -12,12 +17,6 @@ import {
   ExternalAppConnection,
 } from './types';
 
-import * as extensionizer from 'extensionizer';
-import NotificationManager from '@core/NotificationManager';
-import WasmWallet from '@core/WasmWallet';
-import { ExternalAppMethod } from '@core/types';
-import { RemoteRequest } from '@app/core/types';
-
 const wallet = WasmWallet.getInstance();
 const notificationManager = NotificationManager.getInstance();
 
@@ -27,12 +26,6 @@ let contentPort = null;
 let notificationPort = null;
 let connected = false;
 let activeTab = null;
-
-function portPostMessage(data) {
-  if (port && connected) {
-    port.postMessage(data);
-  }
-}
 
 export function getEnvironment(href = window.location.href) {
   const url = new URL(href);
@@ -48,6 +41,40 @@ export function getEnvironment(href = window.location.href) {
   }
 }
 
+export function approveContractInfoRequest(req) {
+  return wallet.notificationApproveInfo({ req });
+}
+
+export function rejectConnection() {
+  return wallet.notificationAuthenticaticated({
+    result: false,
+  });
+}
+
+export function rejectContractInfoRequest(req) {
+  return wallet.notificationRejectInfo({ req });
+}
+
+export function approveSendRequest(req) {
+  return wallet.notificationApproveSend({ req });
+}
+
+export function rejectSendRequest(req) {
+  return wallet.notificationRejectSend({ req });
+}
+
+export function approveConnection({
+  apiver, apivermin, appname, appurl,
+}) {
+  return wallet.approveConnection({
+    result: true,
+    apiver,
+    apivermin,
+    appname,
+    appurl,
+  });
+}
+
 function handleConnect(remote) {
   port = remote;
   connected = true;
@@ -56,11 +83,12 @@ function handleConnect(remote) {
 
   port.onDisconnect.addListener(() => {
     connected = false;
+    return connected;
   });
 
-  port.onMessage.addListener(({ id, method, params, action }: RemoteRequest) => {
+  port.onMessage.addListener(({ params, action }: RemoteRequest) => {
     if (action !== undefined) {
-      switch(action){
+      switch (action) {
         case 'connect':
           approveConnection(params);
           break;
@@ -79,14 +107,14 @@ function handleConnect(remote) {
         case 'approveContractInfoRequest':
           approveContractInfoRequest(params);
           break;
-        default: 
+        default:
           break;
       }
     }
   });
 
   switch (port.name) {
-   case Environment.NOTIFICATION: {
+    case Environment.NOTIFICATION: {
       const tabId = remote.sender.tab.id;
       notificationManager.openBeamTabsIDs[tabId] = true;
       activeTab = remote.sender.tab.id;
@@ -99,7 +127,7 @@ function handleConnect(remote) {
           notificationManager.openBeamTabsIDs = {};
         }
       });
-      notificationPort.postMessage({'isRunning': wallet.isRunning(), 'notification': notificationManager.notification});
+      notificationPort.postMessage({ isRunning: wallet.isRunning(), notification: notificationManager.notification });
       break;
     }
 
@@ -118,7 +146,7 @@ function handleConnect(remote) {
           } else if (msg.type === ExternalAppMethod.CreateBeamApi) {
             if (msg.is_reconnect && notificationManager.appname === msg.appname) {
               // eslint-disable-next-line
-              notificationManager.openPopup()
+              notificationManager.openPopup();
             } else {
               notificationManager.openConnectNotification(msg, remote.sender.origin);
             }
@@ -145,7 +173,7 @@ export function initRemoteConnection() {
     wallet.initcontractInfoHandlerCallback(cb);
     notificationManager.openContractNotification(req, info, amounts);
   });
-  
+
   wallet.initSendHandler((req, info, cb) => {
     wallet.initSendHandlerCallback(cb);
     notificationManager.openSendNotification(req, info);
@@ -154,11 +182,8 @@ export function initRemoteConnection() {
 
 export function postMessage<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
   return new Promise((resolve, reject) => {
-    const target = wallet.send(method, params)
+    const target = wallet.send(method, params);
     const handler = (data: RemoteResponse) => {
-      if (method === RPCMethod.GetWalletStatus) {
-        console.log(data);
-      }
       if (data.id === target) {
         if (data.error) {
           return reject(data.error);
@@ -241,38 +266,6 @@ export function finishNotificationAuth(apiver: string, apivermin: string, appnam
     appname,
     appurl,
   });
-}
-
-export function approveConnection({apiver, apivermin, appname, appurl}) {
-  return wallet.approveConnection({
-    result: true,
-    apiver,
-    apivermin,
-    appname,
-    appurl,
-  });
-}
-
-export function rejectConnection() {
-  return wallet.notificationAuthenticaticated({
-    result: false,
-  });
-}
-
-export function approveContractInfoRequest(req) {
-  return wallet.notificationApproveInfo({ req });
-}
-
-export function rejectContractInfoRequest(req) {
-  return wallet.notificationRejectInfo({ req });
-}
-
-export function approveSendRequest(req) {
-  return wallet.notificationApproveSend({ req });
-}
-
-export function rejectSendRequest(req) {
-  return wallet.notificationRejectSend({ req });
 }
 
 export interface CalculateChangeParams {

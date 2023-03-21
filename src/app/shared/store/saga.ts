@@ -1,8 +1,12 @@
-import { call, take, fork, takeLatest, put } from 'redux-saga/effects';
+import {
+  call, take, fork, takeLatest, put,
+} from 'redux-saga/effects';
 
 import { eventChannel, END } from 'redux-saga';
 import { walletLocked } from '@core/api';
-import { BackgroundEvent, RemoteResponse, RPCEvent } from '@core/types';
+import {
+  BackgroundEvent, RemoteResponse, RPCEvent, Environment,
+} from '@core/types';
 
 import {
   handleConnect,
@@ -21,7 +25,6 @@ import NotificationController from '@app/core/NotificationController';
 import NotificationManager from '@app/core/NotificationManager';
 import ExtensionPlatform from '@app/core/Extension';
 import * as extensionizer from 'extensionizer';
-import { Environment, ConnectRequest } from '@core/types';
 
 import WasmWallet from '@core/WasmWallet';
 
@@ -41,8 +44,8 @@ export function remoteEventChannel() {
         name: Environment.NOTIFICATION,
       });
 
-      notificationManager.setReqPort(backgroundPort);//TODO
-      backgroundPort.onMessage.addListener(({isRunning, notification}) => {
+      notificationManager.setReqPort(backgroundPort); // TODO
+      backgroundPort.onMessage.addListener(({ isRunning, notification }) => {
         wallet.init(handler, notification, isRunning);
       });
     } else {

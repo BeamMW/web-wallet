@@ -8,10 +8,12 @@ import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
 import { ExternalAppConnection, NotificationType } from '@core/types';
-import { BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod } from './types';
+
+import {
+  BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
+} from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
-import { approveConnection } from '@core/api';
 
 declare const BeamModule: any;
 
@@ -214,16 +216,17 @@ export default class WasmWallet {
   private mounted: boolean = false;
 
   private eventHandler: WalletEventHandler;
+
   private remoteEventHandler = [];
 
   setRemoteEventHandler(handler: WalletEventHandler) {
-    this.remoteEventHandler.push({'handler': handler, 'is_done': false});
+    this.remoteEventHandler.push({ handler, is_done: false });
 
     this.remoteEventHandler.forEach((item, i) => {
       if (item.is_done) {
         this.remoteEventHandler.splice(i, 1);
       }
-    })
+    });
   }
 
   async init(handler: WalletEventHandler, notification: Notification, is_running?: boolean) {
@@ -336,7 +339,7 @@ export default class WasmWallet {
       const event = JSON.parse(response);
       this.eventHandler(event);
       if (this.remoteEventHandler !== undefined) {
-        this.remoteEventHandler.forEach((item, i) => {
+        this.remoteEventHandler.forEach((item) => {
           const res = item.handler(event);
           item.is_done = !!res;
         });
@@ -620,13 +623,13 @@ export default class WasmWallet {
     if (params.result) {
       this.addConnectedSite({ appName: params.appname, appUrl: params.appurl });
       this.connectExternal(params);
-    } else {
-      return notificationManager.postMessage({
-        result: false,
-        errcode: -3,
-        ermsg: 'Connection rejected',
-      });
+      return null;
     }
+    return notificationManager.postMessage({
+      result: false,
+      errcode: -3,
+      ermsg: 'Connection rejected',
+    });
   }
 
   notificationApproveInfo(params: any) {
@@ -646,6 +649,7 @@ export default class WasmWallet {
       this.sendHandlerCallback.sendApproved(params.req);
     }
   }
+
   notificationRejectSend(params: any) {
     if (params.req) {
       this.sendHandlerCallback.sendApproved(params.req);
@@ -785,7 +789,7 @@ export default class WasmWallet {
       } catch (error) {
         this.emit(id, null, error);
       }
-      return;
+      return null;
     }
 
     this.wallet.sendRequest(

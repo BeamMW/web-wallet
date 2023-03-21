@@ -32,11 +32,11 @@ const AuthBase: React.FC = () => {
       <Popup
         visible={warningVisible}
         title="Restore wallet"
-        confirmButton={
+        confirmButton={(
           <Button icon={DoneIcon} onClick={() => navigate(ROUTES.AUTH.RESTORE)}>
             I agree
           </Button>
-        }
+        )}
         onCancel={() => toggleWarning(false)}
       >
         You are trying to restore an existing Beam Wallet.

@@ -3,6 +3,6 @@ import { connectedSiteInterface } from './ConnectedSiteInterface';
 
 export interface SettingsStateType {
   version: VersionInterface;
-  logs: string;
+  logs: any;
   connectedSites: connectedSiteInterface[];
 }
