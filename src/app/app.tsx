@@ -76,7 +76,7 @@ const App = () => {
       }
       dispatch(sharedActions.navigate(''));
     }
-  }, [navigateURL, dispatch, navigate]);
+  }, [navigateURL, location.pathname, dispatch, navigate]);
 
   useEffect(() => {
     if (isLocked && !location.pathname.includes('auth')) {

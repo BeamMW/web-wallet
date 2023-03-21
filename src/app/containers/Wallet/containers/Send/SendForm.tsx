@@ -15,7 +15,7 @@ import { styled } from '@linaria/react';
 import LabeledToggle from '@app/shared/components/LabeledToggle';
 import { css } from '@linaria/core';
 import {
-  compact, convertLowAmount, fromGroths, toGroths, truncate,
+  compact, convertLowAmount, debounce, fromGroths, toGroths, truncate,
 } from '@core/utils';
 import { useFormik } from 'formik';
 
@@ -219,25 +219,20 @@ const SendForm = () => {
     }
   }, [selected, beam, setFieldValue]);
 
-  const validateAmountHandler = (total: TransactionAmount, offline: boolean) => {
-    const { amount, asset_id } = total;
+  const validateAmountHandler = useCallback(
+    debounce((total: TransactionAmount, offline: boolean) => {
+      const { amount, asset_id } = total;
 
-    if (amount === '0' || !amount) {
+      if (amount === '0' || !amount) {
+        setFieldValue('send_amount', total, true);
+        return;
+      }
+
+      const value = toGroths(parseFloat(amount));
+      const ttl = value + fee;
+
       setFieldValue('send_amount', total, true);
-      return;
-    }
 
-    const value = toGroths(parseFloat(amount));
-
-    const ttl = value + fee;
-
-    setFieldValue('send_amount', total, true);
-
-    if (validateAmountInterval) {
-      clearTimeout(validateAmountInterval);
-      setValidateAmountInterval(null);
-    }
-    const i = setTimeout(() => {
       dispatch(
         validateAmount.request({
           amount: toGroths(+amount),
@@ -245,49 +240,48 @@ const SendForm = () => {
           is_push_transaction: offline,
         }),
       );
-    }, 200);
-    setValidateAmountInterval(i);
-  };
+    }, 200),
+    [dispatch, setFieldValue, fee],
+  );
 
   useEffect(() => {
-    if (values.address.length) {
-      setFieldValue('misc.addressData', addressData, true);
-      if (addressData.amount && addressData.asset_id) {
-        setFieldValue('send_amount', { amount: addressData.amount, asset_id: addressData.asset_id }, true);
-      }
+    if (!values.address.length) return;
 
-      if (addressData.type === 'max_privacy') {
+    setFieldValue('misc.addressData', addressData, true);
+    if (addressData.amount && addressData.asset_id) {
+      setFieldValue('send_amount', { amount: addressData.amount, asset_id: addressData.asset_id }, true);
+    }
+
+    switch (addressData.type) {
+      case 'max_privacy':
         setWarning(AddressTip.MAX_PRIVACY);
         setHint(AddressLabel.MAX_PRIVACY);
-
+        setFieldValue('offline', true, false);
         validateAmountHandler(values.send_amount, true);
-        return;
-      }
-      if (addressData.type === 'public_offline') {
+        break;
+      case 'public_offline':
         setWarning(AddressTip.OFFLINE);
         setHint(AddressLabel.OFFLINE);
         setFieldValue('offline', true, false);
         validateAmountHandler(values.send_amount, true);
-        return;
-      }
-      if (addressData.type === 'regular') {
+        break;
+      case 'regular':
         setWarning(AddressTip.REGULAR);
         setHint(AddressLabel.REGULAR);
         setFieldValue('offline', false, true);
         validateAmountHandler(values.send_amount, false);
-        return;
-      }
-      validateAmountHandler(values.send_amount, values.offline);
-
-      if (values.offline) {
-        setWarning(AddressTip.OFFLINE);
-        return;
-      }
-      if (addressData.is_valid) {
-        setWarning(AddressTip.REGULAR);
-      }
+        break;
+      default:
+        validateAmountHandler(values.send_amount, values.offline);
+        break;
     }
-  }, [addressData, values, fee, setFieldValue]);
+
+    if (values.offline) {
+      setWarning(AddressTip.OFFLINE);
+    } else if (addressData.is_valid) {
+      setWarning(AddressTip.REGULAR);
+    }
+  }, [addressData, fee, setFieldValue, validateAmountHandler, values]);
 
   const groths = fromGroths(selected.available);
 

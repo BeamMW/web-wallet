@@ -92,3 +92,19 @@ export const getBeamTabId = () => {
     });
   });
 };
+
+type Func<T extends any[]> = (...args: T) => void;
+
+export function debounce<T extends any[]>(func: Func<T>, delay: number): Func<T> {
+  let timeoutId: ReturnType<typeof setTimeout>;
+
+  return function debounced(...args: T) {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
