@@ -402,10 +402,9 @@ export default class WasmWallet {
   }
 
   removeConnectedSite(site: ExternalAppConnection) {
-    this.connectedApps.splice(
-      this.connectedApps.findIndex((el) => el.appUrl === site.appUrl && el.appName === site.appName),
-      1,
-    );
+    const sites = this.connectedApps.filter((el) => el.appUrl !== site.appUrl && el.appName !== site.appName);
+
+    this.connectedApps = [...sites];
 
     extensionizer.storage.local.set({
       sites: this.connectedApps,
@@ -417,7 +416,7 @@ export default class WasmWallet {
   addConnectedSite(site: ExternalAppConnection) {
     const isExist = this.connectedApps.find((item: ExternalAppConnection) => item.appUrl === site.appUrl);
     if (!isExist) {
-      this.connectedApps.push(site);
+      this.connectedApps = [...this.connectedApps, site];
       extensionizer.storage.local.set({
         sites: this.connectedApps,
       });

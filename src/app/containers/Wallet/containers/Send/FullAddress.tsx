@@ -48,7 +48,7 @@ const FullAddressWrapper = styled.div`
   .address-information {
     margin-top: 10px;
     white-space: initial;
-    width: 300px;
+    width: 97%;
     text-align: left;
     word-wrap: break-word;
     font-size: 14px;
@@ -107,7 +107,7 @@ const SbbsWrapper = styled.div`
   .address-information {
     margin-top: 10px;
     white-space: initial;
-    width: 300px;
+    width: 97%;
     text-align: left;
     word-wrap: break-word;
     font-size: 14px;

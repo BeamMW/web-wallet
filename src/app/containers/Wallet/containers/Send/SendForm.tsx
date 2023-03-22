@@ -430,7 +430,6 @@ const SendForm = () => {
               valid={isAddressValid()}
               placeholder="Paste recipient address here"
               value={getAddressToUse()}
-              defaultValue={getAddressToUse()}
               onInput={handleAddressChange}
               className="send-input"
               onFocus={() => setFocus(true)}
