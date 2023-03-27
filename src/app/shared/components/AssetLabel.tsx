@@ -29,6 +29,7 @@ const ContainerStyled = styled.div`
 
 const AmountStyled = styled.span`
   flex-grow: 1;
+  text-transform: uppercase;
 `;
 
 const iconClassName = css`
@@ -61,14 +62,17 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   const amount = fromGroths(fee_only ? fee : value);
   const signed = !!income;
   const sign = signed ? getSign(income) : '';
-  const name = truncate(target?.metadata_pairs.UN) ?? '';
+  const n = truncate(target?.metadata_pairs.UN);
+  const name = `${n} (${asset_id})` ?? '';
   const label = `${sign}${convertLowAmount(amount)} ${name}`;
 
   return (
     <ContainerStyled className={className}>
       <AssetIcon asset_id={asset_id} className={iconClass || iconClassName} />
       <AmountStyled className="asset-name">{isBalanceHidden ? name : label}</AmountStyled>
-      {showRate && !isBalanceHidden ? <Rate value={amount} income={income} className={rateStyle} /> : null}
+      {showRate && !isBalanceHidden && n === 'BEAM' ? (
+        <Rate value={amount} income={income} className={rateStyle} />
+      ) : null}
     </ContainerStyled>
   );
 };

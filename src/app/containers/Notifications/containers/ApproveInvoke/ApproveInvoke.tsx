@@ -140,9 +140,6 @@ const ApproveInvoke = () => {
   const amounts = JSON.parse(notification.params.amounts);
   const info = JSON.parse(notification.params.info);
 
-  // eslint-disable-next-line no-console
-  console.log(amounts, info);
-
   const assets = useSelector(selectAssets());
   const text = getNotificationText(info, amounts, notification.params.appname);
   const title = getNotificationTitle(info, amounts);
@@ -185,6 +182,10 @@ const ApproveInvoke = () => {
                       {data.amount}
                       {' '}
                       {assetItem.metadata_pairs.UN}
+                      {' '}
+                      (
+                      {data.assetID}
+                      )
                     </LabelStyled>
                   </AssetItem>
                 ) : (
@@ -194,6 +195,10 @@ const ApproveInvoke = () => {
                       {data.spend ? '-' : '+'}
                       {' '}
                       {data.amount}
+                      {' '}
+                      (
+                      {data.assetID}
+                      )
                     </LabelStyled>
                   </AssetItem>
                 );

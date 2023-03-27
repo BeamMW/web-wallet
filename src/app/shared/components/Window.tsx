@@ -93,6 +93,7 @@ const FrameStyled = styled.div`
   top: 0;
   left: 0;
   width: 750px;
+  min-height: 600px;
   height: 42px;
   text-align: left;
 `;

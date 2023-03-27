@@ -3,7 +3,7 @@ import { NotificationType } from '@core/types';
 import ExtensionPlatform from './Extension';
 
 const NOTIFICATION_HEIGHT = 600;
-const NOTIFICATION_WIDTH = 375;
+const NOTIFICATION_WIDTH = 900;
 
 let contentPort;
 
@@ -173,17 +173,8 @@ export default class NotificationManager {
     if (popup) {
       await this.platform.focusWindow(popup.id);
     } else {
-      let left = 0;
-      let top = 0;
-      try {
-        const lastFocused = await this.platform.getLastFocusedWindow();
-        top = lastFocused.top;
-        left = lastFocused.left + (lastFocused.width - NOTIFICATION_WIDTH);
-      } catch (_) {
-        const { screenX, screenY, outerWidth } = window;
-        top = Math.max(screenY, 0);
-        left = Math.max(screenX + (outerWidth - NOTIFICATION_WIDTH), 0);
-      }
+      const left = window.screen.width / 2 - NOTIFICATION_WIDTH / 2; // Calculate the horizontal position
+      const top = window.screen.height / 2 - NOTIFICATION_HEIGHT / 2;
 
       const popupWindow = await this.platform.openWindow({
         url: 'notification.html',
