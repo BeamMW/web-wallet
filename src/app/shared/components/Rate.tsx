@@ -16,6 +16,7 @@ interface Props {
 const Ratetyled = styled.div`
   margin-top: 4px;
   color: var(--color-gray);
+  font-weight: normal;
 `;
 
 const Rate: React.FC<Props> = ({

@@ -45,7 +45,7 @@ const AssetDetail = () => {
     >
       <WalletActions selected_asset_id={currentAsset?.asset_id} />
       <Section title="">
-        <Assets data={[currentAsset]} isBalanceHidden={isBalanceHidden} />
+        <Assets data={[currentAsset]} isBalanceHidden={isBalanceHidden} assetClassName="full-width" />
       </Section>
       <Section title="Transactions" showAllAction={filtered.length > 4 && !showAll ? showFullTxList : undefined}>
         <TransactionList data={txs} isBalanceHidden={isBalanceHidden} />

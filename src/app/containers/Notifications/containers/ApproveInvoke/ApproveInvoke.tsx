@@ -175,7 +175,7 @@ const ApproveInvoke = () => {
                 const assetItem = assets.find((asset) => asset.asset_id === data.assetID);
                 return assetItem ? (
                   <AssetItem key={data.assetID}>
-                    <AssetIcon asset_id={data.assetID} />
+                    <AssetIcon asset_id={data.assetID} className="without-transform" />
                     <LabelStyled is_spend={data.spend}>
                       {data.spend ? '-' : '+'}
                       {' '}
@@ -190,7 +190,7 @@ const ApproveInvoke = () => {
                   </AssetItem>
                 ) : (
                   <AssetItem key={data.assetID}>
-                    <AssetIcon asset_id={data.assetID} />
+                    <AssetIcon asset_id={data.assetID} className="without-transform" />
                     <LabelStyled is_spend={data.spend}>
                       {data.spend ? '-' : '+'}
                       {' '}
@@ -209,7 +209,7 @@ const ApproveInvoke = () => {
         <Fee>
           <FeeSubtitle>Fee: </FeeSubtitle>
           <FeeValue>
-            <AssetIcon asset_id={0} />
+            <AssetIcon asset_id={0} className="without-transform" />
             <FeeLabelStyled>
               {info.fee}
               {' '}

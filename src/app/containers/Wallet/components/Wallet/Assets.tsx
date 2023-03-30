@@ -9,11 +9,15 @@ import { useNavigate } from 'react-router-dom';
 const ListStyled = styled.ul`
   margin: 0 -20px;
   padding: 0 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 `;
 
 interface AssetsProps {
   data: AssetTotal[];
   isBalanceHidden?: boolean;
+  assetClassName?: string;
 }
 
 const ListItemStyled = styled.li<{ opt_color?: string; asset_id: number }>`
@@ -21,7 +25,12 @@ const ListItemStyled = styled.li<{ opt_color?: string; asset_id: number }>`
   position: relative;
   padding: 20px;
   padding-left: 56px;
+  width: 49%;
+  min-height: 80px;
 
+  &.full-width {
+    width: 100%;
+  }
   &:before {
     opacity: 0.3;
     content: '';
@@ -47,7 +56,7 @@ const ListItemStyled = styled.li<{ opt_color?: string; asset_id: number }>`
   }
 `;
 
-const Assets: React.FC<AssetsProps> = ({ data, isBalanceHidden }) => {
+const Assets: React.FC<AssetsProps> = ({ data, isBalanceHidden, assetClassName }) => {
   const navigate = useNavigate();
 
   const navigateToDetail = (asset_id: number) => {
@@ -62,6 +71,7 @@ const Assets: React.FC<AssetsProps> = ({ data, isBalanceHidden }) => {
           key={asset_id}
           asset_id={asset_id}
           onClick={() => navigateToDetail(asset_id)}
+          className={assetClassName}
         >
           <AssetLabel value={available} asset_id={asset_id} isBalanceHidden={isBalanceHidden} />
         </ListItemStyled>

@@ -25,17 +25,29 @@ const ContainerStyled = styled.div`
   font-size: 16px;
   font-weight: 600;
   color: white;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
 `;
 
 const AmountStyled = styled.span`
   flex-grow: 1;
   text-transform: uppercase;
+  align-items: center;
+  display: flex;
+`;
+
+const AssetID = styled.span`
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  font-size: 12px;
+  color: gray;
 `;
 
 const iconClassName = css`
   position: absolute;
   right: 100%;
-  margin-top: -4px;
 `;
 
 const rateStyle = css`
@@ -63,11 +75,15 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   const signed = !!income;
   const sign = signed ? getSign(income) : '';
   const n = truncate(target?.metadata_pairs.UN);
-  const name = `${n} (${asset_id})` ?? '';
+  const name = `${n}` ?? '';
   const label = `${sign}${convertLowAmount(amount)} ${name}`;
 
   return (
     <ContainerStyled className={className}>
+      <AssetID>
+        #
+        {asset_id}
+      </AssetID>
       <AssetIcon asset_id={asset_id} className={iconClass || iconClassName} />
       <AmountStyled className="asset-name">{isBalanceHidden ? name : label}</AmountStyled>
       {showRate && !isBalanceHidden && n === 'BEAM' ? (
