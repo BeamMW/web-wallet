@@ -2,10 +2,16 @@ import React, {
   ReactElement, useEffect, useRef, useState,
 } from 'react';
 import { styled } from '@linaria/react';
-
+import { Scrollbars } from 'react-custom-scrollbars';
 import { css } from '@linaria/core';
 import config from '@app/config';
 import Angle from './Angle';
+
+const trackStyle = css`
+  z-index: 999;
+  border-radius: 3px;
+  background-color: rgba(255, 255, 255, 0.2);
+`;
 
 const ContainerStyled = styled.div`
   display: inline-block;
@@ -148,9 +154,18 @@ export const Select: React.FC<SelectProps> = ({
         {(selected as ReactElement).props.children}
         {options.length > 1 && <Angle className={angleStyle} value={opened ? 0 : 180} margin={opened ? 3 : 1} />}
       </ButtonStyled>
+
       {opened && (
         <SelectStyled ref={selectRef} tabIndex={-1} onBlur={handleBlur}>
-          {options}
+          <Scrollbars
+            style={{ height: 200 }}
+            autoHeight
+            autoHeightMin="100%"
+            autoHeightMax="100%"
+            renderThumbVertical={(props) => <div {...props} className={trackStyle} />}
+          >
+            {options}
+          </Scrollbars>
         </SelectStyled>
       )}
     </ContainerStyled>

@@ -100,7 +100,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
       <Select value={asset_id} className={selectClassName} onSelect={handleSelect}>
         {assets.map(({ asset_id: id, metadata_pairs }) => (
           <Option key={id} value={id}>
-            <AssetIcon asset_id={id} />
+            <AssetIcon asset_id={id} className="without-transform" />
             <LabelStyled>{truncate(metadata_pairs.UN)}</LabelStyled>
           </Option>
         ))}
