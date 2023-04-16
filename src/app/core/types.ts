@@ -17,6 +17,7 @@ export interface ExternalAppConnection {
 export interface CreateAddressParams {
   type: AddressType;
   comment?: string;
+  use_default_signature: boolean;
 }
 
 export enum RPCMethod {

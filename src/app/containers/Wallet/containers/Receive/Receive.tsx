@@ -120,11 +120,18 @@ const Receive = () => {
 
   useEffect(() => {
     if (comment) {
-      dispatch(generateAddress.request({ type: maxAnonymity ? 'max_privacy' : 'offline', comment }));
+      dispatch(
+        generateAddress.request({
+          type: maxAnonymity ? 'max_privacy' : 'offline',
+          comment,
+          use_default_signature: true,
+        }),
+      );
     } else {
       dispatch(
         generateAddress.request({
           type: maxAnonymity ? 'max_privacy' : 'offline',
+          use_default_signature: true,
         }),
       );
     }
