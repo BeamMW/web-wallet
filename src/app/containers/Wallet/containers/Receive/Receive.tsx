@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { styled } from '@linaria/react';
@@ -95,7 +94,7 @@ const Receive = () => {
   const addressFull = useSelector(selectAddress());
   const sbbs = useSelector(selectSbbs());
   const selected_asset_id = useSelector(selectSelectedAssetId());
-  const address = compact(addressFull);
+  const address = compact(addressFull, 32);
   const [amountError, setAmountError] = useState('');
 
   useEffect(
