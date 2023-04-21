@@ -53,3 +53,9 @@ WalletStateType['selected_asset_id']
 
 export const setSbbs = createAction(WalletActionTypes.SET_SBBS)<WalletStateType['sbbs']>();
 export const setParsedAddressUD = createAction(WalletActionTypes.SET_ADDRESS_UD)<string>();
+
+export const getAssetInfo = createAsyncAction(
+  WalletActionTypes.GET_ASSET_INFO,
+  WalletActionTypes.GET_ASSET_INFO_SUCCESS,
+  WalletActionTypes.GET_ASSET_INFO_FAILURE,
+)<number, Asset, ErrorMessage>();

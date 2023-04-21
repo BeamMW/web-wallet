@@ -1,7 +1,7 @@
 import * as extensionizer from 'extensionizer';
 import NotificationManager from '@core/NotificationManager';
 import WasmWallet from '@core/WasmWallet';
-import { ExternalAppMethod } from '@core/types';
+import { Asset, ExternalAppMethod } from '@core/types';
 import { RemoteRequest } from '@app/core/types';
 import {
   AddressData,
@@ -304,4 +304,8 @@ export function exportPaymentProof(txId: string) {
 
 export function verifyPaymentProof(payment_proof: string) {
   return postMessage(RPCMethod.VerifyPaymentProof, { payment_proof });
+}
+
+export function getAssetInfo(asset_id: number) {
+  return postMessage<Asset>(RPCMethod.GetAssetInfo, { asset_id });
 }

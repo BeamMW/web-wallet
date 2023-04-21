@@ -83,6 +83,9 @@ const reducer = createReducer<WalletStateType, Action>(initialState)
     nexState.assets = action.payload;
     nexState.assets_total = handleAssets(nexState);
   }))
+  .handleAction(actions.getAssetInfo.success, (state, action) => produce(state, (nexState) => {
+    nexState.assets = [...state.assets, action.payload];
+  }))
   .handleAction(actions.loadRate.success, (state, action) => produce(state, (nexState) => {
     nexState.rate = action.payload;
   }))
