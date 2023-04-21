@@ -26,8 +26,14 @@ const Wallet = () => {
   const rate = useSelector(selectRate());
 
   useEffect(() => {
-    if (!assets_info.length) {
-      assets.forEach((asset) => {
+    const a = assets
+      .filter((item1) => !assets_info.some((item2) => item2.asset_id === item1.asset_id))
+      .filter((ass) => ass.asset_id !== 0);
+
+    if (a.length > 0) {
+      console.log(a.length, assets.length, 'assets_info.length !== assets.length');
+
+      a.forEach((asset) => {
         dispatch(getAssetInfo.request(asset.asset_id));
       });
     }
