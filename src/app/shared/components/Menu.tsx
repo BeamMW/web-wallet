@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
 import {
-  CancelIcon, HelpIcon, SettingsIcon, WalletIcon,
+  CancelIcon, DexIcon, HelpIcon, SettingsIcon, WalletIcon,
 } from '@app/shared/icons';
 
 import { ROUTES } from '@app/shared/constants';
@@ -23,6 +23,12 @@ const MENU_ITEMS = [
     title: 'Settings',
     value: ROUTES.SETTINGS.BASE,
     IconComponent: SettingsIcon,
+  },
+  {
+    title: 'DEX',
+    value: ROUTES.DEX.BASE,
+    IconComponent: DexIcon,
+    className: 'dex',
   },
   {
     title: 'Documentation',
@@ -58,6 +64,12 @@ const ListItemStyled = styled.li<{ active: boolean }>`
   > svg {
     margin-right: 26px;
   }
+  &.dex {
+    > svg {
+      margin-left: -10px;
+      margin-right: 16px;
+    }
+  }
 `;
 
 const buttonStyle = css`
@@ -90,8 +102,16 @@ const Menu: React.FC<MenuProps> = ({ onCancel }) => {
       <ContainerStyled>
         <Button variant="icon" icon={CancelIcon} className={buttonStyle} onClick={onCancel} />
         <ListStyled>
-          {MENU_ITEMS.map(({ title, value, IconComponent }, index) => (
-            <ListItemStyled key={value} active={location.pathname === value} data-index={index} onClick={handleClick}>
+          {MENU_ITEMS.map(({
+            title, value, IconComponent, className,
+          }, index) => (
+            <ListItemStyled
+              key={value}
+              active={location.pathname === value}
+              data-index={index}
+              onClick={handleClick}
+              className={className}
+            >
               <IconComponent />
               {title}
             </ListItemStyled>

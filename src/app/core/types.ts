@@ -24,6 +24,7 @@ export enum RPCMethod {
   SubUnsub = 'ev_subunsub',
   GetUTXO = 'get_utxo',
   GetAssetInfo = 'get_asset_info',
+  AssetsList = 'assets_list',
   GetWalletStatus = 'wallet_status',
   GetAddressList = 'addr_list',
   CreateAddress = 'create_address',

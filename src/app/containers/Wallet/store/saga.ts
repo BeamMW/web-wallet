@@ -9,6 +9,7 @@ import {
   sendTransaction,
   convertTokenToJson,
   getAssetInfo,
+  getAssetList,
 } from '@core/api';
 import {
   AddressData, ChangeData, AssetsEvent, Asset,
@@ -127,6 +128,17 @@ export function* getAssetInfoSaga(action: ReturnType<typeof actions.getAssetInfo
     yield put(actions.getAssetInfo.failure(e));
   }
 }
+export function* getAssetListSaga(): Generator {
+  try {
+    const assets: Asset[] = (yield call(getAssetList) as unknown) as Asset[];
+
+    console.log('getAssetListSaga', assets);
+
+    yield put(actions.getAssetList.success(assets));
+  } catch (e) {
+    yield put(actions.getAssetList.failure(e));
+  }
+}
 
 function* walletSaga() {
   yield takeLatest(actions.loadRate.request, loadRate);
@@ -135,6 +147,7 @@ function* walletSaga() {
   yield takeLatest(actions.validateAmount.request, validateAmount);
   yield takeLatest(actions.sendTransaction.request, sendTransactionSaga);
   yield takeEvery(actions.getAssetInfo.request, getAssetInfoSaga);
+  yield takeEvery(actions.getAssetList.request, getAssetListSaga);
 }
 
 export default walletSaga;

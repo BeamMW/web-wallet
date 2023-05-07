@@ -309,3 +309,6 @@ export function verifyPaymentProof(payment_proof: string) {
 export function getAssetInfo(asset_id: number) {
   return postMessage<Asset>(RPCMethod.GetAssetInfo, { asset_id });
 }
+export function getAssetList() {
+  return postMessage<Asset[]>(RPCMethod.AssetsList, { refresh: true });
+}

@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@app/shared/components';
 import { ToastContainer } from 'react-toastify';
 
+import { DexContainer } from '@app/containers';
 import { WalletContainer } from './containers/Wallet';
 import { AuthContainer, Progress } from './containers/Auth';
 import { SettingsContainer } from './containers/Settings';
@@ -58,6 +59,10 @@ const routes = [
   {
     path: `${ROUTES.WALLET.BASE}/*`,
     element: <WalletContainer />,
+  },
+  {
+    path: `${ROUTES.DEX.BASE}/*`,
+    element: <DexContainer />,
   },
 ];
 

@@ -65,7 +65,7 @@
     "@types/readable-stream": "^2.3.11",
     "@unstoppabledomains/resolution": "^8.3.3",
     "babel-polyfill": "^6.26.0",
-    "beam-wasm-client-dappnet": "7.3.13663",
+    "beam-wasm-client-dappnet": "7.3.13670",
     "browser-passworder": "^2.0.3",
     "buffer": "^6.0.3",
     "dnode": "^1.2.2",

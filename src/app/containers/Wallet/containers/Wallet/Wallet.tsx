@@ -39,6 +39,10 @@ const Wallet = () => {
     }
   }, [assets_info, assets, dispatch]);
 
+  // useEffect(() => {
+  //   dispatch(getAssetList.request());
+  // }, [dispatch]);
+
   useEffect(() => {
     if (!rate) {
       dispatch(loadRate.request());
