@@ -15,7 +15,7 @@ export const DexContainer = () => {
       <iframe
         title="Dex"
         ref={iframeRef}
-        src="https://dreamy-lamington-4f9e50.netlify.app/"
+        src="http://dappnet-dex.beam.mw"
         width={750}
         height={800}
         onLoad={handleLoad}
