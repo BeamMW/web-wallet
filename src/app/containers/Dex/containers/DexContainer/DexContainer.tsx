@@ -18,7 +18,7 @@ export const DexContainer = () => {
       <iframe
         title="Dex"
         ref={iframeRef}
-        src="http://dappnet-dex.beam.mw"
+        src="https://dappnet-dex.beam.mw"
         width={750}
         height={800}
         onLoad={handleLoad}
