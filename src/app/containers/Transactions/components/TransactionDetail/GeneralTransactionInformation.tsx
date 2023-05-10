@@ -12,7 +12,7 @@ import config from '@app/config';
 
 import { InformationItem } from '@app/shared/components/DetailInformationLayout';
 
-import { TransactionAmount } from '@app/containers/Transactions/components/TransactionDetail/TransactionAmount';
+import { TransactionAmount } from './TransactionAmount';
 
 const GeneralTransactionWrapper = styled.div`
   text-align: left;
