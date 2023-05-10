@@ -28,6 +28,13 @@ const ContainerStyled = styled.div`
   flex-direction: column;
   height: 100%;
   justify-content: center;
+
+  &.direction-row {
+    flex-direction: row;
+    display: flex;
+    margin: 8px 0;
+    width: 250px;
+  }
 `;
 
 const AmountStyled = styled.span`

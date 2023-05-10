@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
 import {
-  CancelIcon, DexIcon, HelpIcon, SettingsIcon, WalletIcon,
+  CancelIcon, HelpIcon, SettingsIcon, WalletIcon,
 } from '@app/shared/icons';
 
 import { ROUTES } from '@app/shared/constants';
@@ -24,12 +24,12 @@ const MENU_ITEMS = [
     value: ROUTES.SETTINGS.BASE,
     IconComponent: SettingsIcon,
   },
-  {
-    title: 'DEX',
-    value: ROUTES.DEX.BASE,
-    IconComponent: DexIcon,
-    className: 'dex',
-  },
+  // {
+  //   title: 'DEX',
+  //   value: ROUTES.DEX.BASE,
+  //   IconComponent: DexIcon,
+  //   className: 'dex',
+  // },
   {
     title: 'Documentation',
     value: 'https://documentation.beam.mw/',
@@ -102,16 +102,8 @@ const Menu: React.FC<MenuProps> = ({ onCancel }) => {
       <ContainerStyled>
         <Button variant="icon" icon={CancelIcon} className={buttonStyle} onClick={onCancel} />
         <ListStyled>
-          {MENU_ITEMS.map(({
-            title, value, IconComponent, className,
-          }, index) => (
-            <ListItemStyled
-              key={value}
-              active={location.pathname === value}
-              data-index={index}
-              onClick={handleClick}
-              className={className}
-            >
+          {MENU_ITEMS.map(({ title, value, IconComponent }, index) => (
+            <ListItemStyled key={value} active={location.pathname === value} data-index={index} onClick={handleClick}>
               <IconComponent />
               {title}
             </ListItemStyled>

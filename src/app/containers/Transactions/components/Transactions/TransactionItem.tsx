@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
 import { styled } from '@linaria/react';
 import { Transaction } from '@core/types';
-import { Rate, StatusLabel } from '@app/shared/components';
+import { Rate, StatusLabel, AssetIcon } from '@app/shared/components';
 import { css } from '@linaria/core';
 import {
   convertLowAmount, fromGroths, getSign, truncate,
 } from '@core/utils';
 import { AssetTotal } from '@app/containers/Wallet/interfaces';
-import AssetIcon from '../../../../shared/components/AssetIcon';
 
 const ContainerStyled = styled.div`
   display: flex;
@@ -95,6 +94,32 @@ const TransactionSource = styled.div`
   font-weight: bold;
 `;
 
+const multipleAssetsTitle = () => 'Multiple assets';
+
+const multipleAssetsAmount = (invoke_data, fee_only, fee) => {
+  let res = 0;
+
+  invoke_data.forEach((i) => i.amounts.forEach((a) => {
+    const am = fromGroths(fee_only ? fee : a.amount);
+
+    if (am > res) res = am;
+  }));
+  return res;
+};
+
+const getTransactionDate = (create_time: number) => {
+  const txDate = new Date(create_time * 1000);
+  const time = txDate.toLocaleTimeString(undefined, { timeStyle: 'short' });
+  const date = txDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+
+  return (
+    <>
+      <span>{date}</span>
+      <span>{time}</span>
+    </>
+  );
+};
+
 const TransactionItem = ({
   data,
   assets,
@@ -105,7 +130,7 @@ const TransactionItem = ({
   isBalanceHidden?: boolean;
 }) => {
   const {
-    asset_id, invoke_data, income, fee, fee_only, value,
+    asset_id, invoke_data, income, fee, fee_only, value, create_time,
   } = data;
 
   const target = assets.find(({ asset_id: id }) => id === asset_id);
@@ -116,21 +141,6 @@ const TransactionItem = ({
   const sign = getSign(income) ?? '';
   const name = truncate(target?.metadata_pairs.UN) ?? '';
   const label = `${sign}${convertLowAmount(amount)} ${name}`;
-
-  const multipleAssetsTitle = () => {
-    let title = '';
-    invoke_data.forEach((i) => i.amounts.forEach((a) => {
-      const tg = assets.find(({ asset_id: id }) => id === a.asset_id);
-      const n = truncate(tg?.metadata_pairs.UN) ?? '';
-      const am = fromGroths(fee_only ? fee : a.amount);
-      if (!isBalanceHidden) {
-        title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
-      } else {
-        title += `${n} `;
-      }
-    }));
-    return title;
-  };
 
   const assetRate = useMemo(() => {
     let rate = data?.rates.find((a) => a.from === data.asset_id && a.to === 'usd');
@@ -144,41 +154,9 @@ const TransactionItem = ({
     return rate;
   }, [data]);
 
-  const multipleAssetsAmount = () => {
-    let res = 0;
-
-    invoke_data.forEach((i) => i.amounts.forEach((a) => {
-      const am = fromGroths(fee_only ? fee : a.amount);
-
-      if (am > res) res = am;
-    }));
-    return res;
-  };
-
-  const getTransactionDate = () => {
-    const txDate = new Date(data.create_time * 1000);
-    const time = txDate.toLocaleTimeString(undefined, { timeStyle: 'short' });
-    const date = txDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-
-    return (
-      <>
-        <span>{date}</span>
-        <span>{time}</span>
-      </>
-    );
-  };
-
-  return (
-    <>
-      {!hasMultipleAssets ? (
-        <ContainerStyled>
-          <AssetIcon asset_id={data.asset_id} className={iconClassName} />
-          <AmountStyled>{isBalanceHidden ? name : label}</AmountStyled>
-          {assetRate && !isBalanceHidden ? (
-            <Rate value={amount} income={income} txRate={fromGroths(assetRate.rate)} className={rateStyle} />
-          ) : null}
-        </ContainerStyled>
-      ) : (
+  const mainContent = () => {
+    if (hasMultipleAssets) {
+      return (
         <ContainerStyled>
           <MultipleAssets>
             {invoke_data.map((i) => i.amounts
@@ -189,18 +167,33 @@ const TransactionItem = ({
           <AmountStyled>{multipleAssetsTitle()}</AmountStyled>
           {assetRate && !isBalanceHidden ? (
             <Rate
-              value={multipleAssetsAmount()}
+              value={multipleAssetsAmount(invoke_data, fee_only, fee)}
               txRate={fromGroths(assetRate.rate)}
               income={income}
               className={rateStyle}
             />
           ) : null}
         </ContainerStyled>
-      )}
+      );
+    }
+    return (
+      <ContainerStyled>
+        <AssetIcon asset_id={data.asset_id} className={iconClassName} />
+        <AmountStyled>{isBalanceHidden ? name : label}</AmountStyled>
+        {assetRate && !isBalanceHidden ? (
+          <Rate value={amount} income={income} txRate={fromGroths(assetRate.rate)} className={rateStyle} />
+        ) : null}
+      </ContainerStyled>
+    );
+  };
+
+  return (
+    <>
+      {mainContent()}
       <StatusLabel data={data} />
       <TransactionBottom>
         <TransactionSource>{data.appname ?? 'Wallet'}</TransactionSource>
-        <TransactionDate>{getTransactionDate()}</TransactionDate>
+        <TransactionDate>{getTransactionDate(create_time)}</TransactionDate>
       </TransactionBottom>
     </>
   );
