@@ -136,6 +136,7 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
 
 const SendForm = () => {
   const dispatch = useDispatch();
+  const [note, changeNote] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
   const [focus, setFocus] = useState(false);
   const [showFullAddress, setShowFullAddress] = useState(false);
@@ -179,6 +180,7 @@ const SendForm = () => {
     isInitialValid: false,
     validate: (e) => validate(e, setHint),
     onSubmit: (values) => {
+      formik.setFieldValue('comment', note, false);
       setShowConfirm(true);
     },
   });
@@ -192,14 +194,14 @@ const SendForm = () => {
   const compactAddress = useMemo(() => compact(values.address, 15), [values.address]);
 
   useEffect(() => {
-    if (selected_asset_id !== 0) {
+    if (selected_asset_id !== 0 && values.send_amount.asset_id !== selected_asset_id) {
       const current_asset = assets.find((a) => a.asset_id === selected_asset_id);
 
       setSelected(current_asset);
       setFieldValue('send_amount', { amount: 0, asset_id: selected_asset_id }, true);
       setFieldValue('misc.selected', current_asset, true);
     }
-  }, [selected_asset_id, setFieldValue, assets, dispatch]);
+  }, [selected_asset_id, setFieldValue, assets, values, dispatch]);
 
   useEffect(
     () => () => {
@@ -479,12 +481,7 @@ const SendForm = () => {
             )}
           </Section>
           <Section title="Comment" variant="gray" collapse>
-            <Input
-              variant="gray"
-              placeholder="Comment"
-              value={values.comment}
-              onChange={(e) => setFieldValue('comment', e.target.value)}
-            />
+            <Input variant="gray" placeholder="Comment" value={note} onChange={(e) => changeNote(e.target.value)} />
           </Section>
           <WarningStyled>{warning}</WarningStyled>
           <Button pallete="purple" icon={ArrowRightIcon} type="submit" disabled={isFormDisabled()}>

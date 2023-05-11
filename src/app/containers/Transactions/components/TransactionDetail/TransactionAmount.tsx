@@ -57,8 +57,8 @@ export const TransactionAmount = ({
         value={a}
         asset_id={asset_id}
         comment=""
-        className={`asset-label ${income ? 'income' : 'outcome'}`}
-        iconClass="iconClass"
+        className={`asset-label direction-row ${income ? 'income' : 'outcome'}`}
+        iconClass="without-transform"
         showRate={false}
         isBalanceHidden={isBalanceHidden}
       />
