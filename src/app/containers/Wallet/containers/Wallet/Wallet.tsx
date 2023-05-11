@@ -31,8 +31,6 @@ const Wallet = () => {
       .filter((ass) => ass.asset_id !== 0);
 
     if (a.length > 0) {
-      console.log(a.length, assets.length, 'assets_info.length !== assets.length');
-
       a.forEach((asset) => {
         dispatch(getAssetInfo.request(asset.asset_id));
       });

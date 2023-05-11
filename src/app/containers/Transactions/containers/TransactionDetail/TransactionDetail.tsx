@@ -8,7 +8,6 @@ import { PaymentProofInformation, GeneralTransactionInformation } from '@app/con
 import { useDispatch, useSelector } from 'react-redux';
 import { loadTransactionStatus, setPaymentProof } from '@app/containers/Transactions/store/actions';
 import { selectPaymentProof, selectTransactionDetail } from '@app/containers/Transactions/store/selectors';
-import { selectAssets } from '@app/containers/Wallet/store/selectors';
 import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 import { toast } from 'react-toastify';
 import { copyToClipboard } from '@core/utils';
@@ -21,8 +20,6 @@ const TransactionDetail = () => {
   const transactionDetail = useSelector(selectTransactionDetail());
   const paymentProof = useSelector(selectPaymentProof());
   const isBalanceHidden = useSelector(selectIsBalanceHidden());
-  //  const rate = useSelector(selectRate());
-  const assets = useSelector(selectAssets());
 
   useEffect(() => {
     dispatch(loadTransactionStatus.request(params.id));
@@ -97,7 +94,6 @@ const TransactionDetail = () => {
         {activeTab === 'general' && transactionDetail && (
           <GeneralTransactionInformation
             transactionDetail={transactionDetail}
-            assets={assets}
             isBalanceHidden={isBalanceHidden}
             copy={copy}
             assetRate={assetRate}

@@ -15,15 +15,9 @@ interface TransactionAmountProps {
   transactionDetail: TransactionDetail;
   isBalanceHidden: boolean;
   assetRate: Rate;
-  multipleAssetsTitle: () => string;
 }
 
-export const TransactionAmount = ({
-  transactionDetail,
-  isBalanceHidden,
-  assetRate,
-  multipleAssetsTitle,
-}: TransactionAmountProps) => {
+export const TransactionAmount = ({ transactionDetail, isBalanceHidden, assetRate }: TransactionAmountProps) => {
   const amount = useMemo(() => {
     const renderMultipleAssets = () => (
       <MultipleAssetsWrapper>
@@ -96,7 +90,7 @@ export const TransactionAmount = ({
       );
     }
     return null;
-  }, [transactionDetail, isBalanceHidden, assetRate?.rate, multipleAssetsTitle]);
+  }, [transactionDetail, isBalanceHidden, assetRate?.rate]);
 
   return <>{amount}</>;
 };

@@ -132,8 +132,6 @@ export function* getAssetListSaga(): Generator {
   try {
     const assets: Asset[] = (yield call(getAssetList) as unknown) as Asset[];
 
-    console.log('getAssetListSaga', assets);
-
     yield put(actions.getAssetList.success(assets));
   } catch (e) {
     yield put(actions.getAssetList.failure(e));

@@ -1,13 +1,12 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { styled } from '@linaria/react';
 import { Rate, TransactionDetail } from '@core/types';
 import {
-  compact, fromGroths, getTxType, toUSD, truncate,
+  compact, fromGroths, getTxType, toUSD,
 } from '@core/utils';
 import { Button } from '@app/shared/components';
 import { CopySmallIcon, ExternalLink } from '@app/shared/icons';
 import AssetLabel from '@app/shared/components/AssetLabel';
-import { AssetTotal } from '@app/containers/Wallet/interfaces';
 import config from '@app/config';
 
 import { InformationItem } from '@app/shared/components/DetailInformationLayout';
@@ -20,8 +19,6 @@ const GeneralTransactionWrapper = styled.div`
 
 interface GeneralTransactionInformationProps {
   transactionDetail: TransactionDetail;
-  // rate: number;
-  assets: AssetTotal[];
   isBalanceHidden: boolean;
   copy: (value: string, tM: string) => void;
   assetRate: Rate;
@@ -30,27 +27,11 @@ interface GeneralTransactionInformationProps {
 
 const GeneralTransactionInformation = ({
   transactionDetail,
-  assets,
   isBalanceHidden,
   copy,
   assetRate,
   feeRate,
 }: GeneralTransactionInformationProps) => {
-  const multipleAssetsTitle = useCallback(() => {
-    let title = '';
-    transactionDetail.invoke_data?.forEach((i) => i.amounts.forEach((a) => {
-      const tg = assets.find(({ asset_id: id }) => id === a.asset_id);
-      const n = truncate(tg?.metadata_pairs.UN) ?? '';
-      const am = fromGroths(transactionDetail.fee_only ? transactionDetail.fee : a.amount);
-      if (!isBalanceHidden) {
-        title += `${am > 0 ? `+ ${am}` : `- ${Math.abs(am)}`} ${n} `;
-      } else {
-        title += `${n} `;
-      }
-    }));
-    return title;
-  }, [transactionDetail, assets, isBalanceHidden]);
-
   const getTransactionDate = () => {
     const txDate = new Date(transactionDetail.create_time * 1000);
     const time = txDate.toLocaleTimeString(undefined, { timeStyle: 'short' });
@@ -123,7 +104,6 @@ const GeneralTransactionInformation = ({
         transactionDetail={transactionDetail}
         isBalanceHidden={isBalanceHidden}
         assetRate={assetRate}
-        multipleAssetsTitle={multipleAssetsTitle}
       />
 
       {transactionDetail.fee > 0 && (
