@@ -3,7 +3,9 @@ import React from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
-import { CancelIcon, HelpIcon, SettingsIcon, WalletIcon } from '@app/shared/icons';
+import {
+  CancelIcon, HelpIcon, SettingsIcon, WalletIcon,
+} from '@app/shared/icons';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -22,6 +24,12 @@ const MENU_ITEMS = [
     value: ROUTES.SETTINGS.BASE,
     IconComponent: SettingsIcon,
   },
+  // {
+  //   title: 'DEX',
+  //   value: ROUTES.DEX.BASE,
+  //   IconComponent: DexIcon,
+  //   className: 'dex',
+  // },
   {
     title: 'Documentation',
     value: 'https://documentation.beam.mw/',
@@ -31,12 +39,11 @@ const MENU_ITEMS = [
 ];
 
 const ContainerStyled = styled.nav`
-  position: fixed;
+  position: absolute;
   z-index: 4;
-  top: 50px;
   left: 0;
   width: 319px;
-  height: 550px;
+  height: 100%;
   background: ${`var(--color-popup-${config.theme})`};
 `;
 
@@ -48,8 +55,7 @@ const ListItemStyled = styled.li<{ active: boolean }>`
   height: 60px;
   line-height: 60px;
   padding-left: 30px;
-  background-image: ${({ active }) =>
-    !active ? 'none' : 'linear-gradient(to right, rgba(5, 226, 194, 0.1), rgba(5, 226, 194, 0))'};
+  background-image: ${({ active }) => (!active ? 'none' : 'linear-gradient(to right, rgba(5, 226, 194, 0.1), rgba(5, 226, 194, 0))')};
   text-align: left;
   font-size: 16px;
   cursor: ${({ active }) => (active ? 'default' : 'pointer')};
@@ -57,6 +63,12 @@ const ListItemStyled = styled.li<{ active: boolean }>`
   align-items: center;
   > svg {
     margin-right: 26px;
+  }
+  &.dex {
+    > svg {
+      margin-left: -10px;
+      margin-right: 16px;
+    }
   }
 `;
 
@@ -92,7 +104,8 @@ const Menu: React.FC<MenuProps> = ({ onCancel }) => {
         <ListStyled>
           {MENU_ITEMS.map(({ title, value, IconComponent }, index) => (
             <ListItemStyled key={value} active={location.pathname === value} data-index={index} onClick={handleClick}>
-              <IconComponent /> {title}
+              <IconComponent />
+              {title}
             </ListItemStyled>
           ))}
         </ListStyled>

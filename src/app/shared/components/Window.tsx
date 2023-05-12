@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
-import { IconEye, IconLockWallet, MenuIcon, IconEyeCrossed, InfoButton } from '@app/shared/icons';
+import {
+  IconEye, IconLockWallet, MenuIcon, IconEyeCrossed, InfoButton,
+} from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
 import config from '@app/config';
@@ -39,7 +41,7 @@ function getColor(pallete: string): string {
 
 const ContainerStyled = styled.div<WindowProps>`
   position: relative;
-  min-height: 600px;
+  min-height: 100vh;
   padding: 130px 30px 30px;
   text-align: center;
 
@@ -60,12 +62,12 @@ const ContainerStyled = styled.div<WindowProps>`
 `;
 
 const HeadingStyled = styled.div<{ pallete: string }>`
-  position: fixed;
+  position: absolute;
   z-index: 2;
   top: 0;
   left: 0;
   overflow: hidden;
-  width: 375px;
+  width: 750px;
   height: 130px;
   padding-top: 50px;
   background-color: ${`var(--color-bg-${config.theme})`};
@@ -90,13 +92,14 @@ const FrameStyled = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  width: 375px;
+  width: 750px;
+  min-height: 600px;
   height: 42px;
   text-align: left;
 `;
 
 const menuButtonStyle = css`
-  position: fixed;
+  position: absolute;
   z-index: 3;
   top: 74px;
   left: 12px;
@@ -104,7 +107,7 @@ const menuButtonStyle = css`
 `;
 
 const menuEyeStyle = css`
-  position: fixed;
+  position: absolute;
   z-index: 3;
   top: 74px;
   right: 12px;
@@ -112,7 +115,7 @@ const menuEyeStyle = css`
 `;
 
 const menuInfoStyle = css`
-  position: fixed;
+  position: absolute;
   z-index: 3;
   top: 74px;
   right: 55px;

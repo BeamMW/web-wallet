@@ -1,11 +1,13 @@
 import React from 'react';
 import NotificationController from '@core/NotificationController';
 import { styled } from '@linaria/react';
-import { approveContractInfoRequest, rejectContractInfoRequest } from '@core/api';
 import { Button, AssetIcon } from '@app/shared/components';
-import { CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards } from '@app/shared/icons';
+import {
+  CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards,
+} from '@app/shared/icons';
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
+import NotificationManager from '@core/NotificationManager';
 
 const ContainerStyled = styled.div`
   position: relative;
@@ -133,23 +135,31 @@ const getConfirmIcon = (info, amounts) => {
 
 const ApproveInvoke = () => {
   const notification = NotificationController.getNotification();
+  const notificationManager = NotificationManager.getInstance();
 
   const amounts = JSON.parse(notification.params.amounts);
   const info = JSON.parse(notification.params.info);
-  // eslint-disable-next-line no-console
-  console.log(amounts, info);
 
   const assets = useSelector(selectAssets());
   const text = getNotificationText(info, amounts, notification.params.appname);
   const title = getNotificationTitle(info, amounts);
 
   const handleCancelClick = () => {
-    rejectContractInfoRequest(notification.params.req);
+    // TODO
+    notificationManager.postMessage({
+      action: 'rejectContractInfoRequest',
+      params: notification.params.req,
+    });
     window.close();
   };
 
   const handleConfirmClick = () => {
-    approveContractInfoRequest(notification.params.req);
+    // approveContractInfoRequest(notification.params.req);
+    // TODO
+    notificationManager.postMessage({
+      action: 'approveContractInfoRequest',
+      params: notification.params.req,
+    });
     window.close();
   };
 
@@ -162,24 +172,50 @@ const ApproveInvoke = () => {
           <Amounts>
             {amounts.length > 0
               ? amounts.map((data) => {
-                  const assetItem = assets.find((asset) => asset.asset_id === data.assetID);
-                  return assetItem ? (
-                    <AssetItem key={data.assetID}>
-                      <AssetIcon asset_id={data.assetID} />
-                      <LabelStyled is_spend={data.spend}>
-                        {data.spend ? '-' : '+'} {data.amount} {assetItem.metadata_pairs.UN}
-                      </LabelStyled>
-                    </AssetItem>
-                  ) : null;
-                })
+                const assetItem = assets.find((asset) => asset.asset_id === data.assetID);
+                return assetItem ? (
+                  <AssetItem key={data.assetID}>
+                    <AssetIcon asset_id={data.assetID} className="without-transform" />
+                    <LabelStyled is_spend={data.spend}>
+                      {data.spend ? '-' : '+'}
+                      {' '}
+                      {data.amount}
+                      {' '}
+                      {assetItem.metadata_pairs.UN}
+                      {' '}
+                      (
+                      {data.assetID}
+                      )
+                    </LabelStyled>
+                  </AssetItem>
+                ) : (
+                  <AssetItem key={data.assetID}>
+                    <AssetIcon asset_id={data.assetID} className="without-transform" />
+                    <LabelStyled is_spend={data.spend}>
+                      {data.spend ? '-' : '+'}
+                      {' '}
+                      {data.amount}
+                      {' '}
+                      (
+                      {data.assetID}
+                      )
+                    </LabelStyled>
+                  </AssetItem>
+                );
+              })
               : '-'}
           </Amounts>
         </Amount>
         <Fee>
           <FeeSubtitle>Fee: </FeeSubtitle>
           <FeeValue>
-            <AssetIcon asset_id={0} />
-            <FeeLabelStyled>{info.fee} BEAM </FeeLabelStyled>
+            <AssetIcon asset_id={0} className="without-transform" />
+            <FeeLabelStyled>
+              {info.fee}
+              {' '}
+              BEAM
+              {' '}
+            </FeeLabelStyled>
           </FeeValue>
         </Fee>
         <TextStyled>{text}</TextStyled>

@@ -22,7 +22,7 @@ function injectScript() {
     const container = document.head || document.documentElement;
     const scriptTag = document.createElement('script');
     scriptTag.setAttribute('async', 'false');
-    scriptTag.setAttribute('src', chrome.extension.getURL('inpage.js'));
+    scriptTag.setAttribute('src', chrome.runtime.getURL('inpage.js'));
     container.insertBefore(scriptTag, container.children[0]);
     container.removeChild(scriptTag);
   } catch (error) {

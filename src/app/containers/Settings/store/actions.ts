@@ -14,7 +14,7 @@ export const loadLogs = createAsyncAction(
   SettingsActionTypes.LOAD_LOGS,
   SettingsActionTypes.LOAD_LOGS_SUCCESS,
   SettingsActionTypes.LOAD_LOGS_FAILURE,
-)<void, string, ErrorMessage>();
+)<void, any, ErrorMessage>();
 
 export const loadVersion = createAsyncAction(
   SettingsActionTypes.GET_VERSION,

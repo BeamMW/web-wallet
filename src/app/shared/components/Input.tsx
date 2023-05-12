@@ -97,7 +97,9 @@ const menuEyeStyle = css`
 `;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ label, valid = true, variant = 'regular', margin = 'none', pallete, className, ...rest }, ref) => {
+  ({
+    label, valid = true, variant = 'regular', margin = 'none', pallete, className, ...rest
+  }, ref) => {
     const InputComponent = {
       regular: InputRegularStyled,
       gray: InputGrayStyled,

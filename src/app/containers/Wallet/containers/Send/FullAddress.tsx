@@ -48,7 +48,7 @@ const FullAddressWrapper = styled.div`
   .address-information {
     margin-top: 10px;
     white-space: initial;
-    width: 300px;
+    width: 97%;
     text-align: left;
     word-wrap: break-word;
     font-size: 14px;
@@ -107,7 +107,7 @@ const SbbsWrapper = styled.div`
   .address-information {
     margin-top: 10px;
     white-space: initial;
-    width: 300px;
+    width: 97%;
     text-align: left;
     word-wrap: break-word;
     font-size: 14px;
@@ -202,21 +202,24 @@ const FullAddress = ({
           <div className="address-information">{address}</div>
           <Button
             className={
-              showAddress() || getTitle() === 'ONLINE ADDRESS' || (getTitle() === 'Regular Address' && !isOffline) ? '' : 'no-title'
+              showAddress() || getTitle() === 'ONLINE ADDRESS' || (getTitle() === 'Regular Address' && !isOffline)
+                ? ''
+                : 'no-title'
             }
             variant="icon"
             pallete="white"
             icon={CopySmallIcon}
             onClick={copyAddress}
           />
-          {parsed_address_ud ?
+          {parsed_address_ud ? (
+            <div className="hint">Unstoppable Domains</div>
+          ) : (
             <div className="hint">
-              Unstoppable Domains
-            </div> :
-            <div className="hint">
-              {showAddress() || addressData?.type === 'max_privacy' || (getTitle() === 'Regular Address' && !isOffline) ? hintItem : ''}
+              {showAddress() || addressData?.type === 'max_privacy' || (getTitle() === 'Regular Address' && !isOffline)
+                ? hintItem
+                : ''}
             </div>
-          }
+          )}
         </AddressInformationWrapper>
 
         {sbbs && address !== sbbs && !isOffline && (

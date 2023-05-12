@@ -48,11 +48,11 @@ const RemovePopup: React.FC<RemovePopupProps> = ({ visible, onCancel }) => {
     <Popup
       visible={visible}
       title="Remove current wallet"
-      cancelButton={
+      cancelButton={(
         <Button variant="ghost" icon={CancelIcon} onClick={onCancel}>
           cancel
         </Button>
-      }
+      )}
       confirmButton={confirmButton}
       onCancel={onCancel}
     >

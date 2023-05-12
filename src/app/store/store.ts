@@ -1,4 +1,6 @@
-import { createStore, applyMiddleware, compose, Middleware, MiddlewareAPI, Dispatch } from 'redux';
+import {
+  createStore, applyMiddleware, compose, Middleware, MiddlewareAPI, Dispatch,
+} from 'redux';
 
 import createSagaMiddleware from 'redux-saga';
 
@@ -14,23 +16,23 @@ if (process.env.NODE_ENV === 'development') {
   const debuggerMiddleware: Middleware = (store: MiddlewareAPI) => (next: Dispatch) => (action) => {
     const beforeChanges = { ...store.getState() };
     // eslint-disable-next-line no-console
-    console.log('%c beforeChanges:::', 'color:#6b5b95;font-weight:bold;font-size:12px;', beforeChanges);
+    console.debug('%c beforeChanges:::', 'color:#6b5b95;font-weight:bold;font-size:12px;', beforeChanges);
     // eslint-disable-next-line no-console
-    console.log();
+    console.debug();
     // eslint-disable-next-line no-console
-    console.log(
+    console.debug(
       `%c action:::${new Date()}`,
       'color:#eca1a6;font-weight:bold;font-size:12px;',
       action.type,
       action.payload,
     );
     // eslint-disable-next-line no-console
-    console.log();
+    console.debug();
     next(action);
     // eslint-disable-next-line no-console
-    console.log('%c currentState:::', 'color:#feb236;font-weight:bold;font-size:12px;', { ...store.getState() });
+    console.debug('%c currentState:::', 'color:#feb236;font-weight:bold;font-size:12px;', { ...store.getState() });
     // eslint-disable-next-line no-console
-    console.log('________________');
+    console.debug('________________');
   };
   middleware = [sagaMiddleware, debuggerMiddleware];
   composer = compose;

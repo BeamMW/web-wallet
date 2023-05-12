@@ -7,7 +7,7 @@ import { TransactionsActionTypes } from './constants';
 export const setTransactions = createAction(TransactionsActionTypes.SET_TRANSACTIONS)<Transaction[]>();
 
 export const setPaymentProof = createAction(TransactionsActionTypes.SET_PAYMENT_PROOF)<
-  TransactionsStateType['payment_proof']
+TransactionsStateType['payment_proof']
 >();
 
 export const loadTransactionStatus = createAsyncAction(

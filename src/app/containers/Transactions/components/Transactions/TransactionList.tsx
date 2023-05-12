@@ -62,9 +62,9 @@ const TransactionList: React.FC<TransactionsProps> = ({ data: transactions, isBa
         const data = !payload
           ? tx
           : {
-              ...tx,
-              ...payload,
-            };
+            ...tx,
+            ...payload,
+          };
 
         return (
           <ListItemStyled key={tx.txId} onClick={() => navigateTransactionDetail(tx.txId)}>

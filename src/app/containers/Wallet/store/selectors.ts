@@ -4,6 +4,7 @@ import { AppState } from '../../../shared/interface';
 const selectWallet = (state: AppState) => state.wallet;
 
 export const selectAssets = () => createSelector(selectWallet, (state) => state.assets_total);
+export const selectAssetsInfo = () => createSelector(selectWallet, (state) => state.assets);
 
 export const selectRate = () => createSelector(selectWallet, (state) => state.rate);
 

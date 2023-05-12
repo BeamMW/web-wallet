@@ -2,7 +2,9 @@ import React from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
-import { convertLowAmount, fromGroths, getSign, truncate } from '@core/utils';
+import {
+  convertLowAmount, fromGroths, getSign, truncate,
+} from '@core/utils';
 import { Transaction } from '@core/types';
 import { useSelector } from 'react-redux';
 import { selectAssets } from '@app/containers/Wallet/store/selectors';
@@ -23,16 +25,36 @@ const ContainerStyled = styled.div`
   font-size: 16px;
   font-weight: 600;
   color: white;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+
+  &.direction-row {
+    flex-direction: row;
+    display: flex;
+    margin: 8px 0;
+    width: 250px;
+  }
 `;
 
 const AmountStyled = styled.span`
   flex-grow: 1;
+  text-transform: uppercase;
+  align-items: center;
+  display: flex;
+`;
+
+const AssetID = styled.span`
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  font-size: 12px;
+  color: gray;
 `;
 
 const iconClassName = css`
   position: absolute;
   right: 100%;
-  margin-top: -4px;
 `;
 
 const rateStyle = css`
@@ -59,14 +81,21 @@ const AssetLabel: React.FC<AssetLabelProps> = ({
   const amount = fromGroths(fee_only ? fee : value);
   const signed = !!income;
   const sign = signed ? getSign(income) : '';
-  const name = truncate(target?.metadata_pairs.UN) ?? '';
+  const n = truncate(target?.metadata_pairs.UN);
+  const name = `${n}` ?? '';
   const label = `${sign}${convertLowAmount(amount)} ${name}`;
 
   return (
     <ContainerStyled className={className}>
+      <AssetID>
+        #
+        {asset_id}
+      </AssetID>
       <AssetIcon asset_id={asset_id} className={iconClass || iconClassName} />
       <AmountStyled className="asset-name">{isBalanceHidden ? name : label}</AmountStyled>
-      {showRate && !isBalanceHidden ? <Rate value={amount} income={income} className={rateStyle} /> : null}
+      {showRate && !isBalanceHidden && n === 'BEAM' ? (
+        <Rate value={amount} income={income} className={rateStyle} />
+      ) : null}
     </ContainerStyled>
   );
 };
