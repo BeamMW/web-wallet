@@ -1,17 +1,27 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 
-import { AmountInput, Button, Input, Rate, Section, Title, Window } from '@app/shared/components';
+import {
+  AmountInput, Button, Input, Rate, Section, Title, Window,
+} from '@app/shared/components';
 
-import { ArrowRightIcon, ArrowUpIcon, CopySmallIcon, IconCancel, InfoButton } from '@app/shared/icons';
+import {
+  ArrowRightIcon, ArrowUpIcon, CopySmallIcon, IconCancel, InfoButton,
+} from '@app/shared/icons';
 
 import { styled } from '@linaria/react';
 import LabeledToggle from '@app/shared/components/LabeledToggle';
 import { css } from '@linaria/core';
-import { compact, convertLowAmount, fromGroths, toGroths, truncate } from '@core/utils';
+import {
+  compact, convertLowAmount, debounce, fromGroths, toGroths, truncate,
+} from '@core/utils';
 import { useFormik } from 'formik';
 
-import { AddressLabel, AddressTip, AmountError, ASSET_BLANK, FEE_DEFAULT } from '@app/containers/Wallet/constants';
+import {
+  AddressLabel, AddressTip, AmountError, ASSET_BLANK, FEE_DEFAULT,
+} from '@app/containers/Wallet/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   resetSendData,
@@ -65,7 +75,9 @@ interface SendFormData {
 
 const validate = async (values: SendFormData, setHint: (string) => void) => {
   const errors: any = {};
-  const { addressData, selected, beam, fee } = values.misc;
+  const {
+    addressData, selected, beam, fee,
+  } = values.misc;
 
   if (!values.address.length) {
     errors.address = '';
@@ -76,10 +88,9 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
   }
 
   if (values.offline && addressData.type !== 'max_privacy' && addressData.type !== 'public_offline') {
-    const warning =
-      addressData.payments > 1
-        ? 'transactions left.'
-        : 'transaction left. Ask receiver to come online to support more offline transactions.';
+    const warning = addressData.payments > 1
+      ? 'transactions left.'
+      : 'transaction left. Ask receiver to come online to support more offline transactions.';
 
     const label = `${AddressLabel.OFFLINE} ${addressData.payments} ${warning}`;
 
@@ -103,10 +114,10 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
   const total = value + (send_amount.asset_id === 0 ? fee : 0);
 
   if (
-    Number(send_amount.amount) < 0.00000001 &&
-    Number(send_amount.amount) !== 0 &&
-    send_amount.amount !== '' &&
-    send_amount.asset_id === 0
+    Number(send_amount.amount) < 0.00000001
+    && Number(send_amount.amount) !== 0
+    && send_amount.amount !== ''
+    && send_amount.asset_id === 0
   ) {
     errors.send_amount = AmountError.LESS;
   }
@@ -125,6 +136,7 @@ const validate = async (values: SendFormData, setHint: (string) => void) => {
 
 const SendForm = () => {
   const dispatch = useDispatch();
+  const [note, changeNote] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
   const [focus, setFocus] = useState(false);
   const [showFullAddress, setShowFullAddress] = useState(false);
@@ -168,25 +180,28 @@ const SendForm = () => {
     isInitialValid: false,
     validate: (e) => validate(e, setHint),
     onSubmit: (values) => {
+      formik.setFieldValue('comment', note, false);
       setShowConfirm(true);
     },
   });
 
-  const { values, setFieldValue, errors, submitForm } = formik;
+  const {
+    values, setFieldValue, errors, submitForm,
+  } = formik;
 
   const { type: addressType } = addressData;
 
   const compactAddress = useMemo(() => compact(values.address, 15), [values.address]);
 
   useEffect(() => {
-    if (selected_asset_id !== 0) {
+    if (selected_asset_id !== 0 && values.send_amount.asset_id !== selected_asset_id) {
       const current_asset = assets.find((a) => a.asset_id === selected_asset_id);
 
       setSelected(current_asset);
       setFieldValue('send_amount', { amount: 0, asset_id: selected_asset_id }, true);
       setFieldValue('misc.selected', current_asset, true);
     }
-  }, [selected_asset_id, setFieldValue, assets, dispatch]);
+  }, [selected_asset_id, setFieldValue, assets, values, dispatch]);
 
   useEffect(
     () => () => {
@@ -206,25 +221,20 @@ const SendForm = () => {
     }
   }, [selected, beam, setFieldValue]);
 
-  const validateAmountHandler = (total: TransactionAmount, offline: boolean) => {
-    const { amount, asset_id } = total;
+  const validateAmountHandler = useCallback(
+    (total: TransactionAmount, offline: boolean) => {
+      const { amount, asset_id } = total;
 
-    if (amount === '0' || !amount) {
+      if (amount === '0' || !amount) {
+        setFieldValue('send_amount', total, true);
+        return;
+      }
+
+      const value = toGroths(parseFloat(amount));
+      const ttl = value + fee;
+
       setFieldValue('send_amount', total, true);
-      return;
-    }
 
-    const value = toGroths(parseFloat(amount));
-
-    const ttl = value + fee;
-
-    setFieldValue('send_amount', total, true);
-
-    if (validateAmountInterval) {
-      clearTimeout(validateAmountInterval);
-      setValidateAmountInterval(null);
-    }
-    const i = setTimeout(() => {
       dispatch(
         validateAmount.request({
           amount: toGroths(+amount),
@@ -232,49 +242,48 @@ const SendForm = () => {
           is_push_transaction: offline,
         }),
       );
-    }, 200);
-    setValidateAmountInterval(i);
-  };
+    },
+    [dispatch, setFieldValue, fee],
+  );
 
   useEffect(() => {
-    if (values.address.length) {
-      setFieldValue('misc.addressData', addressData, true);
-      if (addressData.amount && addressData.asset_id) {
-        setFieldValue('send_amount', { amount: addressData.amount, asset_id: addressData.asset_id }, true);
-      }
+    if (!values.address.length) return;
 
-      if (addressData.type === 'max_privacy') {
+    setFieldValue('misc.addressData', addressData, true);
+    if (addressData.amount && addressData.asset_id) {
+      setFieldValue('send_amount', { amount: addressData.amount, asset_id: addressData.asset_id }, true);
+    }
+
+    switch (addressData.type) {
+      case 'max_privacy':
         setWarning(AddressTip.MAX_PRIVACY);
         setHint(AddressLabel.MAX_PRIVACY);
-
+        setFieldValue('offline', true, false);
         validateAmountHandler(values.send_amount, true);
-        return;
-      }
-      if (addressData.type === 'public_offline') {
+        break;
+      case 'public_offline':
         setWarning(AddressTip.OFFLINE);
         setHint(AddressLabel.OFFLINE);
         setFieldValue('offline', true, false);
         validateAmountHandler(values.send_amount, true);
-        return;
-      }
-      if (addressData.type === 'regular') {
+        break;
+      case 'regular':
         setWarning(AddressTip.REGULAR);
         setHint(AddressLabel.REGULAR);
         setFieldValue('offline', false, true);
         validateAmountHandler(values.send_amount, false);
-        return;
-      }
-      validateAmountHandler(values.send_amount, values.offline);
-
-      if (values.offline) {
-        setWarning(AddressTip.OFFLINE);
-        return;
-      }
-      if (addressData.is_valid) {
-        setWarning(AddressTip.REGULAR);
-      }
+        break;
+      default:
+        validateAmountHandler(values.send_amount, values.offline);
+        break;
     }
-  }, [addressData, values, fee, setFieldValue]);
+
+    if (values.offline) {
+      setWarning(AddressTip.OFFLINE);
+    } else if (addressData.is_valid) {
+      setWarning(AddressTip.REGULAR);
+    }
+  }, [addressData, fee, setFieldValue, validateAmountHandler, values]);
 
   const groths = fromGroths(selected.available);
 
@@ -356,21 +365,23 @@ const SendForm = () => {
   };
 
   const submitSend = useCallback(() => {
-    const { send_amount, address, offline, comment } = values;
+    const {
+      send_amount, address, offline, comment,
+    } = values;
     const isMaxPrivacy = addressData.type === 'max_privacy';
     const value = send_amount.amount === '' ? 0 : toGroths(parseFloat(send_amount.amount));
 
     const transactionPayload = {
       fee,
       value,
-      address: parsed_address_ud ? parsed_address_ud : address,
+      address: parsed_address_ud || address,
       comment,
       asset_id: send_amount.asset_id,
       offline: offline || isMaxPrivacy,
     };
 
     dispatch(sendTransaction.request(transactionPayload));
-  }, [values, fee, addressData, dispatch]);
+  }, [values, parsed_address_ud, fee, addressData, dispatch]);
 
   const handlePrevious: React.MouseEventHandler = () => {
     setShowConfirm(false);
@@ -388,6 +399,18 @@ const SendForm = () => {
     return !(is_send_ready && errors.address);
   };
 
+  const getAddressToUse = () => {
+    let addressToUse;
+    if (parsed_address_ud && is_send_ready) {
+      addressToUse = parsed_address_ud;
+    } else if (focus || !values.address) {
+      addressToUse = compactAddress;
+    } else {
+      addressToUse = values.address;
+    }
+    return addressToUse;
+  };
+
   return showFullAddress ? (
     <FullAddress
       addressData={addressData}
@@ -399,7 +422,7 @@ const SendForm = () => {
       sbbs={sbbs}
     />
   ) : (
-    <Window title="Send" pallete="purple" showHideButton={true} onPrevious={showConfirm ? handlePrevious : undefined}>
+    <Window title="Send" pallete="purple" showHideButton onPrevious={showConfirm ? handlePrevious : undefined}>
       {!showConfirm ? (
         <form onSubmit={submitForm}>
           <Section title="Send to" variant="gray">
@@ -408,8 +431,7 @@ const SendForm = () => {
               label={getAddressHint()}
               valid={isAddressValid()}
               placeholder="Paste recipient address here"
-              value={parsed_address_ud || !is_send_ready ? values.address : (focus ? values.address : compactAddress) }
-              defaultValue={parsed_address_ud || !is_send_ready ? values.address : (focus ? values.address : compactAddress)}
+              value={getAddressToUse()}
               onInput={handleAddressChange}
               className="send-input"
               onFocus={() => setFocus(true)}
@@ -439,30 +461,27 @@ const SendForm = () => {
               error={errors.send_amount?.toString()}
               onChange={(e) => handleAssetChange(e)}
             />
-            {!isBalanceHidden && <>
-              <Title variant="subtitle">Available</Title>
-              {`${convertLowAmount(groths)} ${truncate(selected.metadata_pairs.N)}`}
-              {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
-              {groths > 0 && (
-                <Button
-                  icon={ArrowUpIcon}
-                  variant="link"
-                  pallete="purple"
-                  className={maxButtonStyle}
-                  onClick={() => handleMaxAmount()}
-                >
-                  max
-                </Button>
-              )}
-            </>}
+            {!isBalanceHidden && (
+              <>
+                <Title variant="subtitle">Available</Title>
+                {`${convertLowAmount(groths)} ${truncate(selected.metadata_pairs.N)}`}
+                {selected.asset_id === 0 && !errors.send_amount && <Rate value={groths} />}
+                {groths > 0 && (
+                  <Button
+                    icon={ArrowUpIcon}
+                    variant="link"
+                    pallete="purple"
+                    className={maxButtonStyle}
+                    onClick={() => handleMaxAmount()}
+                  >
+                    max
+                  </Button>
+                )}
+              </>
+            )}
           </Section>
           <Section title="Comment" variant="gray" collapse>
-            <Input
-              variant="gray"
-              placeholder="Comment"
-              value={values.comment}
-              onChange={(e) => setFieldValue('comment', e.target.value)}
-            />
+            <Input variant="gray" placeholder="Comment" value={note} onChange={(e) => changeNote(e.target.value)} />
           </Section>
           <WarningStyled>{warning}</WarningStyled>
           <Button pallete="purple" icon={ArrowRightIcon} type="submit" disabled={isFormDisabled()}>

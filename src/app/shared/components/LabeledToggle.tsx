@@ -40,7 +40,9 @@ const SliderStyled = styled.div<{ active: boolean }>`
   color: var(--color-green);
 `;
 
-const LabeledToggle: React.FC<LabeledToggleProps> = ({ left = 'off', right = 'on', value, onChange }) => {
+const LabeledToggle: React.FC<LabeledToggleProps> = ({
+  left = 'off', right = 'on', value, onChange,
+}) => {
   const handleClick: React.MouseEventHandler = () => {
     const next = !value;
     onChange(next);

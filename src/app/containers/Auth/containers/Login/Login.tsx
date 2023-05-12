@@ -1,6 +1,9 @@
+import { css } from '@linaria/core';
 import React, { useState, useRef, useCallback } from 'react';
 
-import { Popup, Button, Input, Splash } from '@app/shared/components';
+import {
+  Popup, Button, Input, Splash,
+} from '@app/shared/components';
 
 import { WalletSmallIcon, DoneIcon } from '@app/shared/icons';
 
@@ -10,6 +13,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { startWallet } from '@app/containers/Auth/store/actions';
 import { setError } from '@app/shared/store/actions';
 import { selectErrorMessage } from '@app/shared/store/selectors';
+
+const inputStyle = css`
+  width: 70%;
+  margin: 0 auto 50px auto;
+`;
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -38,6 +46,7 @@ const Login: React.FC = () => {
           <p>Enter your password to access the wallet</p>
           <Input
             autoFocus
+            className={inputStyle}
             id="pwd"
             name="password"
             type="password"
@@ -64,11 +73,11 @@ const Login: React.FC = () => {
       <Popup
         visible={warningVisible}
         title="Restore wallet or create a new one"
-        confirmButton={
+        confirmButton={(
           <Button icon={DoneIcon} onClick={() => navigate(ROUTES.AUTH.BASE)}>
             I agree
           </Button>
-        }
+        )}
         onCancel={() => {
           toggleWarning(false);
         }}

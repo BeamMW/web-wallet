@@ -1,16 +1,14 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 
 import {
-  finishNotificationAuth,
-  generateSeed,
-  getEnvironment,
-  isAllowedSeed,
-  isAllowedWord,
-  startWallet,
+  finishNotificationAuth, generateSeed, getEnvironment, isAllowedSeed, isAllowedWord,
 } from '@core/api';
+import WasmWallet from '@core/WasmWallet';
 import { navigate, setError, unlockWallet } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
-import { ConnectedData, Environment, NotificationType, SyncProgress } from '@core/types';
+import {
+  ConnectedData, Environment, NotificationType, SyncProgress,
+} from '@core/types';
 import NotificationController from '@core/NotificationController';
 import { DatabaseSyncProgress, SyncStep } from '@app/containers/Auth/interfaces';
 
@@ -18,6 +16,7 @@ import { actions } from '.';
 import store from '../../../../index';
 
 const SEED_CONFIRM_COUNT = 6;
+const wallet = WasmWallet.getInstance();
 
 const getRandomIds = () => {
   const result: number[] = [];
@@ -107,7 +106,9 @@ export function* handleUnlockWallet(payload: boolean) {
   const notification = NotificationController.getNotification();
   if (!notification) {
     if (payload) {
-      store.dispatch(navigate(ROUTES.WALLET.BASE));
+      setTimeout(() => {
+        store.dispatch(navigate(ROUTES.WALLET.BASE));
+      }, 0);
     } else {
       store.dispatch(navigate(ROUTES.AUTH.PROGRESS));
     }
@@ -132,7 +133,8 @@ export function* handleDatabaseRestore(payload: DatabaseSyncProgress) {
 function* startWalletSaga(action: ReturnType<typeof actions.startWallet.request>): Generator {
   try {
     yield put(navigate(ROUTES.AUTH.PROGRESS));
-    yield call(startWallet, action.payload);
+    wallet.start(action.payload);
+    // yield call(startWallet, action.payload);
   } catch (e) {
     yield put(setError(e));
     yield put(actions.startWallet.failure(e));

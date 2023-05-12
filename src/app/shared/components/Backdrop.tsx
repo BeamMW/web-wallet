@@ -6,12 +6,12 @@ interface BackDropProps {
 }
 
 const BackdropStyled = styled.div`
-  position: fixed;
+  position: absolute;
   z-index: 3;
   top: 50px;
   left: 0;
   width: 100%;
-  height: 550px;
+  height: 100%;
   background-color: rgba(3, 36, 68, 0.3);
 `;
 

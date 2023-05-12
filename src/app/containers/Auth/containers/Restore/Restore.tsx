@@ -28,7 +28,7 @@ const Restore: React.FC = () => {
     if (seedCache) {
       setCache(cache);
     }
-  }, [seedCache]);
+  }, [seedCache, cache]);
 
   useEffect(() => {
     if (seedValues.length === 12) {

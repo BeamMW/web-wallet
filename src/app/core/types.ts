@@ -17,12 +17,14 @@ export interface ExternalAppConnection {
 export interface CreateAddressParams {
   type: AddressType;
   comment?: string;
+  use_default_signature: boolean;
 }
 
 export enum RPCMethod {
   SubUnsub = 'ev_subunsub',
   GetUTXO = 'get_utxo',
   GetAssetInfo = 'get_asset_info',
+  AssetsList = 'assets_list',
   GetWalletStatus = 'wallet_status',
   GetAddressList = 'addr_list',
   CreateAddress = 'create_address',
@@ -63,6 +65,7 @@ export enum ExternalAppMethod {
 
 export interface RemoteRequest {
   id: number;
+  action: string;
   method: WalletMethod | RPCMethod;
   params: any;
 }

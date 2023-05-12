@@ -1,4 +1,6 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
+import {
+  call, put, takeEvery, takeLatest,
+} from 'redux-saga/effects';
 import {
   getWalletStatus,
   createAddress,
@@ -6,15 +8,20 @@ import {
   calculateChange,
   sendTransaction,
   convertTokenToJson,
+  getAssetInfo,
+  getAssetList,
 } from '@core/api';
-import { AddressData, ChangeData, AssetsEvent } from '@core/types';
+import {
+  AddressData, ChangeData, AssetsEvent, Asset,
+} from '@core/types';
 import { RateResponse } from '@app/containers/Wallet/interfaces';
 import { resetSendData } from '@app/containers/Wallet/store/actions';
 import { navigate } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import store from '../../../../index';
 import { actions } from '.';
-const {default: Resolution} = require('@unstoppabledomains/resolution');
+
+const { default: Resolution } = require('@unstoppabledomains/resolution');
 
 const FETCH_INTERVAL = 310000;
 
@@ -99,6 +106,7 @@ export function* validateAmount(action: ReturnType<typeof actions.validateAmount
     yield put(actions.validateAmount.failure(e));
   }
 }
+
 export function* sendTransactionSaga(action: ReturnType<typeof actions.sendTransaction.request>): Generator {
   try {
     yield call(sendTransaction, action.payload);
@@ -111,12 +119,33 @@ export function* sendTransactionSaga(action: ReturnType<typeof actions.sendTrans
   }
 }
 
+export function* getAssetInfoSaga(action: ReturnType<typeof actions.getAssetInfo.request>): Generator {
+  try {
+    const asset: Asset = (yield call(getAssetInfo, action.payload) as unknown) as Asset;
+
+    yield put(actions.getAssetInfo.success(asset));
+  } catch (e) {
+    yield put(actions.getAssetInfo.failure(e));
+  }
+}
+export function* getAssetListSaga(): Generator {
+  try {
+    const assets: Asset[] = (yield call(getAssetList) as unknown) as Asset[];
+
+    yield put(actions.getAssetList.success(assets));
+  } catch (e) {
+    yield put(actions.getAssetList.failure(e));
+  }
+}
+
 function* walletSaga() {
   yield takeLatest(actions.loadRate.request, loadRate);
   yield takeLatest(actions.generateAddress.request, generateAddress);
   yield takeLatest(actions.validateSendAddress.request, validateSendAddress);
   yield takeLatest(actions.validateAmount.request, validateAmount);
   yield takeLatest(actions.sendTransaction.request, sendTransactionSaga);
+  yield takeEvery(actions.getAssetInfo.request, getAssetInfoSaga);
+  yield takeEvery(actions.getAssetList.request, getAssetListSaga);
 }
 
 export default walletSaga;

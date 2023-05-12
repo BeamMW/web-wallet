@@ -87,8 +87,7 @@ export const InformationItem = styled.div<AssetIconProps>`
         position: relative;
       }
       .asset-name {
-        color: ${({ asset_id }) =>
-          PALLETE_ASSETS[asset_id] ? PALLETE_ASSETS[asset_id] : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length]};
+        color: ${({ asset_id }) => (PALLETE_ASSETS[asset_id] ? PALLETE_ASSETS[asset_id] : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length])};
       }
       &.income {
         .asset-name {

@@ -1,11 +1,13 @@
+/// <reference types="chrome"/>
+
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import 'babel-polyfill';
-import { initRemoteWallet } from '@core/api';
 
 import configureStore from '@app/store/store';
+import { initRemoteConnection } from '@app/core/api';
 import App from './app';
 
 const { store } = configureStore();
@@ -14,7 +16,7 @@ window.global = window;
 
 export default store;
 
-initRemoteWallet();
+initRemoteConnection();
 
 ReactDOM.render(
   <MemoryRouter>

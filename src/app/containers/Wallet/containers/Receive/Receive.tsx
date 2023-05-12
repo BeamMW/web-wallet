@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { styled } from '@linaria/react';
 
-import { Window, Section, Button, Input, Toggle, Popup } from '@app/shared/components';
+import {
+  Window, Section, Button, Input, Toggle, Popup,
+} from '@app/shared/components';
 
 import { CopySmallIcon, IconQrCode, InfoButton } from '@app/shared/icons';
 
@@ -18,7 +19,9 @@ import {
   selectSbbs,
   selectSelectedAssetId,
 } from '@app/containers/Wallet/store/selectors';
-import { generateAddress, resetReceive, setReceiveAmount, setSbbs } from '@app/containers/Wallet/store/actions';
+import {
+  generateAddress, resetReceive, setReceiveAmount, setSbbs,
+} from '@app/containers/Wallet/store/actions';
 import { compact, copyToClipboard } from '@core/utils';
 import { toast } from 'react-toastify';
 import { AmountError } from '@app/containers/Wallet/constants';
@@ -91,7 +94,7 @@ const Receive = () => {
   const addressFull = useSelector(selectAddress());
   const sbbs = useSelector(selectSbbs());
   const selected_asset_id = useSelector(selectSelectedAssetId());
-  const address = compact(addressFull);
+  const address = compact(addressFull, 32);
   const [amountError, setAmountError] = useState('');
 
   useEffect(
@@ -116,11 +119,18 @@ const Receive = () => {
 
   useEffect(() => {
     if (comment) {
-      dispatch(generateAddress.request({ type: maxAnonymity ? 'max_privacy' : 'offline', comment }));
+      dispatch(
+        generateAddress.request({
+          type: maxAnonymity ? 'max_privacy' : 'offline',
+          comment,
+          use_default_signature: true,
+        }),
+      );
     } else {
       dispatch(
         generateAddress.request({
           type: maxAnonymity ? 'max_privacy' : 'offline',
+          use_default_signature: true,
         }),
       );
     }
@@ -145,10 +155,10 @@ const Receive = () => {
   const saveReceiveAmount = (send_amount: TransactionAmount) => {
     setAmountError('');
     if (
-      Number(send_amount.amount) < 0.00000001 &&
-      Number(send_amount.amount) !== 0 &&
-      send_amount.amount !== '' &&
-      send_amount.asset_id === 0
+      Number(send_amount.amount) < 0.00000001
+      && Number(send_amount.amount) !== 0
+      && send_amount.amount !== ''
+      && send_amount.asset_id === 0
     ) {
       setAmountError(AmountError.LESS);
     }
@@ -171,11 +181,11 @@ const Receive = () => {
         visible={qrVisible}
         title=""
         onCancel={() => setQrVisible(false)}
-        confirmButton={
+        confirmButton={(
           <Button icon={CopySmallIcon} pallete="blue" onClick={copyAndCloseQr}>
             copy and close
           </Button>
-        }
+        )}
         footerClass="qr-code-popup"
         cancelButton={null}
       >

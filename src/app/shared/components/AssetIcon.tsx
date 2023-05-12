@@ -18,8 +18,12 @@ const ContainerStyled = styled.div<AssetIconProps>`
   width: 26px;
   height: 26px;
   margin-right: 10px;
-  color: ${({ asset_id }) =>
-    PALLETE_ASSETS[asset_id] ? PALLETE_ASSETS[asset_id] : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length]};
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${({ asset_id }) => (PALLETE_ASSETS[asset_id] ? PALLETE_ASSETS[asset_id] : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length])};
+  &.without-transform {
+    transform: none;
+  }
 `;
 
 const AssetIcon: React.FC<AssetIconProps> = ({ asset_id = 0, className }) => {

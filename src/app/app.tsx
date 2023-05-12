@@ -12,6 +12,8 @@ import { useNavigate, useRoutes, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@app/shared/components';
 import { ToastContainer } from 'react-toastify';
+
+import { DexContainer } from '@app/containers';
 import { WalletContainer } from './containers/Wallet';
 import { AuthContainer, Progress } from './containers/Auth';
 import { SettingsContainer } from './containers/Settings';
@@ -58,6 +60,10 @@ const routes = [
     path: `${ROUTES.WALLET.BASE}/*`,
     element: <WalletContainer />,
   },
+  {
+    path: `${ROUTES.DEX.BASE}/*`,
+    element: <DexContainer />,
+  },
 ];
 
 const App = () => {
@@ -75,7 +81,7 @@ const App = () => {
       }
       dispatch(sharedActions.navigate(''));
     }
-  }, [navigateURL, dispatch, navigate]);
+  }, [navigateURL, location.pathname, dispatch, navigate]);
 
   useEffect(() => {
     if (isLocked && !location.pathname.includes('auth')) {
@@ -86,7 +92,10 @@ const App = () => {
   return (
     <ErrorBoundary>
       <Scrollbars
-        style={{ width: 375, height: 600 }}
+        style={{ width: 750 }}
+        autoHeight
+        autoHeightMin="100%"
+        autoHeightMax="100%"
         renderThumbVertical={(props) => <div {...props} className={trackStyle} />}
       >
         {content}

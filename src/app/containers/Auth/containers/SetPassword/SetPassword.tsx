@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { styled } from '@linaria/react';
 
-import { Window, Button, Input, Footer, Popup } from '@app/shared/components';
+import {
+  Window, Button, Input, Footer, Popup,
+} from '@app/shared/components';
 
 import { ArrowLeftIcon, ArrowRightIcon } from '@app/shared/icons';
 
@@ -139,11 +141,11 @@ const SetPassword = () => {
       <Popup
         visible={warningVisible}
         title="Return to seed phrase"
-        confirmButton={
+        confirmButton={(
           <Button icon={ArrowLeftIcon} onClick={handleReturnClick}>
             return
           </Button>
-        }
+        )}
         onCancel={() => toggleWarning(false)}
       >
         If you return to seed phrase, it would be changed and your local password won’t be saved.

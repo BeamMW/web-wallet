@@ -105,13 +105,13 @@ css`
 
     html,
     body {
-      margin: 0;
+      margin: 0 auto;
       padding: 0;
     }
 
     html {
-      width: 375px;
-      height: 600px;
+      width: 750px;
+      height: 100%;
     }
 
     html * {

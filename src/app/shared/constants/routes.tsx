@@ -35,6 +35,9 @@ export const ROUTES = {
     SETTINGS_REPORT: '/settings/report',
     SETTINGS_CONNECTED: '/settings/connected',
   },
+  DEX: {
+    BASE: '/dex',
+  },
 };
 
 export const ROUTES_PATH = {

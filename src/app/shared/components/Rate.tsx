@@ -16,9 +16,12 @@ interface Props {
 const Ratetyled = styled.div`
   margin-top: 4px;
   color: var(--color-gray);
+  font-weight: normal;
 `;
 
-const Rate: React.FC<Props> = ({ value, income, groths, className, txRate }) => {
+const Rate: React.FC<Props> = ({
+  value, income, groths, className, txRate,
+}) => {
   const rate = useSelector(selectRate());
   const sign = income ? getSign(income) : '';
   const amount = groths ? fromGroths(value) : value;

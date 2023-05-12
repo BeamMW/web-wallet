@@ -3,7 +3,9 @@ import { styled } from '@linaria/react';
 
 import { Window, Button, Footer } from '@app/shared/components';
 
-import { EyeIcon, PassIcon, CopyIcon, DoneIcon } from '@app/shared/icons';
+import {
+  EyeIcon, PassIcon, CopyIcon, DoneIcon,
+} from '@app/shared/icons';
 
 const WarningListStyled = styled.ul`
   > li {

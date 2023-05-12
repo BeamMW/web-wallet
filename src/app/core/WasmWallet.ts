@@ -8,7 +8,10 @@ import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
 import { ExternalAppConnection, NotificationType } from '@core/types';
-import { BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod } from './types';
+
+import {
+  BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
+} from './types';
 import NotificationManager from './NotificationManager';
 import DnodeApp from './DnodeApp';
 
@@ -65,6 +68,8 @@ console.warn = function (...args) {
 
 export default class WasmWallet {
   private static instance: WasmWallet;
+
+  private counter = 0;
 
   private passwordHash: string;
 
@@ -213,10 +218,22 @@ export default class WasmWallet {
 
   private eventHandler: WalletEventHandler;
 
-  async init(handler: WalletEventHandler, notification: Notification) {
+  private remoteEventHandler = [];
+
+  setRemoteEventHandler(handler: WalletEventHandler) {
+    this.remoteEventHandler.push({ handler, is_done: false });
+
+    this.remoteEventHandler.forEach((item, i) => {
+      if (item.is_done) {
+        this.remoteEventHandler.splice(i, 1);
+      }
+    });
+  }
+
+  async init(handler: WalletEventHandler, notification: Notification, is_running?: boolean) {
     this.eventHandler = handler;
 
-    if (this.isRunning()) {
+    if (is_running !== undefined ? is_running : this.isRunning()) {
       this.emit(BackgroundEvent.CONNECTED, {
         onboarding: false,
         is_running: true,
@@ -322,6 +339,12 @@ export default class WasmWallet {
     const responseHandler = (response) => {
       const event = JSON.parse(response);
       this.eventHandler(event);
+      if (this.remoteEventHandler !== undefined) {
+        this.remoteEventHandler.forEach((item) => {
+          const res = item.handler(event);
+          item.is_done = !!res;
+        });
+      }
     };
 
     this.wallet.startWallet();
@@ -335,7 +358,7 @@ export default class WasmWallet {
 
   // TODO: will be updated after sub response fix in wallet api
   toggleEvents(value: boolean) {
-    this.send(0, RPCMethod.SubUnsub, {
+    this.send(RPCMethod.SubUnsub, {
       ev_addrs_changed: value,
       ev_assets_changed: value,
       ev_sync_progress: value,
@@ -380,20 +403,21 @@ export default class WasmWallet {
   }
 
   removeConnectedSite(site: ExternalAppConnection) {
-    this.connectedApps.splice(
-      this.connectedApps.findIndex((el) => el.appUrl === site.appUrl && el.appName === site.appName),
-      1,
-    );
+    const sites = this.connectedApps.filter((el) => el.appUrl !== site.appUrl && el.appName !== site.appName);
+
+    this.connectedApps = [...sites];
 
     extensionizer.storage.local.set({
       sites: this.connectedApps,
     });
+
+    return this.connectedApps;
   }
 
   addConnectedSite(site: ExternalAppConnection) {
     const isExist = this.connectedApps.find((item: ExternalAppConnection) => item.appUrl === site.appUrl);
     if (!isExist) {
-      this.connectedApps.push(site);
+      this.connectedApps = [...this.connectedApps, site];
       extensionizer.storage.local.set({
         sites: this.connectedApps,
       });
@@ -560,6 +584,78 @@ export default class WasmWallet {
     }
   }
 
+  async deleteWallet(pass: string) {
+    await WasmWallet.checkPassword(pass);
+    await this.stop();
+    return WasmWallet.removeWallet();
+  }
+
+  lockWallet() {
+    Object.values(this.apps).forEach((url: string) => {
+      this.apps[url].walletIsLocked();
+    });
+  }
+
+  loadConnectedSites() {
+    return this.connectedApps;
+  }
+
+  notificationAuthenticaticated(params: any) {
+    if (params.result) {
+      if (this.isConnectedSite({ appName: params.appname, appUrl: params.appurl })) {
+        this.connectExternal(params);
+        this.emit(BackgroundEvent.CLOSE_NOTIFICATION);
+      } else {
+        const notification = {
+          type: 'connect',
+          params,
+        };
+        this.emit(BackgroundEvent.CONNECTED, {
+          onboarding: false,
+          is_running: true,
+          notification,
+        });
+      }
+    }
+  }
+
+  approveConnection(params: any) {
+    if (params.result) {
+      this.addConnectedSite({ appName: params.appname, appUrl: params.appurl });
+      this.connectExternal(params);
+      return null;
+    }
+    return notificationManager.postMessage({
+      result: false,
+      errcode: -3,
+      ermsg: 'Connection rejected',
+    });
+  }
+
+  notificationApproveInfo(params: any) {
+    if (params.req) {
+      this.contractInfoHandlerCallback.contractInfoApproved(params.req);
+    }
+  }
+
+  notificationRejectInfo(params: any) {
+    if (params.req) {
+      this.contractInfoHandlerCallback.contractInfoApproved(params.req);
+    }
+  }
+
+  notificationApproveSend(params: any) {
+    if (params.req) {
+      this.sendHandlerCallback.sendApproved(params.req);
+    }
+  }
+
+  notificationRejectSend(params: any) {
+    if (params.req) {
+      this.sendHandlerCallback.sendApproved(params.req);
+    }
+  }
+
   async callInternal(id: number, method: WalletMethod, params: any) {
     switch (method) {
       case WalletMethod.ConvertTokenToJson: {
@@ -589,9 +685,9 @@ export default class WasmWallet {
         try {
           await WasmWallet.checkPassword(params);
           this.start(params);
-          this.emit(id);
+          // this.emit(id);
         } catch (error) {
-          this.emit(id, null, error);
+          // this.emit(id, null, error);
         }
         break;
       case WalletMethod.StopWallet:
@@ -682,8 +778,10 @@ export default class WasmWallet {
     return null;
   }
 
-  send(id: number, method: RPCMethod | WalletMethod, params?: any) {
+  send(method: RPCMethod | WalletMethod, params?: any) {
     const internal = Object.values(WalletMethod).includes(method as WalletMethod);
+    const id = this.counter;
+    this.counter += 1;
 
     if (internal) {
       try {
@@ -691,7 +789,7 @@ export default class WasmWallet {
       } catch (error) {
         this.emit(id, null, error);
       }
-      return;
+      return null;
     }
 
     this.wallet.sendRequest(
@@ -702,5 +800,7 @@ export default class WasmWallet {
         params,
       }),
     );
+
+    return id;
   }
 }

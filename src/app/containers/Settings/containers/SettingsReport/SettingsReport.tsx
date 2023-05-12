@@ -69,7 +69,8 @@ const SettingsReport = () => {
           2. Send email to
           <LinkStyled onClick={() => mailClicked()}>support@beam.mw</LinkStyled>
           or open a ticket in
-          <LinkStyled onClick={() => githubClicked()}>Github</LinkStyled>.
+          <LinkStyled onClick={() => githubClicked()}>Github</LinkStyled>
+          .
         </p>
         <p>3. Don’t forget to attach logs archive.</p>
       </ReportStyled>
