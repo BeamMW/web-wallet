@@ -6,3 +6,4 @@ export const setError = createAction(SharedActionTypes.SET_ERROR)<string | null>
 export const lockWallet = createAction(SharedActionTypes.LOCK_WALLET)();
 export const unlockWallet = createAction(SharedActionTypes.UNLOCK_WALLET)();
 export const hideBalances = createAction(SharedActionTypes.HIDE_BALANCE)();
+export const setAssetSync = createAction(SharedActionTypes.SYNC_ASSET)();

@@ -3,4 +3,5 @@ export interface SharedStateType {
   errorMessage: string | null;
   isBalanceHidden: boolean;
   isLocked: boolean;
+  isAssetSync: boolean;
 }
