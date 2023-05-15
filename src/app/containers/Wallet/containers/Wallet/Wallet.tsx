@@ -7,11 +7,11 @@ import { ROUTES } from '@app/shared/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectAssets, selectAssetsInfo, selectRate } from '@app/containers/Wallet/store/selectors';
 
-import { loadRate, getAssetInfo } from '@app/containers/Wallet/store/actions';
+import { loadRate, getAssetInfo, getAssetList } from '@app/containers/Wallet/store/actions';
 import { TransactionList } from '@app/containers/Transactions';
 import { createdComparator } from '@core/utils';
 import { selectTransactions } from '@app/containers/Transactions/store/selectors';
-import { selectIsBalanceHidden } from '@app/shared/store/selectors';
+import { selectIsBalanceHidden, selectAssetSync } from '@app/shared/store/selectors';
 import { Assets } from '../../components/Wallet';
 
 const TXS_MAX = 4;
@@ -23,6 +23,7 @@ const Wallet = () => {
   const assets_info = useSelector(selectAssetsInfo());
   const transactions = useSelector(selectTransactions());
   const isBalanceHidden = useSelector(selectIsBalanceHidden());
+  const isAssetSynced = useSelector(selectAssetSync());
   const rate = useSelector(selectRate());
 
   useEffect(() => {
@@ -37,9 +38,9 @@ const Wallet = () => {
     }
   }, [assets_info, assets, dispatch]);
 
-  // useEffect(() => {
-  //   dispatch(getAssetList.request());
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(getAssetList.request({ refresh: !isAssetSynced }));
+  }, [dispatch, isAssetSynced]);
 
   useEffect(() => {
     if (!rate) {

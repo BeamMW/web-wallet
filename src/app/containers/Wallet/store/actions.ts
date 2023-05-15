@@ -64,4 +64,4 @@ export const getAssetList = createAsyncAction(
   WalletActionTypes.GET_ASSET_LIST,
   WalletActionTypes.GET_ASSET_LIST_SUCCESS,
   WalletActionTypes.GET_ASSET_LIST_FAILURE,
-)<void, Asset[], ErrorMessage>();
+)<{ refresh: boolean }, Asset[], ErrorMessage>();

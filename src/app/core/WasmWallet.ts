@@ -549,6 +549,7 @@ export default class WasmWallet {
   }
 
   async connectExternal(params) {
+    console.log(params);
     if (!WasmWallet.isAppSupported(params.apiver, params.apivermin)) {
       return notificationManager.postMessage({
         result: false,
