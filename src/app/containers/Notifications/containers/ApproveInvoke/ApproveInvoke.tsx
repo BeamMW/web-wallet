@@ -5,8 +5,6 @@ import { Button, AssetIcon } from '@app/shared/components';
 import {
   CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards,
 } from '@app/shared/icons';
-import { useSelector } from 'react-redux';
-import { selectAssets } from '@app/containers/Wallet/store/selectors';
 import NotificationManager from '@core/NotificationManager';
 
 const ContainerStyled = styled.div`
@@ -136,11 +134,10 @@ const getConfirmIcon = (info, amounts) => {
 const ApproveInvoke = () => {
   const notification = NotificationController.getNotification();
   const notificationManager = NotificationManager.getInstance();
-
+  const { assets } = notification.params;
   const amounts = JSON.parse(notification.params.amounts);
   const info = JSON.parse(notification.params.info);
 
-  const assets = useSelector(selectAssets());
   const text = getNotificationText(info, amounts, notification.params.appname);
   const title = getNotificationTitle(info, amounts);
 
@@ -172,7 +169,7 @@ const ApproveInvoke = () => {
           <Amounts>
             {amounts.length > 0
               ? amounts.map((data) => {
-                const assetItem = assets.find((asset) => asset.asset_id === data.assetID);
+                const assetItem = assets?.find((asset) => asset.asset_id === data.assetID);
                 return assetItem ? (
                   <AssetItem key={data.assetID}>
                     <AssetIcon asset_id={data.assetID} className="without-transform" />
@@ -195,6 +192,8 @@ const ApproveInvoke = () => {
                       {data.spend ? '-' : '+'}
                       {' '}
                       {data.amount}
+                      {' '}
+                      {data.assetID === 0 ? 'BEAM' : ''}
                       {' '}
                       (
                       {data.assetID}

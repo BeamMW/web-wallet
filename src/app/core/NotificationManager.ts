@@ -1,6 +1,7 @@
 import * as extensionizer from 'extensionizer';
 import { NotificationType } from '@core/types';
 import ExtensionPlatform from './Extension';
+import store from '../../index';
 
 const NOTIFICATION_HEIGHT = 600;
 const NOTIFICATION_WIDTH = 900;
@@ -91,6 +92,7 @@ export default class NotificationManager {
         req,
         info,
         appname: this.appname,
+        assets: store.getState().wallet.assets,
       },
     };
     this.notificationIsOpen = true;
@@ -105,6 +107,7 @@ export default class NotificationManager {
         info,
         amounts,
         appname: this.appname,
+        assets: store.getState().wallet.assets,
       },
     };
     this.notificationIsOpen = true;
