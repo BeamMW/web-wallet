@@ -15,7 +15,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
+      "matches": ["file://*/*", "http://*/*", "https://*/*"],
       "js": [
         "contentscript.js"
       ],
@@ -31,18 +31,19 @@
   "permissions": [
     "activeTab",
     "storage",
-    "tabs",
-    "file:///*"
+    "tabs"
   ],
   "host_permissions": [
-    "*://*.beam.mw/*",
-    "https://dappnet-dex.beam.mw/*"
+    "*://*.beam.mw/",
+    "https://dappnet-dex.beam.mw/"
   ],
-  "content_security_policy": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; script-src-elem 'self' 'unsafe-inline';",
+  "content_security_policy":  {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; script-src-elem 'self' 'unsafe-inline';"
+  },
   "web_accessible_resources": [
-    "inpage.js",
-    "wasm-client.worker.js",
-    "wasm-client.js",
-    "assets/*.png"
+    {
+      "resources": ["inpage.js", "wasm-client.worker.js", "wasm-client.js", "assets/*.png"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
   ]
 }
