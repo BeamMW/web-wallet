@@ -1,15 +1,19 @@
-# Running Beam Web wallet
+#  Beam Web Wallet
 
-## Run wallet extension
+Beam Web Wallet is fully functional wallet for [Beam](https://beam.mw) blockchain implemented as Chromium extension
 
-`npm install`
-`npm run build`
+## Building web wallet extension
+
+```
+npm install
+npm run build
+```
 
 Enable developer mode in Chrome `chrome://extensions/`
 Import unpacked extension from `./dist`
 
 
-# Web wallet integration with DAPP
+# Web wallet integration with Beam dApps
 
 - Add [utils.js](https://github.com/BeamMW/dapp-utils) to DAPP
 
