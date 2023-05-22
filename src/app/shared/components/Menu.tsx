@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 
 import {
-  CancelIcon, DexIcon, HelpIcon, SettingsIcon, WalletIcon,
+  CancelIcon, HelpIcon, SettingsIcon, WalletIcon,
 } from '@app/shared/icons';
 
 import { ROUTES } from '@app/shared/constants';
@@ -24,12 +24,12 @@ const MENU_ITEMS = [
     value: ROUTES.SETTINGS.BASE,
     IconComponent: SettingsIcon,
   },
-  {
-    title: 'DEX',
-    value: ROUTES.DEX.BASE,
-    IconComponent: DexIcon,
-    className: 'dex',
-  },
+  // {
+  //   title: 'DEX',
+  //   value: ROUTES.DEX.BASE,
+  //   IconComponent: DexIcon,
+  //   className: 'dex',
+  // },
   {
     title: 'Documentation',
     value: 'https://documentation.beam.mw/',
