@@ -1,21 +1,27 @@
 {
   "manifest_version": 3,
-  "name": "Beam Web Wallet (Masternet)",
-  "short_name": "Beam Web Wallet (Masternet)",
-  "description": "Beam Web Wallet (Masternet)",
+  "name": "Beam Web Wallet%BEAM_NETWORK%",
+  "short_name": "Beam Web Wallet%BEAM_NETWORK%",
+  "description": "Beam Web Wallet%BEAM_NETWORK%",
   "action": {
     "default_icon": {
       "16": "assets/chrome-extention-icon-16x16.png"
     },
-    "default_title": "Beam Web Wallet (Masternet)"
+    "default_title": "Beam Web Wallet%BEAM_NETWORK%"
   },
-  "version": "1.0.1",
+  "version": "%BEAM_VERSION%",
+  "cross_origin_embedder_policy": {
+    "value": "require-corp"
+  },
+  "cross_origin_opener_policy": {
+    "value": "same-origin"
+  },
   "background": {
     "service_worker": "appinit.js"
   },
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
+      "matches": ["file://*/*", "http://*/*", "https://*/*"],
       "js": [
         "contentscript.js"
       ],
@@ -31,18 +37,15 @@
   "permissions": [
     "activeTab",
     "storage",
-    "tabs",
-    "file:///*"
+    "tabs"
   ],
-  "host_permissions": [
-    "*://*.beam.mw/*",
-    "https://dappnet-dex.beam.mw/*"
-  ],
-  "content_security_policy": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; script-src-elem 'self' 'unsafe-inline';",
+  "content_security_policy":  {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; script-src-elem 'self' 'unsafe-inline';"
+  },
   "web_accessible_resources": [
-    "inpage.js",
-    "wasm-client.worker.js",
-    "wasm-client.js",
-    "assets/*.png"
+    {
+      "resources": ["inpage.js", "wasm-client.worker.js", "wasm-client.js", "assets/*.png"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
   ]
 }
