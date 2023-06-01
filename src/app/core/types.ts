@@ -317,6 +317,7 @@ export interface NotificationParams {
   apiver?: string;
   apivermin?: string;
   appurl?: string;
+  assets?: Asset[];
 }
 
 export interface Notification {

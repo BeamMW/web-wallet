@@ -5,13 +5,13 @@ import { Window, Section, WalletActions } from '@app/shared/components';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@app/shared/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAssets, selectAssetsInfo, selectRate } from '@app/containers/Wallet/store/selectors';
+import { selectAssets, selectRate } from '@app/containers/Wallet/store/selectors';
 
-import { loadRate, getAssetInfo } from '@app/containers/Wallet/store/actions';
+import { loadRate, getAssetList } from '@app/containers/Wallet/store/actions';
 import { TransactionList } from '@app/containers/Transactions';
 import { createdComparator } from '@core/utils';
 import { selectTransactions } from '@app/containers/Transactions/store/selectors';
-import { selectIsBalanceHidden } from '@app/shared/store/selectors';
+import { selectIsBalanceHidden, selectAssetSync } from '@app/shared/store/selectors';
 import { Assets } from '../../components/Wallet';
 
 const TXS_MAX = 4;
@@ -20,26 +20,16 @@ const Wallet = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const assets = useSelector(selectAssets());
-  const assets_info = useSelector(selectAssetsInfo());
   const transactions = useSelector(selectTransactions());
   const isBalanceHidden = useSelector(selectIsBalanceHidden());
+  const isAssetSynced = useSelector(selectAssetSync());
   const rate = useSelector(selectRate());
 
   useEffect(() => {
-    const a = assets
-      .filter((item1) => !assets_info.some((item2) => item2.asset_id === item1.asset_id))
-      .filter((ass) => ass.asset_id !== 0);
-
-    if (a.length > 0) {
-      a.forEach((asset) => {
-        dispatch(getAssetInfo.request(asset.asset_id));
-      });
+    if (!isAssetSynced) {
+      dispatch(getAssetList.request({ refresh: true }));
     }
-  }, [assets_info, assets, dispatch]);
-
-  // useEffect(() => {
-  //   dispatch(getAssetList.request());
-  // }, [dispatch]);
+  }, [dispatch, isAssetSynced]);
 
   useEffect(() => {
     if (!rate) {

@@ -16,7 +16,7 @@ import {
 } from '@core/types';
 import { RateResponse } from '@app/containers/Wallet/interfaces';
 import { resetSendData } from '@app/containers/Wallet/store/actions';
-import { navigate } from '@app/shared/store/actions';
+import { navigate, setAssetSync } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import store from '../../../../index';
 import { actions } from '.';
@@ -128,11 +128,14 @@ export function* getAssetInfoSaga(action: ReturnType<typeof actions.getAssetInfo
     yield put(actions.getAssetInfo.failure(e));
   }
 }
-export function* getAssetListSaga(): Generator {
+export function* getAssetListSaga(action: ReturnType<typeof actions.getAssetList.request>): Generator {
   try {
-    const assets: Asset[] = (yield call(getAssetList) as unknown) as Asset[];
+    const assets: Asset[] = (yield call(getAssetList, action.payload) as unknown) as Asset[];
 
-    yield put(actions.getAssetList.success(assets));
+    if (assets?.length) {
+      yield put(actions.getAssetList.success(assets));
+    }
+    yield put(setAssetSync());
   } catch (e) {
     yield put(actions.getAssetList.failure(e));
   }
