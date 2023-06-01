@@ -47,7 +47,8 @@ export default class DnodeApp {
       callWalletApiResult: async (handler: any) => {
         this.appApiHandler = handler;
       },
-      callWalletApi: async (callid: string, method: string, params) => {
+      callWalletApi: async (callid: string, method: string, params, appname: string) => {
+        notificationManager.appname = appname;
         if (!localStorage.getItem('locked')) {
           const request = {
             jsonrpc: '2.0',
