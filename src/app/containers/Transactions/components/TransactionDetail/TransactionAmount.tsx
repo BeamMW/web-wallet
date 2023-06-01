@@ -23,7 +23,7 @@ export const TransactionAmount = ({ transactionDetail, isBalanceHidden, assetRat
       <MultipleAssetsWrapper>
         {transactionDetail.invoke_data.map((i) => i.amounts.map((a) => (
           <AssetLabel
-            value={a.amount}
+            value={a.amount * -1}
             asset_id={a.asset_id}
             comment=""
             iconClass="without-transform"

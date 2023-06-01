@@ -1,21 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "Beam Web Wallet%BEAM_NETWORK%",
-  "short_name": "Beam Web Wallet%BEAM_NETWORK%",
-  "description": "Beam Web Wallet%BEAM_NETWORK%",
+  "name": "Beam Web Wallet (Masternet)",
+  "short_name": "Beam Web Wallet (Masternet)",
+  "description": "Beam Web Wallet (Masternet)",
   "action": {
     "default_icon": {
       "16": "assets/chrome-extention-icon-16x16.png"
     },
-    "default_title": "Beam Web Wallet%BEAM_NETWORK%"
+    "default_title": "Beam Web Wallet (Masternet)"
   },
-  "version": "%BEAM_VERSION%",
-  "cross_origin_embedder_policy": {
-    "value": "require-corp"
-  },
-  "cross_origin_opener_policy": {
-    "value": "same-origin"
-  },
+  "version": "1.0.1",
   "background": {
     "service_worker": "appinit.js"
   },

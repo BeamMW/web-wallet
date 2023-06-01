@@ -46,6 +46,9 @@ export const MultipleAssets = styled.div`
     &:first-child {
       margin-left: 6px;
     }
+    &:nth-child(3) {
+      margin-left: -6px;
+    }
   }
 `;
 
