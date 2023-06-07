@@ -40,6 +40,10 @@ const reducer = createReducer<SharedStateType, Action>(initialState)
   .handleAction(actions.setAssetSync, (state) => produce(state, (nexState) => {
     nexState.isAssetSync = true;
     localStorage.setItem('asset_sync', '1');
+  }))
+  .handleAction(actions.unsetAssetSync, (state) => produce(state, (nexState) => {
+    nexState.isAssetSync = false;
+    localStorage.removeItem('asset_sync');
   }));
 
 export { reducer as SharedReducer };

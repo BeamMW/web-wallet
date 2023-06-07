@@ -136,6 +136,7 @@ export function* getAssetListSaga(action: ReturnType<typeof actions.getAssetList
       yield put(actions.getAssetList.success(assets));
     }
     yield put(setAssetSync());
+    yield call(getWalletStatus);
   } catch (e) {
     yield put(actions.getAssetList.failure(e));
   }

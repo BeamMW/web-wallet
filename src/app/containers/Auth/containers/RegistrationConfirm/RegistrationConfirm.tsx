@@ -11,6 +11,7 @@ import { SeedList } from '@app/containers/Auth/components';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectSeedIds, selectRegistrationSeed } from '@app/containers/Auth/store/selectors';
 import { generateRegistrationSeed } from '@app/containers/Auth/store/actions';
+import { unsetAssetSync } from '@app/shared/store/actions';
 
 const SEED_CONFIRM_COUNT = 6;
 
@@ -47,6 +48,7 @@ const RegistrationConfirm: React.FC = () => {
   const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
     navigate(ROUTES.AUTH.SET_PASSWORD);
+    dispatch(unsetAssetSync());
   };
 
   const handlePrevious: React.MouseEventHandler = () => {

@@ -39,13 +39,16 @@
     "storage",
     "tabs"
   ],
+  "host_permissions": [
+      "https://dappnet-dex.beam.mw/"
+  ],
   "content_security_policy":  {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; script-src-elem 'self' 'unsafe-inline';"
   },
   "web_accessible_resources": [
     {
       "resources": ["inpage.js", "wasm-client.worker.js", "wasm-client.js", "assets/*.png"],
-      "matches": ["http://*/*", "https://*/*"]
+      "matches": ["http://*/*", "https://*/*","<all_urls>"]
     }
   ]
 }
