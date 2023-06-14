@@ -43,7 +43,7 @@ const SectionGrayStyled = styled.div`
     position: absolute;
     top: 68px;
     cursor: pointer;
-    background: #202124;
+    //  background: #202124;
     margin: 0;
     right: 20px;
   }

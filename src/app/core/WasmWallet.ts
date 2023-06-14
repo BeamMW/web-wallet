@@ -141,6 +141,7 @@ export default class WasmWallet {
 
   static removeWallet() {
     WasmWalletClient.DeleteWallet(PATH_DB);
+    indexedDB.deleteDatabase('/beam_wallet');
     extensionizer.storage.local.remove(['wallet']);
   }
 
