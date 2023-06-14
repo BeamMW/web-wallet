@@ -7,3 +7,4 @@ export const lockWallet = createAction(SharedActionTypes.LOCK_WALLET)();
 export const unlockWallet = createAction(SharedActionTypes.UNLOCK_WALLET)();
 export const hideBalances = createAction(SharedActionTypes.HIDE_BALANCE)();
 export const setAssetSync = createAction(SharedActionTypes.SYNC_ASSET)();
+export const unsetAssetSync = createAction(SharedActionTypes.UNSET_SYNC_ASSET)();

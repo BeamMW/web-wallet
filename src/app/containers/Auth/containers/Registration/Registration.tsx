@@ -13,6 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateRegistrationSeed } from '@app/containers/Auth/store/actions';
 import { selectRegistrationSeed } from '@app/containers/Auth/store/selectors';
+import { unsetAssetSync } from '@app/shared/store/actions';
 import { RegistrationWarning } from '../../components';
 
 const SeedListStyled = styled.ol`
@@ -67,6 +68,7 @@ const Registration: React.FC = () => {
 
   const handleNextClick: React.MouseEventHandler = () => {
     navigate(ROUTES.AUTH.REGISTRATION_CONFIRM);
+    dispatch(unsetAssetSync());
   };
 
   const handleCancel: React.MouseEventHandler = () => {

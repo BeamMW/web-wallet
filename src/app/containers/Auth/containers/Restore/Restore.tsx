@@ -9,6 +9,7 @@ import { SeedList } from '@app/containers/Auth/components';
 import { useDispatch, useSelector } from 'react-redux';
 import { setRegistrationSeed, setSeedResult, updateSeedList } from '@app/containers/Auth/store/actions';
 import { selectSeedCache, selectSeedErrors, selectSeedValues } from '@app/containers/Auth/store/selectors';
+import { unsetAssetSync } from '@app/shared/store/actions';
 
 const Restore: React.FC = () => {
   const [interval, updateInterval] = useState<null | NodeJS.Timer>(null);
@@ -47,6 +48,7 @@ const Restore: React.FC = () => {
     dispatch(setSeedResult(seed));
     dispatch(setRegistrationSeed({ registration_seed: seed, is_restore: true }));
     navigate(ROUTES.AUTH.SET_PASSWORD);
+    dispatch(unsetAssetSync());
   };
 
   const seedListHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
