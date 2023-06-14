@@ -1,6 +1,6 @@
 import { takeLatest, put, call } from 'redux-saga/effects';
 import { actions } from '@app/containers/Settings/store';
-import { navigate, setError } from '@app/shared/store/actions';
+import { navigate, setError, unsetAssetSync } from '@app/shared/store/actions';
 import {
   deleteWallet, loadBackgroundLogs, loadConnectedSites, getVersion, disconnectAllowedSite,
 } from '@core/api';
@@ -18,6 +18,7 @@ function* deleteWalletSaga(action: ReturnType<typeof actions.deleteWallet.reques
     yield put(setError(null));
     yield put(navigate(ROUTES.AUTH.BASE));
     yield put(setDefaultSyncState());
+    yield put(unsetAssetSync());
   } catch (e) {
     yield put(setError(e));
     yield put(actions.deleteWallet.failure(e));

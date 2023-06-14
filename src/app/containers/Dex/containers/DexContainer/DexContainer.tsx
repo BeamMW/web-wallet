@@ -9,7 +9,9 @@ export const DexContainer = () => {
   const sites = useSelector(selectConnectedSites());
 
   const handleLoad = () => {
-    setLoadingState(false);
+    setTimeout(() => {
+      setLoadingState(false);
+    }, 3000);
   };
 
   return (
@@ -28,6 +30,7 @@ export const DexContainer = () => {
           overflowX: 'hidden',
           scrollbarWidth: 'none',
           margin: '0 -30px',
+          opacity: loading ? 0 : 1,
         }}
       />
     </Window>

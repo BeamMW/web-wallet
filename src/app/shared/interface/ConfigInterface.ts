@@ -5,6 +5,7 @@ export interface Configuration {
   env: string;
   theme: string;
   explorer_url_confidential_id: string;
+  dex_url: string;
 }
 
 export interface ConfigurationObject {
