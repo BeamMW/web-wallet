@@ -102,8 +102,16 @@ const Menu: React.FC<MenuProps> = ({ onCancel }) => {
       <ContainerStyled>
         <Button variant="icon" icon={CancelIcon} className={buttonStyle} onClick={onCancel} />
         <ListStyled>
-          {MENU_ITEMS.map(({ title, value, IconComponent }, index) => (
-            <ListItemStyled key={value} active={location.pathname === value} data-index={index} onClick={handleClick}>
+          {MENU_ITEMS.map(({
+            title, value, className, IconComponent,
+          }, index) => (
+            <ListItemStyled
+              key={value}
+              active={location.pathname === value}
+              data-index={index}
+              onClick={handleClick}
+              className={className}
+            >
               <IconComponent />
               {title}
             </ListItemStyled>
