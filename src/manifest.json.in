@@ -37,7 +37,8 @@
   "permissions": [
     "activeTab",
     "storage",
-    "tabs"
+    "tabs",
+     "scripting"
   ],
   "host_permissions": [
       "https://dappnet-dex.beam.mw/",
