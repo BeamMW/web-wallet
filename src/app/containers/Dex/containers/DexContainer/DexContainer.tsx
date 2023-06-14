@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Loader, Window } from '@app/shared/components';
 import { useSelector } from 'react-redux';
 import { selectConnectedSites } from '@app/containers/Settings/store/selectors';
+import config from '@app/config';
 
 export const DexContainer = () => {
   const iframeRef = useRef(null);
@@ -20,7 +21,7 @@ export const DexContainer = () => {
       <iframe
         title="Dex"
         ref={iframeRef}
-        src="https://dappnet-dex.beam.mw"
+        src={config.dex_url}
         width={750}
         height={800}
         onLoad={handleLoad}
