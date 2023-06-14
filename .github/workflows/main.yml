@@ -1,5 +1,9 @@
 name: Build
-on: [push]
+on:
+  push:
+    branches:
+      - mainnet
+
 jobs:
   build:
     runs-on: ubuntu-latest
