@@ -9,7 +9,7 @@
     "commit-hook": "git add .",
     "lint": "eslint './src/**/*.ts{,x}' --fix",
     "prettier": "prettier --write \"**/*.+(ts|tsx)\"",
-    "watch": "webpack --env NODE_ENV=production --watch --progress --mode=production",
+    "watch": "webpack --env NODE_ENV=development --watch --progress --mode=development",
     "serve": "webpack serve --mode=development",
     "build": "webpack --env NODE_ENV=production --mode=production"
   },
@@ -65,7 +65,7 @@
     "@types/readable-stream": "^2.3.11",
     "@unstoppabledomains/resolution": "^8.3.3",
     "babel-polyfill": "^6.26.0",
-    "beam-wasm-client": "7.3.14073",
+    "beam-wasm-client": "7.3.13743",
     "browser-passworder": "^2.0.3",
     "buffer": "^6.0.3",
     "dnode": "^1.2.2",

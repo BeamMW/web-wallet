@@ -333,7 +333,7 @@ export default class WasmWallet {
     this.emit(BackgroundEvent.UNLOCK_WALLET, false);
 
     if (!this.wallet) {
-      this.wallet = new WasmWalletClient(PATH_DB, pass, config.path_node);
+      this.wallet = new WasmWalletClient(PATH_DB, pass, config.path_node, MyModule.Network.dappnet);
     }
 
     const responseHandler = (response) => {
@@ -514,7 +514,7 @@ export default class WasmWallet {
 
       WasmWalletClient.CreateWallet(seed, PATH_DB, password);
       if (!this.wallet) {
-        this.wallet = new WasmWalletClient(PATH_DB, password, config.path_node);
+        this.wallet = new WasmWalletClient(PATH_DB, password, config.path_node, MyModule.Network.dappnet);
       }
       await this.fastSync();
 
