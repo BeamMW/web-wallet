@@ -4,4 +4,5 @@ export interface SharedStateType {
   isBalanceHidden: boolean;
   isLocked: boolean;
   isAssetSync: boolean;
+  isLoading: boolean;
 }

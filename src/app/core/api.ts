@@ -306,8 +306,8 @@ export function verifyPaymentProof(payment_proof: string) {
   return postMessage(RPCMethod.VerifyPaymentProof, { payment_proof });
 }
 
-export function getAssetInfo(asset_id: number) {
-  return postMessage<Asset>(RPCMethod.GetAssetInfo, { asset_id });
+export async function getAssetsInfo(asset_ids: number[]) {
+  return Promise.all(asset_ids.map((asset_id) => postMessage<Asset>(RPCMethod.GetAssetInfo, { asset_id })));
 }
 export function getAssetList({ refresh }: { refresh: boolean }) {
   return postMessage<Asset[]>(RPCMethod.AssetsList, { refresh });

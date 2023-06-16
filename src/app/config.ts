@@ -9,7 +9,8 @@ const development: Configuration = {
   explorer_url: 'https://dappnet.explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/dappnet/dappnet_recovery.bin',
   theme: 'dappnet',
-  dex_url: 'https://dappnet-dex.beam.mw"',
+  dex_url: 'https://dappnet-dex.beam.mw',
+  network: 'dappnet',
 };
 
 const master_net: Configuration = {
@@ -17,6 +18,7 @@ const master_net: Configuration = {
   path_node: 'eu-node01.masternet.beam.mw:8200',
   theme: 'masternet',
   explorer_url_confidential_id: 'https://master-net.explorer.beam.mw/assets/details/',
+  network: 'masternet',
 };
 
 const test_net: Configuration = {
@@ -26,6 +28,7 @@ const test_net: Configuration = {
   path_node: 'eu-node01.testnet.beam.mw:8200',
   theme: 'testnet',
   explorer_url_confidential_id: 'https://testnet.explorer.beam.mw/assets/details/',
+  network: 'testnet',
 };
 
 const main_net: Configuration = {
@@ -36,6 +39,7 @@ const main_net: Configuration = {
   theme: 'mainnet',
   explorer_url_confidential_id: 'https://explorer.beam.mw/assets/details/',
   dex_url: 'https://dex.beam.mw',
+  network: 'mainnet',
 };
 
 const dapp_net: Configuration = {
@@ -44,6 +48,7 @@ const dapp_net: Configuration = {
   explorer_url: 'https://dappnet.explorer.beam.mw/block?kernel_id=',
   restore_url: 'https://mobile-restore.beam.mw/dappnet/dappnet_recovery.bin',
   theme: 'dappnet',
+  network: 'dappnet',
 };
 
 const production: Configuration = {

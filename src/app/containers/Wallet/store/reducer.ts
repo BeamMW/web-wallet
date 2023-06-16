@@ -74,17 +74,19 @@ const handleAssets = (state: WalletStateType) => {
     : [];
 };
 
+const filterAssets = (assets: Asset[]) => assets.filter((asset, index, self) => index === self.findIndex((t) => t.asset_id === asset.asset_id));
+
 const reducer = createReducer<WalletStateType, Action>(initialState)
   .handleAction(actions.setTotals, (state, action) => produce(state, (nexState) => {
     nexState.totals = action.payload;
     nexState.assets_total = handleAssets(nexState);
   }))
   .handleAction(actions.setAssets, (state, action) => produce(state, (nexState) => {
-    nexState.assets = action.payload;
+    nexState.assets = filterAssets([...action.payload, ...state.assets]);
     nexState.assets_total = handleAssets(nexState);
   }))
   .handleAction(actions.getAssetInfo.success, (state, action) => produce(state, (nexState) => {
-    nexState.assets = [...state.assets, action.payload];
+    nexState.assets = filterAssets([...action.payload, ...state.assets]);
   }))
   .handleAction(actions.loadRate.success, (state, action) => produce(state, (nexState) => {
     nexState.rate = action.payload;

@@ -9,3 +9,4 @@ export const selectErrorMessage = () => createSelector(selectShared, (state) => 
 export const selectIsBalanceHidden = () => createSelector(selectShared, (state) => state.isBalanceHidden);
 export const selectIsLocked = () => createSelector(selectShared, (state) => state.isLocked);
 export const selectAssetSync = () => createSelector(selectShared, (state) => state.isAssetSync);
+export const selectIsLoading = () => createSelector(selectShared, (state) => state.isLoading);
