@@ -12,6 +12,7 @@ const initialState: SharedStateType = {
   isBalanceHidden: !!localStorage.getItem('isBalanceHidden') ?? false,
   isLocked: !!localStorage.getItem('locked') ?? false,
   isAssetSync: !!localStorage.getItem('asset_sync') ?? false,
+  isLoading: false,
 };
 
 const reducer = createReducer<SharedStateType, Action>(initialState)
@@ -44,6 +45,9 @@ const reducer = createReducer<SharedStateType, Action>(initialState)
   .handleAction(actions.unsetAssetSync, (state) => produce(state, (nexState) => {
     nexState.isAssetSync = false;
     localStorage.removeItem('asset_sync');
+  }))
+  .handleAction(actions.setIsLoading, (state, action) => produce(state, (nexState) => {
+    nexState.isLoading = action.payload;
   }));
 
 export { reducer as SharedReducer };
