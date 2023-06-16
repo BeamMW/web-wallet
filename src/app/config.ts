@@ -1,6 +1,6 @@
 import { Configuration, ConfigurationObject } from '@app/shared/interface';
 
-const { NODE_ENV = 'development' } = process.env;
+const { NODE_ENV = 'production' } = process.env;
 
 const development: Configuration = {
   env: NODE_ENV,
