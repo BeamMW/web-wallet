@@ -32,7 +32,7 @@ const MENU_ITEMS = [
   },
   {
     title: 'Documentation',
-    value: 'https://documentation.beam.mw/',
+    value: 'https://beam.mw/docs',
     outside: true,
     IconComponent: HelpIcon,
   },
