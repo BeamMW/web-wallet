@@ -15,10 +15,30 @@ import {
   SendTransactionParams,
   TransactionDetail,
   ExternalAppConnection,
+  BackgroundEvent,
+  ConnectedData,
 } from './types';
 
 const wallet = WasmWallet.getInstance();
 const notificationManager = NotificationManager.getInstance();
+
+export function getEnvironment(href = window.location.href) {
+  const url = new URL(href);
+  switch (url.pathname) {
+    case '/popup.html':
+      return Environment.POPUP;
+    case '/page.html':
+      return Environment.FULLSCREEN;
+    case '/offscreen.html':
+      return Environment.OFFSCREEN;
+    case '/notification.html':
+      return Environment.NOTIFICATION;
+    default:
+      return Environment.BACKGROUND;
+  }
+}
+
+const IS_ENGINE = getEnvironment() === Environment.OFFSCREEN;
 
 let port;
 
@@ -97,38 +117,183 @@ function broadcastToOrigin(origin: string, msg: BeamRpcPushMessage | BeamRpcErro
   });
 }
 
-// Forward async wallet callbacks to every tab for that origin
-wallet.setExternalAppMessageHandler((appurl: string, json: string) => {
-  const msg: BeamRpcPushMessage = {
-    type: 'BEAM_WALLET_RPC_PUSH',
-    version: 1,
-    payload: { json },
-  };
-  broadcastToOrigin(appurl, msg);
-});
+// =====================================================================================
+// Engine (offscreen) <-> UI bridge
+// =====================================================================================
 
-export function getEnvironment(href = window.location.href) {
-  const url = new URL(href);
-  switch (url.pathname) {
-    case '/popup.html':
-      return Environment.POPUP;
-    case '/page.html':
-      return Environment.FULLSCREEN;
-    case '/notification.html':
-      return Environment.NOTIFICATION;
-    default:
-      return Environment.BACKGROUND;
+type UiRpcMessage = { kind: 'rpc'; uiReqId: number; op: string; args: any[] };
+type UiResMessage = { kind: 'res'; uiReqId: number; result?: any; error?: any };
+type UiEventMessage = { kind: 'event'; data: RemoteResponse };
+type UiHelloMessage = { kind: 'hello'; connected: ConnectedData };
+type UiActionMessage = { action: string; params?: any };
+type UiInbound = UiResMessage | UiEventMessage | UiHelloMessage;
+
+function serializeError(e: any) {
+  if (e == null) return 'Unknown error';
+  if (typeof e === 'string') return e;
+  if (e instanceof Error) return e.message;
+  try {
+    return JSON.parse(JSON.stringify(e));
+  } catch {
+    return String(e);
   }
+}
+
+// -------------------------------------------------------------------------------------
+// UI-side client (popup / notification)
+// -------------------------------------------------------------------------------------
+
+let enginePort: chrome.runtime.Port | null = null;
+let enginePortReady: Promise<chrome.runtime.Port> | null = null;
+let uiReqSeq = 0;
+const pendingRpc: Map<number, { resolve: (v: any) => void; reject: (e: any) => void }> = new Map();
+let eventEmitter: ((data: RemoteResponse) => void) | null = null;
+
+function onEngineMessage(msg: UiInbound) {
+  if (!msg) return;
+  if (msg.kind === 'res') {
+    const entry = pendingRpc.get(msg.uiReqId);
+    if (entry) {
+      pendingRpc.delete(msg.uiReqId);
+      if (msg.error !== undefined && msg.error !== null) {
+        entry.reject(msg.error);
+      } else {
+        entry.resolve(msg.result);
+      }
+    }
+    return;
+  }
+  if (msg.kind === 'event') {
+    eventEmitter?.(msg.data);
+    return;
+  }
+  if (msg.kind === 'hello') {
+    eventEmitter?.({
+      id: BackgroundEvent.CONNECTED,
+      method: undefined as any,
+      result: msg.connected,
+      error: undefined,
+    });
+  }
+}
+
+function ensureEnginePort(): Promise<chrome.runtime.Port> {
+  if (enginePort) return Promise.resolve(enginePort);
+  if (enginePortReady) return enginePortReady;
+
+  enginePortReady = new Promise<chrome.runtime.Port>((resolve) => {
+    const finishConnect = () => {
+      const env = getEnvironment();
+      const name = env === Environment.NOTIFICATION ? Environment.NOTIFICATION : Environment.POPUP;
+      const p = extensionizer.runtime.connect({ name });
+      p.onMessage.addListener(onEngineMessage);
+      p.onDisconnect.addListener(() => {
+        enginePort = null;
+        enginePortReady = null;
+      });
+      enginePort = p;
+      resolve(p);
+    };
+
+    // Ask the service worker to (idempotently) create the offscreen engine before
+    // we connect — otherwise a cold-started browser has no engine to accept the port.
+    try {
+      extensionizer.runtime.sendMessage({ target: 'sw', type: 'ensure-offscreen' }, () => {
+        // Read lastError so Chrome doesn't log "Unchecked runtime.lastError".
+        if (extensionizer.runtime.lastError) {
+          /* offscreen ensured elsewhere; ignore */
+        }
+        finishConnect();
+      });
+    } catch {
+      finishConnect();
+    }
+  });
+
+  return enginePortReady;
+}
+
+function rpc<T = any>(op: string, args: any[] = []): Promise<T> {
+  uiReqSeq += 1;
+  const uiReqId = uiReqSeq;
+  return ensureEnginePort().then(
+    (p) => new Promise<T>((resolve, reject) => {
+      pendingRpc.set(uiReqId, { resolve, reject });
+      const message: UiRpcMessage = {
+        kind: 'rpc',
+        uiReqId,
+        op,
+        args,
+      };
+      p.postMessage(message);
+    }),
+  );
+}
+
+/**
+ * Wraps an engine operation. In the offscreen (engine) context it runs the real
+ * WASM-backed implementation; in a UI context it forwards the call to the engine.
+ */
+function engineOp<A extends any[], R>(op: string, impl: (...a: A) => R) {
+  return (...args: A): Promise<Awaited<R>> => (IS_ENGINE ? Promise.resolve(impl(...args)) : rpc<Awaited<R>>(op, args));
+}
+
+/** Wire the UI event stream (used by the shared saga's remoteEventChannel). */
+export function connectEngine(emitter: (data: RemoteResponse) => void): Promise<chrome.runtime.Port> {
+  eventEmitter = emitter;
+  return ensureEnginePort().then((p) => {
+    if (getEnvironment() === Environment.NOTIFICATION) {
+      notificationManager.setReqPort(p);
+    }
+    return p;
+  });
+}
+
+export function disconnectEngine() {
+  eventEmitter = null;
+}
+
+// -------------------------------------------------------------------------------------
+// Engine-side (offscreen) server
+// -------------------------------------------------------------------------------------
+
+// Every connected UI port (popup + notification window). Engine push events fan out here.
+const enginePorts = new Set<chrome.runtime.Port>();
+
+function broadcastEvent(data: RemoteResponse) {
+  const message: UiEventMessage = { kind: 'event', data };
+  enginePorts.forEach((p) => {
+    try {
+      p.postMessage(message);
+    } catch {
+      // ignore dead port
+    }
+  });
+}
+
+// Resolves once the engine has mounted WASM and computed its initial state.
+let engineReady: Promise<void> | null = null;
+
+// Engine push callback forwards async wallet callbacks to every tab for that origin.
+if (IS_ENGINE) {
+  wallet.setExternalAppMessageHandler((appurl: string, json: string) => {
+    const msg: BeamRpcPushMessage = {
+      type: 'BEAM_WALLET_RPC_PUSH',
+      version: 1,
+      payload: { json },
+    };
+    broadcastToOrigin(appurl, msg);
+  });
 }
 
 export function approveContractInfoRequest(req) {
   return wallet.notificationApproveInfo({ req });
 }
 
-export function rejectConnection() {
-  return wallet.notificationAuthenticaticated({
-    result: false,
-  });
+export function rejectConnection(params?: { appurl?: string }) {
+  if (params?.appurl) {
+    notificationManager.sendAuthResponse({ result: false, errcode: -3, ermsg: 'Connection rejected' }, params.appurl);
+  }
 }
 
 export function rejectContractInfoRequest(req) {
@@ -155,7 +320,201 @@ export function approveConnection({
   });
 }
 
+function handleUiAction({ params, action }: UiActionMessage) {
+  switch (action) {
+    case 'connect':
+      approveConnection(params);
+      break;
+    case 'connect_rejected':
+      rejectConnection(params);
+      break;
+    case 'rejectSendRequest':
+      rejectSendRequest(params);
+      break;
+    case 'approveSendRequest':
+      approveSendRequest(params);
+      break;
+    case 'rejectContractInfoRequest':
+      rejectContractInfoRequest(params);
+      break;
+    case 'approveContractInfoRequest':
+      approveContractInfoRequest(params);
+      break;
+    default:
+      break;
+  }
+}
+
+async function handleUiRpc(remote: chrome.runtime.Port, msg: UiRpcMessage) {
+  const { uiReqId, op, args } = msg;
+  try {
+    let result: any;
+    if (op === '__post') {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      result = await enginePost(args[0], args[1]);
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    } else if (Object.prototype.hasOwnProperty.call(ENGINE_OPS, op)) {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      result = await ENGINE_OPS[op](...(args || []));
+    } else {
+      throw new Error(`Unknown engine op "${op}"`);
+    }
+    remote.postMessage({ kind: 'res', uiReqId, result } as UiResMessage);
+  } catch (e) {
+    remote.postMessage({ kind: 'res', uiReqId, error: serializeError(e) } as UiResMessage);
+  }
+}
+
+// A port-like wrapper the engine can use exactly like a real chrome.runtime.Port.
+// Used for dApp content-script connections relayed through the service worker.
+type PortLike = {
+  name: string;
+  sender: any;
+  postMessage: (msg: any) => void;
+  onMessage: { addListener: (cb: (msg: any) => void) => void };
+  onDisconnect: { addListener: (cb: () => void) => void };
+  disconnect: () => void;
+};
+
+function makeRelayVirtualPort(relay: chrome.runtime.Port, name: string, sender: any): PortLike {
+  return {
+    name,
+    sender,
+    postMessage: (msg: any) => {
+      try {
+        relay.postMessage(msg);
+      } catch {
+        // relay already closed
+      }
+    },
+    onMessage: { addListener: (cb: (msg: any) => void) => relay.onMessage.addListener((m: any) => cb(m)) },
+    onDisconnect: { addListener: (cb: () => void) => relay.onDisconnect.addListener(() => cb()) },
+    disconnect: () => {
+      try {
+        relay.disconnect();
+      } catch {
+        // noop
+      }
+    },
+  };
+}
+
+// dApp RPC channel (BEAM_WALLET_RPC_REQUEST relay).
+function setupContentPort(remote: PortLike) {
+  NotificationManager.setPort(remote as any);
+  const origin = getSenderOrigin(remote.sender);
+  if (!origin) return;
+  addExternalRpcPort(origin, remote as any);
+
+  remote.onDisconnect.addListener(() => {
+    removeExternalRpcPort(origin, remote as any);
+    appnameByOrigin.delete(origin);
+    // Clean up the WASM app API when the dApp's RPC channel closes (tab close / navigation).
+    wallet.disconnectAppApi(origin);
+  });
+
+  remote.onMessage.addListener((msg: BeamRpcRequestMessage) => {
+    if (!msg || msg.type !== 'BEAM_WALLET_RPC_REQUEST' || msg.version !== 1) return;
+    const {
+      id, method, params, appname,
+    } = msg.payload || {};
+    if (!id || !method) return;
+
+    // Track appname per origin so multi-tab scenarios don't collide.
+    if (appname) {
+      appnameByOrigin.set(origin, String(appname).slice(0, 64));
+    }
+
+    try {
+      const ok = wallet.callExternalWalletApi(origin, { id, method, params });
+      if (!ok) {
+        broadcastToOrigin(origin, {
+          type: 'BEAM_WALLET_RPC_ERROR',
+          version: 1,
+          payload: {
+            id,
+            error: { code: -32000, message: 'BeamApi not connected for this site' },
+          },
+        });
+      }
+    } catch (e: any) {
+      broadcastToOrigin(origin, {
+        type: 'BEAM_WALLET_RPC_ERROR',
+        version: 1,
+        payload: {
+          id,
+          error: { code: -32001, message: e?.message || 'BeamApi call failed', data: e },
+        },
+      });
+    }
+  });
+}
+
+// dApp auth handshake channel (create_beam_api relay).
+function setupContentReqPort(remote: PortLike) {
+  const reqOrigin = getSenderOrigin(remote.sender);
+  if (reqOrigin) notificationManager.setContentReqPort(remote as any, reqOrigin);
+  contentPort = remote;
+  contentPort.onMessage.addListener((msg) => {
+    const origin = getSenderOrigin(remote.sender);
+    if (!origin) return;
+
+    if (wallet.isRunning() && !localStorage.getItem('locked')) {
+      if (wallet.isConnectedSite({ appName: msg.appname, appUrl: origin })) {
+        msg.appurl = origin;
+        wallet.connectExternal(msg);
+      } else if (msg.type === ExternalAppMethod.CreateBeamApi) {
+        if (msg.is_reconnect && notificationManager.appname === msg.appname) {
+          // eslint-disable-next-line
+          notificationManager.openPopup();
+        } else {
+          notificationManager.openConnectNotification(msg, origin);
+        }
+      }
+    } else {
+      notificationManager.openAuthNotification(msg, origin);
+    }
+  });
+
+  contentPort.onDisconnect.addListener(() => {
+    // CONTENT_REQ ports are ephemeral (disconnected after auth succeeds) — do NOT
+    // clean up the app API here. App API lifetime tracks the CONTENT (RPC) port.
+  });
+}
+
+// Relay ports are opened by the service worker on behalf of a dApp content script.
+// Name format: `relay:<content|content_req>:<encodeURIComponent(JSON sender)>`.
+function handleRelayPort(relay: chrome.runtime.Port) {
+  const parts = relay.name.split(':');
+  const type = parts[1];
+  let meta: { origin?: string; url?: string; tabId?: number } = {};
+  try {
+    meta = JSON.parse(decodeURIComponent(parts.slice(2).join(':')));
+  } catch {
+    meta = {};
+  }
+  const sender = {
+    origin: meta.origin,
+    url: meta.url,
+    tab: meta.tabId != null ? { id: meta.tabId } : undefined,
+  };
+  const vport = makeRelayVirtualPort(relay, type, sender);
+
+  if (type === Environment.CONTENT) {
+    setupContentPort(vport);
+  } else if (type === Environment.CONTENT_REQ) {
+    setupContentReqPort(vport);
+  }
+}
+
 function handleConnect(remote) {
+  // dApp content-script traffic is relayed by the service worker (content scripts
+  // cannot reach an offscreen document directly).
+  if (remote.name && remote.name.startsWith('relay:')) {
+    handleRelayPort(remote);
+    return;
+  }
+
   port = remote;
   connected = true;
   // eslint-disable-next-line no-console
@@ -166,134 +525,59 @@ function handleConnect(remote) {
     return connected;
   });
 
-  port.onMessage.addListener(({ params, action }: RemoteRequest) => {
-    if (action !== undefined) {
-      switch (action) {
-        case 'connect':
-          approveConnection(params);
-          break;
-        case 'connect_rejected':
-          rejectConnection();
-          break;
-        case 'rejectSendRequest':
-          rejectSendRequest(params);
-          break;
-        case 'approveSendRequest':
-          approveSendRequest(params);
-          break;
-        case 'rejectContractInfoRequest':
-          rejectContractInfoRequest(params);
-          break;
-        case 'approveContractInfoRequest':
-          approveContractInfoRequest(params);
-          break;
-        default:
-          break;
-      }
+  port.onMessage.addListener((msg: any) => {
+    if (msg && msg.kind === 'rpc') {
+      handleUiRpc(remote, msg as UiRpcMessage);
+      return;
+    }
+    if (msg && (msg as RemoteRequest).action !== undefined) {
+      handleUiAction(msg as UiActionMessage);
     }
   });
 
   switch (port.name) {
+    case Environment.POPUP:
     case Environment.NOTIFICATION: {
-      const tabId = remote.sender.tab.id;
-      notificationManager.openBeamTabsIDs[tabId] = true;
-      activeTab = remote.sender.tab.id;
-      notificationPort = remote;
-      notificationPort.onDisconnect.addListener(() => {
-        // Resolve the openPopup() promise immediately instead of waiting for the poll.
-        notificationManager.closeNotification();
-        if (activeTab) {
-          activeTab = null;
-          notificationManager.openBeamTabsIDs = {};
+      enginePorts.add(remote);
+
+      if (port.name === Environment.NOTIFICATION) {
+        const tabId = remote.sender?.tab?.id;
+        if (tabId !== undefined) {
+          notificationManager.openBeamTabsIDs[tabId] = true;
+          activeTab = tabId;
         }
-      });
-      notificationPort.postMessage({ isRunning: wallet.isRunning(), notification: notificationManager.notification });
-      break;
-    }
-
-    case Environment.CONTENT:
-      NotificationManager.setPort(remote);
-      {
-        const origin = getSenderOrigin(remote.sender);
-        if (!origin) break;
-        addExternalRpcPort(origin, remote);
-
-        remote.onDisconnect.addListener(() => {
-          removeExternalRpcPort(origin, remote);
-          appnameByOrigin.delete(origin);
-          // Clean up the WASM app API when the dApp's RPC channel closes (tab close / navigation).
-          wallet.disconnectAppApi(origin);
-        });
-
-        remote.onMessage.addListener((msg: BeamRpcRequestMessage) => {
-          if (!msg || msg.type !== 'BEAM_WALLET_RPC_REQUEST' || msg.version !== 1) return;
-          const {
-            id, method, params, appname,
-          } = msg.payload || {};
-          if (!id || !method) return;
-
-          // Track appname per origin so multi-tab scenarios don't collide.
-          if (appname) {
-            appnameByOrigin.set(origin, String(appname).slice(0, 64));
-          }
-
-          try {
-            const ok = wallet.callExternalWalletApi(origin, { id, method, params });
-            if (!ok) {
-              broadcastToOrigin(origin, {
-                type: 'BEAM_WALLET_RPC_ERROR',
-                version: 1,
-                payload: {
-                  id,
-                  error: { code: -32000, message: 'BeamApi not connected for this site' },
-                },
-              });
-            }
-          } catch (e: any) {
-            broadcastToOrigin(origin, {
-              type: 'BEAM_WALLET_RPC_ERROR',
-              version: 1,
-              payload: {
-                id,
-                error: { code: -32001, message: e?.message || 'BeamApi call failed', data: e },
-              },
-            });
+        notificationPort = remote;
+        notificationPort.onDisconnect.addListener(() => {
+          // Resolve the openPopup() promise immediately instead of waiting for the poll.
+          notificationManager.closeNotification();
+          if (activeTab) {
+            activeTab = null;
+            notificationManager.openBeamTabsIDs = {};
           }
         });
       }
-      break;
 
-    case Environment.CONTENT_REQ: {
-      const reqOrigin = getSenderOrigin(remote.sender);
-      if (reqOrigin) notificationManager.setContentReqPort(remote, reqOrigin);
-      contentPort = remote;
-      contentPort.onMessage.addListener((msg) => {
-        const origin = getSenderOrigin(remote.sender);
-        if (!origin) return;
-
-        if (wallet.isRunning() && !localStorage.getItem('locked')) {
-          if (wallet.isConnectedSite({ appName: msg.appname, appUrl: origin })) {
-            msg.appurl = origin;
-            wallet.connectExternal(msg);
-          } else if (msg.type === ExternalAppMethod.CreateBeamApi) {
-            if (msg.is_reconnect && notificationManager.appname === msg.appname) {
-              // eslint-disable-next-line
-              notificationManager.openPopup();
-            } else {
-              notificationManager.openConnectNotification(msg, origin);
-            }
-          }
-        } else {
-          notificationManager.openAuthNotification(msg, origin);
-        }
+      remote.onDisconnect.addListener(() => {
+        enginePorts.delete(remote);
       });
 
-      contentPort.onDisconnect.addListener(() => {
-        // CONTENT_REQ ports are ephemeral (disconnected after auth succeeds) — do NOT
-        // clean up the app API here. App API lifetime tracks the CONTENT (RPC) port.
+      // Send the current engine state to this freshly-opened UI so it can route.
+      (engineReady ?? Promise.resolve()).then(() => {
+        try {
+          remote.postMessage({ kind: 'hello', connected: wallet.getConnectedSnapshot() } as UiHelloMessage);
+        } catch {
+          // port already closed
+        }
+        // The engine keeps running across popup open/close. On the 2nd+ open the
+        // wallet is already running & synced, so no live events fire and this UI
+        // would show empty balances. Re-emit the current state so it rehydrates.
+        wallet.replayStateToUi();
       });
       break;
     }
+    // CONTENT / CONTENT_REQ never arrive here directly — content scripts cannot
+    // message an offscreen document. They are relayed by the service worker as
+    // `relay:*` ports and handled by handleRelayPort() below.
     default:
       break;
   }
@@ -313,9 +597,15 @@ export function initRemoteConnection() {
     const appname = appnameByOrigin.get(req?.appurl ?? '') ?? req?.appname;
     notificationManager.openSendNotification(req, info, appname);
   });
+
+  // Boot the WASM wallet engine. Every emitted event is broadcast to connected UIs.
+  engineReady = Promise.resolve(wallet.init((data) => broadcastEvent(data as unknown as RemoteResponse), null)).then(
+    () => undefined,
+  );
 }
 
-export function postMessage<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
+/** Engine-only: send an RPC to the running WASM wallet and await its response. */
+function enginePost<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
   const target = wallet.send(method, params);
   return new Promise((resolve, reject) => {
     wallet.registerResponseHandler(target, (data: RemoteResponse) => {
@@ -332,57 +622,53 @@ export function postMessage<T = any, P = unknown>(method: RPCMethod, params?: P)
   });
 }
 
-export function convertTokenToJson(token: string) {
-  return WasmWallet.convertTokenToJson(token);
+/**
+ * Send a wallet RPC. In the engine this hits WASM directly; in the UI it is forwarded
+ * to the offscreen engine over the port.
+ */
+export function postMessage<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
+  if (IS_ENGINE) return enginePost<T, P>(method, params);
+  return rpc<T>('__post', [method, params]);
 }
 
-export function startWallet(pass: string) {
-  return wallet.start(pass);
-}
+export const convertTokenToJson = engineOp('convertTokenToJson', (token: string) => WasmWallet.convertTokenToJson(token));
 
-export function deleteWallet(pass: string) {
-  return wallet.deleteWallet(pass);
-}
+export const startWallet = engineOp('startWallet', (pass: string) => wallet.start(pass));
 
-export function stopWallet() {
-  return wallet.stop();
-}
+export const deleteWallet = engineOp('deleteWallet', (pass: string) => wallet.deleteWallet(pass));
 
-export function walletLocked() {
-  return wallet.lockWallet();
-}
+export const stopWallet = engineOp('stopWallet', () => wallet.stop());
 
-export function createWallet(params: CreateWalletParams) {
-  return wallet.create(params);
-}
+export const walletLocked = engineOp('walletLocked', () => wallet.lockWallet());
 
-export function isAllowedWord(value: string) {
-  return WasmWallet.isAllowedWord(value);
-}
+export const createWallet = engineOp('createWallet', (params: CreateWalletParams) => wallet.create(params));
 
-export function isAllowedSeed(value: string[]) {
-  return WasmWallet.isAllowedSeed(value);
-}
+export const isAllowedWord = engineOp('isAllowedWord', (value: string) => WasmWallet.isAllowedWord(value));
 
-export function generateSeed() {
-  return WasmWallet.generateSeed();
-}
+export const isAllowedSeed = engineOp('isAllowedSeed', (value: string[]) => WasmWallet.isAllowedSeed(value));
 
-export function loadBackgroundLogs() {
-  return WasmWallet.loadLogs();
-}
+export const generateSeed = engineOp('generateSeed', () => WasmWallet.generateSeed());
 
-export function loadConnectedSites() {
-  return wallet.loadConnectedSites();
-}
+export const loadBackgroundLogs = engineOp('loadBackgroundLogs', () => WasmWallet.loadLogs());
 
-export function disconnectAllowedSite(params: ExternalAppConnection) {
-  return wallet.removeConnectedSite(params);
-}
+export const loadConnectedSites = engineOp('loadConnectedSites', () => wallet.loadConnectedSites());
 
-export async function validateAddress(address: string): Promise<AddressData> {
-  const result = await postMessage<AddressData>(RPCMethod.ValidateAddress, { address });
-  const json = await convertTokenToJson(address);
+export const disconnectAllowedSite = engineOp('disconnectAllowedSite', (params: ExternalAppConnection) => wallet.removeConnectedSite(params));
+
+export const finishNotificationAuth = engineOp(
+  'finishNotificationAuth',
+  (apiver: string, apivermin: string, appname: string, appurl: string) => wallet.notificationAuthenticaticated({
+    result: true,
+    apiver,
+    apivermin,
+    appname,
+    appurl,
+  }),
+);
+
+export const validateAddress = engineOp('validateAddress', async (address: string): Promise<AddressData> => {
+  const result = await enginePost<AddressData>(RPCMethod.ValidateAddress, { address });
+  const json = WasmWallet.convertTokenToJson(address);
 
   if (!json) {
     return result;
@@ -392,17 +678,7 @@ export async function validateAddress(address: string): Promise<AddressData> {
     ...result,
     ...json,
   };
-}
-
-export function finishNotificationAuth(apiver: string, apivermin: string, appname: string, appurl: string) {
-  return wallet.notificationAuthenticaticated({
-    result: true,
-    apiver,
-    apivermin,
-    appname,
-    appurl,
-  });
-}
+});
 
 export interface CalculateChangeParams {
   amount: number;
@@ -476,7 +752,7 @@ const internalAppAPIs: Map<string, any> = new Map();
  * This is required before calling invokeContract
  * Uses the same flow as external dApps via SDK
  */
-export async function createInternalAppAPI(
+async function createInternalAppAPIEngine(
   appurl: string,
   appname: string,
   apiver: string = '6.2',
@@ -512,6 +788,11 @@ export async function createInternalAppAPI(
   internalAppAPIs.set(appurl, appApi);
 }
 
+export const createInternalAppAPI = engineOp(
+  'createInternalAppAPI',
+  (appurl: string, appname: string, apiver: string = '6.2', apivermin: string = '6.2') => createInternalAppAPIEngine(appurl, appname, apiver, apivermin),
+);
+
 /**
  * Get internal app API by appurl
  */
@@ -525,7 +806,7 @@ export function getInternalAppAPI(appurl: string): any {
  * Note: if the wallet requires send approval the promise resolves only after
  * the user acts on the notification — use a long timeout accordingly.
  */
-export async function processInvokeData(appurl: string, data: any): Promise<any> {
+function processInvokeDataEngine(appurl: string, data: any): Promise<any> {
   const appApi = internalAppAPIs.get(appurl);
   if (!appApi) {
     throw new Error(`App API not found for ${appurl}`);
@@ -555,11 +836,13 @@ export async function processInvokeData(appurl: string, data: any): Promise<any>
   });
 }
 
+export const processInvokeData = engineOp('processInvokeData', (appurl: string, data: any) => processInvokeDataEngine(appurl, data));
+
 /**
  * Invoke contract using app API (same flow as SDK)
  * This matches the skeleton-dapp flow: create app API -> callWalletApi -> handle response
  */
-export async function invokeContract(params: InvokeContractParams) {
+async function invokeContractEngine(params: InvokeContractParams) {
   const { appurl, appname, ...invokeParams } = params;
 
   if (!appurl || !appname) {
@@ -567,7 +850,7 @@ export async function invokeContract(params: InvokeContractParams) {
   }
 
   // Ensure the app API is created (same as SDK's client initialization)
-  await createInternalAppAPI(appurl, appname);
+  await createInternalAppAPIEngine(appurl, appname);
 
   // Get the app API (same as callExternalWalletApi does)
   const appApi = internalAppAPIs.get(appurl);
@@ -607,3 +890,27 @@ export async function invokeContract(params: InvokeContractParams) {
     }, 30000);
   });
 }
+
+export const invokeContract = engineOp('invokeContract', (params: InvokeContractParams) => invokeContractEngine(params));
+
+// Table of operations the offscreen engine executes on behalf of UI clients.
+// In the engine context calling these wrappers runs the real implementation.
+const ENGINE_OPS: Record<string, (...args: any[]) => any> = {
+  convertTokenToJson,
+  startWallet,
+  deleteWallet,
+  stopWallet,
+  walletLocked,
+  createWallet,
+  isAllowedWord,
+  isAllowedSeed,
+  generateSeed,
+  loadBackgroundLogs,
+  loadConnectedSites,
+  disconnectAllowedSite,
+  finishNotificationAuth,
+  validateAddress,
+  createInternalAppAPI,
+  processInvokeData,
+  invokeContract,
+};

@@ -24,6 +24,8 @@ export default class ExtensionPlatform {
       res = Environment.POPUP;
     } else if (parsedUrl.pathname === '/page.html') {
       res = Environment.FULLSCREEN;
+    } else if (parsedUrl.pathname === '/offscreen.html') {
+      res = Environment.OFFSCREEN;
     } else if (parsedUrl.pathname === '/notification.html') {
       res = Environment.NOTIFICATION;
     }

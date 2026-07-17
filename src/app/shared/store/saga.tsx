@@ -3,10 +3,8 @@ import {
 } from 'redux-saga/effects';
 
 import { eventChannel, END } from 'redux-saga';
-import { walletLocked } from '@core/api';
-import {
-  BackgroundEvent, RemoteResponse, RPCEvent, Environment,
-} from '@core/types';
+import { walletLocked, connectEngine, disconnectEngine } from '@core/api';
+import { BackgroundEvent, RemoteResponse, RPCEvent } from '@core/types';
 
 import {
   handleConnect,
@@ -22,38 +20,19 @@ import { actions } from '@app/shared/store/index';
 import { navigate } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import NotificationController from '@app/core/NotificationController';
-import NotificationManager from '@app/core/NotificationManager';
-import ExtensionPlatform from '@app/core/Extension';
-import * as extensionizer from 'extensionizer';
 
-import WasmWallet from '@core/WasmWallet';
 import { clearSavedPassword } from '@core/RememberPassword';
-
-const wallet = WasmWallet.getInstance();
-const notificationManager = NotificationManager.getInstance();
 
 export function remoteEventChannel() {
   return eventChannel((emitter) => {
-    const handler = (data: RemoteResponse) => {
+    // Connect to the offscreen wallet engine. Engine push events (CONNECTED,
+    // SYNC_PROGRESS, TXS_CHANGED, ...) flow into the saga via the emitter.
+    connectEngine((data: RemoteResponse) => {
       emitter(data);
-    };
-
-    const platform = new ExtensionPlatform();
-
-    if (platform.getEnvironmentType() === 'notification') {
-      const backgroundPort = extensionizer.runtime.connect({
-        name: Environment.NOTIFICATION,
-      });
-
-      notificationManager.setReqPort(backgroundPort); // TODO
-      backgroundPort.onMessage.addListener(({ isRunning, notification }) => {
-        wallet.init(handler, notification, isRunning);
-      });
-    } else {
-      wallet.init(handler, null);
-    }
+    });
 
     const unsubscribe = () => {
+      disconnectEngine();
       emitter(END);
     };
 

@@ -141,25 +141,6 @@ async function setupInpageApi() {
   // @ts-ignore
   global.BeamApi = BeamApi;
 
-  // EIP-6963: announce the provider so discovery-aware SDKs don't need to poll.
-  const BEAM_PROVIDER_INFO = Object.freeze({
-    uuid: 'a8f4b2c1-9e3d-4f7a-b2d8-6c1e9a4f3b07',
-    name: 'Beam Wallet',
-    icon: '',
-    rdns: 'com.beam.wallet',
-  });
-
-  function announceBeamProvider() {
-    window.dispatchEvent(
-      new CustomEvent('eip6963:announceProvider', {
-        detail: Object.freeze({ info: BEAM_PROVIDER_INFO, provider: BeamApi }),
-      }),
-    );
-  }
-
-  window.addEventListener('eip6963:requestProvider', announceBeamProvider);
-  announceBeamProvider();
-
   await new Promise<void>((resolve) => {
     const onWindowMessage = (event: MessageEvent) => {
       if (event.source !== window) return;

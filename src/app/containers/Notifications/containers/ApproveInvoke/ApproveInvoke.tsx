@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import NotificationController from '@core/NotificationController';
 import { styled } from '@linaria/react';
 import { Button, AssetIcon } from '@app/shared/components';
@@ -6,6 +7,8 @@ import {
   CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards,
 } from '@app/shared/icons';
 import NotificationManager from '@core/NotificationManager';
+import { selectAssetsInfo } from '@app/containers/Wallet/store/selectors';
+import { getAssetList } from '@app/containers/Wallet/store/actions';
 
 const ContainerStyled = styled.div`
   position: relative;
@@ -134,7 +137,17 @@ const getConfirmIcon = (info, amounts) => {
 const ApproveInvoke = () => {
   const notification = NotificationController.getNotification();
   const notificationManager = NotificationManager.getInstance();
-  const { assets } = notification.params;
+  const dispatch = useDispatch();
+  // Assets are no longer piggy-backed on the notification (the engine has no UI
+  // store); source them from this window's own store, loading if needed.
+  const storeAssets = useSelector(selectAssetsInfo());
+  const assets = notification.params.assets?.length ? notification.params.assets : storeAssets;
+
+  useEffect(() => {
+    if (!storeAssets?.length) {
+      dispatch(getAssetList.request({ refresh: false }));
+    }
+  }, [dispatch, storeAssets]);
 
   let amounts: any[] = [];
   let info: any = {};

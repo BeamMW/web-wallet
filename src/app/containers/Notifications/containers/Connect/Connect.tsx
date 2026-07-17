@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { styled } from '@linaria/react';
 import NotificationController from '@core/NotificationController';
 import NotificationManager from '@core/NotificationManager';
@@ -36,13 +36,21 @@ const Connect = () => {
 
   const notificationManager = NotificationManager.getInstance();
 
+  // Guards the beforeunload fallback so it doesn't send a second (reject) message
+  // after the user already explicitly approved/rejected and we called window.close().
+  const actedRef = useRef(false);
+
   useEffect(() => {
     const handler = () => {
-      notificationManager.postMessage({ action: 'connect_rejected' });
+      if (actedRef.current) return;
+      notificationManager.postMessage({
+        action: 'connect_rejected',
+        params: { appurl: notification.params.appurl },
+      });
     };
     window.addEventListener('beforeunload', handler);
     return () => window.removeEventListener('beforeunload', handler);
-  }, [notificationManager]);
+  }, [notificationManager, notification.params.appurl]);
 
   return (
     <>
@@ -66,7 +74,7 @@ const Connect = () => {
       <Button
         type="button"
         onClick={() => {
-          // TODO
+          actedRef.current = true;
           notificationManager.postMessage({
             action: 'connect',
             params: {
@@ -77,12 +85,6 @@ const Connect = () => {
             },
           });
           window.close();
-          // approveConnection(
-          //   notification.params.apiver,
-          //   notification.params.apivermin,
-          //   notification.params.appname,
-          //   notification.params.appurl,
-          // );
         }}
       >
         Approve
@@ -90,6 +92,11 @@ const Connect = () => {
       <Button
         type="button"
         onClick={() => {
+          actedRef.current = true;
+          notificationManager.postMessage({
+            action: 'connect_rejected',
+            params: { appurl: notification.params.appurl },
+          });
           window.close();
         }}
       >

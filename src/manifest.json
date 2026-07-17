@@ -7,7 +7,8 @@
     "default_icon": {
       "16": "assets/chrome-extention-icon-16x16.png"
     },
-    "default_title": "Beam Web Wallet (DEV)"
+    "default_title": "Beam Web Wallet (DEV)",
+    "default_popup": "popup.html"
   },
   "version": "1.0.1",
   "background": {
@@ -32,7 +33,8 @@
     "activeTab",
     "storage",
     "tabs",
-    "scripting"
+    "scripting",
+    "offscreen"
   ],
   "host_permissions": [
     "https://dappnet-dex.beam.mw/",

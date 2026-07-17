@@ -12,6 +12,7 @@ const config = {
   cache: false,
   entry: {
     index: path.join(__dirname, './src/index.tsx'),
+    offscreen: path.join(__dirname, './src/offscreen.ts'),
     contentscript: path.join(__dirname, './src/contentscript.ts'),
     inpage: path.join(__dirname, './src/inpage.ts'),
     appinit: path.join(__dirname, './src/appinit.ts'),
@@ -86,7 +87,7 @@ const config = {
           context: 'public',
         },
         {
-          from: path.join(__dirname, 'src/page.html'),
+          from: path.join(__dirname, 'src/offscreen.html'),
           to: path.join(__dirname, 'dist'),
           context: 'public',
         },

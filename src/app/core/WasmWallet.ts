@@ -1,5 +1,6 @@
-import * as extensionizer from 'extensionizer';
 import * as passworder from 'browser-passworder';
+
+import { storageLocal } from '@core/storage';
 
 import { GROTHS_IN_BEAM } from '@app/containers/Wallet/constants';
 import config from '@app/config';
@@ -8,7 +9,13 @@ import { SyncStep } from '@app/containers/Auth/interfaces';
 import { ExternalAppConnection, NotificationType } from '@core/types';
 
 import {
-  BackgroundEvent, CreateWalletParams, Notification, RPCEvent, RPCMethod, WalletMethod,
+  BackgroundEvent,
+  ConnectedData,
+  CreateWalletParams,
+  Notification,
+  RPCEvent,
+  RPCMethod,
+  WalletMethod,
 } from './types';
 import NotificationManager from './NotificationManager';
 
@@ -47,20 +54,28 @@ const bgLogs = {
   warnsDef: console.warn.bind(console),
 };
 
+const MAX_BG_LOG_ENTRIES = 1000;
+const pushCapped = (arr: unknown[], entry: unknown) => {
+  arr.push(entry);
+  if (arr.length > MAX_BG_LOG_ENTRIES) {
+    arr.shift();
+  }
+};
+
 // eslint-disable-next-line no-console
 console.log = function (...args) {
   bgLogs.commonDef.apply(console, args);
-  bgLogs.common.push(Array.from(args));
+  pushCapped(bgLogs.common, Array.from(args));
 };
 // eslint-disable-next-line no-console
 console.error = function (...args) {
   bgLogs.errorsDef.apply(console, args);
-  bgLogs.errors.push(Array.from(args));
+  pushCapped(bgLogs.errors, Array.from(args));
 };
 // eslint-disable-next-line no-console
 console.warn = function (...args) {
   bgLogs.warnsDef.apply(console, args);
-  bgLogs.warns.push(Array.from(args));
+  pushCapped(bgLogs.warns, Array.from(args));
 };
 
 export default class WasmWallet {
@@ -134,7 +149,7 @@ export default class WasmWallet {
   }
 
   static initSettings(seedConfirmed: boolean) {
-    extensionizer.storage.local.set({
+    storageLocal.set({
       settings: {
         privacySetting: false,
         saveLogsSetting: 0,
@@ -156,22 +171,22 @@ export default class WasmWallet {
   }
 
   static initConnectedSites() {
-    extensionizer.storage.local.set({
+    storageLocal.set({
       sites: [],
     });
   }
 
   static async saveWallet(pass: string) {
     const data = await passworder.encrypt(pass, Date.now());
-    extensionizer.storage.local.remove(['wallet']);
-    extensionizer.storage.local.set({ wallet: data });
+    storageLocal.remove(['wallet']);
+    storageLocal.set({ wallet: data });
     return data;
   }
 
   static removeWallet() {
     WasmWalletClient.DeleteWallet(PATH_DB);
     indexedDB.deleteDatabase('/beam_wallet');
-    extensionizer.storage.local.remove(['wallet']);
+    storageLocal.remove(['wallet']);
   }
 
   static checkPassword(pass: string): Promise<string> {
@@ -180,7 +195,7 @@ export default class WasmWallet {
         reject(ErrorMessage.EMPTY);
       }
 
-      extensionizer.storage.local.get('wallet', ({ wallet }) => {
+      storageLocal.get('wallet', ({ wallet }) => {
         passworder
           .decrypt(pass, wallet)
           .then(() => {
@@ -205,8 +220,8 @@ export default class WasmWallet {
     return WasmWalletClient.IsAppSupported(apiver, apivermin);
   }
 
-  static generateAppID(appurl: string, appname: string): string {
-    return WasmWalletClient.GenerateAppID(appurl, appname);
+  static generateAppID(appname: string, appurl: string): string {
+    return WasmWalletClient.GenerateAppID(appname, appurl);
   }
 
   static isAllowedSeed(seed: string[]) {
@@ -311,8 +326,6 @@ export default class WasmWallet {
   }
 
   emit(id: number | RPCEvent | BackgroundEvent, result?: any, error?: any) {
-    // eslint-disable-next-line no-console
-    console.info(`emitted event "${id}"`);
     this.eventHandler({
       id,
       result,
@@ -397,6 +410,26 @@ export default class WasmWallet {
     return !this.wallet ? false : this.wallet.isRunning();
   }
 
+  replayStateToUi() {
+    if (!this.isRunning()) return;
+    this.toggleEvents(false);
+    this.toggleEvents(true);
+  }
+
+  getConnectedSnapshot(): ConnectedData {
+    let onboarding = true;
+    try {
+      onboarding = this.mounted ? !WasmWalletClient.IsInitialized(PATH_DB) : true;
+    } catch {
+      onboarding = true;
+    }
+    return {
+      is_running: this.isRunning(),
+      onboarding,
+      notification: notificationManager.notification ?? null,
+    };
+  }
+
   async createAppAPI(apiver: string, apivermin: string, appurl: string, appname: string, handler: any) {
     return new Promise((resolve, reject) => {
       const appid = WasmWallet.generateAppID(appname, appurl);
@@ -415,7 +448,7 @@ export default class WasmWallet {
 
   private loadConnectedApps() {
     return new Promise((resolve) => {
-      extensionizer.storage.local.get('sites', ({ sites }) => {
+      storageLocal.get('sites', ({ sites }) => {
         this.connectedApps = sites || [];
         resolve(true);
       });
@@ -432,7 +465,7 @@ export default class WasmWallet {
 
     this.connectedApps = [...sites];
 
-    extensionizer.storage.local.set({
+    storageLocal.set({
       sites: this.connectedApps,
     });
 
@@ -443,7 +476,7 @@ export default class WasmWallet {
     const isExist = this.connectedApps.find((item: ExternalAppConnection) => item.appUrl === site.appUrl);
     if (!isExist) {
       this.connectedApps = [...this.connectedApps, site];
-      extensionizer.storage.local.set({
+      storageLocal.set({
         sites: this.connectedApps,
       });
     }

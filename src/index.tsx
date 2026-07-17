@@ -7,15 +7,12 @@ import { MemoryRouter } from 'react-router-dom';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
-import { initRemoteConnection } from '@app/core/api';
 import store from '@app/store/rootStore';
 import App from './app';
 
 window.global = window;
 
 export default store;
-
-initRemoteConnection();
 
 const ReduxProvider = Provider as unknown as React.ComponentType<any>;
 

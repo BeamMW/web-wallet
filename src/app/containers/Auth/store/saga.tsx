@@ -1,7 +1,12 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 
 import {
-  finishNotificationAuth, generateSeed, getEnvironment, isAllowedSeed, isAllowedWord,
+  finishNotificationAuth,
+  generateSeed,
+  getEnvironment,
+  isAllowedSeed,
+  isAllowedWord,
+  startWallet,
 } from '@core/api';
 import WasmWallet from '@core/WasmWallet';
 import { navigate, setError, unlockWallet } from '@app/shared/store/actions';
@@ -19,7 +24,6 @@ import { actions } from '.';
 import store from '../../../../index';
 
 const SEED_CONFIRM_COUNT = 6;
-const wallet = WasmWallet.getInstance();
 
 const getRandomIds = () => {
   const result: number[] = [];
@@ -38,10 +42,10 @@ export function* handleConnect({ notification, is_running, onboarding }: Connect
     return;
   }
 
-  // Auto-unlock (session only) when user explicitly enabled it in Settings.
-  // This avoids persisting plaintext password to disk while still preventing
-  // popup reloads / navigation from forcing re-entry during the same session.
-  if (!is_running) {
+  const isLocked = !!localStorage.getItem('locked');
+  const requiresPassword = !is_running || isLocked;
+
+  if (requiresPassword) {
     try {
       const enabled = (yield call(getSavePasswordSetting) as unknown) as boolean;
       if (enabled) {
@@ -62,14 +66,14 @@ export function* handleConnect({ notification, is_running, onboarding }: Connect
     if (notification.type === NotificationType.AUTH) {
       yield put(navigate(ROUTES.AUTH.LOGIN));
     } else if (notification.type === NotificationType.APPROVE_TX) {
-      yield put(navigate(is_running ? ROUTES.NOTIFICATIONS.APPROVE_SEND : ROUTES.AUTH.LOGIN));
+      yield put(navigate(requiresPassword ? ROUTES.AUTH.LOGIN : ROUTES.NOTIFICATIONS.APPROVE_SEND));
     } else if (notification.type === NotificationType.APPROVE_INVOKE) {
-      yield put(navigate(is_running ? ROUTES.NOTIFICATIONS.APPROVE_INVOKE : ROUTES.AUTH.LOGIN));
+      yield put(navigate(requiresPassword ? ROUTES.AUTH.LOGIN : ROUTES.NOTIFICATIONS.APPROVE_INVOKE));
     } else if (notification.type === NotificationType.CONNECT) {
-      yield put(navigate(is_running ? ROUTES.NOTIFICATIONS.CONNECT : ROUTES.AUTH.LOGIN));
+      yield put(navigate(requiresPassword ? ROUTES.AUTH.LOGIN : ROUTES.NOTIFICATIONS.CONNECT));
     }
   } else {
-    yield put(navigate(is_running && localStorage.getItem('locked') ? ROUTES.WALLET.BASE : ROUTES.AUTH.LOGIN));
+    yield put(navigate(requiresPassword ? ROUTES.AUTH.LOGIN : ROUTES.WALLET.BASE));
   }
 }
 
@@ -159,7 +163,7 @@ function* startWalletSaga(action: ReturnType<typeof actions.startWallet.request>
 
     // Validate password first to provide reliable UX and to avoid starting the wallet with an invalid password.
     yield call(() => WasmWallet.checkPassword(action.payload));
-    yield call([wallet, wallet.start], action.payload);
+    yield call(startWallet, action.payload);
 
     const enabled = (yield call(getSavePasswordSetting) as unknown) as boolean;
     if (enabled) {

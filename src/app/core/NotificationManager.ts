@@ -2,11 +2,6 @@ import * as extensionizer from 'extensionizer';
 import { NotificationType } from '@core/types';
 import ExtensionPlatform from './Extension';
 
-// Lazily resolved at call time to avoid a circular dependency:
-// WasmWallet → NotificationManager → rootStore → store → saga → auth/saga → WasmWallet
-// eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-const getStore = (): any => require('@app/store/rootStore').default;
-
 const NOTIFICATION_HEIGHT = 600;
 const NOTIFICATION_WIDTH = 900;
 
@@ -28,6 +23,8 @@ export default class NotificationManager {
   private static instance: NotificationManager;
 
   private uiIsTriggering = false;
+
+  private openingPopup = false;
 
   private popupId = null;
 
@@ -117,13 +114,14 @@ export default class NotificationManager {
         req,
         info,
         appname: appname ?? req?.appname ?? this.appname,
-        assets: getStore().getState().wallet.assets,
       },
     };
     this.openPopup();
   }
 
   openContractNotification(req, info, amounts, appname?: string) {
+    // Assets are sourced by the notification UI from its own store (the engine
+    // runs in the offscreen document and has no UI redux store).
     this.notification = {
       type: NotificationType.APPROVE_INVOKE,
       params: {
@@ -131,7 +129,6 @@ export default class NotificationManager {
         info,
         amounts,
         appname: appname ?? req?.appname ?? this.appname,
-        assets: getStore().getState().wallet.assets,
       },
     };
     this.openPopup();
@@ -140,30 +137,35 @@ export default class NotificationManager {
   /** Called by api.ts when the notification popup closes (port disconnect). */
   closeNotification() {
     this.notificationIsOpen = false;
+    if (!this.openingPopup) {
+      this.notification = null;
+      this.appname = '';
+    }
     this.popupResolve?.();
     this.popupResolve = null;
   }
 
-  checkForError = () => {
-    const { lastError } = extensionizer.runtime;
-    if (!lastError) {
-      return undefined;
-    }
-    if (lastError.stack && lastError.message) {
-      return lastError;
-    }
-    return new Error(lastError.message);
-  };
-
-  getActiveTabs = () => new Promise<any[]>((resolve, reject) => {
-    extensionizer.tabs.query({ active: true }, (tabs) => {
-      const error = this.checkForError();
-      if (error) {
-        return reject(error);
-      }
-      return resolve(tabs);
+  // Delegate a window/tab operation to the service worker. The engine runs in an
+  // offscreen document, which has no access to chrome.windows / chrome.tabs.
+  // eslint-disable-next-line class-methods-use-this
+  private sw<T = any>(op: string, payload?: any): Promise<T> {
+    return new Promise((resolve, reject) => {
+      extensionizer.runtime.sendMessage({ target: 'sw-winop', op, payload }, (res) => {
+        const { lastError } = extensionizer.runtime;
+        if (lastError) {
+          reject(new Error(lastError.message));
+          return;
+        }
+        if (res && res.error) {
+          reject(new Error(res.error));
+          return;
+        }
+        resolve(res ? res.result : undefined);
+      });
     });
-  });
+  }
+
+  getActiveTabs = () => this.sw<any[]>('getActiveTabs');
 
   async triggerUi() {
     const tabs = await this.getActiveTabs();
@@ -190,7 +192,12 @@ export default class NotificationManager {
 
   async openPopup() {
     this.notificationIsOpen = true;
-    await this.triggerUi();
+    this.openingPopup = true;
+    try {
+      await this.triggerUi();
+    } finally {
+      this.openingPopup = false;
+    }
     await new Promise<void>((resolve) => {
       this.popupResolve = resolve;
       // 60-second hard ceiling in case the popup is force-closed without signalling.
@@ -206,33 +213,37 @@ export default class NotificationManager {
     const popup = await this.getPopup();
 
     if (popup) {
-      await this.platform.focusWindow(popup.id);
-    } else {
-      const left = window.screen.width / 2 - NOTIFICATION_WIDTH / 2; // Calculate the horizontal position
-      const top = window.screen.height / 2 - NOTIFICATION_HEIGHT / 2;
-
-      const popupWindow = await this.platform.openWindow({
-        url: 'notification.html',
-        type: 'popup',
-        width: NOTIFICATION_WIDTH,
-        height: NOTIFICATION_HEIGHT,
-        left,
-        top,
-      });
-
-      if (popupWindow.left !== left && popupWindow.state !== 'fullscreen') {
-        await this.platform.updateWindowPosition(popupWindow.id, left, top);
-      }
-      this.popupId = popupWindow.id;
+      await this.sw('focusWindow', { windowId: popup.id });
+      return;
     }
+
+    // Center on the last focused window (offscreen has no reliable window.screen).
+    const focused = await this.sw<any>('getLastFocused').catch(() => null);
+    const baseLeft = focused?.left ?? 0;
+    const baseTop = focused?.top ?? 0;
+    const baseWidth = focused?.width ?? 1280;
+    const baseHeight = focused?.height ?? 800;
+    const left = Math.round(baseLeft + baseWidth / 2 - NOTIFICATION_WIDTH / 2);
+    const top = Math.round(baseTop + baseHeight / 2 - NOTIFICATION_HEIGHT / 2);
+
+    const popupWindow = await this.sw<any>('openWindow', {
+      url: 'notification.html',
+      type: 'popup',
+      width: NOTIFICATION_WIDTH,
+      height: NOTIFICATION_HEIGHT,
+      left,
+      top,
+    });
+
+    this.popupId = popupWindow?.id ?? null;
   }
 
   async closeTab(tabId) {
-    return this.platform.closeTab(tabId);
+    return this.sw('closeTab', { tabId });
   }
 
   private async getPopup() {
-    const windows = await this.platform.getAllWindows();
+    const windows = await this.sw<any[]>('getAllWindows');
     return this.getPopupIn(windows);
   }
 

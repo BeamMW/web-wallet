@@ -81,18 +81,6 @@ export const convertLowAmount = (amount: number) => {
   //   : amount;
 };
 
-export const getBeamTabId = () => {
-  const tabId = localStorage.getItem('beamTabId');
-  if (!tabId) return null;
-  return new Promise((rs) => {
-    chrome.tabs.query({ status: 'complete' }, (tabs) => {
-      const tab = tabs?.find((t) => t.id.toString() === tabId);
-      if (tab) rs(tab?.id);
-      rs(null);
-    });
-  });
-};
-
 type Func<T extends any[]> = (...args: T) => void;
 
 export function debounce<T extends any[]>(func: Func<T>, delay: number): Func<T> {

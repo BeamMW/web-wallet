@@ -330,6 +330,7 @@ export enum Environment {
   POPUP = 'popup',
   NOTIFICATION = 'notification',
   FULLSCREEN = 'fullscreen',
+  OFFSCREEN = 'offscreen',
   BACKGROUND = 'background',
   CONTENT = 'content',
   CONTENT_REQ = 'content_req',

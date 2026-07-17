@@ -115,8 +115,9 @@ css`
     }
 
     html[data-env='popup'] {
-      width: 750px;
-      margin: 0 auto;
+      width: 400px;
+      height: 600px;
+      overflow: hidden;
     }
 
     html * {
