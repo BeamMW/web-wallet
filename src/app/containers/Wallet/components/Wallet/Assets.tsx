@@ -20,30 +20,31 @@ const Tile = styled.li`
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
+  padding: 11px 12px;
+  clip-path: var(--cp-clip-sm);
+  border: 1px solid var(--cp-hair);
+  background: rgba(255, 255, 255, 0.015);
   cursor: pointer;
   transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.13);
+    background: rgba(0, 246, 210, 0.03);
+    border-color: var(--cp-line);
     transform: translateY(-1px);
   }
 `;
 
 const IconBox = styled.div<{ boxColor: string }>`
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   background: ${({ boxColor }) => `${boxColor}1a`};
+  box-shadow: 0 0 12px -4px ${({ boxColor }) => boxColor};
 `;
 
 const iconClass = css`
@@ -59,18 +60,20 @@ const Info = styled.div`
 `;
 
 const AssetName = styled.div`
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 2px;
+  color: var(--cp-muted);
+  margin-bottom: 3px;
 `;
 
 const Amount = styled.div`
-  font-size: 15px;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cp-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -79,8 +82,9 @@ const Amount = styled.div`
 const rateClass = css`
   margin: 0 !important;
   margin-top: 0 !important;
+  font-family: var(--font-mono) !important;
   font-size: 12px !important;
-  color: rgba(255, 255, 255, 0.35) !important;
+  color: var(--cp-accent-3) !important;
   font-weight: 500 !important;
   white-space: nowrap;
   flex-shrink: 0;

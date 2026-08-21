@@ -21,18 +21,23 @@ const SeedListStyled = styled.ol`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding: 0 10px;
+  gap: 6px 8px;
+  padding: 0;
 
   > li {
     counter-increment: counter;
-    display: inline-block;
-    width: 140px;
-    height: 32px;
-    line-height: 30px;
-    margin-bottom: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    width: calc(50% - 4px);
+    height: 36px;
+    margin-bottom: 4px;
+    border: 1px solid var(--cp-line);
+    clip-path: var(--cp-clip-sm);
+    background: rgba(0, 0, 0, 0.25);
     text-align: left;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--cp-text);
 
     &:before {
       display: inline-block;
@@ -40,13 +45,15 @@ const SeedListStyled = styled.ol`
       width: 20px;
       height: 20px;
       line-height: 20px;
-      margin: 5px 10px 5px 9px;
+      margin: 0 10px 0 9px;
       border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.2);
+      background-color: rgba(0, 246, 210, 0.15);
       text-align: center;
       font-size: 10px;
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--cp-accent);
+      flex-shrink: 0;
     }
+  }
 `;
 
 const Registration: React.FC = () => {

@@ -2,19 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 import {
-  IconEye, IconLockWallet, MenuIcon, IconEyeCrossed, InfoButton,
+  IconEye, IconLockWallet, MenuIcon, IconEyeCrossed, InfoButton, AngleBackIcon,
 } from '@app/shared/icons';
 
 import { useNavigate } from 'react-router-dom';
-import config from '@app/config';
 
 import useOutsideClick from '@app/shared/hooks/OutsideClickHook';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '@app/shared/store';
 import { selectIsBalanceHidden } from '@app/shared/store/selectors';
 import Logo from './Logo';
-import BackButton from './BackButton';
-import Title from './Title';
 import Button from './Button';
 import Menu from './Menu';
 
@@ -29,178 +26,233 @@ interface WindowProps {
   children?: React.ReactNode;
 }
 
-function getColor(pallete: string): string {
+function accentColor(pallete: string): string {
   switch (pallete) {
     case 'blue':
-      return 'var(--color-blue)';
+      return 'var(--cp-accent-3)';
     case 'purple':
-      return 'var(--color-purple)';
+      return 'var(--cp-accent-2)';
     default:
-      return `var(--color-gradient-finish-${config.theme})`;
+      return 'var(--cp-accent)';
   }
 }
 
-const ContainerStyled = styled.div<WindowProps>`
+const HEADER_H = 56;
+
+const ContainerStyled = styled.div<{ pallete: string }>`
   position: relative;
   min-height: 100vh;
-  padding: 130px 40px 30px;
-  text-align: center;
-
-  &:before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    top: 50px;
-    left: 0;
-    width: 100%;
-    height: 100px;
-    background-image: linear-gradient(
-      to top,
-      ${`var(--color-gradient-start-${config.theme})`},
-      ${({ pallete }) => getColor(pallete)} 150%
-    );
-  }
-`;
-
-const HeadingStyled = styled.div<{ pallete: string }>`
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  width: 100%;
-  height: 130px;
-  padding-top: 50px;
-  background-color: ${`var(--color-bg-${config.theme})`};
-
-  &:before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    top: 50px;
-    left: 0;
-    width: 100%;
-    height: 100px;
-    background-image: linear-gradient(
-      to top,
-      ${`var(--color-gradient-start-${config.theme})`},
-      ${({ pallete }) => getColor(pallete)} 150%
-    );
-  }
-`;
-
-const FrameStyled = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-height: 600px;
-  height: 42px;
+  display: flex;
+  flex-direction: column;
   text-align: left;
 `;
 
-const menuButtonStyle = css`
-  position: absolute;
-  z-index: 3;
-  top: 74px;
-  left: 12px;
-  margin: 0;
-`;
+// ── HUD header ──────────────────────────────────────────────────────────────
+const HeaderStyled = styled.header<{ pallete: string }>`
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  height: ${HEADER_H}px;
+  padding: 0 14px;
+  background: linear-gradient(180deg, rgba(0, 246, 210, 0.05), rgba(5, 7, 13, 0.85) 90%), rgba(5, 7, 13, 0.72);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--cp-line);
 
-const menuEyeStyle = css`
-  position: absolute;
-  z-index: 3;
-  top: 74px;
-  right: 12px;
-  margin: 0;
-`;
-
-const menuInfoStyle = css`
-  position: absolute;
-  z-index: 3;
-  top: 74px;
-  right: 55px;
-  margin: 0;
-`;
-
-const OnlineWrapper = styled.div`
-  position: absolute;
-  top: 17px;
-  width: 250px;
-  display: inline-block;
-  > svg {
-    margin: 0 30px;
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, ${({ pallete }) => accentColor(pallete)}, transparent);
+    opacity: 0.7;
   }
-  > .online-ico {
-    width: 10px;
-    height: 10px;
-    margin: 0 10px 0 0;
-    box-shadow: 0 0 5px 0 rgba(0, 246, 210, 0.7);
-    background-color: #00f6d2;
+`;
+
+// Left side (brand + online, or back + title) yields space and truncates.
+const LeftCluster = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+`;
+
+// Right side (action buttons) must never be pushed off the popup edge.
+const RightCluster = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+`;
+
+const Brand = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+
+  > b {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: var(--cp-text);
+  }
+`;
+
+const logoIconClass = css`
+  width: 26px !important;
+  height: 26px !important;
+  margin: 0 !important;
+  filter: drop-shadow(0 0 7px rgba(0, 246, 210, 0.5));
+`;
+
+const HeadTitle = styled.h2<{ pallete: string }>`
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cp-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const Online = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cp-muted);
+
+  > i {
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    display: inline-block;
-  }
-  > .online-text {
-    font-size: 14px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    color: #8da1ad;
+    background: var(--cp-accent);
+    box-shadow: 0 0 8px var(--cp-accent);
+    animation: cp-pulse 2.4s ease-in-out infinite;
   }
 `;
 
-const BurgerWrapper = styled.div`
-  position: absolute;
-  top: 17px;
-  right: 10px;
+const hudBtnClass = css`
+  width: 32px;
+  height: 32px;
+  display: grid !important;
+  place-items: center;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--cp-muted);
+  border: 1px solid var(--cp-line);
+  background: rgba(0, 0, 0, 0.28);
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  transition: color 0.15s, border-color 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    color: var(--cp-accent);
+    border-color: var(--cp-accent);
+    box-shadow: 0 0 12px -3px rgba(0, 246, 210, 0.5);
+  }
+
+  > svg {
+    width: 17px;
+    height: 17px;
+    vertical-align: middle;
+  }
+`;
+
+// ── content ─────────────────────────────────────────────────────────────────
+const Content = styled.div`
+  flex: 1;
+  padding: 16px 14px 22px;
+
+  :global(html[data-env='fullscreen']) & {
+    padding: 22px 18px 28px;
+  }
+`;
+
+// ── kebab (lock) ────────────────────────────────────────────────────────────
+const Kebab = styled.div`
+  position: relative;
+
   > .kebab {
     cursor: pointer;
-    width: 24px;
-    height: 24px;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--cp-line);
+    background: rgba(0, 0, 0, 0.28);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+
     div {
-      background-color: #92abba;
       width: 3px;
       height: 3px;
       border-radius: 50%;
-      :nth-child(2) {
+      background-color: var(--cp-muted);
+      &:nth-child(2) {
         margin: 3px 0;
       }
     }
+
+    &:hover {
+      border-color: var(--cp-accent-2);
+      div {
+        background-color: var(--cp-accent-2);
+      }
+    }
   }
+
   > .burger-content {
-    padding: 20px 0;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.14);
-    background-color: ${`var(--color-popup-${config.theme})`};
-    width: 205px;
     position: absolute;
-    right: 8px;
-    top: 16px;
+    right: 0;
+    top: 40px;
     z-index: 100;
+    width: 190px;
+    padding: 6px;
+    background: var(--cp-panel);
+    border: 1px solid var(--cp-line-2);
+    clip-path: var(--cp-clip);
+    box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.8);
+
     .burger-item {
       display: flex;
       align-items: center;
-      padding: 10px 20px;
-      font-size: 16px;
-      font-weight: normal;
-      font-stretch: normal;
-      font-style: normal;
-      line-height: normal;
-      letter-spacing: normal;
-      color: #fff;
+      gap: 12px;
+      padding: 11px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cp-text);
       cursor: pointer;
-      opacity: 0.8;
-      &:hover {
-        opacity: 1;
-        background: ${`var(--color-hover-${config.theme})`};
+      clip-path: var(--cp-clip-sm);
+
+      > svg {
+        width: 17px;
+        height: 17px;
+        color: var(--cp-accent-2);
       }
-      span {
-        margin-left: 14px;
+
+      &:hover {
+        background: rgba(218, 104, 245, 0.1);
       }
     }
   }
@@ -278,49 +330,64 @@ export const Window: React.FC<WindowProps> = ({
 
   return (
     <ContainerStyled pallete={pallete}>
-      <HeadingStyled pallete={pallete}>
-        <FrameStyled>
-          <Logo size="icon" />
-          <OnlineWrapper>
-            <span className="online-ico" />
-            <span className="online-text">online</span>
-          </OnlineWrapper>
-          <BurgerWrapper>
-            <div className="kebab" onClick={() => handleBurger()} aria-hidden="true">
-              <div />
-              <div />
-              <div />
-            </div>
-            {isOpened && (
-              <div className="burger-content" ref={wrapperRef}>
-                <div className="burger-item" onClick={stopWallet} aria-hidden="true">
-                  <IconLockWallet />
-                  <span>Lock Wallet</span>
+      <HeaderStyled pallete={pallete}>
+        <LeftCluster>
+          {primary ? (
+            <>
+              <Brand>
+                <Logo size="icon" className={logoIconClass} />
+                <b>BEAM</b>
+              </Brand>
+              <Online>
+                <i />
+                online
+              </Online>
+            </>
+          ) : (
+            <>
+              <Button variant="icon" icon={AngleBackIcon} className={hudBtnClass} onClick={handleBackClick} />
+              <HeadTitle pallete={pallete}>{title}</HeadTitle>
+            </>
+          )}
+        </LeftCluster>
+
+        <RightCluster>
+          {showInfoButton && (
+            <Button variant="icon" icon={InfoButton} className={hudBtnClass} onClick={navigateToInfo} />
+          )}
+          {showHideButton && (
+            <Button
+              variant="icon"
+              icon={!isBalanceHidden ? IconEye : IconEyeCrossed}
+              className={hudBtnClass}
+              onClick={hideBalance}
+            />
+          )}
+          {primary && (
+            <>
+              <Button variant="icon" icon={MenuIcon} className={hudBtnClass} onClick={handleMenuClick} />
+              <Kebab>
+                <div className="kebab" onClick={handleBurger} aria-hidden="true">
+                  <div />
+                  <div />
+                  <div />
                 </div>
-              </div>
-            )}
-          </BurgerWrapper>
-        </FrameStyled>
-        <Title variant="heading">{title}</Title>
-        {showInfoButton && (
-          <Button variant="icon" icon={InfoButton} className={menuInfoStyle} onClick={navigateToInfo} />
-        )}
-        {showHideButton && (
-          <Button
-            variant="icon"
-            icon={!isBalanceHidden ? IconEye : IconEyeCrossed}
-            className={menuEyeStyle}
-            onClick={hideBalance}
-          />
-        )}
-      </HeadingStyled>
-      {primary ? (
-        <Button variant="icon" icon={MenuIcon} className={menuButtonStyle} onClick={handleMenuClick} />
-      ) : (
-        <BackButton onClick={handleBackClick} />
-      )}
+                {isOpened && (
+                  <div className="burger-content" ref={wrapperRef}>
+                    <div className="burger-item" onClick={stopWallet} aria-hidden="true">
+                      <IconLockWallet />
+                      <span>Lock Wallet</span>
+                    </div>
+                  </div>
+                )}
+              </Kebab>
+            </>
+          )}
+        </RightCluster>
+      </HeaderStyled>
+
       {menuVisible && <Menu onCancel={handleCancelClick} closing={menuClosing} />}
-      {children}
+      <Content>{children}</Content>
     </ContainerStyled>
   );
 };

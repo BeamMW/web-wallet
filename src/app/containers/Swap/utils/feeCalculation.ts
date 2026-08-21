@@ -50,18 +50,33 @@ export function calcRelayFee(params: RelayFeeParams): number {
   return result;
 }
 
+// Arbitrum orders by arrival, not by tip: maxPriorityFeePerGas in the payload is
+// ethers' generic 1.5 gwei default and is not actually paid there. Adding it would
+// inflate the relayer fee ~75x, since Arbitrum's gasPrice is ~0.02 gwei.
+// Matches both 'arbitrum' and 'arbitrum-sepolia' keys in /bridges/gasprices.
+function ignoresPriorityFee(network?: string): boolean {
+  return !!network && network.startsWith('arbitrum');
+}
+
 /**
  * Extract gas price from fee data
+ *
+ * `/bridges/gasprices` returns ethers' FeeData per network:
+ * { lastBaseFeePerGas, maxFeePerGas, maxPriorityFeePerGas, gasPrice } as hex BigNumbers.
+ * We build the estimate from `gasPrice` (eth_gasPrice — base fee plus whatever tip the
+ * node's oracle sees) rather than `maxFeePerGas`, because ethers derives the latter as
+ * `lastBaseFeePerGas * 2 + maxPriorityFeePerGas`, which double-counts headroom the
+ * relayer does not spend.
+ *
  * @param feeData - Gas price data from API
- * @param debugNetwork - Optional network name for debugging
+ * @param network - Network key from the gasprices payload (e.g. 'arbitrum', 'ethereum')
  * @returns Gas price in Gwei
  */
-export function getGasPrice(feeData: GasPriceItem, debugNetwork?: string): number {
+export function getGasPrice(feeData: GasPriceItem, network?: string): number {
   // Parse hex-encoded wei values safely (no JS number precision issues).
   const baseWei = EthersBigNumber.from(feeData.gasPrice?.hex ?? 0);
   const rawPriorityWei = EthersBigNumber.from(feeData.maxPriorityFeePerGas?.hex ?? 0);
-  // Arbitrum: ignore priority fee.
-  const priorityWei = debugNetwork === 'arbitrum' ? EthersBigNumber.from(0) : rawPriorityWei;
+  const priorityWei = ignoresPriorityFee(network) ? EthersBigNumber.from(0) : rawPriorityWei;
 
   // Apply safety factor (1.2x) using integer math; ceil to avoid underestimating.
   const baseWithSafetyWei = baseWei.mul(12).add(9).div(10);

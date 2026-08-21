@@ -12,13 +12,14 @@ import WasmWallet from '@core/WasmWallet';
 import { navigate, setError, unlockWallet } from '@app/shared/store/actions';
 import { ROUTES } from '@app/shared/constants';
 import {
-  ConnectedData, Environment, NotificationType, SyncProgress,
+  ConnectedData, Environment, NotificationType, SyncProgress, SyncStateSnapshot,
 } from '@core/types';
 import NotificationController from '@core/NotificationController';
 import { DatabaseSyncProgress, SyncStep } from '@app/containers/Auth/interfaces';
 import {
   clearSavedPassword, getSavedPassword, getSavePasswordSetting, savePassword,
 } from '@core/RememberPassword';
+import { getWalletLocked, setWalletLocked } from '@core/lockState';
 
 import { actions } from '.';
 import store from '../../../../index';
@@ -36,14 +37,38 @@ const getRandomIds = () => {
   return result;
 };
 
-export function* handleConnect({ notification, is_running, onboarding }: ConnectedData) {
+/**
+ * Copy the engine's sync snapshot into the store. A reopened popup starts with an
+ * empty auth state even though the engine has been syncing the whole time.
+ */
+function* restoreSyncState(sync_state: SyncStateSnapshot) {
+  yield put(actions.setSyncStep(sync_state.step));
+  if (sync_state.sync_progress) {
+    yield put(actions.updateWalletSyncProgress(sync_state.sync_progress));
+  }
+  if (sync_state.download_progress) {
+    yield put(actions.downloadDatabaseFile(sync_state.download_progress));
+  }
+  if (sync_state.restore_progress) {
+    yield put(actions.restoreWallet(sync_state.restore_progress));
+  }
+  yield put(actions.setSyncedWalletState(sync_state.is_synced));
+}
+
+export function* handleConnect({
+  notification, is_running, onboarding, sync_state,
+}: ConnectedData) {
   if (onboarding) {
     yield put(navigate(ROUTES.AUTH.BASE));
     return;
   }
 
-  const isLocked = !!localStorage.getItem('locked');
+  const isLocked = (yield call(getWalletLocked) as unknown) as boolean;
   const requiresPassword = !is_running || isLocked;
+
+  if (is_running && sync_state) {
+    yield* restoreSyncState(sync_state);
+  }
 
   if (requiresPassword) {
     try {
@@ -59,6 +84,16 @@ export function* handleConnect({ notification, is_running, onboarding }: Connect
     } catch {
       // ignore auto-unlock failures; fall back to normal navigation
     }
+  }
+
+  // The engine kept syncing while this UI was closed. Show the progress screen
+  // instead of an empty wallet; handleProgress routes onward once the tip is reached.
+  if (!requiresPassword && sync_state && !sync_state.is_synced) {
+    if (notification) {
+      NotificationController.setNotification(notification);
+    }
+    yield put(navigate(ROUTES.AUTH.PROGRESS));
+    return;
   }
 
   if (notification) {
@@ -87,7 +122,7 @@ export function* handleProgress({
   if (is_wallet_synced) return;
   if (current_state_hash === tip_state_hash) {
     yield put(actions.setSyncedWalletState(true));
-    const isLocked = localStorage.getItem('locked');
+    const isLocked = (yield call(getWalletLocked) as unknown) as boolean;
     if (getEnvironment() !== Environment.NOTIFICATION) {
       if (isLocked) {
         yield put(navigate(ROUTES.AUTH.LOGIN));
@@ -129,12 +164,16 @@ export function* handleSyncStep(payload: SyncStep) {
 }
 
 export function* handleUnlockWallet(payload: boolean) {
+  yield call(setWalletLocked, false);
   yield put(unlockWallet());
   const notification = NotificationController.getNotification();
   if (!notification) {
     if (payload) {
       setTimeout(() => {
-        store.dispatch(navigate(ROUTES.WALLET.BASE));
+        // Wallet was already running. It may still be catching up (the engine keeps
+        // syncing while the popup is closed), so honour the known sync state.
+        const { is_wallet_synced } = store.getState().auth;
+        store.dispatch(navigate(is_wallet_synced ? ROUTES.WALLET.BASE : ROUTES.AUTH.PROGRESS));
       }, 0);
     } else {
       store.dispatch(navigate(ROUTES.AUTH.PROGRESS));

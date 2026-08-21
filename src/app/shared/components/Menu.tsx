@@ -9,7 +9,6 @@ import {
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
-import config from '@app/config';
 import Button from './Button';
 import BackDrop from './Backdrop';
 
@@ -43,9 +42,12 @@ const ContainerStyled = styled.nav<{ closing: boolean }>`
   z-index: 101;
   top: 0;
   left: 0;
-  width: 319px;
+  width: 300px;
+  max-width: 82%;
   height: 100vh;
-  background: ${`var(--color-popup-${config.theme})`};
+  background: var(--cp-panel);
+  border-right: 1px solid var(--cp-line);
+  box-shadow: 1px 0 0 rgba(0, 246, 210, 0.35), 0 0 40px -10px rgba(0, 246, 210, 0.4);
   animation: ${({ closing }) => (closing ? 'menuSlideOut' : 'menuSlideIn')} 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   will-change: transform;
   overflow: hidden;
@@ -74,23 +76,42 @@ const ListStyled = styled.ul`
 `;
 
 const ListItemStyled = styled.li<{ active: boolean }>`
-  height: 60px;
-  line-height: 60px;
+  position: relative;
+  height: 56px;
   padding-left: 30px;
-  background-image: ${({ active }) => (!active ? 'none' : 'linear-gradient(to right, rgba(5, 226, 194, 0.1), rgba(5, 226, 194, 0))')};
+  background-image: ${({ active }) => (!active ? 'none' : 'linear-gradient(to right, rgba(0, 246, 210, 0.1), rgba(0, 246, 210, 0))')};
   text-align: left;
-  font-size: 16px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: ${({ active }) => (active ? 'var(--cp-accent)' : 'var(--cp-muted)')};
   cursor: ${({ active }) => (active ? 'default' : 'pointer')};
   display: flex;
   align-items: center;
-  > svg {
-    margin-right: 26px;
+  transition: color 0.15s, background 0.15s;
+
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--cp-accent);
+    box-shadow: 0 0 10px var(--cp-accent);
+    opacity: ${({ active }) => (active ? 1 : 0)};
   }
-  &.dex {
-    > svg {
-      margin-left: -10px;
-      margin-right: 16px;
-    }
+
+  &:hover {
+    color: ${({ active }) => (active ? 'var(--cp-accent)' : 'var(--cp-text)')};
+  }
+
+  > svg {
+    width: 22px;
+    height: 22px;
+    margin-right: 22px;
+    flex-shrink: 0;
   }
 `;
 

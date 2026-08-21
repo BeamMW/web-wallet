@@ -233,11 +233,21 @@ window.addEventListener('message', (event) => {
     return;
   }
 
-  if (event.data && event.data.type === 'BEAM_WALLET_INPAGE_READY' && event.data.version === 1) {
+  // Any script on the page can postMessage to window — strings, null, arrays.
+  // Only object payloads carry a wallet message; everything else is not ours.
+  if (!event.data || typeof event.data !== 'object') {
+    return;
+  }
+
+  if (event.data.type === 'BEAM_WALLET_INPAGE_READY' && event.data.version === 1) {
     setupInpageChannel();
     // Do NOT eagerly create the RPC port here — it would trigger ensureWalletTabOpen
     // on every page load even when the user never interacts with the wallet.
     // The port is created lazily in inpagePort.onmessage when a real RPC call arrives.
+    return;
+  }
+
+  if (event.data.type !== 'create_beam_api') {
     return;
   }
 
@@ -249,8 +259,6 @@ window.addEventListener('message', (event) => {
     is_reconnect: event.data.is_reconnect,
   };
 
-  if (event.data.type === 'create_beam_api') {
-    // getExtensionPort() creates the port lazily (and registers the response listener once).
-    getExtensionPort().postMessage(reqData);
-  }
+  // getExtensionPort() creates the port lazily (and registers the response listener once).
+  getExtensionPort().postMessage(reqData);
 });

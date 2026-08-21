@@ -11,7 +11,8 @@ import { createWallet } from '@core/api';
 
 import { ROUTES } from '@app/shared/constants';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setError } from '@app/shared/store/actions';
 import { selectRegistrationSeed, selectIsRestore } from '@app/containers/Auth/store/selectors';
 import { PasswordStrength } from '../../components';
 
@@ -68,6 +69,7 @@ const SetPassword = () => {
   const restoring = useSelector(selectIsRestore());
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const matched = pass === confirm;
   const valid = confirm === '' || matched;
@@ -81,6 +83,11 @@ const SetPassword = () => {
       seed,
       password: pass,
       isSeedConfirmed: true,
+    }).catch((e: any) => {
+      // Wallet creation failed (persist / WASM init / sync) — don't leave the user
+      // stuck on the progress screen believing the wallet exists.
+      dispatch(setError(e?.message ?? String(e ?? 'Failed to create wallet')));
+      navigate(ROUTES.AUTH.BASE);
     });
 
     navigate(ROUTES.AUTH.PROGRESS);

@@ -7,6 +7,7 @@ import config from '@app/config';
 
 import { SyncStep } from '@app/containers/Auth/interfaces';
 import { ExternalAppConnection, NotificationType } from '@core/types';
+import { getWalletLocked, isWalletLockedSync, setWalletLocked } from '@core/lockState';
 
 import {
   BackgroundEvent,
@@ -15,6 +16,7 @@ import {
   Notification,
   RPCEvent,
   RPCMethod,
+  SyncStateSnapshot,
   WalletMethod,
 } from './types';
 import NotificationManager from './NotificationManager';
@@ -85,17 +87,30 @@ export default class WasmWallet {
 
   private contractInfoHandler;
 
-  private contractInfoHandlerCallback;
-
   private sendHandler;
 
-  private sendHandlerCallback;
+  // Approval callbacks are keyed by the WASM request id. A single slot would be
+  // overwritten whenever two dApps (or two tabs) request approval concurrently,
+  // stranding the first request's callback forever.
+  private contractInfoCallbacks = new Map<string, any>();
+
+  private sendCallbacks = new Map<string, any>();
 
   private apps: Record<string, { appApi: any; appname: string; appurl: string }> = {};
 
   private externalAppMessageHandler: ((appurl: string, json: string) => void) | null = null;
 
   private connectedApps = [];
+
+  // Sync state lives here, not in the UI store: the popup is torn down on every
+  // close while the engine keeps syncing, so this is the only durable copy.
+  private syncState: SyncStateSnapshot = {
+    step: SyncStep.SYNC,
+    is_synced: false,
+    sync_progress: null,
+    download_progress: null,
+    restore_progress: null,
+  };
 
   static getInstance() {
     if (this.instance != null) {
@@ -115,11 +130,11 @@ export default class WasmWallet {
     this.externalAppMessageHandler(appurl, json);
   }
 
-  callExternalWalletApi(appurl: string, req: { id: string; method: string; params?: any }) {
+  async callExternalWalletApi(appurl: string, req: { id: string; method: string; params?: any }) {
     const app = this.apps[appurl];
     if (!app || !app.appApi) return false;
 
-    if (localStorage.getItem('locked')) {
+    if (await getWalletLocked()) {
       this.emitToExternalApp(appurl, {
         jsonrpc: '2.0',
         id: req.id,
@@ -193,6 +208,7 @@ export default class WasmWallet {
     return new Promise((resolve, reject) => {
       if (pass === '') {
         reject(ErrorMessage.EMPTY);
+        return;
       }
 
       storageLocal.get('wallet', ({ wallet }) => {
@@ -277,7 +293,7 @@ export default class WasmWallet {
     this.eventHandler = handler;
 
     if (is_running !== undefined ? is_running : this.isRunning()) {
-      this.emit(BackgroundEvent.CONNECTED, {
+      this.emitConnected({
         onboarding: false,
         is_running: true,
         notification,
@@ -295,13 +311,13 @@ export default class WasmWallet {
         this.mounted = true;
       }
 
-      this.emit(BackgroundEvent.CONNECTED, {
+      this.emitConnected({
         is_running: false,
         onboarding: !WasmWalletClient.IsInitialized(PATH_DB),
         notification,
       });
     } catch {
-      this.emit(BackgroundEvent.CONNECTED, {
+      this.emitConnected({
         is_running: false,
         onboarding: true,
         notification: null,
@@ -313,19 +329,32 @@ export default class WasmWallet {
     this.contractInfoHandler = handler;
   }
 
-  initcontractInfoHandlerCallback(cb) {
-    this.contractInfoHandlerCallback = cb;
+  registerContractInfoCallback(req, cb) {
+    this.contractInfoCallbacks.set(String(req), cb);
   }
 
   initSendHandler(handler) {
     this.sendHandler = handler;
   }
 
-  initSendHandlerCallback(cb) {
-    this.sendHandlerCallback = cb;
+  registerSendCallback(req, cb) {
+    this.sendCallbacks.set(String(req), cb);
+  }
+
+  private static takeCallback(store: Map<string, any>, req: any, kind: string) {
+    const key = String(req);
+    const cb = store.get(key);
+    if (!cb) {
+      // eslint-disable-next-line no-console
+      console.warn(`No pending ${kind} callback for request ${key} (already resolved?)`);
+      return null;
+    }
+    store.delete(key);
+    return cb;
   }
 
   emit(id: number | RPCEvent | BackgroundEvent, result?: any, error?: any) {
+    this.trackSyncState(id, result);
     this.eventHandler({
       id,
       result,
@@ -333,7 +362,58 @@ export default class WasmWallet {
     });
   }
 
+  /** Every CONNECTED goes out with the current sync snapshot attached, so the UI can route on it. */
+  private emitConnected(data: { is_running: boolean; onboarding: boolean; notification: any }) {
+    this.emit(BackgroundEvent.CONNECTED, {
+      ...data,
+      sync_state: this.getSyncState(),
+    });
+  }
+
+  getSyncState(): SyncStateSnapshot {
+    return { ...this.syncState };
+  }
+
+  /**
+   * Mirror every sync-related event into `syncState` so a UI that connects later
+   * can be handed the current progress instead of starting from zero.
+   */
+  private trackSyncState(id: number | RPCEvent | BackgroundEvent, result: any) {
+    if (result == null) return;
+
+    switch (id) {
+      case BackgroundEvent.CHANGE_SYNC_STEP:
+        this.syncState.step = result as SyncStep;
+        break;
+      case BackgroundEvent.DOWNLOAD_DB_PROGRESS:
+        this.syncState.step = SyncStep.DOWNLOAD;
+        this.syncState.download_progress = { done: result.done, total: result.total };
+        break;
+      case BackgroundEvent.RESTORE_DB_PROGRESS:
+        this.syncState.step = SyncStep.RESTORE;
+        this.syncState.restore_progress = { done: result.done, total: result.total };
+        break;
+      case RPCEvent.SYNC_PROGRESS: {
+        const {
+          current_state_hash, tip_state_hash, sync_requests_done, sync_requests_total,
+        } = result;
+        this.syncState.is_synced = current_state_hash === tip_state_hash;
+        if (!this.syncState.is_synced && sync_requests_done !== 0) {
+          this.syncState.step = SyncStep.SYNC;
+          this.syncState.sync_progress = { sync_requests_done, sync_requests_total };
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
   async start(pass: string) {
+    // Reaching here means the password already checked out. Clear the flag in the
+    // engine rather than waiting for the UI to round-trip it back to us.
+    await setWalletLocked(false);
+
     if (this.isRunning()) {
       this.emit(BackgroundEvent.UNLOCK_WALLET, true);
       if (notificationManager.notification && notificationManager.notification.type === NotificationType.AUTH) {
@@ -356,14 +436,14 @@ export default class WasmWallet {
             type: 'connect',
             params: notificationManager.notification.params,
           };
-          this.emit(BackgroundEvent.CONNECTED, {
+          this.emitConnected({
             onboarding: false,
             is_running: true,
             notification,
           });
         }
       } else {
-        this.emit(BackgroundEvent.CONNECTED, {
+        this.emitConnected({
           onboarding: false,
           is_running: true,
           notification: null,
@@ -379,6 +459,8 @@ export default class WasmWallet {
 
     const responseHandler = (response) => {
       const event = JSON.parse(response);
+      // WASM events bypass emit(), so mirror them into the sync snapshot here too.
+      this.trackSyncState(event.id, event.result);
       this.eventHandler(event);
       this.remoteResponseHandlers.forEach((handler) => {
         handler(event);
@@ -427,6 +509,7 @@ export default class WasmWallet {
       is_running: this.isRunning(),
       onboarding,
       notification: notificationManager.notification ?? null,
+      sync_state: this.getSyncState(),
     };
   }
 
@@ -560,29 +643,36 @@ export default class WasmWallet {
   }
 
   async create({ seed, password, isSeedConfirmed }: CreateWalletParams) {
-    try {
-      if (WasmWallet.isInitialized()) {
-        WasmWallet.removeWallet();
-      }
-
-      WasmWallet.saveWallet(password);
-      WasmWallet.initSettings(isSeedConfirmed);
-      WasmWallet.initConnectedSites();
-
-      WasmWalletClient.CreateWallet(seed, PATH_DB, password);
-      if (!this.wallet) {
-        this.wallet = new WasmWalletClient(PATH_DB, password, config.path_node, MyModule.Network.mainnet);
-      }
-      await this.fastSync();
-
-      this.start(password);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
+    if (WasmWallet.isInitialized()) {
+      WasmWallet.removeWallet();
     }
+
+    // Must complete before we report success: without the password verifier blob
+    // on disk, checkPassword() can never succeed against the new wallet.
+    await WasmWallet.saveWallet(password);
+    WasmWallet.initSettings(isSeedConfirmed);
+    WasmWallet.initConnectedSites();
+
+    WasmWalletClient.CreateWallet(seed, PATH_DB, password);
+    if (!this.wallet) {
+      this.wallet = new WasmWalletClient(PATH_DB, password, config.path_node, MyModule.Network.mainnet);
+    }
+    await this.fastSync();
+
+    await this.start(password);
   }
 
   stop() {
+    // The snapshot describes a wallet that no longer runs — drop it so the next
+    // UI doesn't rehydrate stale progress.
+    this.syncState = {
+      step: SyncStep.SYNC,
+      is_synced: false,
+      sync_progress: null,
+      download_progress: null,
+      restore_progress: null,
+    };
+
     return new Promise((resolve, reject) => {
       if (!this.wallet) {
         resolve(true);
@@ -625,7 +715,10 @@ export default class WasmWallet {
         params.appurl,
         params.appname,
         (json: string) => {
-          if (!localStorage.getItem('locked')) {
+          // WASM invokes this synchronously per response; the mirror is hydrated
+          // long before any app API exists, and callExternalWalletApi already did
+          // the authoritative check on the way in.
+          if (!isWalletLockedSync()) {
             this.emitToExternalApp(params.appurl, json);
           } else {
             // Preserve the response id so inpage can resolve/reject the pending call.
@@ -694,7 +787,7 @@ export default class WasmWallet {
           type: 'connect',
           params,
         };
-        this.emit(BackgroundEvent.CONNECTED, {
+        this.emitConnected({
           onboarding: false,
           is_running: true,
           notification,
@@ -723,27 +816,23 @@ export default class WasmWallet {
   }
 
   notificationApproveInfo(params: any) {
-    if (params.req) {
-      this.contractInfoHandlerCallback.contractInfoApproved(params.req);
-    }
+    if (params.req === undefined || params.req === null) return;
+    WasmWallet.takeCallback(this.contractInfoCallbacks, params.req, 'contract info')?.contractInfoApproved(params.req);
   }
 
   notificationRejectInfo(params: any) {
-    if (params.req) {
-      this.contractInfoHandlerCallback.contractInfoRejected(params.req);
-    }
+    if (params.req === undefined || params.req === null) return;
+    WasmWallet.takeCallback(this.contractInfoCallbacks, params.req, 'contract info')?.contractInfoRejected(params.req);
   }
 
   notificationApproveSend(params: any) {
-    if (params.req) {
-      this.sendHandlerCallback.sendApproved(params.req);
-    }
+    if (params.req === undefined || params.req === null) return;
+    WasmWallet.takeCallback(this.sendCallbacks, params.req, 'send')?.sendApproved(params.req);
   }
 
   notificationRejectSend(params: any) {
-    if (params.req) {
-      this.sendHandlerCallback.sendRejected(params.req);
-    }
+    if (params.req === undefined || params.req === null) return;
+    WasmWallet.takeCallback(this.sendCallbacks, params.req, 'send')?.sendRejected(params.req);
   }
 
   async callInternal(id: number, method: WalletMethod, params: any) {
@@ -769,12 +858,18 @@ export default class WasmWallet {
         break;
       }
       case WalletMethod.CreateWallet:
-        this.create(params);
+        try {
+          await this.create(params);
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('createWallet failed:', error);
+          this.emit(id, null, error);
+        }
         break;
       case WalletMethod.StartWallet:
         try {
           await WasmWallet.checkPassword(params);
-          this.start(params);
+          await this.start(params);
           // this.emit(id);
         } catch (error) {
           // this.emit(id, null, error);
@@ -803,7 +898,7 @@ export default class WasmWallet {
               type: 'connect',
               params,
             };
-            this.emit(BackgroundEvent.CONNECTED, {
+            this.emitConnected({
               onboarding: false,
               is_running: true,
               notification,
@@ -839,24 +934,16 @@ export default class WasmWallet {
         this.emit(id, true);
         break;
       case WalletMethod.NotificationApproveInfo:
-        if (params.req) {
-          this.contractInfoHandlerCallback.contractInfoApproved(params.req);
-        }
+        this.notificationApproveInfo(params);
         break;
       case WalletMethod.NotificationRejectInfo:
-        if (params.req) {
-          this.contractInfoHandlerCallback.contractInfoRejected(params.req);
-        }
+        this.notificationRejectInfo(params);
         break;
       case WalletMethod.NotificationApproveSend:
-        if (params.req) {
-          this.sendHandlerCallback.sendApproved(params.req);
-        }
+        this.notificationApproveSend(params);
         break;
       case WalletMethod.NotificationRejectSend:
-        if (params.req) {
-          this.sendHandlerCallback.sendRejected(params.req);
-        }
+        this.notificationRejectSend(params);
         break;
       case WalletMethod.LoadBackgroundLogs:
         this.emit(id, WasmWallet.loadLogs());

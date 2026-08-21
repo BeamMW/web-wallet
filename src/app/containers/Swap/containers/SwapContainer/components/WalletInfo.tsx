@@ -7,9 +7,9 @@ const Bar = styled.div`
   gap: 8px;
   padding: 7px 10px;
   margin-bottom: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip-sm);
 `;
 
 const StatusDot = styled.span<{ ok: boolean }>`
@@ -25,8 +25,8 @@ const Address = styled.span`
   flex: 1;
   font-size: 12px;
   font-weight: 600;
-  font-family: 'SF Mono', 'Fira Code', monospace;
-  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--font-mono);
+  color: var(--cp-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

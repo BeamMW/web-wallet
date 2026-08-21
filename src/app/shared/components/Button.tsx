@@ -23,57 +23,72 @@ const BaseButtonStyled = styled.button<ButtonProps>`
 const ButtonStyled = styled(BaseButtonStyled)`
   display: block;
   width: 100%;
-  max-width: 254px;
-  margin: 0 auto;
-  margin-bottom: 10px;
-  padding: 12px 24px;
+  max-width: 300px;
+  margin: 0 auto 10px;
+  padding: 14px 22px;
   border: none;
-  border-radius: 22px;
-  background-color: ${({ pallete }) => `var(--color-${pallete})`};
+  cursor: pointer;
+  clip-path: var(--cp-clip);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, ${({ pallete }) => `var(--color-${pallete})`} 100%, white 8%),
+    ${({ pallete }) => `var(--color-${pallete})`}
+  );
   text-align: center;
-  font-weight: bold;
-  font-size: 16px;
-  color: var(--color-dark-blue);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: ${({ pallete }) => (pallete === 'purple' ? '#fff' : '#04121a')};
+  box-shadow: 0 0 22px -8px ${({ pallete }) => `var(--color-${pallete})`};
+  transition: box-shadow 0.15s, transform 0.12s, filter 0.15s;
 
   &:hover,
   &:active {
-    box-shadow: 0 0 8px white;
+    transform: translateY(-1px);
+    filter: brightness(1.07);
+    box-shadow: 0 0 30px -6px ${({ pallete }) => `var(--color-${pallete})`};
     cursor: pointer;
   }
 
   > svg {
     vertical-align: sub;
     margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
   }
 `;
 
 const GhostButtonStyled = styled(ButtonStyled)`
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--cp-text);
+  border: 1px solid var(--cp-line);
+  box-shadow: none;
 
   &:hover,
   &:active {
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
-    background-color: rgba(255, 255, 255, 0.3);
+    filter: none;
+    background: rgba(0, 246, 210, 0.08);
+    border-color: ${({ pallete }) => `var(--color-${pallete})`};
+    box-shadow: 0 0 18px -6px ${({ pallete }) => `var(--color-${pallete})`};
   }
 `;
 
 const BlockButtonStyled = styled(GhostButtonStyled)`
   width: 100%;
   max-width: none;
-  padding: 18px;
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.03);
-  font-size: 14px;
+  padding: 16px;
+  font-size: 13px;
   text-align: left;
-  text-transform: uppercase;
-  letter-spacing: 3px;
+  letter-spacing: 0.14em;
   color: ${({ pallete }) => `var(--color-${pallete})`};
 
   &:hover,
   &:active {
-    background-color: rgba(255, 255, 255, 0.1);
-    box-shadow: none;
+    transform: none;
+    background: rgba(255, 255, 255, 0.06);
   }
 `;
 
@@ -90,6 +105,8 @@ const IconButtonStyled = styled(BaseButtonStyled)`
 
   > svg {
     vertical-align: sub;
+    width: 18px;
+    height: 18px;
   }
 `;
 

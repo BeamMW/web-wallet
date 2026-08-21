@@ -5,30 +5,36 @@ export type SwapMode = 'cross-chain' | 'dex';
 
 const TabRow = styled.div`
   display: flex;
-  gap: 4px;
-  padding: 0 20px 14px;
-  max-width: 676px;
+  gap: 6px;
+  padding: 0 0 14px;
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
+
+  :global(html[data-env='fullscreen']) & {
+    max-width: 560px;
+  }
 `;
 
 const Tab = styled.button<{ active: boolean }>`
   flex: 1;
   height: 36px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  clip-path: var(--cp-clip-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-  border: 1px solid ${({ active }) => (active ? 'rgba(218,104,245,0.35)' : 'rgba(255,255,255,0.08)')};
-  background: ${({ active }) => (active ? 'rgba(218,104,245,0.12)' : 'transparent')};
-  color: ${({ active }) => (active ? '#da68f5' : 'rgba(255,255,255,0.38)')};
+  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  border: 1px solid ${({ active }) => (active ? 'var(--cp-line-2)' : 'var(--cp-line)')};
+  background: ${({ active }) => (active ? 'rgba(218,104,245,0.12)' : 'rgba(0,0,0,0.25)')};
+  color: ${({ active }) => (active ? 'var(--cp-accent-2)' : 'var(--cp-muted)')};
+  box-shadow: ${({ active }) => (active ? '0 0 14px -5px rgba(218,104,245,0.6)' : 'none')};
 
   &:hover:not(:disabled) {
-    background: rgba(218, 104, 245, 0.08);
-    color: rgba(255, 255, 255, 0.7);
-    border-color: rgba(218, 104, 245, 0.2);
+    color: var(--cp-text);
+    border-color: var(--cp-line-2);
   }
 `;
 

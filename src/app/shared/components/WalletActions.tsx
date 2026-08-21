@@ -11,8 +11,8 @@ import { setSelectedAssetId } from '@app/containers/Wallet/store/actions';
 const ActionsStyled = styled.div`
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin: 10px -14px 0;
+  gap: 9px;
+  margin: 10px 0 0;
 
   > button {
     margin: 0 !important;

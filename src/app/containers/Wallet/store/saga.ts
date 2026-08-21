@@ -19,19 +19,10 @@ import { ROUTES } from '@app/shared/constants';
 import store from '../../../../index';
 import { actions } from '.';
 
-const { default: Resolution } = require('@unstoppabledomains/resolution');
-
 const FETCH_INTERVAL = 310000;
 
 const API_URL = 'https://api.coingecko.com/api/v3/simple/price';
 const RATE_PARAMS = 'ids=beam&vs_currencies=usd';
-
-const resolution = new Resolution();
-
-function resolveUD(domain, currency) {
-  const resolutionResult = resolution.addr(domain, currency);
-  return resolutionResult;
-}
 
 export function* handleTotals() {
   const { totals } = yield call(getWalletStatus);
@@ -73,13 +64,7 @@ export function* generateAddress(action: ReturnType<typeof actions.generateAddre
 }
 
 export function* validateSendAddress(action: ReturnType<typeof actions.validateSendAddress.request>): Generator {
-  let addressToValidate = action.payload;
-  try {
-    addressToValidate = (yield call(resolveUD, action.payload, 'BEAM')) as string;
-    yield put(actions.setParsedAddressUD(addressToValidate));
-  } catch (e) {
-    yield put(actions.setParsedAddressUD(null));
-  }
+  const addressToValidate = action.payload;
 
   try {
     yield put(actions.setSendTransactionState(false));

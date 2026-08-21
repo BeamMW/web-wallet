@@ -36,9 +36,9 @@ const Right = styled.div`
 const IconWrap = styled.div`
   width: 34px;
   height: 34px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  clip-path: var(--cp-clip-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--cp-line);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,9 +78,9 @@ const MultiPos3 = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 14px;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.95);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cp-text);
   line-height: 1.2;
   min-width: 0;
   white-space: nowrap;
@@ -101,24 +101,26 @@ const DateLine = styled.div`
 `;
 
 const MetaText = styled.div`
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--cp-muted);
   white-space: nowrap;
 `;
 
 const AmountText = styled.div<{ tone: 'in' | 'out' | 'neutral' }>`
+  font-family: var(--font-mono);
   font-size: 14px;
-  font-weight: 900;
+  font-weight: 600;
   letter-spacing: 0.01em;
   color: ${({ tone }) => {
     switch (tone) {
       case 'in':
-        return 'var(--color-blue)';
+        return 'var(--cp-accent-3)';
       case 'out':
-        return 'var(--color-purple)';
+        return 'var(--cp-accent-2)';
       default:
-        return 'rgba(255, 255, 255, 0.9)';
+        return 'var(--cp-text)';
     }
   }};
 `;

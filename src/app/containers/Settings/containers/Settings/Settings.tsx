@@ -26,14 +26,15 @@ import WasmWallet, { ErrorMessage } from '@core/WasmWallet';
 import { RemovePopup } from '../../components';
 
 const ContainerStyled = styled.div`
-  margin: 0 -10px;
+  margin: 0;
 `;
 
 const SectionStyled = styled.div`
-  margin: 14px 0 22px 0;
+  margin: 12px 0 18px 0;
   padding: 14px 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
+  clip-path: var(--cp-clip);
+  border: 1px solid var(--cp-line);
+  background: rgba(255, 255, 255, 0.015);
 `;
 
 const RowStyled = styled.div`
@@ -44,21 +45,26 @@ const RowStyled = styled.div`
 `;
 
 const TitleStyled = styled.div`
-  font-family: 'SFProDisplay';
-  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cp-text);
 `;
 
 const HintStyled = styled.div`
   margin-top: 8px;
   font-size: 12px;
   line-height: 16px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--cp-muted);
 `;
 
 const VersionStyled = styled.div`
   text-align: end;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cp-muted);
+  margin-bottom: 18px;
 `;
 
 const Settings = () => {

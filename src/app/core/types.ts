@@ -1,3 +1,9 @@
+import type {
+  DatabaseSyncProgress,
+  SyncProgress as SyncRequestsProgress,
+  SyncStep,
+} from '@app/containers/Auth/interfaces/SyncProgress';
+
 export type Pallete = 'green' | 'ghost' | 'purple' | 'blue' | 'red' | 'white' | 'default';
 
 export type ButtonVariant = 'regular' | 'ghost' | 'block' | 'link' | 'icon';
@@ -103,10 +109,24 @@ export interface ToggleSubscribeToParams {
 
 // data
 
+/**
+ * Snapshot of where the engine is in the sync pipeline. The engine keeps running
+ * while the popup is closed, so a freshly opened UI has no sync history of its own —
+ * it rehydrates from this instead of showing an empty wallet.
+ */
+export interface SyncStateSnapshot {
+  step: SyncStep;
+  is_synced: boolean;
+  sync_progress: SyncRequestsProgress | null;
+  download_progress: DatabaseSyncProgress | null;
+  restore_progress: DatabaseSyncProgress | null;
+}
+
 export interface ConnectedData {
   is_running: boolean;
   onboarding: boolean;
   notification: Notification;
+  sync_state?: SyncStateSnapshot;
 }
 
 export interface SyncHash {

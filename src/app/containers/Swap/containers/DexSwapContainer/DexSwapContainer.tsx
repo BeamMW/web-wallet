@@ -3,10 +3,10 @@ import React, {
 } from 'react';
 import { toast } from 'react-toastify';
 import { toGroths, fromGroths } from '@core/utils';
-import { executeDexTrade } from '../../utils/dexApi';
+import { executeDexTrade, predictDexTrade } from '../../utils/dexApi';
 import { useDexPools } from '../../utils/useDexPools';
 import { useDexPrediction } from '../../utils/useDexPrediction';
-import { DEX_TX_FEE } from '../../utils/dexConstants';
+import { DEX_TX_FEE, DEFAULT_SLIPPAGE_PERCENT } from '../../utils/dexConstants';
 import { DexSwapForm } from '../SwapContainer/components/DexSwapForm';
 
 const AMOUNT_PATTERN = /^\d*\.?\d*$/;
@@ -36,6 +36,7 @@ export const DexSwapContainer = () => {
   const [fromAmount, setFromAmount] = useState('');
   const [manualKind, setManualKind] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [slippagePercent, setSlippagePercent] = useState(DEFAULT_SLIPPAGE_PERCENT);
 
   const effectiveFromAid = fromAid;
 
@@ -77,6 +78,19 @@ export const DexSwapContainer = () => {
   const selectedKind = selectedPool?.kind ?? availableKinds[0] ?? 1;
 
   const predictedOutput = useMemo(() => (predicted?.buy ? grothsToDisplay(predicted.buy) : null), [predicted]);
+
+  // Floor on what the swap may return. The quote above is a prediction against the
+  // pool's current reserves; by the time the trade lands the price can have moved,
+  // so anything below this is treated as "the quote went stale" and not submitted.
+  const minReceiveGroths = useMemo(
+    () => (predicted?.buy ? Math.floor(predicted.buy * (1 - slippagePercent / 100)) : 0),
+    [predicted, slippagePercent],
+  );
+
+  const minReceiveDisplay = useMemo(
+    () => (minReceiveGroths > 0 ? grothsToDisplay(minReceiveGroths) : null),
+    [minReceiveGroths],
+  );
 
   const fromAmountError = useMemo(() => {
     if (!fromAmount || !fromAsset) return undefined;
@@ -146,13 +160,30 @@ export const DexSwapContainer = () => {
 
       setIsSubmitting(true);
       try {
-        await executeDexTrade({
+        const tradeParams = {
           aid1: toAid, // asset you receive
           aid2: effectiveFromAid, // asset you pay
           kind: selectedPool.kind,
           val1_buy: 0,
           val2_pay: fromGrothsValue,
-        });
+        };
+
+        // The displayed quote is debounced and can be seconds old. Re-price against
+        // the live pool right before signing and bail if the output has dropped
+        // below the slippage floor, rather than accepting whatever the pool gives.
+        const fresh = await predictDexTrade(tradeParams);
+        const freshBuy = fresh?.buy ?? 0;
+
+        if (freshBuy < minReceiveGroths) {
+          toast.error(
+            `Price moved: you would receive ${grothsToDisplay(freshBuy) || '0'} ${toAsset?.name ?? ''}, `
+              + `below your ${slippagePercent}% slippage limit of ${grothsToDisplay(minReceiveGroths)}. `
+              + 'Swap cancelled — retry or raise the tolerance.',
+          );
+          return;
+        }
+
+        await executeDexTrade(tradeParams);
         toast.success('Swap submitted!');
         setFromAmount('');
         reload();
@@ -165,7 +196,17 @@ export const DexSwapContainer = () => {
         setIsSubmitting(false);
       }
     },
-    [canSwap, selectedPool, effectiveFromAid, toAid, fromGrothsValue, reload],
+    [
+      canSwap,
+      selectedPool,
+      effectiveFromAid,
+      toAid,
+      toAsset,
+      fromGrothsValue,
+      minReceiveGroths,
+      slippagePercent,
+      reload,
+    ],
   );
 
   const fromBalanceDisplay = fromAsset ? `${grothsToDisplay(fromAsset.available) || '0'} ${fromAsset.name}` : '—';
@@ -198,6 +239,9 @@ export const DexSwapContainer = () => {
       isMaxDisabled={!fromAsset || fromAsset.available === 0}
       predictedOutput={predictedOutput}
       isPredicting={isPredicting}
+      minReceiveDisplay={minReceiveDisplay}
+      slippagePercent={slippagePercent}
+      onSlippageChange={setSlippagePercent}
       availableKinds={availableKinds}
       selectedKind={selectedKind}
       selectedPool={selectedPool}

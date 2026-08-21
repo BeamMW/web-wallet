@@ -15,17 +15,29 @@ import { ProgressBar } from '../../../../shared/components';
 
 const TitleStyled = styled.h2`
   margin: 0;
-  font-size: 16px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cp-accent);
+  text-shadow: 0 0 16px rgba(0, 246, 210, 0.4);
 `;
 
 const SubtitleStyled = styled.h3`
-  opacity: 0.5;
-  height: 17px;
-  margin: 30px 0;
-  color: white;
-  font-size: 14px;
+  min-height: 17px;
+  margin: 22px 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 400;
-  font-style: italic;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cp-muted);
+
+  &:not(:empty):before {
+    content: '> ';
+    color: var(--cp-accent);
+  }
 `;
 
 // const wallet = WasmWallet.getInstance();
@@ -39,39 +51,34 @@ const Progress = () => {
   const getSyncPercent = () => {
     switch (syncStep) {
       case SyncStep.DOWNLOAD: {
-        const percent = downloadDbProgress.total / downloadDbProgress.done;
-        const title = 'Downloading blockchain info';
-        return { percent, title };
+        const { done, total } = downloadDbProgress;
+        return { done, total, title: 'Downloading blockchain info' };
       }
       case SyncStep.RESTORE: {
-        const percent = databaseSyncProgress.total / databaseSyncProgress.done;
-        const title = 'Unpack blockchain info';
-        return { percent, title };
+        const { done, total } = databaseSyncProgress;
+        return { done, total, title: 'Unpack blockchain info' };
       }
-      case SyncStep.SYNC: {
-        const percent = syncProgress.sync_requests_total / syncProgress.sync_requests_done;
-        const title = 'Syncing with blockchain';
-        return { percent, title };
-      }
+      case SyncStep.SYNC:
       default: {
-        const percent = syncProgress.sync_requests_total / syncProgress.sync_requests_done;
-        const title = 'Syncing with blockchain';
-        return { percent, title };
+        const { sync_requests_done: done, sync_requests_total: total } = syncProgress;
+        return { done, total, title: 'Syncing with blockchain' };
       }
     }
   };
 
-  const { percent, title } = getSyncPercent();
-  const syncPercent = Math.floor(100 / percent);
+  const { done, total, title } = getSyncPercent();
+  // Progress can be unknown right after the popup opens — the engine has not
+  // reported a step yet. Fall back to the indeterminate bar instead of "0%".
+  const known = total > 0;
+  const syncPercent = known ? Math.min(100, Math.max(0, Math.floor((done / total) * 100))) : 0;
 
-  const active = percent > 0;
-  const progress = `${title} ${syncPercent}%`;
+  const progress = known ? `${title} ${syncPercent}%` : title;
 
   return (
     <Splash size="small">
       <TitleStyled>Loading</TitleStyled>
-      <SubtitleStyled>{active && progress}</SubtitleStyled>
-      <ProgressBar active={active} percent={syncPercent} />
+      <SubtitleStyled>{progress}</SubtitleStyled>
+      <ProgressBar active={known} percent={syncPercent} />
       {/* <Footer>
         { loading && (
         <Button variant="ghost" icon={CancelIcon} onClick={handleCancelClick}>

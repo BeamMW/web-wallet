@@ -1,7 +1,6 @@
 import React from 'react';
 import { styled } from '@linaria/react';
 
-import config from '@app/config';
 import { CancelIcon } from '@app/shared/icons';
 
 import Backdrop from './Backdrop';
@@ -22,12 +21,15 @@ const ContainerStyled = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 335px;
-  padding: 30px 20px;
-  border-radius: 10px;
-  background-color: ${`var(--color-popup-${config.theme})`};
+  width: 336px;
+  max-width: calc(100vw - 28px);
+  padding: 26px 20px;
+  clip-path: var(--cp-clip);
+  border: 1px solid var(--cp-line-2);
+  background-color: var(--cp-panel);
+  box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.85), 0 0 40px -18px rgba(218, 104, 245, 0.3);
   text-align: center;
-  color: white;
+  color: var(--cp-text);
 
   > .cancel-header {
     right: 4px;
@@ -37,9 +39,11 @@ const ContainerStyled = styled.div`
 `;
 
 const TitleStyled = styled.h2`
-  font-size: 16px;
-  margin: 0;
-  margin-bottom: 20px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0 0 20px;
 `;
 
 const FooterStyled = styled.div`

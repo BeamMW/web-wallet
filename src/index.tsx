@@ -8,6 +8,8 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import store from '@app/store/rootStore';
+import { initLockState } from '@core/lockState';
+import { setLockState } from '@app/shared/store/actions';
 import App from './app';
 
 window.global = window;
@@ -21,10 +23,19 @@ if (!rootEl) {
   throw new Error('Root element (#root) not found');
 }
 
-createRoot(rootEl).render(
+const render = () => createRoot(rootEl).render(
   <MemoryRouter>
     <ReduxProvider store={store}>
       <App />
     </ReduxProvider>
   </MemoryRouter>,
 );
+
+// Resolve the lock flag from chrome.storage.session before the first render, so the
+// router never routes off a stale value.
+initLockState()
+  .then((locked) => {
+    store.dispatch(setLockState(locked));
+    render();
+  })
+  .catch(() => render());

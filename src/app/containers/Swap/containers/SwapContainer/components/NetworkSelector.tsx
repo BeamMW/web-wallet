@@ -4,11 +4,11 @@ import { styled } from '@linaria/react';
 // Segmented-control track
 const Track = styled.div`
   display: flex;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip-sm);
   padding: 3px;
-  gap: 2px;
+  gap: 3px;
   margin-bottom: 10px;
 `;
 
@@ -16,9 +16,12 @@ const Segment = styled.button<{ active?: boolean; warn?: boolean }>`
   flex: 1;
   height: 30px;
   border: none;
-  border-radius: 7px;
-  font-size: 12px;
-  font-weight: 700;
+  clip-path: var(--cp-clip-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -34,8 +37,8 @@ const Segment = styled.button<{ active?: boolean; warn?: boolean }>`
 
   color: ${({ active, warn }) => {
     if (active && warn) return '#ffb340';
-    if (active) return '#da68f5';
-    return 'rgba(255, 255, 255, 0.4)';
+    if (active) return 'var(--cp-accent-2)';
+    return 'var(--cp-muted)';
   }};
 
   &:hover:not(:disabled) {

@@ -1,6 +1,7 @@
 import * as extensionizer from 'extensionizer';
 import NotificationManager from '@core/NotificationManager';
 import WasmWallet from '@core/WasmWallet';
+import { getWalletLocked, initLockState } from '@core/lockState';
 import { Asset, ExternalAppMethod } from '@core/types';
 import { RemoteRequest } from '@app/core/types';
 import {
@@ -425,28 +426,29 @@ function setupContentPort(remote: PortLike) {
       appnameByOrigin.set(origin, String(appname).slice(0, 64));
     }
 
-    try {
-      const ok = wallet.callExternalWalletApi(origin, { id, method, params });
-      if (!ok) {
+    Promise.resolve(wallet.callExternalWalletApi(origin, { id, method, params }))
+      .then((ok) => {
+        if (!ok) {
+          broadcastToOrigin(origin, {
+            type: 'BEAM_WALLET_RPC_ERROR',
+            version: 1,
+            payload: {
+              id,
+              error: { code: -32000, message: 'BeamApi not connected for this site' },
+            },
+          });
+        }
+      })
+      .catch((e: any) => {
         broadcastToOrigin(origin, {
           type: 'BEAM_WALLET_RPC_ERROR',
           version: 1,
           payload: {
             id,
-            error: { code: -32000, message: 'BeamApi not connected for this site' },
+            error: { code: -32001, message: e?.message || 'BeamApi call failed', data: e },
           },
         });
-      }
-    } catch (e: any) {
-      broadcastToOrigin(origin, {
-        type: 'BEAM_WALLET_RPC_ERROR',
-        version: 1,
-        payload: {
-          id,
-          error: { code: -32001, message: e?.message || 'BeamApi call failed', data: e },
-        },
       });
-    }
   });
 }
 
@@ -455,11 +457,15 @@ function setupContentReqPort(remote: PortLike) {
   const reqOrigin = getSenderOrigin(remote.sender);
   if (reqOrigin) notificationManager.setContentReqPort(remote as any, reqOrigin);
   contentPort = remote;
-  contentPort.onMessage.addListener((msg) => {
+  contentPort.onMessage.addListener(async (msg) => {
     const origin = getSenderOrigin(remote.sender);
     if (!origin) return;
 
-    if (wallet.isRunning() && !localStorage.getItem('locked')) {
+    // Authoritative read: silently auto-reconnecting a dApp while the wallet is
+    // locked is exactly what this gate exists to prevent.
+    const isLocked = await getWalletLocked();
+
+    if (wallet.isRunning() && !isLocked) {
       if (wallet.isConnectedSite({ appName: msg.appname, appUrl: origin })) {
         msg.appurl = origin;
         wallet.connectExternal(msg);
@@ -584,16 +590,21 @@ function handleConnect(remote) {
 }
 
 export function initRemoteConnection() {
+  // Hydrate the lock mirror before any dApp traffic can reach the engine.
+  initLockState();
+
   extensionizer.runtime.onConnect.addListener(handleConnect);
 
   wallet.initContractInfoHandler((req, info, amounts, cb) => {
-    wallet.initcontractInfoHandlerCallback(cb);
+    // Keyed by req so concurrent approvals from different dApps don't clobber
+    // each other; the notification manager queues the popups one at a time.
+    wallet.registerContractInfoCallback(req, cb);
     const appname = appnameByOrigin.get(req?.appurl ?? '') ?? req?.appname;
     notificationManager.openContractNotification(req, info, amounts, appname);
   });
 
   wallet.initSendHandler((req, info, cb) => {
-    wallet.initSendHandlerCallback(cb);
+    wallet.registerSendCallback(req, cb);
     const appname = appnameByOrigin.get(req?.appurl ?? '') ?? req?.appname;
     notificationManager.openSendNotification(req, info, appname);
   });
@@ -607,6 +618,12 @@ export function initRemoteConnection() {
 /** Engine-only: send an RPC to the running WASM wallet and await its response. */
 function enginePost<T = any, P = unknown>(method: RPCMethod, params?: P): Promise<T> {
   const target = wallet.send(method, params);
+  if (target === null) {
+    // send() returns null for WalletMethod values — those are dispatched internally
+    // and never produce a response on the id we'd be waiting for. Fail loudly
+    // instead of leaving the caller hanging forever.
+    return Promise.reject(new Error(`"${method}" is not a wallet RPC method and cannot be awaited`));
+  }
   return new Promise((resolve, reject) => {
     wallet.registerResponseHandler(target, (data: RemoteResponse) => {
       if (data.id === target) {

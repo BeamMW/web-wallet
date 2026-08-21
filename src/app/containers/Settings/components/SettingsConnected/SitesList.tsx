@@ -8,7 +8,10 @@ import { disconnectAllowedSite } from '@app/containers/Settings/store/actions';
 import { useDispatch } from 'react-redux';
 
 const ListStyled = styled.ul`
-  margin: 0 -20px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 interface SitesProps {
@@ -17,20 +20,29 @@ interface SitesProps {
 
 const ListItemStyled = styled.li`
   position: relative;
-  padding: 20px;
+  padding: 13px 14px;
   text-align: start;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+  clip-path: var(--cp-clip-sm);
+  border: 1px solid var(--cp-hair);
+  background-color: rgba(255, 255, 255, 0.015);
 
-  &:nth-child(odd) {
-    background-color: rgba(255, 255, 255, 0.05);
+  span > div:first-child {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--cp-text);
   }
 `;
 
 const UrlItemStyled = styled.div`
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cp-accent-3);
+  word-break: break-all;
 `;
 
 const SitesList: React.FC<SitesProps> = ({ data: sites }) => {

@@ -47,7 +47,26 @@ const config = {
       },
       {
         test: /\.svg$/,
-        use: ['@svgr/webpack', 'svgo-loader'],
+        use: [
+          {
+            loader: '@svgr/webpack',
+            options: {
+              // svgo 1.x config (svgr 5 bundles svgo@1). Two things matter:
+              //  - removeViewBox:false → keep viewBox so a CSS width/height scales
+              //    the artwork instead of clipping it.
+              //  - prefixIds → make every icon's internal ids unique. Otherwise
+              //    svgo minifies ids to a/b/c across ALL icons and inlined masks
+              //    /gradients reference the wrong icon (icons render only partially).
+              svgoConfig: {
+                plugins: [
+                  { removeViewBox: false },
+                  { prefixIds: true },
+                  { cleanupIDs: false },
+                ],
+              },
+            },
+          },
+        ],
       },
       {
         test: /\.css$/,

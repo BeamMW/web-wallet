@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
 import { Button, Input } from '@app/shared/components';
 import Select, { Option } from '@app/shared/components/Select';
-import { KIND_LABELS } from '../../../utils/dexConstants';
+import { KIND_LABELS, SLIPPAGE_OPTIONS } from '../../../utils/dexConstants';
 import type { DexPool } from '../../../utils/dexApi';
 
 // ─── Layout shell ────────────────────────────────────────────────────────────
@@ -11,29 +11,32 @@ import type { DexPool } from '../../../utils/dexApi';
 const Wrap = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 20px 22px;
-  max-width: 676px;
+  padding: 0 0 22px;
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
+
+  :global(html[data-env='fullscreen']) & {
+    max-width: 560px;
+  }
 `;
 
 // ─── Swap stack ──────────────────────────────────────────────────────────────
 
 const SwapStack = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
+  overflow: hidden;
 `;
 
 const FromSection = styled.div`
   padding: 14px 16px;
   background: rgba(218, 104, 245, 0.045);
-  border-radius: 16px 16px 0 0;
 `;
 
 const ToSection = styled.div`
   padding: 14px 16px;
   background: rgba(218, 104, 245, 0.02);
-  border-radius: 0 0 16px 16px;
 `;
 
 const CardTop = styled.div`
@@ -291,17 +294,20 @@ const SwapBtn = styled.button`
   width: 100%;
   height: 46px;
   border: none;
-  border-radius: 12px;
-  font-size: 14px;
+  clip-path: var(--cp-clip);
+  font-family: var(--font-mono);
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: opacity 0.15s, transform 0.12s;
+  transition: filter 0.15s, transform 0.12s;
   color: #fff;
   background: linear-gradient(135deg, #8b5cf6 0%, #da68f5 100%);
+  box-shadow: 0 0 22px -8px #da68f5;
 
   &:hover:not(:disabled) {
-    opacity: 0.88;
+    filter: brightness(1.07);
     transform: translateY(-1px);
   }
   &:active:not(:disabled) {
@@ -436,6 +442,10 @@ export interface DexSwapFormProps {
   predictedOutput: string | null;
   isPredicting: boolean;
 
+  minReceiveDisplay: string | null;
+  slippagePercent: number;
+  onSlippageChange: (percent: number) => void;
+
   availableKinds: number[];
   selectedKind: number;
   selectedPool: DexPool | null;
@@ -465,6 +475,9 @@ export const DexSwapForm = ({
   isMaxDisabled,
   predictedOutput,
   isPredicting,
+  minReceiveDisplay,
+  slippagePercent,
+  onSlippageChange,
   availableKinds,
   selectedKind,
   selectedPool,
@@ -603,6 +616,21 @@ export const DexSwapForm = ({
               {noPoolForKind && <NoPoolNote>No pool for this tier</NoPoolNote>}
             </KindRow>
 
+            <KindRow>
+              <KindLabel>Slippage</KindLabel>
+              {SLIPPAGE_OPTIONS.map((percent) => (
+                <KindPill
+                  key={percent}
+                  type="button"
+                  active={slippagePercent === percent}
+                  available
+                  onClick={() => onSlippageChange(percent)}
+                >
+                  {`${percent}%`}
+                </KindPill>
+              ))}
+            </KindRow>
+
             {/* ── Fee breakdown ── */}
             <FeeRow>
               {selectedPool && (
@@ -632,6 +660,16 @@ export const DexSwapForm = ({
                     {toAsset.name}
                   </FeeTotalValue>
                 </FeeTotalRow>
+                {minReceiveDisplay && (
+                  <FeeTotalRow>
+                    Minimum received
+                    <FeeTotalValue>
+                      {minReceiveDisplay}
+                      {' '}
+                      {toAsset.name}
+                    </FeeTotalValue>
+                  </FeeTotalRow>
+                )}
               </>
             )}
           </>

@@ -106,11 +106,19 @@ const App = () => {
           icon={false}
           toastStyle={{
             textAlign: 'center',
-            background: '#25557B',
-            color: 'white',
-            width: '90%',
+            background: 'var(--cp-panel)',
+            color: 'var(--cp-text)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '12px',
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            border: '1px solid var(--cp-line)',
+            boxShadow: '0 0 22px -6px rgba(0, 246, 210, 0.5)',
+            clipPath: 'var(--cp-clip)',
+            borderRadius: 0,
+            minHeight: 'auto',
+            width: '92%',
             margin: '0 auto 16px',
-            borderRadius: '10px',
           }}
         />
       </Scrollbar>

@@ -31,7 +31,6 @@ import {
   selectAssetChange,
   selectAssets,
   selectChange,
-  selectParsedAddressUD,
   selectIsSendReady,
   selectSbbs,
   selectSelectedAssetId,
@@ -50,27 +49,32 @@ const AMOUNT_MAX = 2e14;
 
 const PageWrap = styled.form`
   width: 100%;
-  max-width: 676px;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  :global(html[data-env='fullscreen']) & {
+    max-width: 560px;
+  }
 `;
 
 const Card = styled.div`
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
   padding: 16px;
   overflow: hidden;
 `;
 
 const FieldLabel = styled.div`
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--cp-muted);
   margin-bottom: 8px;
 `;
 
@@ -80,14 +84,15 @@ const AddressInputWrap = styled.div<{ error?: boolean }>`
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid ${({ error }) => (error ? 'rgba(255,90,90,0.6)' : 'rgba(255,255,255,0.09)')};
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid ${({ error }) => (error ? 'var(--cp-danger)' : 'var(--cp-line-2)')};
+  clip-path: var(--cp-clip);
   padding: 8px 10px;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 
   &:focus-within {
-    border-color: ${({ error }) => (error ? 'rgba(255,90,90,0.8)' : 'rgba(255,255,255,0.22)')};
+    border-color: ${({ error }) => (error ? 'var(--cp-danger)' : 'var(--cp-accent-2)')};
+    box-shadow: 0 0 18px -6px rgba(218, 104, 245, 0.5);
   }
 `;
 
@@ -97,12 +102,13 @@ const AddressTextInput = styled.input`
   background: transparent;
   border: none;
   outline: none;
-  color: white;
+  color: var(--cp-text);
   font-size: 13px;
-  font-family: 'SFProDisplay';
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.25);
+    color: var(--cp-muted);
   }
 `;
 
@@ -116,27 +122,28 @@ const SmallBtn = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.4);
-  border-radius: 6px;
+  color: var(--cp-muted);
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
   padding: 0;
   transition: color 0.12s, background 0.12s;
 
   &:hover:not(:disabled) {
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
+    color: var(--cp-accent-2);
+    background: rgba(218, 104, 245, 0.12);
   }
 
   &:disabled {
-    opacity: 0.2;
+    opacity: 0.25;
     cursor: default;
   }
 `;
 
 const HintText = styled.div<{ error?: boolean }>`
+  font-family: var(--font-mono);
   font-size: 11px;
   margin-top: 6px;
-  font-style: italic;
-  color: ${({ error }) => (error ? '#ff6b6b' : 'rgba(255, 255, 255, 0.4)')};
+  letter-spacing: 0.02em;
+  color: ${({ error }) => (error ? 'var(--cp-danger)' : 'var(--cp-muted)')};
 `;
 
 // ── Tx type card ─────────────────────────────────────────────────────────────
@@ -445,7 +452,6 @@ const SendForm = () => {
   const asset_change = useSelector(selectAssetChange());
   const is_send_ready = useSelector(selectIsSendReady());
   const selected_asset_id = useSelector(selectSelectedAssetId());
-  const parsed_address_ud = useSelector(selectParsedAddressUD());
   const isBalanceHidden = useSelector(selectIsBalanceHidden());
 
   const beam = useMemo(() => assets.find((a) => a.asset_id === 0), [assets]);
@@ -656,14 +662,14 @@ const SendForm = () => {
     const transactionPayload = {
       fee,
       value,
-      address: parsed_address_ud || address,
+      address,
       comment,
       asset_id: send_amount.asset_id,
       offline: offline || isMaxPrivacy,
     };
 
     dispatch(sendTransaction.request(transactionPayload));
-  }, [values, parsed_address_ud, fee, addressData, dispatch]);
+  }, [values, fee, addressData, dispatch]);
 
   const handlePrevious: React.MouseEventHandler = () => {
     setShowConfirm(false);
@@ -677,9 +683,7 @@ const SendForm = () => {
 
   const getAddressToUse = () => {
     let addressToUse;
-    if (parsed_address_ud && is_send_ready) {
-      addressToUse = parsed_address_ud;
-    } else if (focus || !values.address) {
+    if (focus || !values.address) {
       addressToUse = compactAddress;
     } else {
       addressToUse = values.address;

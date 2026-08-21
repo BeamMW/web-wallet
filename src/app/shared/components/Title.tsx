@@ -8,21 +8,24 @@ interface TitleProps {
 
 const STYLE_BASE = {
   margin: 0,
-  fontSize: 14,
+  fontFamily: 'var(--font-mono)',
+  fontSize: 12,
   fontWeight: 600,
   textTransform: 'uppercase',
   textAlign: 'left',
-  letterSpacing: 1,
-  color: 'white',
+  letterSpacing: '0.14em',
+  color: 'var(--cp-text)',
 };
 
 const HeadingStyled = styled.h2`
-  line-height: 72px;
+  line-height: 1.2;
   margin: 0;
-  font-size: 20px;
+  font-family: var(--font-mono);
+  font-size: 16px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 3px;
+  letter-spacing: 0.22em;
+  color: var(--cp-text);
 `;
 
 const TitleStyled = styled.h3`

@@ -3,122 +3,103 @@ import { useDispatch, useSelector } from 'react-redux';
 import NotificationController from '@core/NotificationController';
 import { styled } from '@linaria/react';
 import { Button, AssetIcon } from '@app/shared/components';
-import {
-  CancelIcon, ArrowDownIcon, ArrowUpIcon, ArrowsTowards,
-} from '@app/shared/icons';
+import { ArrowDownIcon, ArrowUpIcon, ArrowsTowards } from '@app/shared/icons';
 import NotificationManager from '@core/NotificationManager';
 import { selectAssetsInfo } from '@app/containers/Wallet/store/selectors';
 import { getAssetList } from '@app/containers/Wallet/store/actions';
+import { NotificationLayout } from '../../components';
 
-const ContainerStyled = styled.div`
-  position: relative;
-  padding: 50px 30px;
+const Card = styled.div`
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
+  overflow: hidden;
 `;
 
-const TitleStyled = styled.div`
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
+const SectionLabel = styled.div`
+  padding: 11px 14px 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cp-muted);
 `;
 
-const TextStyled = styled.div`
-  text-align: center;
-  margin-top: 30px;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.7);
-`;
-
-const Amount = styled.div`
-  margin-top: 32px;
+const AmountRow = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--cp-hair);
 `;
 
-const Amounts = styled.div`
-  margin-top: 2px;
-`;
-
-const AmountSubtitle = styled.div`
+const AmountText = styled.div<{ is_spend: boolean }>`
+  font-family: var(--font-mono);
   font-size: 14px;
-  color: #8da1ad;
-  margin-top: 4px;
-  width: 55px;
-  text-align: start;
+  font-weight: 600;
+  color: ${({ is_spend }) => (is_spend ? 'var(--cp-accent-2)' : 'var(--cp-accent-3)')};
 `;
 
-const LabelStyled = styled.div<{ is_spend: boolean }>`
-  display: inline-block;
-  vertical-align: bottom;
-  line-height: 26px;
-  color: ${({ is_spend }) => (is_spend ? 'var(--color-purple)' : 'var(--color-blue)')};
-`;
-
-const FeeLabelStyled = styled.div`
-  display: inline-block;
-  vertical-align: bottom;
-  line-height: 26px;
-`;
-
-const AssetItem = styled.div`
-  &:not(:first-child) {
-    margin-top: 15px;
-  }
-`;
-
-const Fee = styled.div`
-  margin-top: 15px;
+const FeeRow = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--cp-line);
 `;
 
-const FeeSubtitle = styled.div`
-  font-size: 14px;
-  color: #8da1ad;
-  margin-top: 4px;
-  width: 55px;
-  text-align: start;
+const FeeLabel = styled.div`
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cp-muted);
 `;
 
 const FeeValue = styled.div`
   display: flex;
-  margin-top: 2px;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--cp-text);
 `;
 
-const ControlsStyled = styled.div`
-  margin-top: 30px;
+const Note = styled.p`
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--cp-muted);
 `;
 
 const getNotificationTitle = (info, amounts) => {
   if (info.isSpend && amounts.length > 1) {
-    return 'Confirm withdraw & deposit';
+    return 'Withdraw & deposit';
   }
   if (info.isSpend && amounts.length === 1) {
-    return 'Confirm deposit from the wallet';
+    return 'Confirm deposit';
   }
   if (!info.isSpend && amounts.length === 1) {
-    return 'Confirm withdraw to the wallet';
+    return 'Confirm withdraw';
   }
-  return 'Confirm application transaction';
+  return 'App transaction';
 };
 
 const getNotificationText = (info, amounts, appName) => {
   if (!info.isEnough) {
-    return 'There is not enough funds to complete the transaction';
+    return 'There are not enough funds to complete this transaction.';
   }
-
   if (info.isSpend && amounts.length > 1) {
-    return `${appName} will change the balances of your wallet`;
+    return `${appName} will change the balances of your wallet.`;
   }
-
   if (info.isSpend && amounts.length === 1) {
-    return `${appName} will take the funds from your wallet`;
+    return `${appName} will take funds from your wallet.`;
   }
-
   if (!info.isSpend && amounts.length === 1) {
-    return `${appName} will send the funds to your wallet`;
+    return `${appName} will send funds to your wallet.`;
   }
-
-  return 'The transaction fee would be deducted from your balance';
+  return 'The transaction fee will be deducted from your balance.';
 };
 
 const getConfirmIcon = (info, amounts) => {
@@ -127,9 +108,6 @@ const getConfirmIcon = (info, amounts) => {
   }
   if (info.isSpend && amounts.length === 1) {
     return ArrowUpIcon;
-  }
-  if (!info.isSpend && amounts.length === 1) {
-    return ArrowDownIcon;
   }
   return ArrowDownIcon;
 };
@@ -156,15 +134,16 @@ const ApproveInvoke = () => {
     info = JSON.parse(notification.params.info);
   } catch {
     return (
-      <ContainerStyled>
-        <TitleStyled>Error</TitleStyled>
-        <TextStyled>Invalid notification data. Please close this window and try again.</TextStyled>
-        <ControlsStyled>
-          <Button variant="ghost" icon={CancelIcon} onClick={() => window.close()}>
-            close
+      <NotificationLayout
+        title="Error"
+        actions={(
+          <Button type="button" variant="ghost" pallete="purple" onClick={() => window.close()}>
+            Close
           </Button>
-        </ControlsStyled>
-      </ContainerStyled>
+        )}
+      >
+        <Note>Invalid notification data. Please close this window and try again.</Note>
+      </NotificationLayout>
     );
   }
 
@@ -172,7 +151,6 @@ const ApproveInvoke = () => {
   const title = getNotificationTitle(info, amounts);
 
   const handleCancelClick = () => {
-    // TODO
     notificationManager.postMessage({
       action: 'rejectContractInfoRequest',
       params: notification.params.req,
@@ -181,8 +159,6 @@ const ApproveInvoke = () => {
   };
 
   const handleConfirmClick = () => {
-    // approveContractInfoRequest(notification.params.req);
-    // TODO
     notificationManager.postMessage({
       action: 'approveContractInfoRequest',
       params: notification.params.req,
@@ -191,77 +167,56 @@ const ApproveInvoke = () => {
   };
 
   return (
-    <>
-      <ContainerStyled>
-        <TitleStyled>{title}</TitleStyled>
-        <Amount>
-          <AmountSubtitle>Amount: </AmountSubtitle>
-          <Amounts>
-            {amounts.length > 0
-              ? amounts.map((data) => {
-                const assetItem = assets?.find((asset) => asset.asset_id === data.assetID);
-                return assetItem ? (
-                  <AssetItem key={data.assetID}>
-                    <AssetIcon asset_id={data.assetID} className="without-transform" />
-                    <LabelStyled is_spend={data.spend}>
-                      {data.spend ? '-' : '+'}
-                      {' '}
-                      {data.amount}
-                      {' '}
-                      {assetItem.metadata_pairs.UN}
-                      {' '}
-                      (
-                      {data.assetID}
-                      )
-                    </LabelStyled>
-                  </AssetItem>
-                ) : (
-                  <AssetItem key={data.assetID}>
-                    <AssetIcon asset_id={data.assetID} className="without-transform" />
-                    <LabelStyled is_spend={data.spend}>
-                      {data.spend ? '-' : '+'}
-                      {' '}
-                      {data.amount}
-                      {' '}
-                      {data.assetID === 0 ? 'BEAM' : ''}
-                      {' '}
-                      (
-                      {data.assetID}
-                      )
-                    </LabelStyled>
-                  </AssetItem>
-                );
-              })
-              : '-'}
-          </Amounts>
-        </Amount>
-        <Fee>
-          <FeeSubtitle>Fee: </FeeSubtitle>
-          <FeeValue>
-            <AssetIcon asset_id={0} className="without-transform" />
-            <FeeLabelStyled>
-              {info.fee}
-              {' '}
-              BEAM
-              {' '}
-            </FeeLabelStyled>
-          </FeeValue>
-        </Fee>
-        <TextStyled>{text}</TextStyled>
-        <ControlsStyled>
+    <NotificationLayout
+      title={title}
+      appname={notification.params.appname}
+      accent={info.isSpend ? 'purple' : 'blue'}
+      actions={(
+        <>
+          <Button type="button" variant="ghost" pallete="purple" onClick={handleCancelClick}>
+            Cancel
+          </Button>
           <Button
+            type="button"
             pallete={info.isSpend ? 'purple' : 'blue'}
             icon={getConfirmIcon(info, amounts)}
             onClick={handleConfirmClick}
           >
-            confirm
+            Confirm
           </Button>
-          <Button variant="ghost" icon={CancelIcon} onClick={handleCancelClick}>
-            cancel
-          </Button>
-        </ControlsStyled>
-      </ContainerStyled>
-    </>
+        </>
+      )}
+    >
+      <Card>
+        <SectionLabel>Amounts</SectionLabel>
+        {amounts.length > 0 ? (
+          amounts.map((data) => {
+            const assetItem = assets?.find((asset) => asset.asset_id === data.assetID);
+            const name = assetItem?.metadata_pairs?.UN ?? (data.assetID === 0 ? 'BEAM' : '');
+            return (
+              <AmountRow key={data.assetID}>
+                <AssetIcon asset_id={data.assetID} className="without-transform" />
+                <AmountText is_spend={data.spend}>
+                  {`${data.spend ? '-' : '+'} ${data.amount} ${name} (${data.assetID})`}
+                </AmountText>
+              </AmountRow>
+            );
+          })
+        ) : (
+          <AmountRow>
+            <AmountText is_spend={false}>—</AmountText>
+          </AmountRow>
+        )}
+        <FeeRow>
+          <FeeLabel>Network fee</FeeLabel>
+          <FeeValue>
+            <AssetIcon asset_id={0} className="without-transform" />
+            {`${info.fee} BEAM`}
+          </FeeValue>
+        </FeeRow>
+      </Card>
+      <Note>{text}</Note>
+    </NotificationLayout>
   );
 };
 

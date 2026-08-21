@@ -5,8 +5,6 @@ import { AddressData } from '@core/types';
 import { CopySmallIcon } from '@app/shared/icons';
 import { toast } from 'react-toastify';
 import { copyToClipboard } from '@core/utils';
-import { useSelector } from 'react-redux';
-import { selectParsedAddressUD } from '../../store/selectors';
 
 interface FullAddressProps {
   addressData?: AddressData;
@@ -20,112 +18,48 @@ interface FullAddressProps {
 }
 
 const FullAddressWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const AddressCard = styled.div`
   position: relative;
-  height: 70vh;
-  margin: 0 auto;
-  > button {
-    display: flex !important;
-    position: absolute;
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    bottom: -35px;
-  }
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
+  padding: 14px 46px 14px 14px;
 
   .title {
-    opacity: 0.5;
-    font-size: 14px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: 1px;
-    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--cp-muted);
     text-transform: uppercase;
     text-align: left;
   }
   .address-information {
-    margin-top: 10px;
-    white-space: initial;
-    width: 97%;
+    margin-top: 8px;
     text-align: left;
-    word-wrap: break-word;
-    font-size: 14px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    color: #fff;
-  }
-`;
-
-const AddressInformationWrapper = styled.div`
-  position: relative;
-
-  button {
-    position: absolute;
-    top: 25px;
-    right: -20px;
-
-    &.no-title {
-      top: 0;
-    }
+    word-break: break-all;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--cp-text);
   }
   .hint {
     margin-top: 10px;
-    opacity: 0.5;
-    font-size: 14px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: italic;
-    line-height: normal;
-    letter-spacing: normal;
-    text-align: center;
-    color: #fff;
-  }
-`;
-
-const SbbsWrapper = styled.div`
-  position: relative;
-  border-top: solid 1px #8191a2;
-  padding-top: 14px;
-  margin-top: 14px;
-  .title {
-    opacity: 0.5;
-    font-size: 14px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: 1px;
-    color: #fff;
-    text-transform: uppercase;
     text-align: left;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1.4;
+    color: var(--cp-muted);
   }
-  .address-information {
-    margin-top: 10px;
-    white-space: initial;
-    width: 97%;
-    text-align: left;
-    word-wrap: break-word;
-    font-size: 14px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    color: #fff;
-  }
-  button {
+  > button {
     position: absolute;
-    top: 40px;
-    right: -20px;
-
-    &.no-title {
-      top: 0;
-    }
+    top: 12px;
+    right: 12px;
+    margin: 0 !important;
   }
 `;
 
@@ -141,7 +75,6 @@ const FullAddress = ({
 }: FullAddressProps) => {
   let hintItem = hint;
   const isMaxPrivacy = addressData?.type === 'max_privacy';
-  const parsed_address_ud = useSelector(selectParsedAddressUD());
 
   const copyAddress = async () => {
     toast('Address copied to clipboard');
@@ -195,39 +128,22 @@ const FullAddress = ({
   return (
     <Window pallete={pallete} onPrevious={onClose} title={getTitle()}>
       <FullAddressWrapper>
-        <AddressInformationWrapper>
+        <AddressCard>
           {(showAddress() || getTitle() === 'ONLINE ADDRESS' || (getTitle() === 'Regular Address' && !isOffline)) && (
-            <div className="title">{getTitle() === 'ONLINE ADDRESS' ? 'ONLINE (SBBS) ADDRESS' : 'Address'}</div>
+            <div className="title">{getTitle() === 'ONLINE ADDRESS' ? 'Online (SBBS) address' : 'Address'}</div>
           )}
           <div className="address-information">{address}</div>
-          <Button
-            className={
-              showAddress() || getTitle() === 'ONLINE ADDRESS' || (getTitle() === 'Regular Address' && !isOffline)
-                ? ''
-                : 'no-title'
-            }
-            variant="icon"
-            pallete="white"
-            icon={CopySmallIcon}
-            onClick={copyAddress}
-          />
-          {parsed_address_ud ? (
-            <div className="hint">Unstoppable Domains</div>
-          ) : (
-            <div className="hint">
-              {showAddress() || addressData?.type === 'max_privacy' || (getTitle() === 'Regular Address' && !isOffline)
-                ? hintItem
-                : ''}
-            </div>
-          )}
-        </AddressInformationWrapper>
+          <Button variant="icon" pallete="white" icon={CopySmallIcon} onClick={copyAddress} />
+          {(showAddress() || addressData?.type === 'max_privacy' || (getTitle() === 'Regular Address' && !isOffline))
+            && hintItem && <div className="hint">{hintItem}</div>}
+        </AddressCard>
 
         {sbbs && address !== sbbs && !isOffline && (
-          <SbbsWrapper>
-            <div className="title">Online (SBBS) Address</div>
+          <AddressCard>
+            <div className="title">Online (SBBS) address</div>
             <div className="address-information">{sbbs}</div>
             <Button variant="icon" pallete="white" icon={CopySmallIcon} onClick={copySbbs} />
-          </SbbsWrapper>
+          </AddressCard>
         )}
 
         <Button icon={CopySmallIcon} pallete={pallete} onClick={copyAndClose}>

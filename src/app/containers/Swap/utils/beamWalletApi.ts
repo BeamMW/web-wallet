@@ -14,7 +14,8 @@ export interface BeamBridgeAddress {
 }
 
 export interface SendToParams {
-  amount: number;
+  // Prefer the raw decimal string from the input — see toBaseUnits().
+  amount: number | string;
   address: string; // Beam address (66 hex chars) without network indicator
   fee: number;
   decimals: number;
@@ -30,6 +31,10 @@ export const CID_BY_NETWORK: Record<string, string> = {
 const SWAP_APP_URL = 'beam-swap-internal';
 const SWAP_APP_NAME = 'BEAM Swap';
 
+// Longest-first: 'arbsep' must be tested before 'arb', otherwise an
+// arbsep… address matches 'arb' and only 3 chars get stripped.
+const NETWORK_INDICATORS = ['arbsep', 'eth', 'arb', 'sep'];
+
 let wasmBytes: Uint8Array | null = null;
 
 /**
@@ -40,7 +45,7 @@ let wasmBytes: Uint8Array | null = null;
  */
 export function formatBeamAddress(address: string): string {
   // Remove network indicators like "eth" or "arb" from the end
-  const indicators = ['eth', 'arb', 'arbsep', 'sep'];
+  const indicators = NETWORK_INDICATORS;
   const foundPrefix = indicators.find((indicator) => address.startsWith(indicator));
   if (foundPrefix) {
     return address.slice(foundPrefix.length);
@@ -140,6 +145,48 @@ export async function loadPublicKey(cid: string): Promise<string> {
   }
 }
 
+const DECIMAL_PATTERN = /^-?\d*(\.\d*)?$/;
+
+/**
+ * Convert a decimal amount to integer base units, as a decimal string.
+ *
+ * The result stays a string all the way into the contract args: for an 18-decimal
+ * token any amount >= ~9 produces more than 2^53 base units, so returning a JS
+ * number here would silently round the value.
+ *
+ * Pass the amount as a string wherever one is available (e.g. straight from a text
+ * input). A `number` argument has already lost precision beyond ~17 significant
+ * digits before it ever reaches this function, and nothing here can recover it.
+ */
+export function toBaseUnits(value: number | string, dec: number): string {
+  let decimalText: string;
+
+  if (typeof value === 'string') {
+    decimalText = value.trim();
+    if (!decimalText || !DECIMAL_PATTERN.test(decimalText)) {
+      throw new Error(`Invalid amount: ${value}`);
+    }
+  } else {
+    if (!Number.isFinite(value)) {
+      throw new Error(`Invalid amount: ${value}`);
+    }
+    if (Math.abs(value) >= 1e21) {
+      // toFixed() switches to exponential notation past this point.
+      throw new Error(`Amount out of range: ${value}`);
+    }
+    decimalText = value.toFixed(dec);
+  }
+
+  const negative = decimalText.startsWith('-');
+  const [intPart, fracPart = ''] = (negative ? decimalText.slice(1) : decimalText).split('.');
+  // Extra fractional digits are below the token's resolution — truncate, never round up.
+  const padded = fracPart.padEnd(dec, '0').slice(0, dec);
+
+  // BigInt normalises leading zeros and keeps full precision at any width.
+  const units = BigInt(`${intPart || '0'}${padded}`);
+  return (negative ? -units : units).toString();
+}
+
 /**
  * Send funds via bridge contract
  */
@@ -148,16 +195,7 @@ export async function sendTo(params: SendToParams): Promise<any> {
     amount, address, fee, decimals, cid,
   } = params;
   // Match bridge-app approach: calculate 10^decimals and multiply
-  // Use string-based calculation to avoid precision issues with large numbers
   const decimalsNum = typeof decimals === 'number' ? decimals : parseInt(String(decimals), 10);
-
-  // Convert float to base units via string to avoid IEEE 754 precision loss.
-  const toBaseUnits = (value: number, dec: number): number => {
-    const fixed = value.toFixed(dec);
-    const [intPart, fracPart = ''] = fixed.split('.');
-    const padded = fracPart.padEnd(dec, '0').slice(0, dec);
-    return parseInt(`${intPart}${padded}`, 10);
-  };
 
   const finalAmount = toBaseUnits(amount, decimalsNum);
   const relayerFee = toBaseUnits(fee, decimalsNum);
@@ -252,7 +290,7 @@ export async function getWalletAddress(networkId: string = '42161'): Promise<str
  * Parse bridge address to extract Beam address and network indicator
  */
 export function parseBridgeAddress(fullAddress: string): BeamBridgeAddress | null {
-  const indicators = ['eth', 'arb', 'arbsep', 'sep'];
+  const indicators = NETWORK_INDICATORS;
   const trimmed = fullAddress.trim();
 
   if (!trimmed) {

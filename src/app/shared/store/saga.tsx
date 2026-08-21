@@ -22,6 +22,7 @@ import { ROUTES } from '@app/shared/constants';
 import NotificationController from '@app/core/NotificationController';
 
 import { clearSavedPassword } from '@core/RememberPassword';
+import { setWalletLocked } from '@core/lockState';
 
 export function remoteEventChannel() {
   return eventChannel((emitter) => {
@@ -41,7 +42,9 @@ export function remoteEventChannel() {
 }
 
 function* lockWallet() {
-  localStorage.setItem('locked', '1');
+  // Persist before telling the engine — the engine reads this flag to reject
+  // in-flight dApp calls, so it must already be visible there.
+  yield call(setWalletLocked, true);
   walletLocked();
   // Always clear any remembered password when user explicitly locks.
   yield call(clearSavedPassword);

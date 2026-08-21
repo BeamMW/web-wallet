@@ -10,23 +10,26 @@ import { AddressData } from '@core/types';
 import { AssetTotal, TransactionAmount } from '@app/containers/Wallet/interfaces';
 import { useSelector } from 'react-redux';
 import { selectIsBalanceHidden } from '@app/shared/store/selectors';
-import { selectParsedAddressUD } from '../../store/selectors';
 
 // ── Layout ────────────────────────────────────────────────────────────────────
 
 const ConfirmWrap = styled.form`
   width: 100%;
-  max-width: 676px;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  :global(html[data-env='fullscreen']) & {
+    max-width: 560px;
+  }
 `;
 
 const SummaryCard = styled.div`
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
   overflow: hidden;
 `;
 
@@ -36,7 +39,7 @@ const Row = styled.div`
   justify-content: space-between;
   gap: 16px;
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--cp-hair);
 
   &:last-child {
     border-bottom: none;
@@ -44,11 +47,12 @@ const Row = styled.div`
 `;
 
 const RowLabel = styled.div`
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--cp-muted);
   white-space: nowrap;
   padding-top: 3px;
 `;
@@ -62,17 +66,19 @@ const RowRight = styled.div`
 `;
 
 const RowValue = styled.div`
-  font-size: 14px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cp-text);
   text-align: right;
   word-break: break-all;
 `;
 
 const AmountValue = styled.div`
+  font-family: var(--font-mono);
   font-size: 20px;
-  font-weight: 800;
-  color: var(--color-purple);
+  font-weight: 600;
+  color: var(--cp-accent-2);
   text-align: right;
 `;
 
@@ -97,24 +103,26 @@ const PrimaryBtn = styled.button`
   width: 100%;
   height: 48px;
   border: none;
-  border-radius: 12px;
-  background: var(--color-purple);
-  color: var(--color-dark-blue);
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  clip-path: var(--cp-clip);
+  background: linear-gradient(135deg, #8b5cf6 0%, var(--color-purple) 100%);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: opacity 0.15s, transform 0.12s;
+  box-shadow: 0 0 22px -8px var(--color-purple);
+  transition: box-shadow 0.15s, transform 0.12s, filter 0.15s;
 
   &:hover:not(:disabled) {
-    opacity: 0.88;
+    filter: brightness(1.07);
     transform: translateY(-1px);
+    box-shadow: 0 0 30px -6px var(--color-purple);
   }
 
   &:active:not(:disabled) {
     transform: none;
-    opacity: 1;
   }
 `;
 
@@ -138,7 +146,6 @@ const SendConfirm = (props: SendConfirmProps) => {
     address, offline, send_amount, selected, addressData, fee, change, submitSend, beam, asset_change,
   } = props;
 
-  const parsed_address_ud = useSelector(selectParsedAddressUD());
   const isBalanceHidden = useSelector(selectIsBalanceHidden());
 
   const { asset_id, amount } = send_amount;
@@ -149,7 +156,7 @@ const SendConfirm = (props: SendConfirmProps) => {
   const txType = getTxType(addressType, offline);
   const beamRemaining = beam.available - fee;
 
-  const displayAddress = parsed_address_ud ? compact(parsed_address_ud) : compact(address);
+  const displayAddress = compact(address);
 
   return (
     <ConfirmWrap

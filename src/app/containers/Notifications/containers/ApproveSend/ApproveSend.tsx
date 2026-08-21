@@ -3,75 +3,58 @@ import NotificationController from '@core/NotificationController';
 import { styled } from '@linaria/react';
 
 import { Button, AssetIcon } from '@app/shared/components';
-import { CancelIcon, ArrowUpIcon } from '@app/shared/icons';
 import { fromGroths, compact } from '@core/utils';
 import NotificationManager from '@core/NotificationManager';
+import { NotificationLayout } from '../../components';
 
-const ContainerStyled = styled.div`
-  position: relative;
-  padding: 50px 30px;
+const Card = styled.div`
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
+  overflow: hidden;
 `;
 
-const TitleStyled = styled.div`
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-const Receiver = styled.div`
-  margin-top: 32px;
+const Row = styled.div`
   display: flex;
-  flex-direction: column;
-`;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--cp-hair);
 
-const Amounts = styled.div`
-  margin-top: 2px;
-`;
-
-const Subtitle = styled.div`
-  font-size: 14px;
-  color: #8da1ad;
-  margin-top: 4px;
-  width: 130px;
-  text-align: start;
-`;
-
-const LabelStyled = styled.div<{ is_spend: boolean }>`
-  display: inline-block;
-  vertical-align: bottom;
-  line-height: 26px;
-  color: ${({ is_spend }) => (is_spend ? 'var(--color-purple)' : 'var(--color-blue)')};
-`;
-
-const FeeLabelStyled = styled.div`
-  display: inline-block;
-  vertical-align: bottom;
-  line-height: 26px;
-`;
-
-const AssetItem = styled.div`
-  &:not(:first-child) {
-    margin-top: 15px;
+  &:last-child {
+    border-bottom: none;
   }
 `;
 
-const Section = styled.div`
-  margin-top: 15px;
+const Label = styled.div`
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cp-muted);
+  white-space: nowrap;
+`;
+
+const Value = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--cp-text);
+  text-align: right;
+  word-break: break-all;
 `;
 
-const FeeValue = styled.div`
+const Amount = styled.div<{ is_spend: boolean }>`
   display: flex;
-  margin-top: 2px;
-`;
-
-const ControlsStyled = styled.div`
-  margin-top: 30px;
-`;
-
-const ReceiverAddress = styled.div`
-  margin-top: 10px;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  color: ${({ is_spend }) => (is_spend ? 'var(--cp-accent-2)' : 'var(--cp-accent-3)')};
 `;
 
 const ApproveSend = () => {
@@ -82,8 +65,6 @@ const ApproveSend = () => {
   const info = JSON.parse(notification.params.info);
 
   const handleCancelClick = () => {
-    // rejectSendRequest(notification.params.req);
-    // TODO
     notificationManager.postMessage({
       action: 'rejectSendRequest',
       params: notification.params.req,
@@ -92,8 +73,6 @@ const ApproveSend = () => {
   };
 
   const handleConfirmClick = () => {
-    // approveSendRequest();
-    // TODO
     notificationManager.postMessage({
       action: 'approveSendRequest',
       params: notification.params.req,
@@ -102,50 +81,42 @@ const ApproveSend = () => {
   };
 
   return (
-    <>
-      <ContainerStyled>
-        <TitleStyled>Confirm transaction details</TitleStyled>
-        <Receiver>
-          <Subtitle>Recipient: </Subtitle>
-          <ReceiverAddress>{compact(info.token, 16)}</ReceiverAddress>
-        </Receiver>
-        {/* <Section>
-            <Subtitle>Transaction type: </Subtitle>
-            <ReceiverAddress>
-                {info.isOnline ? 'Regular' : 'Offline'}
-            </ReceiverAddress>
-        </Section> */}
-        <Section>
-          <Subtitle>Amount: </Subtitle>
-          <Amounts>
-            <AssetItem key={info.assetID}>
-              <AssetIcon asset_id={info.assetID} />
-              <LabelStyled is_spend={info.isSpend}>{amount}</LabelStyled>
-            </AssetItem>
-          </Amounts>
-        </Section>
-        <Section>
-          <Subtitle>Fee: </Subtitle>
-          <FeeValue>
-            <AssetIcon asset_id={0} />
-            <FeeLabelStyled>
-              {info.fee}
-              {' '}
-              BEAM
-              {' '}
-            </FeeLabelStyled>
-          </FeeValue>
-        </Section>
-        <ControlsStyled>
-          <Button pallete={info.isSpend ? 'purple' : 'blue'} icon={ArrowUpIcon} onClick={handleConfirmClick}>
-            confirm
+    <NotificationLayout
+      title="Confirm transaction"
+      appname={notification.params.appname}
+      accent={info.isSpend ? 'purple' : 'blue'}
+      actions={(
+        <>
+          <Button type="button" variant="ghost" pallete="purple" onClick={handleCancelClick}>
+            Cancel
           </Button>
-          <Button variant="ghost" icon={CancelIcon} onClick={handleCancelClick}>
-            cancel
+          <Button type="button" pallete={info.isSpend ? 'purple' : 'blue'} onClick={handleConfirmClick}>
+            Confirm
           </Button>
-        </ControlsStyled>
-      </ContainerStyled>
-    </>
+        </>
+      )}
+    >
+      <Card>
+        <Row>
+          <Label>Recipient</Label>
+          <Value>{compact(info.token, 16)}</Value>
+        </Row>
+        <Row>
+          <Label>Amount</Label>
+          <Amount is_spend={info.isSpend}>
+            <AssetIcon asset_id={info.assetID} className="without-transform" />
+            {`${info.isSpend ? '-' : '+'} ${amount}`}
+          </Amount>
+        </Row>
+        <Row>
+          <Label>Network fee</Label>
+          <Value>
+            <AssetIcon asset_id={0} className="without-transform" />
+            {`${info.fee} BEAM`}
+          </Value>
+        </Row>
+      </Card>
+    </NotificationLayout>
   );
 };
 

@@ -1,6 +1,8 @@
 import produce from 'immer';
 import { ActionType, createReducer } from 'typesafe-actions';
 
+import { isWalletLockedSync } from '@core/lockState';
+
 import { SharedStateType } from '../interface';
 import * as actions from './actions';
 
@@ -10,7 +12,9 @@ const initialState: SharedStateType = {
   routerLink: '',
   errorMessage: null,
   isBalanceHidden: !!localStorage.getItem('isBalanceHidden'),
-  isLocked: !!localStorage.getItem('locked'),
+  // Seeded from the session-storage mirror; index.tsx hydrates it and dispatches
+  // setLockState before the first render, so this is only a placeholder.
+  isLocked: isWalletLockedSync(),
   isAssetSync: !!localStorage.getItem('asset_sync'),
   isLoading: false,
 };
@@ -30,13 +34,16 @@ const reducer = createReducer<SharedStateType, Action>(initialState)
       localStorage.removeItem('isBalanceHidden');
     }
   }))
+  // Persisting the flag is the sagas' job (chrome.storage.session is async);
+  // the reducer stays pure.
   .handleAction(actions.lockWallet, (state) => produce(state, (nexState) => {
     nexState.isLocked = true;
-    localStorage.setItem('locked', '1');
   }))
   .handleAction(actions.unlockWallet, (state) => produce(state, (nexState) => {
     nexState.isLocked = false;
-    localStorage.removeItem('locked');
+  }))
+  .handleAction(actions.setLockState, (state, action) => produce(state, (nexState) => {
+    nexState.isLocked = action.payload;
   }))
   .handleAction(actions.setAssetSync, (state) => produce(state, (nexState) => {
     nexState.isAssetSync = true;

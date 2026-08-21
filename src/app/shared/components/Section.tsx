@@ -16,47 +16,47 @@ interface SectionProps {
 
 const SectionStyled = styled.div`
   position: relative;
-  margin: 0 -10px;
-  padding-top: 20px;
+  margin: 0;
+  padding-top: 18px;
   text-align: left;
 
   > .cancel-button {
     position: absolute;
     top: 68px;
-    right: 20px;
+    right: 12px;
     cursor: pointer;
   }
 
   > .send-input {
-    width: 95%;
+    width: 100%;
   }
 `;
 
 const SectionGrayStyled = styled.div`
   position: relative;
-  margin: 0 -30px;
-  margin-bottom: 20px;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.05);
+  margin: 0 0 16px;
+  padding: 16px;
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
+  background-color: rgba(255, 255, 255, 0.02);
   text-align: left;
 
   > .full-address-button {
     position: absolute;
-    top: 68px;
+    top: 62px;
     cursor: pointer;
-    //  background: #202124;
     margin: 0;
-    right: 20px;
+    right: 14px;
   }
 
   > .cancel-button {
     position: absolute;
-    top: 73px;
-    right: 47px;
+    top: 66px;
+    right: 40px;
     cursor: pointer;
   }
   > .send-input {
-    width: 88%;
+    width: 100%;
   }
 `;
 
@@ -73,15 +73,18 @@ const ButtonStyled = styled.button`
 `;
 
 const ShowAll = styled.div`
-  font-size: 14px;
-  font-weight: bold;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   text-align: center;
-  color: #00f6d2;
+  color: var(--cp-accent);
   cursor: pointer;
+
+  &:hover {
+    text-shadow: 0 0 10px rgba(0, 246, 210, 0.5);
+  }
 `;
 
 const TitleWrapper = styled.div`

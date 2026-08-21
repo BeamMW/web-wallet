@@ -4,10 +4,10 @@ import { styled } from '@linaria/react';
 const ContainerStyled = styled.div`
   overflow: hidden;
   position: relative;
-  width: 256px;
-  height: 4px
+  width: 100%;
+  max-width: 260px;
+  height: 4px;
   margin: 0 auto;
-  border-radius: 2px;
 
   &:before {
     content: '';
@@ -17,8 +17,7 @@ const ContainerStyled = styled.div`
     left: 0;
     width: 100%;
     height: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
+    border: 1px solid var(--cp-line);
   }
 `;
 
@@ -28,8 +27,8 @@ const LineStyled = styled.div`
   left: 0;
   width: 256px;
   height: 4px;
-  border-radius: 2px;
-  background-color: var(--color-green);
+  background-color: var(--cp-accent);
+  box-shadow: 0 0 10px rgba(0, 246, 210, 0.6);
 `;
 
 const LineActive = styled(LineStyled)<{ percent: number }>`

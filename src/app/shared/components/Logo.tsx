@@ -5,6 +5,7 @@ import { LogoIcon, LogoSmall } from '@app/shared/icons';
 
 interface LogoProps {
   size?: 'large' | 'small' | 'icon';
+  className?: string;
 }
 
 const LogoClassName = css`
@@ -30,13 +31,13 @@ const DIMENSIONS = {
   },
 };
 
-const Logo: React.FC<LogoProps> = ({ size = 'large' }) => {
+const Logo: React.FC<LogoProps> = ({ size = 'large', className }) => {
   const viewBox = '0 0 159 159';
   const dimensions = DIMENSIONS[size];
   return size === 'icon' ? (
-    <LogoSmall {...dimensions} className={smallLogoClassName} />
+    <LogoSmall {...dimensions} className={[smallLogoClassName, className].filter(Boolean).join(' ')} />
   ) : (
-    <LogoIcon {...dimensions} viewBox={viewBox} className={LogoClassName} />
+    <LogoIcon {...dimensions} viewBox={viewBox} className={[LogoClassName, className].filter(Boolean).join(' ')} />
   );
 };
 

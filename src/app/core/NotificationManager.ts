@@ -18,7 +18,9 @@ export default class NotificationManager {
 
   appname = '';
 
-  private popupResolve: (() => void) | null = null;
+  // A list, not a single slot: openPopup() can be awaited by the queue pump and by
+  // the reconnect path at the same time, and both must be released on close.
+  private popupResolvers: Array<() => void> = [];
 
   private static instance: NotificationManager;
 
@@ -27,6 +29,11 @@ export default class NotificationManager {
   private openingPopup = false;
 
   private popupId = null;
+
+  // Notifications awaiting their turn in the single `notification` slot.
+  private notificationQueue: Array<{ notification: any; resolve: () => void }> = [];
+
+  private activeNotification: { notification: any; resolve: () => void } | null = null;
 
   // notification.html → page.html channel (NOTIFICATION port, set by shared saga).
   private reqPort: chrome.runtime.Port | null = null;
@@ -79,8 +86,48 @@ export default class NotificationManager {
     this.contentReqPorts.get(origin)?.postMessage(message);
   }
 
+  /**
+   * Present notifications one at a time.
+   *
+   * `notification` is a single slot the popup reads to decide what to render, so
+   * two concurrent approval requests used to mean the second silently replaced the
+   * first and only one of them was ever shown. Queueing keeps every request
+   * visible: each waits for the previous popup to close before taking the slot.
+   */
+  private enqueueNotification(notification: any): Promise<void> {
+    return new Promise<void>((resolve) => {
+      this.notificationQueue.push({ notification, resolve });
+      this.pumpNotificationQueue();
+    });
+  }
+
+  private pumpNotificationQueue() {
+    if (this.activeNotification || this.notificationQueue.length === 0) return;
+
+    const entry = this.notificationQueue.shift()!;
+    this.activeNotification = entry;
+    this.notification = entry.notification;
+    if (entry.notification?.params?.appname) {
+      this.appname = entry.notification.params.appname;
+    }
+
+    const finish = () => {
+      this.activeNotification = null;
+      this.notification = null;
+      entry.resolve();
+      this.pumpNotificationQueue();
+    };
+
+    this.openPopup().then(finish, (error) => {
+      // eslint-disable-next-line no-console
+      console.error('Failed to present notification:', error);
+      finish();
+    });
+  }
+
   openConnectNotification(msg, appurl) {
-    this.notification = {
+    this.appname = msg.appname;
+    return this.enqueueNotification({
       type: NotificationType.CONNECT,
       params: {
         appurl,
@@ -88,13 +135,11 @@ export default class NotificationManager {
         apiver: msg.apiver,
         apivermin: msg.apivermin,
       },
-    };
-    this.appname = msg.appname;
-    this.openPopup();
+    });
   }
 
   openAuthNotification(msg, appurl) {
-    this.notification = {
+    return this.enqueueNotification({
       type: NotificationType.AUTH,
       params: {
         appurl,
@@ -103,26 +148,24 @@ export default class NotificationManager {
         apivermin: msg.apivermin,
         is_reconnect: msg.is_reconnect,
       },
-    };
-    this.openPopup();
+    });
   }
 
   openSendNotification(req, info, appname?: string) {
-    this.notification = {
+    return this.enqueueNotification({
       type: NotificationType.APPROVE_TX,
       params: {
         req,
         info,
         appname: appname ?? req?.appname ?? this.appname,
       },
-    };
-    this.openPopup();
+    });
   }
 
   openContractNotification(req, info, amounts, appname?: string) {
     // Assets are sourced by the notification UI from its own store (the engine
     // runs in the offscreen document and has no UI redux store).
-    this.notification = {
+    return this.enqueueNotification({
       type: NotificationType.APPROVE_INVOKE,
       params: {
         req,
@@ -130,8 +173,7 @@ export default class NotificationManager {
         amounts,
         appname: appname ?? req?.appname ?? this.appname,
       },
-    };
-    this.openPopup();
+    });
   }
 
   /** Called by api.ts when the notification popup closes (port disconnect). */
@@ -141,8 +183,9 @@ export default class NotificationManager {
       this.notification = null;
       this.appname = '';
     }
-    this.popupResolve?.();
-    this.popupResolve = null;
+    const resolvers = this.popupResolvers;
+    this.popupResolvers = [];
+    resolvers.forEach((resolve) => resolve());
   }
 
   // Delegate a window/tab operation to the service worker. The engine runs in an
@@ -199,12 +242,15 @@ export default class NotificationManager {
       this.openingPopup = false;
     }
     await new Promise<void>((resolve) => {
-      this.popupResolve = resolve;
-      // 60-second hard ceiling in case the popup is force-closed without signalling.
-      setTimeout(() => {
-        this.popupResolve = null;
+      let settled = false;
+      const settle = () => {
+        if (settled) return;
+        settled = true;
         resolve();
-      }, 60_000);
+      };
+      this.popupResolvers.push(settle);
+      // 60-second hard ceiling in case the popup is force-closed without signalling.
+      setTimeout(settle, 60_000);
     });
     this.notificationIsOpen = false;
   }

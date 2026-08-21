@@ -31,13 +31,15 @@ const ContainerStyled = styled.div<{ fg: string; bg: string; border: string }>`
   gap: 6px;
   height: 22px;
   padding: 0 10px;
-  border-radius: 999px;
+  clip-path: var(--cp-clip-sm);
   border: 1px solid ${({ border }) => border};
   background: ${({ bg }) => bg};
   color: ${({ fg }) => fg};
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   line-height: 1;
 `;
 
@@ -105,14 +107,14 @@ function getIconColor({ income, status, status_string }: Transaction): string {
   switch (true) {
     case status_string === TxStatusString.SELF_SENDING:
     case status_string === TxStatusString.SENT_TO_OWN_ADDRESS:
-      return 'white';
+      return 'var(--cp-text)';
     case status_string === TxStatusString.EXPIRED:
     case status === TxStatus.CANCELED:
-      return 'var(--color-gray)';
+      return 'var(--cp-muted)';
     case status === TxStatus.FAILED:
-      return 'var(--color-red)';
+      return 'var(--cp-danger)';
     default:
-      return income ? 'var(--color-blue)' : 'var(--color-purple)';
+      return income ? 'var(--cp-accent-3)' : 'var(--cp-accent-2)';
   }
 }
 
@@ -121,16 +123,16 @@ function getPillColors(data: Transaction): { fg: string; bg: string; border: str
   switch (true) {
     case data.status_string === TxStatusString.SELF_SENDING:
     case data.status_string === TxStatusString.SENT_TO_OWN_ADDRESS:
-      return { fg: 'white', bg: 'rgba(255,255,255,0.08)', border: 'rgba(255,255,255,0.12)' };
+      return { fg: 'var(--cp-text)', bg: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.12)' };
     case data.status_string === TxStatusString.EXPIRED:
     case data.status === TxStatus.CANCELED:
-      return { fg, bg: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.10)' };
+      return { fg, bg: 'rgba(255,255,255,0.03)', border: 'var(--cp-hair)' };
     case data.status === TxStatus.FAILED:
-      return { fg, bg: 'rgba(255, 98, 92, 0.12)', border: 'rgba(255, 98, 92, 0.25)' };
+      return { fg, bg: 'rgba(242, 95, 91, 0.12)', border: 'rgba(242, 95, 91, 0.28)' };
     default:
       return data.income
-        ? { fg, bg: 'rgba(103, 184, 246, 0.14)', border: 'rgba(103, 184, 246, 0.28)' }
-        : { fg, bg: 'rgba(152, 99, 255, 0.14)', border: 'rgba(152, 99, 255, 0.28)' };
+        ? { fg, bg: 'rgba(11, 204, 247, 0.12)', border: 'rgba(11, 204, 247, 0.28)' }
+        : { fg, bg: 'rgba(218, 104, 245, 0.12)', border: 'rgba(218, 104, 245, 0.28)' };
   }
 }
 

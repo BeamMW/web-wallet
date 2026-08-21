@@ -6,7 +6,7 @@ const FooterStyled = styled.div<FooterProps>`
   bottom: ${({ margin }) => (margin === 'large' ? 40 : 20)}px;
   left: 0;
   width: 100%;
-  padding: 0 30px;
+  padding: 0 14px;
 
   > button:last-child {
     margin-bottom: 0;

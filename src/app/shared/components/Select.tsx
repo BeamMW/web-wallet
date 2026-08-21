@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
-import config from '@app/config';
 import Angle from './Angle';
 
 const ContainerStyled = styled.div`
@@ -16,31 +15,36 @@ const SelectStyled = styled.div`
   right: 0;
   z-index: 1000;
   margin-top: 8px;
-  padding: 10px 0;
-  border-radius: 10px;
-  background-color: ${`var(--color-popup-${config.theme})`};
+  padding: 6px;
+  clip-path: var(--cp-clip);
+  border: 1px solid var(--cp-line-2);
+  background-color: var(--cp-panel);
   max-height: 200px;
   overflow-y: auto;
   overflow-x: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  min-width: 120px;
+  box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.8);
+  min-width: 130px;
 `;
 
 const OptionStyled = styled.div`
-  padding: 10px 20px;
+  padding: 9px 12px;
   cursor: pointer;
   text-align: left;
   white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--cp-text);
+  clip-path: var(--cp-clip-sm);
 
   &:hover,
   &:active {
-    background-color: rgba(255, 255, 255, 0.07);
+    background-color: rgba(0, 246, 210, 0.08);
   }
 `;
 
 const OptionActiveStyled = styled(OptionStyled)`
   cursor: default;
-  color: var(--color-green);
+  color: var(--cp-accent);
 
   &:hover,
   &:active {
@@ -55,12 +59,16 @@ const ButtonStyled = styled.button`
   border: none;
   background-color: transparent;
   text-decoration: none;
-  color: white;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--cp-text);
   white-space: nowrap;
 
   &:hover,
   &:active {
     background-color: transparent;
+    color: var(--cp-accent);
   }
 `;
 

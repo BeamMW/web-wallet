@@ -56,19 +56,19 @@ const ListItemStyled = styled.li<{ points: number }>`
   flex-grow: 1;
   height: 6px;
   margin: 0 4px;
-  border-radius: 3px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--cp-line);
   border-width: ${({ points }) => (points > 0 ? 0 : 1)}px;
+  box-shadow: ${({ points }) => (points >= 5 ? '0 0 8px rgba(0,246,210,0.6)' : 'none')};
   background-color: ${({ points }) => {
     switch (true) {
       case points >= 5:
-        return 'var(--color-green)';
+        return 'var(--cp-accent)';
       case points === 3:
         return 'var(--color-yellow)';
       case points === 0:
         return 'transparent';
       default:
-        return 'var(--color-red)';
+        return 'var(--cp-danger)';
     }
   }};
 `;
@@ -77,6 +77,11 @@ const StrengthTitleStyled = styled.span`
   position: absolute;
   bottom: 0;
   left: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cp-muted);
 `;
 
 const PasswordStrength: React.FC<PasswordStrengthProps> = ({ value }) => {

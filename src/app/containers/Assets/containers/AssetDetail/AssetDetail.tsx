@@ -16,36 +16,40 @@ import { setSelectedAssetId } from '@app/containers/Wallet/store/actions';
 
 const PageWrap = styled.div`
   width: 100%;
-  max-width: 676px;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
+
+  :global(html[data-env='fullscreen']) & {
+    max-width: 560px;
+  }
 `;
 
 const QuickActions = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 9px;
 `;
 
 const ActionBtn = styled.button<{ accent: 'purple' | 'green' | 'blue' }>`
   flex: 1;
   height: 44px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 12px;
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, transform 0.12s;
-  color: rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  transition: background 0.15s, border-color 0.15s, transform 0.12s, box-shadow 0.15s;
+  color: var(--cp-text);
+  background: var(--cp-panel);
 
   > svg {
     width: 16px;
@@ -55,21 +59,20 @@ const ActionBtn = styled.button<{ accent: 'purple' | 'green' | 'blue' }>`
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.16);
     transform: translateY(-1px);
+    border-color: ${({ accent }) => `var(--color-${accent})`};
+    box-shadow: inset 0 0 20px rgba(0, 246, 210, 0.06), 0 0 16px -4px ${({ accent }) => `var(--color-${accent})`};
   }
 
   &:active {
     transform: none;
-    background: rgba(255, 255, 255, 0.06);
   }
 `;
 
 const Card = styled.div`
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
   padding: 16px;
   overflow: hidden;
 `;
@@ -79,6 +82,7 @@ const TabsRow = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
+  border-bottom: 1px solid var(--cp-line);
 `;
 
 const TabList = styled.div`
@@ -92,37 +96,42 @@ const TabButton = styled.button<{ active?: boolean }>`
   cursor: pointer;
   padding: 8px 2px;
   background: transparent;
-  color: ${({ active }) => (active ? 'white' : 'rgba(255, 255, 255, 0.45)')};
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+  color: ${({ active }) => (active ? 'var(--cp-text)' : 'var(--cp-muted)')};
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   font-size: 11px;
   transition: color 120ms ease;
-  border-bottom: 2px solid ${({ active }) => (active ? 'var(--color-green)' : 'transparent')};
+  border-bottom: 2px solid ${({ active }) => (active ? 'var(--cp-accent)' : 'transparent')};
+  margin-bottom: -1px;
+  text-shadow: ${({ active }) => (active ? '0 0 10px rgba(0,246,210,0.4)' : 'none')};
 
   &:hover {
-    color: white;
+    color: var(--cp-text);
   }
 `;
 
 const TabCount = styled.span`
   margin-left: 6px;
-  opacity: 0.45;
-  font-weight: 700;
+  color: var(--cp-accent-2);
+  font-weight: 600;
 `;
 
 const ShowAllBtn = styled.button`
   border: none;
   background: transparent;
-  color: var(--color-green);
-  font-weight: 700;
-  font-size: 13px;
+  color: var(--cp-accent);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
   padding: 4px 0;
-  letter-spacing: 0.02em;
 
   &:hover {
-    opacity: 0.85;
+    text-shadow: 0 0 10px rgba(0, 246, 210, 0.5);
   }
 `;
 
@@ -131,11 +140,11 @@ const txListClass = css`
 `;
 
 const txItemClass = css`
-  background-color: transparent !important;
-  border-radius: 12px !important;
+  background-color: rgba(255, 255, 255, 0.015) !important;
+  clip-path: var(--cp-clip-sm);
   padding: 12px !important;
   margin: 0 !important;
-  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid var(--cp-hair) !important;
   cursor: pointer;
   transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
 

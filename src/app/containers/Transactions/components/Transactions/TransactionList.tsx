@@ -27,17 +27,17 @@ interface TransactionsProps {
 
 const ListItemStyled = styled.li`
   position: relative;
-  padding: 14px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 13px;
+  clip-path: var(--cp-clip-sm);
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--cp-hair);
   cursor: pointer;
   transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
 
   &:hover {
     transform: translateY(-1px);
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(0, 246, 210, 0.03);
+    border-color: var(--cp-line);
   }
 `;
 

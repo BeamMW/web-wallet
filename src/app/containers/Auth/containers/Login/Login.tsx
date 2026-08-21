@@ -15,8 +15,9 @@ import { setError } from '@app/shared/store/actions';
 import { selectErrorMessage } from '@app/shared/store/selectors';
 
 const inputStyle = css`
-  width: 70%;
-  margin: 0 auto 50px auto;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto 24px auto;
 `;
 
 const Login: React.FC = () => {

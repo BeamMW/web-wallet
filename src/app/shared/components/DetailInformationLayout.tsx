@@ -4,23 +4,24 @@ import { AssetIconProps } from '@app/shared/components/AssetIcon';
 
 export const DetailTabs = styled.div`
   display: flex;
-  margin: 0 -30px 30px;
+  margin: 0 0 24px;
+  border-bottom: 1px solid var(--cp-line);
   .transaction-item {
-    padding: 10px 30px;
-    font-size: 14px;
-    font-weight: 500;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: 3px;
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
     text-align: center;
-    color: #fff;
+    color: var(--cp-muted);
     text-transform: uppercase;
-    opacity: 0.5;
     cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
     &.active {
-      opacity: 1;
-      border-bottom: 3px solid #00f6d2;
+      color: var(--cp-text);
+      border-bottom-color: var(--cp-accent);
+      text-shadow: 0 0 10px rgba(0, 246, 210, 0.4);
     }
   }
 `;
@@ -30,28 +31,23 @@ export const DetailInfoWrapper = styled.div`
 `;
 
 export const InformationItem = styled.div<AssetIconProps>`
-  margin-bottom: 30px;
+  margin-bottom: 22px;
   .title {
-    opacity: 0.5;
-    font-size: 14px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: 1px;
-    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--cp-muted);
     text-transform: uppercase;
   }
   .value {
     display: flex;
-    margin: 10px 0 0;
-    font-size: 14px;
+    margin: 9px 0 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
     font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    color: #fff;
+    line-height: 1.5;
+    color: var(--cp-text);
     align-items: center;
     word-break: break-word;
 
@@ -91,12 +87,12 @@ export const InformationItem = styled.div<AssetIconProps>`
       }
       &.income {
         .asset-name {
-          color: #0bccf7;
+          color: var(--cp-accent-3);
         }
       }
       &.outcome {
         .asset-name {
-          color: #c061e0;
+          color: var(--cp-accent-2);
         }
       }
     }

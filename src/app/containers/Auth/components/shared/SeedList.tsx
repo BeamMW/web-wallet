@@ -18,42 +18,50 @@ const ListStyled = styled.ul`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding: 0 10px;
+  gap: 6px 8px;
+  padding: 0;
 `;
 
 const baseClassName = css`
   position: relative;
   display: inline-block;
-  width: 140px;
-  height: 32px;
-  margin-bottom: 10px;
-  padding-left: 30px;
+  width: calc(50% - 4px);
+  height: 34px;
+  margin-bottom: 6px;
+  padding-left: 28px;
 
   &:before {
     position: absolute;
-    top: 12px;
+    top: 8px;
     left: 0;
     content: attr(data-index);
     width: 20px;
     height: 20px;
     line-height: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--cp-line);
     border-radius: 50%;
     text-align: center;
+    font-family: var(--font-mono);
     font-size: 10px;
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--cp-muted);
     box-sizing: border-box;
   }
 
   > input {
-    width: 110px;
-    height: 32px;
+    width: 100%;
+    height: 34px;
     line-height: 16px;
-    padding-top: 16px;
+    padding: 14px 4px 4px;
     background-color: transparent;
     border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
+    border-bottom: 1px solid var(--cp-line);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--cp-text);
+
+    &:focus {
+      border-bottom-color: var(--cp-accent);
+    }
   }
 `;
 
@@ -61,8 +69,8 @@ const errorClassName = css`
   &:before {
     line-height: 20px;
     border: none;
-    background-color: var(--color-red);
-    color: var(--color-dark-blue);
+    background-color: var(--cp-danger);
+    color: #04121a;
   }
 `;
 
@@ -70,8 +78,9 @@ const validClassName = css`
   &:before {
     line-height: 20px;
     border: none;
-    background-color: var(--color-green);
-    color: var(--color-dark-blue);
+    background-color: var(--cp-accent);
+    color: #04121a;
+    box-shadow: 0 0 10px -2px rgba(0, 246, 210, 0.6);
   }
 `;
 

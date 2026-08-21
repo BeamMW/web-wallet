@@ -138,8 +138,12 @@ async function setupInpageApi() {
     },
   };
 
-  // @ts-ignore
-  global.BeamApi = BeamApi;
+  // Expose on `window` explicitly — this bundle runs in the page context, where
+  // `global` only exists if webpack's node shim happens to be bundled in.
+  (window as any).BeamApi = BeamApi;
+  if (typeof (globalThis as any).global === 'object' && (globalThis as any).global !== null) {
+    (globalThis as any).global.BeamApi = BeamApi;
+  }
 
   await new Promise<void>((resolve) => {
     const onWindowMessage = (event: MessageEvent) => {
@@ -168,4 +172,8 @@ async function setupInpageApi() {
   });
 }
 
-setupInpageApi().catch(() => {});
+setupInpageApi().catch((error) => {
+  // Swallowing this silently made a broken handshake look like "no wallet installed".
+  // eslint-disable-next-line no-console
+  console.error('BeamApi failed to initialize.', error);
+});

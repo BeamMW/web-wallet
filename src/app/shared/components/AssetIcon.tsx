@@ -21,6 +21,12 @@ const ContainerStyled = styled.div<AssetIconProps>`
   top: 50%;
   transform: translateY(-50%);
   color: ${({ asset_id }) => (PALLETE_ASSETS[asset_id] ? PALLETE_ASSETS[asset_id] : PALLETE_ASSETS[asset_id % PALLETE_ASSETS.length])};
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
   &.without-transform {
     transform: none;
   }

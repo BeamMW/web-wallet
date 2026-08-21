@@ -34,26 +34,31 @@ const AMOUNT_MAX = 2e14;
 
 const PageWrap = styled.div`
   width: 100%;
-  max-width: 676px;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  :global(html[data-env='fullscreen']) & {
+    max-width: 560px;
+  }
 `;
 
 const Card = styled.div`
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
   padding: 16px;
 `;
 
 const FieldLabel = styled.div`
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--cp-muted);
   margin-bottom: 8px;
 `;
 
@@ -67,9 +72,10 @@ const AddressRow = styled.div`
 
 const AddressText = styled.div`
   flex: 1;
-  font-size: 13px;
+  font-family: var(--font-mono);
+  font-size: 12px;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--cp-text);
   word-break: break-all;
   min-width: 0;
 `;
@@ -82,28 +88,29 @@ const IconBtnRow = styled.div`
 `;
 
 const IconBtn = styled.button`
-  border: none;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
+  border: 1px solid var(--cp-line);
+  background: rgba(0, 0, 0, 0.3);
+  clip-path: var(--cp-clip-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px;
+  padding: 6px;
   line-height: 0;
-  color: rgba(255, 255, 255, 0.6);
-  transition: background 0.12s, color 0.12s;
+  color: var(--cp-muted);
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: white;
+    border-color: var(--cp-accent);
+    color: var(--cp-accent);
+    box-shadow: 0 0 12px -3px rgba(0, 246, 210, 0.5);
   }
 `;
 
 const AddressHint = styled.div`
-  font-size: 11px;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.35);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--cp-muted);
   margin-top: 8px;
 `;
 
@@ -118,29 +125,30 @@ const AmountRow = styled.div`
 const AmountNumInput = styled.input`
   flex: 1;
   min-width: 0;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
   padding: 10px 14px;
-  font-size: 24px;
-  font-weight: 700;
-  color: white;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--cp-text);
   outline: none;
-  font-family: 'SFProDisplay';
-  transition: border-color 0.15s;
+  font-family: var(--font-mono);
+  transition: border-color 0.15s, box-shadow 0.15s;
   min-height: 52px;
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--cp-muted);
     font-weight: 400;
   }
 
   &.error {
-    border-color: rgba(255, 90, 90, 0.6);
+    border-color: var(--cp-danger);
   }
 
   &:focus {
-    border-color: rgba(255, 255, 255, 0.22);
+    border-color: var(--cp-accent);
+    box-shadow: 0 0 18px -6px rgba(0, 246, 210, 0.5);
   }
 
   -moz-appearance: textfield;
@@ -160,34 +168,36 @@ const tokenSelectClass = css`
 
   > button {
     flex: 1 !important;
-    border: 1px solid rgba(255, 255, 255, 0.09) !important;
-    border-radius: 10px !important;
+    border: 1px solid var(--cp-line) !important;
+    clip-path: var(--cp-clip) !important;
     padding: 0 14px !important;
-    background: rgba(255, 255, 255, 0.07) !important;
+    background: rgba(0, 0, 0, 0.3) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 6px !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
+    font-family: var(--font-mono) !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
     min-width: 90px !important;
-    color: white !important;
+    color: var(--cp-text) !important;
   }
 `;
 
 const rateClass = css`
   margin: 0 !important;
   margin-top: 6px !important;
+  font-family: var(--font-mono) !important;
   font-size: 12px !important;
-  color: rgba(255, 255, 255, 0.35) !important;
+  color: var(--cp-accent-3) !important;
   font-weight: 500 !important;
 `;
 
 const ErrorText = styled.div`
-  font-size: 12px;
-  color: #ff6b6b;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cp-danger);
   margin-top: 6px;
-  font-style: italic;
 `;
 
 // ── Collapsible cards ─────────────────────────────────────────────────────────
@@ -212,24 +222,25 @@ const Chevron = styled.span`
 const CommentInput = styled.textarea`
   width: 100%;
   margin-top: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
   padding: 10px 12px;
-  color: white;
+  color: var(--cp-text);
   font-size: 13px;
-  font-family: 'SFProDisplay';
+  font-family: var(--font-mono);
   resize: none;
   outline: none;
   height: 72px;
   box-sizing: border-box;
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.25);
+    color: var(--cp-muted);
   }
 
   &:focus {
-    border-color: rgba(255, 255, 255, 0.22);
+    border-color: var(--cp-accent);
+    box-shadow: 0 0 18px -6px rgba(0, 246, 210, 0.5);
   }
 `;
 
@@ -239,18 +250,18 @@ const ToggleRow = styled.div`
   justify-content: space-between;
   margin-top: 10px;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--cp-text);
 `;
 
 // ── Warning notice ────────────────────────────────────────────────────────────
 
 const Notice = styled.div`
-  font-size: 12px;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cp-muted);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
   padding: 12px 14px;
   line-height: 1.6;
 `;
@@ -261,29 +272,32 @@ const PrimaryBtn = styled.button`
   width: 100%;
   height: 48px;
   border: none;
-  border-radius: 12px;
-  background: var(--color-blue);
-  color: var(--color-dark-blue);
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  clip-path: var(--cp-clip);
+  background: linear-gradient(120deg, var(--color-blue), var(--cp-accent));
+  color: #04121a;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: opacity 0.15s, transform 0.12s;
+  box-shadow: 0 0 22px -8px var(--color-blue);
+  transition: box-shadow 0.15s, transform 0.12s, filter 0.15s;
 
   &:hover:not(:disabled) {
-    opacity: 0.88;
+    filter: brightness(1.07);
     transform: translateY(-1px);
+    box-shadow: 0 0 30px -6px var(--color-blue);
   }
 
   &:active:not(:disabled) {
     transform: none;
-    opacity: 1;
   }
 
   &:disabled {
     opacity: 0.35;
     cursor: default;
+    box-shadow: none;
   }
 `;
 
@@ -300,30 +314,34 @@ const QrOverlay = styled.div`
 `;
 
 const QrPanel = styled.div`
-  background: #0e1f28;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 28px 24px;
+  background: var(--cp-panel);
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
+  padding: 26px 22px;
   width: 300px;
+  max-width: calc(100vw - 28px);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.85), 0 0 40px -18px rgba(0, 246, 210, 0.3);
 `;
 
 const QrFrame = styled.div`
   background: white;
-  border-radius: 12px;
-  padding: 8px;
+  border-radius: 6px;
+  padding: 10px;
   display: flex;
+  box-shadow: 0 0 24px -6px rgba(0, 246, 210, 0.5);
 `;
 
 const QrCaption = styled.div`
-  font-size: 12px;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cp-muted);
   text-align: center;
   line-height: 1.6;
+  white-space: pre-line;
 `;
 
 const QrCopyBtn = styled(PrimaryBtn)`

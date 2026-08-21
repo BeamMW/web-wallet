@@ -11,36 +11,40 @@ import { Assets } from '../../../Wallet/components/Wallet';
 
 const PageWrap = styled.div`
   width: 100%;
-  max-width: 676px;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
+
+  :global(html[data-env='fullscreen']) & {
+    max-width: 560px;
+  }
 `;
 
 const QuickActions = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 9px;
 `;
 
 const ActionBtn = styled.button<{ accent: 'purple' | 'green' | 'blue' }>`
   flex: 1;
   height: 44px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 12px;
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, transform 0.12s;
-  color: rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  transition: background 0.15s, border-color 0.15s, transform 0.12s, box-shadow 0.15s;
+  color: var(--cp-text);
+  background: var(--cp-panel);
 
   > svg {
     width: 16px;
@@ -50,21 +54,20 @@ const ActionBtn = styled.button<{ accent: 'purple' | 'green' | 'blue' }>`
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.16);
     transform: translateY(-1px);
+    border-color: ${({ accent }) => `var(--color-${accent})`};
+    box-shadow: inset 0 0 20px rgba(0, 246, 210, 0.06), 0 0 16px -4px ${({ accent }) => `var(--color-${accent})`};
   }
 
   &:active {
     transform: none;
-    background: rgba(255, 255, 255, 0.06);
   }
 `;
 
 const Card = styled.div`
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
   padding: 16px;
   overflow: hidden;
 `;

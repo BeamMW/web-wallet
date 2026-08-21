@@ -14,33 +14,30 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const ContainerStyled = styled.div<InputProps>`
   position: relative;
-  min-height: 53px;
-  margin-bottom: ${({ margin }) => (margin === 'none' ? 0 : 50)}px;
+  min-height: 50px;
+  margin-bottom: ${({ margin }) => (margin === 'none' ? 0 : 28)}px;
 `;
 
 const InputStyled = styled.input<InputProps>`
   width: 100%;
-  height: 45px;
-  line-height: 40px;
-  padding: 15px;
-  border: none;
+  height: 48px;
+  padding: 13px 14px;
+  border: 1px solid var(--cp-line);
   outline: none;
-  // background-color: transparent;
-  font-size: 14px;
-  color: white;
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.05);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--cp-text);
+  clip-path: var(--cp-clip);
+  background-color: rgba(0, 0, 0, 0.35);
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 
   &::placeholder {
-    transform: translateX(1px);
-    opacity: 0.2;
-    font-size: 14px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: italic;
-    line-height: normal;
-    letter-spacing: 0.26px;
-    color: #fff;
+    opacity: 1;
+    font-size: 13px;
+    font-style: normal;
+    letter-spacing: 0.02em;
+    color: var(--cp-muted);
   }
 
   &::-webkit-outer-spin-button,
@@ -55,37 +52,39 @@ const InputStyled = styled.input<InputProps>`
   }
 
   &:focus {
-    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--cp-accent);
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 1px rgba(0, 246, 210, 0.2), 0 0 18px -6px rgba(0, 246, 210, 0.5);
   }
 
   &.invalid {
-    background-color: rgba(255, 116, 107, 0.15);
-    color: #ff625c;
+    border-color: var(--cp-danger);
+    color: var(--cp-danger);
+    box-shadow: 0 0 0 1px rgba(242, 95, 91, 0.2);
   }
 `;
 
 const InputRegularStyled = styled(InputStyled)`
-  border-color: ${({ valid }) => (valid ? 'var(--color-green)' : 'var(--color-red)')};
+  border-color: ${({ valid }) => (valid ? 'var(--cp-line)' : 'var(--cp-danger)')};
 `;
 
 const InputGrayStyled = styled(InputStyled)`
-  border-width: 1px;
-  border-color: ${({ valid }) => (valid ? 'rgba(255,255,255,0.3)' : 'var(--color-red)')};
+  border-color: ${({ valid }) => (valid ? 'var(--cp-line-2)' : 'var(--cp-danger)')};
 `;
 
 const InputAmountStyled = styled(InputGrayStyled)<{ pallete: string }>`
   font-size: 18px;
   font-weight: 600;
-  letter-spacing: 0.34px;
+  letter-spacing: 0.02em;
   color: ${({ pallete }) => `var(--color-${pallete})`};
 `;
 
 const LabelStyled = styled.div<InputProps>`
-  margin-top: 4px;
-  font-family: SFProDisplay;
-  font-size: 14px;
-  font-style: italic;
-  color: ${({ valid }) => (valid ? 'var(--color-gray)' : 'var(--color-red)')};
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: ${({ valid }) => (valid ? 'var(--cp-muted)' : 'var(--cp-danger)')};
 `;
 
 const menuEyeStyle = css`

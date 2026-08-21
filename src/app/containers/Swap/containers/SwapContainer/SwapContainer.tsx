@@ -483,7 +483,9 @@ export const SwapContainer = () => {
     setIsSendingBeam(true);
     try {
       await sendTo({
-        amount,
+        // Send the typed string, not `amount` — converting via a double first would
+        // round high-decimal tokens before the base-unit conversion ever runs.
+        amount: beamToEvmAmount.trim(),
         address: cleanAddress.replace(/^0x/i, ''),
         fee: beamRelayerFee,
         decimals: selectedBeamAsset.decimals,

@@ -12,10 +12,14 @@ import { MetaMaskIcon } from './MetaMaskIcon';
 const Wrap = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 14px 20px 22px;
-  max-width: 676px;
+  padding: 14px 0 22px;
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
+
+  :global(html[data-env='fullscreen']) & {
+    max-width: 560px;
+  }
 `;
 
 // ─── Connected wallet + network bar ─────────────────────────────────────────
@@ -166,8 +170,8 @@ function truncate(addr: string): string {
 // ─── Swap stack (FROM + divider + TO in one box) ─────────────────────────────
 
 const SwapStack = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  border: 1px solid var(--cp-line);
+  clip-path: var(--cp-clip);
   overflow: hidden;
 `;
 
@@ -384,29 +388,32 @@ const PrimaryBtn = styled.button<{ pallete: 'purple' | 'blue' }>`
   width: 100%;
   height: 46px;
   border: none;
-  border-radius: 12px;
-  font-size: 14px;
+  clip-path: var(--cp-clip);
+  font-family: var(--font-mono);
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: opacity 0.15s, transform 0.12s;
-  color: #fff;
+  transition: box-shadow 0.15s, transform 0.12s, filter 0.15s;
+  color: ${({ pallete }) => (pallete === 'purple' ? '#fff' : '#04121a')};
   background: ${({ pallete }) => (pallete === 'purple'
     ? 'linear-gradient(135deg, #8b5cf6 0%, #da68f5 100%)'
-    : 'linear-gradient(135deg, #0284c7 0%, #00adff 100%)')};
+    : 'linear-gradient(135deg, #0bccf7 0%, #00f6d2 100%)')};
+  box-shadow: ${({ pallete }) => (pallete === 'purple' ? '0 0 22px -8px #da68f5' : '0 0 22px -8px #00f6d2')};
 
   &:hover:not(:disabled) {
-    opacity: 0.88;
+    filter: brightness(1.07);
     transform: translateY(-1px);
   }
   &:active:not(:disabled) {
     transform: translateY(0);
-    opacity: 1;
   }
   &:disabled {
     opacity: 0.3;
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
   }
 `;
 
